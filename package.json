@@ -1,0 +1,23 @@
+{
+  "name": "slicejs_docs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "slice:init": "node node_modules/slicejs-cli/client.js init",
+    "slice:create": "node node_modules/slicejs-cli/client.js component create",
+    "slice:list": "node node_modules/slicejs-cli/client.js component list",
+    "slice:delete": "node node_modules/slicejs-cli/client.js component delete",
+    "run": "node api/index.js",
+    "slice:start": "node api/index.js",
+    "development": "node api/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "slicejs-cli": "^2.0.11"
+  }
+}
