@@ -59,11 +59,7 @@ export default class Playground extends HTMLElement {
       const sliceButton = await slice.build('Button', {
          value: 'Slice',
          onClickCallback: () => {
-            if (slice.translator.currentLanguage == 'es') {
-               slice.translator.changeLanguage('en');
-            } else {
-               slice.translator.changeLanguage('es');
-            }
+            alert("Hello from Slice.js");
          },
       });
       const sliceInput = await slice.build('Input', {
