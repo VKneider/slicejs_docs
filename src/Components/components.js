@@ -15,6 +15,7 @@ const components = {
   "Playground": "AppComponents",
   "RoutingDocumentation": "AppComponents",
   "ServiceDocumentation": "AppComponents",
+  "SliceConfigDocumentation": "AppComponents",
   "SliceStylesDocumentation": "AppComponents",
   "SliceTeamCard": "AppComponents",
   "StructuralDocumentation": "AppComponents",

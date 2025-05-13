@@ -52,9 +52,9 @@ export default class DocumentationPage extends HTMLElement {
                         component: 'ServiceDocumentation'
                      },
                      {
-                        title: 'Lifecycle methods',
-                        path: '/Documentation/Lifecycle-methods',
-                        component: 'LifecycleMethods'
+                        title: 'SliceConfig.json',
+                        path: '/Documentation/SliceConfig',
+                        component: 'SliceConfigDocumentation'
                      }
                   ]
                },

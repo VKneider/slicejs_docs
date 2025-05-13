@@ -1,0 +1,279 @@
+slice-config-documentation {
+  font-family: var(--font-family);
+  color: var(--font-primary-color);
+  display: block;
+}
+
+slice-config-documentation .config-documentation-container {
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Encabezado */
+slice-config-documentation .config-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--secondary-background-color);
+  padding-bottom: 1rem;
+}
+
+slice-config-documentation h1 {
+  font-size: 2.2rem;
+  color: var(--primary-color);
+  margin-right: 1rem;
+  margin-bottom: 0;
+  flex-grow: 1;
+}
+
+slice-config-documentation .config-badge {
+  background-color: var(--primary-color);
+  color: var(--primary-color-contrast);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+/* Secciones generales */
+slice-config-documentation section {
+  margin-bottom: 3rem;
+}
+
+slice-config-documentation h2 {
+  font-size: 1.8rem;
+  margin-top: 2rem;
+  margin-bottom: 1.2rem;
+  color: var(--primary-color);
+  position: relative;
+  padding-left: 1rem;
+}
+
+slice-config-documentation h2:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  height: 100%;
+  width: 4px;
+  background-color: var(--primary-color);
+  border-radius: 4px;
+}
+
+slice-config-documentation h3 {
+  font-size: 1.5rem;
+  margin-top: 1.8rem;
+  margin-bottom: 1rem;
+  color: var(--font-primary-color);
+}
+
+slice-config-documentation h4 {
+  font-size: 1.2rem;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+slice-config-documentation p {
+  margin-bottom: 1.2rem;
+  line-height: 1.7;
+  text-align: justify;
+  font-size: 1.05rem;
+}
+
+slice-config-documentation code {
+  font-family: monospace;
+  background-color: var(--secondary-background-color);
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 0.95em;
+  color: var(--primary-color);
+}
+
+/* Vista previa JSON */
+slice-config-documentation .config-json-preview {
+  margin: 20px 0;
+  border-radius: var(--border-radius-slice);
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Detalles de configuración */
+slice-config-documentation .config-details-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 2rem;
+}
+
+/* Categorías de componentes */
+slice-config-documentation .category-explanation {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  margin-top: 2rem;
+}
+
+slice-config-documentation .category-card {
+  background-color: var(--primary-background-color);
+  border-radius: var(--border-radius-slice);
+  padding: 25px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-top: 5px solid;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+slice-config-documentation .category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+slice-config-documentation .app-components {
+  border-top-color: #4CAF50;
+}
+
+slice-config-documentation .visual-components {
+  border-top-color: #2196F3;
+}
+
+slice-config-documentation .service-components {
+  border-top-color: #FF9800;
+}
+
+slice-config-documentation .category-card h3 {
+  margin-top: 0;
+  color: var(--font-primary-color);
+  border-bottom: 1px solid var(--secondary-background-color);
+  padding-bottom: 10px;
+}
+
+slice-config-documentation .category-features {
+  list-style-type: none;
+  padding-left: 0;
+  margin-bottom: 1.5rem;
+}
+
+slice-config-documentation .category-features li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+slice-config-documentation .category-features li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+/* Ejemplo de código */
+slice-config-documentation div[class$="-example"] {
+  margin-top: 1rem;
+  border-radius: var(--border-radius-slice);
+  overflow: hidden;
+}
+
+/* Customización */
+slice-config-documentation .customization-subsection {
+  background-color: var(--primary-background-color);
+  border-radius: var(--border-radius-slice);
+  padding: 25px;
+  margin-bottom: 2rem;
+  border-left: 5px solid var(--primary-color);
+}
+
+slice-config-documentation .customization-subsection h3 {
+  margin-top: 0;
+  color: var(--primary-color);
+}
+
+/* Mejores prácticas */
+slice-config-documentation .practices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+slice-config-documentation .practice-item {
+  display: flex;
+  background-color: var(--primary-background-color);
+  border-radius: var(--border-radius-slice);
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+slice-config-documentation .practice-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background-color: var(--success-color);
+  color: var(--success-contrast);
+  border-radius: 50%;
+  margin-right: 15px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+slice-config-documentation .practice-content {
+  flex-grow: 1;
+}
+
+slice-config-documentation .practice-content p {
+  margin-bottom: 0;
+}
+
+/* Responsive */
+@media only screen and (max-width: 960px) {
+  slice-config-documentation .config-documentation-container {
+    max-width: 95%;
+  }
+  
+  slice-config-documentation h1 {
+    font-size: 2rem;
+  }
+  
+  slice-config-documentation h2 {
+    font-size: 1.6rem;
+  }
+  
+  slice-config-documentation h3 {
+    font-size: 1.3rem;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  slice-config-documentation .config-documentation-container {
+    max-width: 100%;
+    padding: 15px;
+  }
+  
+  slice-config-documentation .config-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  slice-config-documentation .config-badge {
+    margin-top: 10px;
+  }
+  
+  slice-config-documentation h1 {
+    font-size: 1.8rem;
+    margin-right: 0;
+  }
+  
+  slice-config-documentation .category-explanation {
+    grid-template-columns: 1fr;
+  }
+  
+  slice-config-documentation .practice-item {
+    flex-direction: column;
+  }
+  
+  slice-config-documentation .practice-icon {
+    margin-bottom: 10px;
+  }
+}

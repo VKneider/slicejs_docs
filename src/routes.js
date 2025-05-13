@@ -10,6 +10,11 @@ const routes = [
             component: 'WhatIsSlice',
          },
          {
+            path: '/SliceConfig',
+            component: 'SliceConfigDocumentation',
+         },
+
+         {
             path:'/Visual',
             component: 'VisualDocumentation',
          },

@@ -1,0 +1,146 @@
+<div class="config-documentation-container">
+  <header class="config-header">
+    <h1 id="slice-config">Configuration File: sliceConfig.json</h1>
+    <span class="config-badge">Core Configuration</span>
+  </header>
+  
+  <section class="config-introduction">
+    <p>
+      The <code>sliceConfig.json</code> file is the heart of your Slice.js application configuration. It defines how the framework's core components function, file paths, and enabled features. This file is located at the project root and is loaded automatically when initializing the application.
+    </p>
+  </section>
+
+  <section class="config-preview">
+    <h2 id="estructura">Configuration File Structure</h2>
+    <div class="config-json-preview"></div>
+  </section>
+
+  <section class="config-details">
+    <h2 id="configuraciones">Main Configurations</h2>
+    <p>
+      Each section of the configuration file controls a different aspect of the framework. Below, you'll find a detailed explanation of each configuration and its options.
+    </p>
+    <div class="config-details-container"></div>
+  </section>
+
+  <section class="component-categories">
+    <h2 id="categorias">Component Categories</h2>
+    <p>
+      The categories defined in <code>paths.components</code> determine the types of components you can create with the Slice.js CLI. Each category has a specific purpose and can contain different types of components.
+    </p>
+
+    <div class="category-explanation">
+      <div class="category-card app-components">
+        <h3 id="app-components">AppComponents</h3>
+        <p>
+          <strong>AppComponents</strong> are application-specific components, generally composed of multiple visual components. These components form the main pages and sections of your interface.
+        </p>
+        <ul class="category-features">
+          <li>High-level components that represent complete functionalities</li>
+          <li>Can contain business logic and visual components</li>
+          <li>Typically correspond to specific routes or sections of the application</li>
+        </ul>
+        <div class="app-components-example"></div>
+      </div>
+
+      <div class="category-card visual-components">
+        <h3 id="visual-components">Visual</h3>
+        <p>
+          <strong>Visual</strong> components are the fundamental building blocks of the user interface. They are reusable components that represent visual elements such as buttons, cards, inputs, etc.
+        </p>
+        <ul class="category-features">
+          <li>Reusable UI components across the entire application</li>
+          <li>Contain HTML and CSS in addition to JavaScript code</li>
+          <li>Focused on presentation and basic interaction</li>
+        </ul>
+        <div class="visual-components-example"></div>
+      </div>
+
+      <div class="category-card service-components">
+        <h3 id="service-components">Service</h3>
+        <p>
+          <strong>Service</strong> components encapsulate business logic and services without visual interface. They provide functionalities such as data management, API connections, storage, etc.
+        </p>
+        <ul class="category-features">
+          <li>Components without user interface (no HTML or CSS)</li>
+          <li>Provide services and functionalities to other components</li>
+          <li>Manage communication with APIs, storage, and complex logic</li>
+        </ul>
+        <div class="service-components-example"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="customization-section">
+    <h2 id="personalizacion">Customizing Core Components</h2>
+    
+    <div class="customization-subsection">
+      <h3 id="loading-customization">Customizing the Loading Component</h3>
+      <p>
+        The <strong>Loading</strong> component is displayed during navigation between routes when <code>loading.enabled</code> is activated. You can completely customize this component by modifying the files in <code>src/Components/Visual/Loading/</code>.
+      </p>
+      <div class="loading-example"></div>
+    </div>
+    
+    <div class="customization-subsection">
+      <h3 id="theme-customization">Creating Custom Themes</h3>
+      <p>
+        You can create custom themes by adding new CSS files in <code>src/Themes/</code> and then configuring <code>themeManager.defaultTheme</code> to use your custom theme.
+      </p>
+      <div class="theme-example"></div>
+    </div>
+  </section>
+
+  <section class="config-updating">
+    <h2 id="actualizacion">Updating the Configuration</h2>
+    <p>
+      Modifying the <code>sliceConfig.json</code> file allows you to completely customize Slice.js behavior to adapt it to your application's needs. Changes to this file will take effect the next time you start the application.
+    </p>
+    <div class="config-update-example"></div>
+  </section>
+
+  <section class="best-practices">
+    <h2 id="mejores-practicas">Best Practices</h2>
+    <div class="practices-list">
+      <div class="practice-item">
+        <span class="practice-icon">✓</span>
+        <div class="practice-content">
+          <h4>Maintain Category Structure</h4>
+          <p>Respecting the category structure (AppComponents, Visual, Service) improves code organization and maintainability.</p>
+        </div>
+      </div>
+      
+      <div class="practice-item">
+        <span class="practice-icon">✓</span>
+        <div class="practice-content">
+          <h4>Enable the Debugger During Development</h4>
+          <p>Activating <code>debugger.enabled</code> during development facilitates component inspection and testing.</p>
+        </div>
+      </div>
+      
+      <div class="practice-item">
+        <span class="practice-icon">✓</span>
+        <div class="practice-content">
+          <h4>Customize Loading to Improve UX</h4>
+          <p>Adapt the Loading component to match your application's aesthetics and improve user experience.</p>
+        </div>
+      </div>
+      
+      <div class="practice-item">
+        <span class="practice-icon">✓</span>
+        <div class="practice-content">
+          <h4>Create Consistent Themes</h4>
+          <p>When creating custom themes, make sure to define all necessary CSS variables to maintain visual consistency.</p>
+        </div>
+      </div>
+      
+      <div class="practice-item">
+        <span class="practice-icon">✓</span>
+        <div class="practice-content">
+          <h4>Disable Logger in Production</h4>
+          <p>Consider disabling <code>logger.enabled</code> in production to improve performance, or at least, deactivate <code>info</code> type logs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
