@@ -99,7 +99,7 @@ const routes = [
       component: 'LandingPage',
    },
    {
-      path: '/Team',
+      path: '/About',
       component: 'TheSliceTeam',
    }
 ];

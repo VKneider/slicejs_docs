@@ -22,7 +22,7 @@ export default class TheSliceTeam extends HTMLElement {
             { text: 'Home', path: '/' },
             { text: 'Documentation', path: '/Documentation' },
             { text: 'Playground', path: '/Playground' },
-            { text: 'About', path: '/Team' }
+            { text: 'About', path: '/About' }
          ],
          buttons: [{
             value: 'Change Theme',

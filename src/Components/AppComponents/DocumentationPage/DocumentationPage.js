@@ -121,7 +121,7 @@ export default class DocumentationPage extends HTMLElement {
             { text: 'Home', path: '/' },
             { text: 'Documentation', path: '/Documentation' },
             { text: 'Playground', path: '/Playground' },
-            { text: 'About', path: '/Team' }
+            { text: 'About', path: '/About' }
          ],
          buttons: [
             {
