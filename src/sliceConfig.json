@@ -1,6 +1,6 @@
 {
     "debugger": {
-        "enabled": false,
+        "enabled": true,
         "click": "right"
     },
     "stylesManager":{
@@ -9,11 +9,11 @@
     "themeManager": {
         "enabled":true,
         "defaultTheme": "Slice",
-        "saveThemeLocally": false,
+        "saveThemeLocally": true,
         "useBrowserTheme": false
     },
     "logger": {
-        "enabled": true,
+        "enabled": false,
         "showLogs": {
             "console": {
                 "error": true,
@@ -21,9 +21,6 @@
                 "info": false
             }
         }
-    },
-    "translator": {
-        "enabled": false
     },
     "paths": {
         "components": {
