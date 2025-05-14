@@ -1,0 +1,96 @@
+<h1 id="cli-commands">Slice.js CLI Commands</h1>
+<p>
+  Slice.js comes with a powerful command-line interface (CLI) that helps you create, manage, and run your Slice.js applications. 
+  These commands are defined in your <code>package.json</code> file and can be run using npm.
+</p>
+
+<div class="commands-grid">
+  <div class="command-card">
+    <h2 id="init-command">Initialize Project</h2>
+    <div class="command-description">
+      <p>
+        The <code>slice:init</code> command sets up a new Slice.js project with the proper folder structure and configuration files.
+        It's the first command you should run when starting a new Slice.js project.
+      </p>
+      <div class="init-example"></div>
+    </div>
+  </div>
+
+  <div class="command-card">
+    <h2 id="create-command">Create Component</h2>
+    <div class="command-description">
+      <p>
+        The <code>slice:create</code> command helps you create new components with the proper structure.
+        It generates the JavaScript, HTML, and CSS files for your component.
+      </p>
+      <div class="create-example"></div>
+    </div>
+  </div>
+
+  <div class="command-card">
+    <h2 id="list-command">List Components</h2>
+    <div class="command-description">
+      <p>
+        The <code>slice:list</code> command shows you all available components in your project.
+        This is useful for seeing what components you have and where they're located.
+      </p>
+      <div class="list-example"></div>
+    </div>
+  </div>
+
+  <div class="command-card">
+    <h2 id="delete-command">Delete Component</h2>
+    <div class="command-description">
+      <p>
+        The <code>slice:delete</code> command allows you to safely remove components from your project.
+        It ensures all files related to the component are properly deleted.
+      </p>
+      <div class="delete-example"></div>
+    </div>
+  </div>
+
+  <div class="command-card">
+    <h2 id="start-command">Start Server</h2>
+    <div class="command-description">
+      <p>
+        The <code>slice:start</code> command starts the development server for your Slice.js application.
+        It serves your application and provides an interactive server menu.
+      </p>
+      <div class="start-example"></div>
+    </div>
+  </div>
+</div>
+
+<h2 id="workflow">Typical Command Workflow</h2>
+<p>
+  When developing with Slice.js, you typically follow a workflow that involves multiple commands
+  in a specific sequence. Here's how the commands work together:
+</p>
+<div class="command-workflow"></div>
+
+<div class="best-practices">
+  <h2 id="best-practices">CLI Best Practices</h2>
+  <ul>
+    <li>Always run <code>slice:init</code> first when creating a new project</li>
+    <li>Use <code>slice:create</code> to ensure components follow the proper structure</li>
+    <li>Run <code>slice:list</code> when you need to reference existing components</li>
+    <li>Use <code>slice:delete</code> instead of manually deleting component files</li>
+    <li>Keep the server running with <code>slice:start</code> during development</li>
+  </ul>
+</div>
+
+<div class="cli-tips">
+  <h3>Pro Tips</h3>
+  <p>
+    <strong>Multiple Terminals:</strong> For the best development experience, keep one terminal running 
+    <code>slice:start</code> and use another terminal for other commands.
+  </p>
+  <p>
+    <strong>Component Categories:</strong> When creating components, choose the appropriate category:
+  </p>
+  <ul>
+    <li><strong>Visual:</strong> For UI components that users interact with</li>
+    <li><strong>Service:</strong> For components that provide functionality but no UI</li>
+    <li><strong>AppComponents:</strong> For application-specific components</li>
+  </ul>
+</div>

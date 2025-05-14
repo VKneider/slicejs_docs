@@ -3,6 +3,7 @@ const components = {
   "CardDocumentation": "AppComponents",
   "CheckboxDocumentation": "AppComponents",
   "CodeVisualizer": "AppComponents",
+  "CommandsDocumentation": "AppComponents",
   "Documentation": "AppComponents",
   "DocumentationPage": "AppComponents",
   "InputDocumentation": "AppComponents",

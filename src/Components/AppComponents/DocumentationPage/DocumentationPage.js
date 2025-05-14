@@ -22,6 +22,11 @@ export default class DocumentationPage extends HTMLElement {
                   title: 'Installation',
                   path: '/Documentation/Installation',
                   component: 'Installation'
+               },
+               {
+                  title: 'Slice-cli Commands',
+                  path: '/Documentation/Commands',
+                  component: 'CommandsDocumentation'
                }
             ]
          },
@@ -78,15 +83,15 @@ export default class DocumentationPage extends HTMLElement {
          componentsLibrary: {
             title: 'Components Library',
             items: [
-             /*  {
-                  title: 'Services',
-                  items: [
-                     {
-                        title: 'FetchManager',
-                        path: '/Documentation/SliceComponents/FetchManager'
-                     }
-                  ]
-               },*/
+               /*  {
+                    title: 'Services',
+                    items: [
+                       {
+                          title: 'FetchManager',
+                          path: '/Documentation/SliceComponents/FetchManager'
+                       }
+                    ]
+                 },*/
                {
                   title: 'Visual',
                   path: '/Documentation/Visual',
@@ -116,7 +121,7 @@ export default class DocumentationPage extends HTMLElement {
             { text: 'Home', path: '/' },
             { text: 'Documentation', path: '/Documentation' },
             { text: 'Playground', path: '/Playground' },
-            { text: 'Our Team', path: '/Team' }
+            { text: 'About', path: '/Team' }
          ],
          buttons: [
             {
@@ -141,10 +146,10 @@ export default class DocumentationPage extends HTMLElement {
       // Función para extraer todas las rutas para MultiRoute
       const getAllRoutes = (routesObj) => {
          const allRoutes = [];
-         
+
          const processItems = (items) => {
             if (!items) return;
-            
+
             items.forEach(item => {
                if (item.path && item.component) {
                   allRoutes.push({
@@ -152,13 +157,13 @@ export default class DocumentationPage extends HTMLElement {
                      component: item.component
                   });
                }
-               
+
                if (item.items) {
                   processItems(item.items);
                }
             });
          };
-         
+
          // Procesar cada sección principal
          Object.values(routesObj).forEach(section => {
             if (section.path && section.component) {
@@ -167,12 +172,12 @@ export default class DocumentationPage extends HTMLElement {
                   component: section.component
                });
             }
-            
+
             if (section.items) {
                processItems(section.items);
             }
          });
-         
+
          return allRoutes;
       };
 
@@ -232,7 +237,7 @@ export default class DocumentationPage extends HTMLElement {
 
       // Obtener todas las rutas planas para el MultiRoute
       const multiRouteItems = getAllRoutes(routesConfig);
-      
+
       // Asegurarse que la ruta por defecto esté incluida
       if (!multiRouteItems.some(route => route.path === routesConfig.defaultRoute.path)) {
          multiRouteItems.push(routesConfig.defaultRoute);
@@ -275,7 +280,7 @@ export default class DocumentationPage extends HTMLElement {
       if (window.location.pathname === '/Documentation') {
          await VisualComponentsMultiRoute.renderIfCurrentRoute();
       }
-      
+
       this.appendChild(layOut);
    }
 }
