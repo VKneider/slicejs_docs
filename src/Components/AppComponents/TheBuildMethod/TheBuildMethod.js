@@ -10,18 +10,18 @@ export default class TheBuildMethod extends HTMLElement {
    async init() {
       // Crear ejemplos de código para la documentación
       const basicBuildExample = await slice.build('CodeVisualizer', {
-         value: `// Construir un componente básico
+         value: `// Building a basic component
 const myButton = await slice.build("Button", {
    value: "Click me!"
 });
 
-// Añadir el componente al DOM
-document.querySelector("#container").appendChild(myButton);`,
+// Add the component to the DOM
+this.querySelector("#container").appendChild(myButton);`,
          language: 'javascript'
       });
 
       const advancedBuildExample = await slice.build('CodeVisualizer', {
-         value: `// Componente con propiedades más avanzadas
+         value: `// Advanced component with more properties
 const customCard = await slice.build("Card", {
    title: "Custom Card",
    text: "This is a custom card with specific styling",
@@ -33,19 +33,19 @@ const customCard = await slice.build("Card", {
       card: "#3a0ca3",
       icon: "#f72585"
    },
-   sliceId: "my-custom-card" // ID personalizado para referencia futura
+   sliceId: "my-custom-card" // Custom ID for future reference
 });`,
          language: 'javascript'
       });
 
       const nestedComponentsExample = await slice.build('CodeVisualizer', {
-         value: `// Construcción de componentes anidados
+         value: `// Building nested components
 const grid = await slice.build("Grid", { 
    columns: 2, 
    rows: 1 
 });
 
-// Construir componentes hijos
+// Build child components
 const card1 = await slice.build("Card", { 
    title: "First Card" 
 });
@@ -53,17 +53,17 @@ const card2 = await slice.build("Card", {
    title: "Second Card" 
 });
 
-// Añadir componentes hijos al grid
+// Add child components to the grid
 await grid.setItem(card1);
 await grid.setItem(card2);
 
-// Añadir el grid al DOM
-document.body.appendChild(grid);`,
+// Add the grid to the component innerHTML
+this.appendChild(grid);`,
          language: 'javascript'
       });
 
       const errorHandlingExample = await slice.build('CodeVisualizer', {
-         value: `// Manejo de errores al construir componentes
+         value: `// Error handling when building components
 try {
    const component = await slice.build("NonExistentComponent", {});
    if (!component) {

@@ -40,7 +40,7 @@ const userProfileRoute = await slice.build("Route", {
   path: "/profile",
   component: "UserProfile"
 });
-document.querySelector(".content-container").appendChild(userProfileRoute);
+this.querySelector(".content-container").appendChild(userProfileRoute);
 });`
         });
 
@@ -59,7 +59,7 @@ const dashboardRoutes = await slice.build("MultiRoute", {
 });
 
 // Add it to your layout
-document.querySelector(".dashboard-content").appendChild(dashboardRoutes);`
+this.querySelector(".dashboard-content").appendChild(dashboardRoutes);`
         });
         this.querySelector(".multi-route-example").appendChild(multiRouteExample);
 
