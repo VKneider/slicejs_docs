@@ -1,47 +1,44 @@
 :root {
-  /* Tipografía */
-  --font-primary-color: #2E1A47; /* Uva oscuro, elegante para lectura */
-  --font-secondary-color: #7D3AC1; /* Uva brillante para títulos y resaltes */
+  /* Tipografía con mayor contraste */
+  --font-primary-color: #1A0B2E; /* Púrpura muy oscuro para excelente legibilidad */
+  --font-secondary-color: #6B46C1; /* Púrpura brillante para títulos y resaltes */
 
-  /** Primary - Uva intenso **/
-  --primary-color: #7D3AC1;
-  --primary-color-rgb: 125, 58, 193;
-  --primary-background-color: #F8F4FF; /* Lila muy claro como fondo principal */
-  --primary-color-contrast: #ffffff;
-  --primary-color-shade: #4E2279;
+  /** Primary - Púrpura eléctrico más vibrante **/
+  --primary-color: #9333EA; /* Púrpura más brillante y vibrante */
+  --primary-color-rgb: 147, 51, 234;
+  --primary-background-color: #FEFBFF; /* Blanco con toque lavanda para suavidad */
+  --primary-color-contrast: #FFFFFF;
+  --primary-color-shade: #7C3AED; /* Sombra más intensa */
 
-  /** Secondary - Lima vibrante **/
-  --secondary-color: #C6FF00; /* Amarillo lima brillante, capta la atención */
-  --secondary-color-rgb: 198, 255, 0;
-  --secondary-background-color: #F9FFE1;
-  --secondary-color-contrast: #2E2E2E;
+  /** Secondary - Verde neón vibrante **/
+  --secondary-color: #10B981; /* Verde esmeralda brillante, mejor contraste que el lima */
+  --secondary-color-rgb: 16, 185, 129;
+  --secondary-background-color: #F0FDF4; /* Verde muy claro para fondos */
+  --secondary-color-contrast: #FFFFFF;
 
-  /** Tertiary - Turquesa suave **/
-  --tertiary-background-color: #D0F4F2; /* Fondo suave, fresco y moderno */
+  /** Tertiary - Azul cian vibrante **/
+  --tertiary-background-color: #ECFEFF; /* Cian muy claro, más fresco */
 
-  /** Success - Verde esmeralda claro **/
-  --success-color: #00B894;
-  --success-contrast: #ffffff;
+  /** Success - Verde más intenso **/
+  --success-color: #059669; /* Verde más oscuro y contrastante */
+  --success-contrast: #FFFFFF;
 
-  /** Warning - Amarillo más tradicional pero suave **/
-  --warning-color: #FFD54F;
-  --warning-contrast: #3E2723;
+  /** Warning - Naranja vibrante en lugar de amarillo **/
+  --warning-color: #F59E0B; /* Naranja dorado, más visible que el amarillo */
+  --warning-contrast: #FFFFFF;
 
-  /** Danger - Coral vibrante (sin caer en rojo tradicional) **/
-  --danger-color: #FF6F61;
-  --danger-contrast: #ffffff;
+  /** Danger - Rojo magenta vibrante **/
+  --danger-color: #DC2626; /* Rojo más intenso y contrastante */
+  --danger-contrast: #FFFFFF;
 
-  /** Medium - Gris lavanda para texto secundario **/
-  --medium-color: #A89FB5;
-  --medium-contrast: #000000;
+  /** Medium - Gris con toque púrpura más contrastante **/
+  --medium-color: #6B7280; /* Gris más oscuro para mejor legibilidad */
+  --medium-contrast: #FFFFFF;
 
-  /** Disabled - Gris pastel lavanda **/
-  --disabled-color: #E6E0F1;
+  /** Disabled - Manteniendo contraste adecuado **/
+  --disabled-color: #D1D5DB; /* Gris más neutro pero visible */
 
-  /** Accent - Turquesa brillante para detalles elegantes **/
-  --accent-color: #00CFC1;
+  /** Accent - Cian eléctrico **/
+  --accent-color: #06B6D4; /* Cian más vibrante y contrastante */
 
-  /* Sombras */
-  --box-shadow-primary: 0px 4px 12px rgba(125, 58, 193, 0.15);
-  --box-shadow-secondary: 0px 3px 8px rgba(198, 255, 0, 0.1);
 }
