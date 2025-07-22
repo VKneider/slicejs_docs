@@ -21,7 +21,7 @@
     "node": ">=20.x"
   },
   "dependencies": {
-    "slicejs-cli": "^latest",
+    "slicejs-cli": "latest",
     "slicejs-web-framework": "latest"
   }
 }
