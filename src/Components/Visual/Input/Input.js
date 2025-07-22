@@ -1,184 +1,130 @@
 export default class Input extends HTMLElement {
+
+   static props = {
+      placeholder: { 
+         type: 'string', 
+         default: '', 
+         required: false 
+      },
+      type: { 
+         type: 'string', 
+         default: 'text' 
+      },
+      required: { 
+         type: 'boolean', 
+         default: false 
+      },
+      disabled: { 
+         type: 'boolean', 
+         default: false 
+      },
+      secret: { 
+         type: 'boolean', 
+         default: false 
+      },
+      conditions: { 
+         type: 'object', 
+         default: null 
+      }
+   };
+
    constructor(props) {
       super();
       slice.attachTemplate(this);
-      this.$inputContainer = this.querySelector('.slice_input');
-      this.$input = this.querySelector('.input_area');
+      this.$inputContainer = this.querySelector('.slice_input_container');
+      this.$input = this.querySelector('input');
       this.$placeholder = this.querySelector('.slice_input_placeholder');
-
-      this.$inputContainer.addEventListener('click', () => {
-         this.$input.focus(); // Hacer que el input obtenga el foco al hacer clic en el contenedor
-      });
+      this.$eyeIcon = this.querySelector('.slice_eye_icon');
 
       slice.controller.setComponentProps(this, props);
-      this.debuggerProps = ['value', 'placeholder', 'type', 'required', 'conditions', 'disabled', 'secret'];
    }
 
-   get placeholder() {
-      return this._placeholder;
+   init() {
+      // Static props ensure type has a default value
+      this.$input.type = this.type;
+
+      // Set up placeholder behavior
+      if (this.placeholder) {
+         this.$placeholder.textContent = this.placeholder;
+      }
+
+      // Set up disabled state
+      this.$input.disabled = this.disabled;
+
+      // Set up required state
+      if (this.required) {
+         this.$inputContainer.classList.add('required');
+      }
+
+      // Set up secret functionality for password fields
+      if (this.secret && this.type === 'password') {
+         this.setupSecretToggle();
+      }
+
+      // Set up conditions if provided
+      if (this.conditions) {
+         this.setupConditions();
+      }
+
+      // Set up event listeners
+      this.$input.addEventListener('input', () => {
+         this.update();
+      });
    }
 
-   set placeholder(value) {
-      this._placeholder = value;
-      this.$placeholder.textContent = value;
-   }
-
-   get value() {
-      return this.$input.value;
-   }
-
-   set value(value) {
-      if (value) {
-         this._value = value;
-         this.$input.value = value;
-         this.$placeholder.classList.add('slice_input_value');
-      } else {
-         this.$placeholder.classList.remove('slice_input_value');
-         this.$input.value = '';
+   setupSecretToggle() {
+      if (this.$eyeIcon) {
+         this.$eyeIcon.style.display = 'block';
+         this.$eyeIcon.addEventListener('click', () => {
+            if (this.$input.type === 'password') {
+               this.$input.type = 'text';
+               this.$eyeIcon.textContent = '🙈';
+            } else {
+               this.$input.type = 'password';
+               this.$eyeIcon.textContent = '👁️';
+            }
+         });
       }
    }
 
-   get type() {
-      return this._type;
-   }
-
-   set type(value) {
-      const allowedTypes = ['text', 'password', 'email', 'number', 'date'];
-
-      if (!allowedTypes.includes(value)) {
-         throw new Error(`This type is not allowed: ${value}`);
-      }
-
-      this._type = value;
-      this.$input.type = value;
-      if (value === 'date') {
-         this.$placeholder.classList.add('slice_input_value');
-      }
-   }
-
-   get required() {
-      return this._required;
-   }
-
-   set required(boolean) {
-      this._required = boolean;
-      this.$input.required = boolean;
-   }
-
-   get disabled() {
-      return this._disabled;
-   }
-
-   set disabled(boolean) {
-      this._disabled = boolean;
-      this.$input.disabled = boolean;
-      if (boolean) {
-         this.$inputContainer.classList.add('disabled');
-      } else {
-         this.$inputContainer.classList.remove('disabled');
-      }
-   }
-
-   get secret() {
-      return this._secret;
-   }
-
-   set secret(boolean) {
-      this._secret = boolean;
-      if (boolean) {
-         this.$input.type = 'password';
-         if (!this.querySelector('.eye')) {
-            const reveal = document.createElement('label');
-
-            const eyeSlash = `<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="var(--primary-color)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
-          </svg>`;
-            const eye = `<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="var(--primary-color)" stroke-width="1.5" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"/>
-            <path stroke="var(--primary-color)" stroke-width="1.5" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
-          </svg>`;
-
-            reveal.classList.add('eye');
-            reveal.innerHTML = eye;
-            reveal.addEventListener('click', () => {
-               if (this.$input.type === 'password') {
-                  this.$input.type = 'text';
-                  reveal.innerHTML = eyeSlash;
-               } else {
-                  this.$input.type = 'password';
-                  reveal.innerHTML = eye;
-               }
-            });
-            this.$inputContainer.appendChild(reveal);
-         } else {
-            this.querySelector('.eye').remove();
-         }
-      }
-   }
-
-   get conditions() {
-      return this._conditions;
-   }
-
-   set conditions(value) {
+   setupConditions() {
       const {
-         regex = '',
+         regex,
          minLength = 0,
-         maxLength = '',
+         maxLength = Infinity,
          minMinusc = 0,
-         maxMinusc = '',
+         maxMinusc = Infinity,
          minMayusc = 0,
-         maxMayusc = '',
+         maxMayusc = Infinity,
          minNumber = 0,
-         maxNumber = '',
+         maxNumber = Infinity,
          minSymbol = 0,
-         maxSymbol = '',
-      } = value;
+         maxSymbol = Infinity
+      } = this.conditions;
 
-      let regexPattern = '';
-
-      if (regex !== '') {
+      let regexPattern;
+      if (regex) {
          regexPattern = regex;
       } else {
-         regexPattern =
-            `^(?=.*[a-z]{${minMinusc},${maxMinusc}})` +
-            `(?=.*[A-Z]{${minMayusc},${maxMayusc}})` +
-            `(?=.*\\d{${minNumber},${maxNumber}})` +
-            `(?=.*[\\W$]{${minSymbol},${maxSymbol}})` +
+         regexPattern = 
+            `^(?=(?:.*[a-z]){${minMinusc},${maxMinusc}})` +
+            `(?=(?:.*[A-Z]){${minMayusc},${maxMayusc}})` +
+            `(?=(?:.*\\d){${minNumber},${maxNumber}})` +
+            `(?=(?:.*[\\W$]){${minSymbol},${maxSymbol}})` +
             `.{${minLength},${maxLength}}$`;
       }
 
       this._conditions = new RegExp(regexPattern);
    }
 
-   init() {
-      if (!this.type) {
-         this.type = 'text';
-      }
-
-      if (!this.disabled) {
-         this._disabled = false;
-      }
-
-      if (!this.required) {
-         this._required = false;
-      }
-
-      this.$input.addEventListener('input', () => {
-         this.update();
-      });
-   }
-
    update() {
-      if (this.$input.value !== '' || !undefined) {
-         if (this.$input.value !== '') {
-            this.$placeholder.classList.add('slice_input_value');
-            this.triggerSuccess();
-         } else {
-            this.$placeholder.classList.remove('slice_input_value');
-            if (this.required) {
-               this.triggerError();
-            }
+      if (this.$input.value !== '') {
+         this.$placeholder.classList.add('slice_input_value');
+         this.triggerSuccess();
+      } else {
+         this.$placeholder.classList.remove('slice_input_value');
+         if (this.required) {
+            this.triggerError();
          }
       }
    }
@@ -200,15 +146,90 @@ export default class Input extends HTMLElement {
    }
 
    triggerSuccess() {
-      this.$inputContainer.classList.remove('required');
+      this.$inputContainer.classList.remove('required', 'error');
    }
 
    triggerError() {
-      this.$inputContainer.classList.add('error');
-      this.$inputContainer.classList.add('required');
+      this.$inputContainer.classList.add('error', 'required');
       setTimeout(() => {
          this.$inputContainer.classList.remove('error');
       }, 500);
+   }
+
+   // Getters and setters for dynamic prop updates
+   get value() {
+      return this.$input.value;
+   }
+
+   set value(newValue) {
+      this.$input.value = newValue;
+      this.update();
+   }
+
+   get placeholder() {
+      return this._placeholder;
+   }
+
+   set placeholder(value) {
+      this._placeholder = value;
+      if (this.$placeholder) {
+         this.$placeholder.textContent = value;
+      }
+   }
+
+   get type() {
+      return this._type;
+   }
+
+   set type(value) {
+      this._type = value;
+      if (this.$input) {
+         this.$input.type = value;
+      }
+   }
+
+   get required() {
+      return this._required;
+   }
+
+   set required(value) {
+      this._required = value;
+      if (this.$inputContainer) {
+         this.$inputContainer.classList.toggle('required', value);
+      }
+   }
+
+   get disabled() {
+      return this._disabled;
+   }
+
+   set disabled(value) {
+      this._disabled = value;
+      if (this.$input) {
+         this.$input.disabled = value;
+      }
+   }
+
+   get secret() {
+      return this._secret;
+   }
+
+   set secret(value) {
+      this._secret = value;
+      if (value && this.type === 'password') {
+         this.setupSecretToggle();
+      }
+   }
+
+   get conditions() {
+      return this._conditions;
+   }
+
+   set conditions(value) {
+      this._conditions = value;
+      if (value) {
+         this.setupConditions();
+      }
    }
 }
 

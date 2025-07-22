@@ -1,87 +1,116 @@
 export default class Switch extends HTMLElement {
+
+   static props = {
+      checked: { 
+         type: 'boolean', 
+         default: false 
+      },
+      disabled: { 
+         type: 'boolean', 
+         default: false 
+      },
+      label: { 
+         type: 'string', 
+         default: null 
+      },
+      labelPlacement: { 
+         type: 'string', 
+         default: 'right' 
+      },
+      customColor: { 
+         type: 'string', 
+         default: null 
+      },
+      toggle: { 
+         type: 'function', 
+         default: null 
+      }
+   };
+
    constructor(props) {
       super();
       slice.attachTemplate(this);
       this.$switch = this.querySelector('.slice_switch');
       this.$checkbox = this.querySelector('input');
-      this.toggle = props.toggle;
-      if (this.toggle) {
+      
+      // Handle toggle callback
+      if (props.toggle) {
+         this.toggle = props.toggle;
          this.$checkbox.addEventListener('click', () => this.toggle());
       }
 
       slice.controller.setComponentProps(this, props);
-      this.debuggerProps = ['checked', 'disabled', 'label', 'customColor', 'labelPlacement'];
    }
 
    init() {
-      if (this._checked === undefined) {
-         this.checked = false;
-      }
-      if (this.labelPlacement === undefined) {
-         this.labelPlacement = 'right';
+      // Set initial checked state (default applied by static props)
+      this.$checkbox.checked = this.checked;
+
+      // Set initial disabled state
+      this.$checkbox.disabled = this.disabled;
+
+      // Set label if provided
+      if (this.label) {
+         this.createLabel();
       }
 
-      if (!this.disabled) {
-         this._disabled = false;
+      // Set label placement (default is 'right')
+      this.applyLabelPlacement();
+
+      // Apply custom color if provided
+      if (this.customColor) {
+         this.applyCustomColor();
       }
 
-      this.querySelector('input').addEventListener('change', (e) => {
+      // Set up change listener
+      this.$checkbox.addEventListener('change', (e) => {
          this.checked = e.target.checked;
       });
    }
 
+   createLabel() {
+      if (!this.querySelector('.switch_label')) {
+         const label = document.createElement('label');
+         label.classList.add('switch_label');
+         label.textContent = this.label;
+         this.$switch.appendChild(label);
+      }
+   }
+
+   applyLabelPlacement() {
+      const placement = this.labelPlacement;
+      switch (placement) {
+         case 'left':
+            this.$switch.style.flexDirection = 'row-reverse';
+            break;
+         case 'right':
+            this.$switch.style.flexDirection = 'row';
+            break;
+         case 'top':
+            this.$switch.style.flexDirection = 'column-reverse';
+            break;
+         case 'bottom':
+            this.$switch.style.flexDirection = 'column';
+            break;
+         default:
+            this.$switch.style.flexDirection = 'row';
+      }
+   }
+
+   applyCustomColor() {
+      this.style.setProperty('--success-color', this.customColor);
+   }
+
+   // Getters and setters for dynamic prop updates
    get checked() {
       return this._checked;
    }
 
    set checked(value) {
       this._checked = value;
-      this.$checkbox.checked = value;
-   }
-
-   get label() {
-      return this._label;
-   }
-
-   set label(value) {
-      this._label = value;
-      if (this.querySelector('.switch_label')) {
-         this.querySelector('.switch_label').textContent = value;
-      } else {
-         const label = document.createElement('label');
-         label.classList.add('switch_label');
-         label.textContent = value;
-         this.$switch.appendChild(label);
+      if (this.$checkbox) {
+         this.$checkbox.checked = value;
       }
-   }
-
-   get customColor() {
-      return this._customColor;
-   }
-
-   set customColor(value) {
-      this._customColor = value;
-      this.style = `--success-color: ${value};`;
-   }
-
-   get labelPlacement() {
-      return this._labelPlacement;
-   }
-
-   set labelPlacement(value) {
-      if (value === 'left') {
-         this.$switch.style = ` flex-direction: row-reverse;`;
-      }
-      if (value === 'right') {
-         this.$switch.style = `flex-direction: row;`;
-      }
-      if (value === 'top') {
-         this.$switch.style = `flex-direction: column-reverse;`;
-      }
-      if (value === 'bottom') {
-         this.$switch.style = `flex-direction: column;`;
-      }
-      this._labelPlacement = value;
    }
 
    get disabled() {
@@ -90,12 +119,61 @@ export default class Switch extends HTMLElement {
 
    set disabled(value) {
       this._disabled = value;
-      this.$checkbox.disabled = value;
-      if (value === true) {
-         this.querySelector('.slider').classList.add('disabled');
-      } else {
-         this.querySelector('.slider').classList.remove('disabled');
+      if (this.$checkbox) {
+         this.$checkbox.disabled = value;
       }
+      
+      const slider = this.querySelector('.slider');
+      if (slider) {
+         slider.classList.toggle('disabled', value);
+      }
+   }
+
+   get label() {
+      return this._label;
+   }
+
+   set label(value) {
+      this._label = value;
+      const existingLabel = this.querySelector('.switch_label');
+      
+      if (value) {
+         if (existingLabel) {
+            existingLabel.textContent = value;
+         } else {
+            this.createLabel();
+         }
+      } else if (existingLabel) {
+         existingLabel.remove();
+      }
+   }
+
+   get labelPlacement() {
+      return this._labelPlacement;
+   }
+
+   set labelPlacement(value) {
+      this._labelPlacement = value;
+      this.applyLabelPlacement();
+   }
+
+   get customColor() {
+      return this._customColor;
+   }
+
+   set customColor(value) {
+      this._customColor = value;
+      if (value) {
+         this.applyCustomColor();
+      }
+   }
+
+   get toggle() {
+      return this._toggle;
+   }
+
+   set toggle(value) {
+      this._toggle = value;
    }
 }
 
