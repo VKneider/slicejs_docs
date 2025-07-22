@@ -8,7 +8,7 @@ export default class StructuralDocumentation extends HTMLElement {
    }
 
    async init() {
-      // Controller documentation section
+      // Controller documentation section - ACTUALIZADO
       const controllerExample = await slice.build("CodeVisualizer", {
          value: `// Accessing components through the Controller
 // Get a reference to a component by its sliceId
@@ -22,22 +22,46 @@ if (slice.controller.activeComponents.has("user-profile")) {
 // Get all active components
 const allComponents = slice.controller.activeComponents;
 
-// Register a component manually (rarely needed)
-slice.controller.registerComponent(myComponent);
+// Static Props System
+// Components can define static props for automatic defaults and validation
+export default class Button extends HTMLElement {
+   static props = {
+      value: { 
+         type: "string", 
+         default: "Button", 
+         required: false 
+      },
+      onClickCallback: { 
+         type: "function", 
+         default: null 
+      }
+   };
+   
+   constructor(props) {
+      super();
+      slice.attachTemplate(this);
+      // Defaults applied automatically by Controller
+      slice.controller.setComponentProps(this, props);
+   }
+}
 
-// Build a component with Controller
+// Build a component with Controller (defaults applied automatically)
 const myButton = await slice.build("Button", {
-   value: "Click Me",
-   sliceId: "my-unique-button-id"
-});`,
+   value: "Click Me"
+   // onClickCallback uses default: null
+});
+
+// Automatic validation in development
+// Controller validates props automatically when static props are defined
+// Unknown props show warnings, missing required props show errors`,
          language: "javascript"
       });
       
       this.querySelector(".controller-example").appendChild(controllerExample);
 
-      // Router documentation section
+      // Router documentation section - ACTUALIZADO
       const routerExample = await slice.build("CodeVisualizer", {
-         value: `// Declaring routes in routes.js
+         value: `// Declaring routes in routes.js (unchanged)
 const routes = [
    { path: "/", component: "LandingPage" },
    { path: "/documentation", component: "DocumentationPage" },
@@ -50,32 +74,71 @@ const routes = [
 
 export default routes;
 
-// Navigating with Router in your components
-// Navigate programmatically
+// Basic navigation (unchanged)
 await slice.router.navigate("/documentation");
-
-// Get current route information
 const currentRoute = slice.router.activeRoute;
 
-// Create a Route component in your HTML
-const routeComponent = await slice.build("Route", {
-   path: "/documentation",
-   component: "DocumentationPage"
+// Navigation using anchor elements
+// The router automatically intercepts anchor clicks for internal navigation
+const link = document.createElement("a");
+link.href = "/documentation";
+link.textContent = "Go to Documentation";
+// Router automatically handles the click without page reload
+
+// HTML anchor elements work automatically
+// <a href="/user/123">View User Profile</a>
+// No special setup required - router intercepts internal links
+
+// Use Link component for enhanced functionality
+const enhancedLink = await slice.build("Link", {
+   href: "/user/123",
+   text: "View User Profile"
 });
 
-// Create a MultiRoute component for multiple routes
-const multiRouteComponent = await slice.build("MultiRoute", {
-   routes: [
-      { path: "/docs/visual", component: "VisualDocumentation" },
-      { path: "/docs/service", component: "ServiceDocumentation" }
-   ]
-});`,
+// Anchor elements that are NOT intercepted:
+// - External links (different domain)
+// - Special protocols (mailto:, tel:, ftp:)
+// - Hash links (#section)
+// - Links with target="_blank" or download attribute
+// - Links with class "external-link" or "no-intercept"
+// - Links with data-no-intercept attribute
+
+// Dynamic route management
+// Add routes at runtime
+slice.router.addRoute({ 
+   path: "/admin", 
+   component: "AdminPanel" 
+});
+
+// Remove routes dynamically
+slice.router.removeRoute("/deprecated-page");
+
+// Update entire route configuration
+slice.router.updateRoutes(newRoutesArray);
+
+// Get all registered routes
+const allRoutes = slice.router.getAllRoutes();
+
+// Router statistics and monitoring
+const stats = slice.router.getStats();
+console.log("Router initialized:", stats.isInitialized);
+console.log("Currently navigating:", stats.isNavigating);
+console.log("Active route:", stats.activeRoute);
+console.log("Cache size:", stats.cache.size);
+console.log("Routes count:", stats.matcher.routes.length);
+
+// Router lifecycle management
+// Destroy router and cleanup resources
+slice.router.destroy();
+
+// Reinitialize router (useful for testing)
+await slice.router.reinitialize(optionalNewRoutes);`,
          language: "javascript"
       });
       
       this.querySelector(".router-example").appendChild(routerExample);
 
-      // StylesManager documentation section
+      // StylesManager documentation section (sin cambios)
       const stylesManagerExample = await slice.build("CodeVisualizer", {
          value: `// Configuring themes in sliceConfig.json
 {
@@ -109,7 +172,7 @@ slice.stylesManager.appendComponentStyles(".my-custom-style { color: red; }");`,
       
       this.querySelector(".styles-manager-example").appendChild(stylesManagerExample);
 
-      // Logger documentation section
+      // Logger documentation section (sin cambios)
       const loggerExample = await slice.build("CodeVisualizer", {
          value: `// Configuring logger in sliceConfig.json
 {
@@ -151,7 +214,7 @@ slice.logger.clearLogs();`,
       
       this.querySelector(".logger-example").appendChild(loggerExample);
 
-      // Debugger documentation section
+      // Debugger documentation section - ACTUALIZADO
       const debuggerExample = await slice.build("CodeVisualizer", {
          value: `// Configuring debugger in sliceConfig.json
 {
@@ -161,25 +224,60 @@ slice.logger.clearLogs();`,
    }
 }
 
-// Defining debug properties in components
+// Enhanced debugger with static props integration
 export default class MyComponent extends HTMLElement {
+   // Static props automatically detected by debugger
+   static props = {
+      title: { 
+         type: "string", 
+         default: "Default Title", 
+         required: false 
+      },
+      count: { 
+         type: "number", 
+         default: 0 
+      },
+      isActive: { 
+         type: "boolean", 
+         default: false,
+         required: true 
+      }
+   };
+   
    constructor(props) {
       super();
       slice.attachTemplate(this);
-      
       slice.controller.setComponentProps(this, props);
-      // Specify which properties can be inspected in the debugger
-      this.debuggerProps = ["value", "color", "isActive", "items"];
+      
+      // debuggerProps no longer needed for static props components
+      // Debugger automatically detects static props configuration
    }
-   
-   // ...rest of component code
+}
+
+// Debugger shows enhanced information:
+// - Static props configuration (type, default, required)
+// - Prop states: Used (green), Missing (red), Optional (gray)
+// - Default values applied automatically
+// - Anti-interference protection from Router events
+// - Real-time prop editing with validation
+
+// Components without static props still work:
+export default class LegacyComponent extends HTMLElement {
+   constructor(props) {
+      super();
+      slice.attachTemplate(this);
+      slice.controller.setComponentProps(this, props);
+      
+      // For components without static props, specify debuggerProps manually
+      this.debuggerProps = ["value", "color", "isActive"];
+   }
 }`,
          language: "javascript"
       });
       
       this.querySelector(".debugger-example").appendChild(debuggerExample);
 
-      // FAQ section
+      // FAQ section - ACTUALIZADA
       const faqQuestions = [
          {
             title: "Can I create my own structural components?",
@@ -198,8 +296,32 @@ export default class MyComponent extends HTMLElement {
             text: "Yes, most structural components are accessible through the global slice object, such as slice.controller, slice.router, slice.logger, etc. However, direct manipulation should be done carefully and only when necessary."
          },
          {
+            title: "What are Static Props and how do I use them?",
+            text: "Static Props allow you to define prop configuration directly in your component class. Include type, default values, and required status. The Controller automatically applies defaults and validates props in development mode."
+         },
+         {
+            title: "How do components work without Static Props?",
+            text: "Components without Static Props work perfectly fine using manual prop handling in the constructor. You can specify debuggerProps manually for debugging. Both approaches are supported."
+         },
+         {
+            title: "How do I migrate to Static Props?",
+            text: "Simply add a static props property to your component class with the prop configuration. Remove manual default value assignment from your constructor. The Controller will handle defaults automatically."
+         },
+         {
+            title: "Can I manage routes dynamically?",
+            text: "Yes! The Router supports addRoute(), removeRoute(), updateRoutes(), and getAllRoutes() for dynamic route management. You can also get detailed statistics with getStats() and manage the router lifecycle with destroy() and reinitialize()."
+         },
+         {
+            title: "How does navigation with anchor elements work?",
+            text: "The Router automatically intercepts clicks on anchor elements (<a href=`/path`>) and handles navigation without page reloads. You can also use the Link component for enhanced functionality with additional features."
+         },
+         {
+            title: "How does the debugger work?",
+            text: "The debugger automatically detects Static Props and shows enhanced information including prop configuration, default values, and prop states (Used/Missing/Optional). It includes anti-interference protection and works seamlessly with all types of components."
+         },
+         {
             title: "How do I extend the Router for advanced functionality?",
-            text: "For advanced routing needs, you can implement route guards or middleware by extending the existing Router through service components. Create a custom RouterService that wraps the structural Router and adds your custom logic for route authorization, data prefetching, or analytics tracking."
+            text: "For advanced routing needs, you can implement route guards or middleware by extending the existing Router through service components. Create a custom RouterService that wraps the structural Router and adds your custom logic for route authorization, data prefetching, or analytics tracking. You can also use the new dynamic route management features."
          }
       ];
 

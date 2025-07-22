@@ -63,15 +63,53 @@
   This allows you to create reusable components that can display different content based on the URL parameters.
 </p>
 
-<h2 id="programmatic-navigation">Programmatic Navigation</h2>
+<h2 id="navigation-methods">Navigation Methods</h2>
 <p>
-  In addition to declarative routing with components, Slice.js provides a programmatic way to navigate between
-  routes using the <code>slice.router.navigate()</code> method.
+  Slice.js provides multiple ways to navigate between routes: programmatically using the router API, 
+  and automatically through anchor elements.
 </p>
+
+<h3 id="programmatic-navigation">Programmatic Navigation</h3>
+<p>
+  Use the <code>slice.router.navigate()</code> method for programmatic navigation in your JavaScript code.
+  This is ideal for conditional navigation, redirects, or navigation triggered by user actions other than link clicks.
+</p>
+
+<h3 id="anchor-navigation">Anchor Element Navigation</h3>
+<p>
+  The router automatically intercepts clicks on anchor elements (<code>&lt;a href="/path"&gt;</code>) 
+  for internal links, providing seamless navigation without page reloads. No special setup is required - 
+  just use standard HTML anchor elements and the router handles the rest.
+</p>
+
+<h4>Automatic Link Interception</h4>
+<p>
+  Any anchor element with an <code>href</code> attribute pointing to an internal path will be automatically 
+  handled by the router. The browser's default navigation is prevented, and the router performs the navigation 
+  using the History API instead.
+</p>
+
+<h4>Links that are NOT intercepted</h4>
+<p>
+  The router intelligently avoids intercepting certain types of links to preserve expected browser behavior:
+</p>
+<ul>
+  <li><strong>External links</strong>: Links to different domains (<code>https://example.com</code>)</li>
+  <li><strong>Special protocols</strong>: Links using <code>mailto:</code>, <code>tel:</code>, <code>ftp:</code>, etc.</li>
+  <li><strong>Hash links</strong>: Links starting with <code>#</code> for same-page anchors</li>
+  <li><strong>Download links</strong>: Links with the <code>download</code> attribute</li>
+  <li><strong>Target attributes</strong>: Links with <code>target="_blank"</code>, <code>target="_top"</code>, etc.</li>
+  <li><strong>Marked as external</strong>: Links with <code>class="external-link"</code> or <code>class="no-intercept"</code></li>
+  <li><strong>Data attributes</strong>: Links with <code>data-no-intercept</code> or <code>data-external</code></li>
+</ul>
 
 <div class="programmatic-nav-example"></div>
 
-
+<h2 id="enhanced-link-component">Enhanced Link Component</h2>
+<p>
+  For situations where you need additional functionality beyond standard anchor elements, Slice.js provides 
+  a Link component that can be built programmatically with enhanced features.
+</p>
 
 <h2 id="nested-routes">Nested Routes and Layouts</h2>
 <p>
@@ -86,16 +124,50 @@
   consistent layout while the content area changes based on the current route.
 </p>
 
+<h2 id="dynamic-route-management">Dynamic Route Management</h2>
+<p>
+  The router supports adding, removing, and updating routes at runtime, providing flexibility for dynamic applications:
+</p>
+<ul>
+  <li><strong>Add routes</strong>: <code>slice.router.addRoute({ path: "/new", component: "NewComponent" })</code></li>
+  <li><strong>Remove routes</strong>: <code>slice.router.removeRoute("/old-path")</code></li>
+  <li><strong>Update routes</strong>: <code>slice.router.updateRoutes(newRoutesArray)</code></li>
+  <li><strong>Get all routes</strong>: <code>slice.router.getAllRoutes()</code></li>
+</ul>
+
+<h2 id="router-statistics">Router Statistics and Monitoring</h2>
+<p>
+  The router provides detailed statistics for monitoring and debugging:
+</p>
+<ul>
+  <li><strong>Initialization status</strong>: Check if the router is fully initialized</li>
+  <li><strong>Navigation state</strong>: Monitor if navigation is currently in progress</li>
+  <li><strong>Active route</strong>: Get information about the currently active route</li>
+  <li><strong>Cache statistics</strong>: Monitor component caching performance</li>
+  <li><strong>Route matcher stats</strong>: Get information about registered routes</li>
+</ul>
+
 <h2 id="route-lifecycle">Route Lifecycle and Events</h2>
 <p>
   When a route changes, Slice.js router triggers several events:
 </p>
 <ol>
-  <li>The previous component is removed from the DOM</li>
+  <li>The previous component is removed from the DOM (with component pooling for reuse)</li>
   <li>The new component is built and inserted into the DOM</li>
   <li>If the new component has an <code>init</code> method, it's called</li>
   <li>If switching between routes that use the same component, the <code>update</code> method is called instead</li>
 </ol>
+
+<h2 id="performance-optimization">Performance Optimization</h2>
+<p>
+  The router includes several performance optimizations:
+</p>
+<ul>
+  <li><strong>Component pooling</strong>: Reuses component instances when possible to reduce memory allocation</li>
+  <li><strong>Route caching</strong>: Caches route matching results for faster navigation</li>
+  <li><strong>Event throttling</strong>: Prevents rapid successive navigation events from overwhelming the system</li>
+  <li><strong>Lazy loading</strong>: Components are only loaded when their routes are accessed</li>
+</ul>
 
 <h2 id="route-best-practices">Best Practices for Routing</h2>
 <ul>
@@ -103,6 +175,19 @@
   <li>Use the most specific component for your routing needs - Route for single routes, MultiRoute for related groups</li>
   <li>Keep route parameters simple and descriptive</li>
   <li>Add a catch-all 404 route to handle unmatched paths</li>
+  <li>Use standard anchor elements (<code>&lt;a href="/path"&gt;</code>) for navigation links - the router handles them automatically</li>
+  <li>Use the Link component for enhanced functionality when you need additional features</li>
+  <li>Mark external links appropriately with <code>target="_blank"</code> or <code>class="external-link"</code> to prevent router interception</li>
   <li>Consider adding loading indicators during navigation, especially for routes that fetch data</li>
   <li>Use the programmatic navigation API for complex navigation scenarios like redirects or conditional navigation</li>
+  <li>Take advantage of dynamic route management for applications with changing route requirements</li>
+  <li>Monitor router statistics in development to optimize performance</li>
+</ul>
+
+<h2 id="troubleshooting">Troubleshooting Common Issues</h2>
+<ul>
+  <li><strong>Links not working</strong>: Check if the link is being intercepted correctly or if it falls into one of the excluded categories</li>
+  <li><strong>Route not found</strong>: Verify that the route is properly defined in your routes configuration</li>
+  <li><strong>Components not loading</strong>: Ensure component names match exactly between routes and component registration</li>
+  <li><strong>Performance issues</strong>: Use router statistics to identify bottlenecks and optimize accordingly</li>
 </ul>

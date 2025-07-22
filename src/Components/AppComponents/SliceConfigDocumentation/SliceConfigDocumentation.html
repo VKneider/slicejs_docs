@@ -1,146 +1,255 @@
 <div class="config-documentation-container">
   <header class="config-header">
-    <h1 id="slice-config">Configuration File: sliceConfig.json</h1>
+    <h1 id="slice-config">sliceConfig.json - Complete Configuration Guide</h1>
     <span class="config-badge">Core Configuration</span>
   </header>
   
   <section class="config-introduction">
     <p>
-      The <code>sliceConfig.json</code> file is the heart of your Slice.js application configuration. It defines how the framework's core components function, file paths, and enabled features. This file is located at the project root and is loaded automatically when initializing the application.
+      The <code>sliceConfig.json</code> file is the central configuration hub of your Slice.js application. Located at the project root, this file controls framework behavior, component paths, development tools, theming, routing, and production optimizations. It's automatically loaded during application initialization and affects how all structural components operate.
     </p>
+    
+    <div class="config-highlights">
+      <div class="highlight-item">
+        <strong>🎯 Purpose:</strong> Centralized configuration for all framework features
+      </div>
+      <div class="highlight-item">
+        <strong>📍 Location:</strong> Project root directory
+      </div>
+      <div class="highlight-item">
+        <strong>🔄 Loading:</strong> Automatic during framework initialization
+      </div>
+    </div>
   </section>
 
   <section class="config-preview">
-    <h2 id="estructura">Configuration File Structure</h2>
+    <h2 id="complete-structure">Complete Configuration Structure</h2>
+    <p>
+      Below is a comprehensive example showing all available configuration options with their default values and explanations:
+    </p>
     <div class="config-json-preview"></div>
   </section>
 
-  <section class="config-details">
-    <h2 id="configuraciones">Main Configurations</h2>
+  <section class="config-sections">
+    <h2 id="configuration-sections">Configuration Sections</h2>
     <p>
-      Each section of the configuration file controls a different aspect of the framework. Below, you'll find a detailed explanation of each configuration and its options.
+      Each section controls a specific aspect of the Slice.js framework. Click on any section below to explore detailed configuration options and examples.
     </p>
     <div class="config-details-container"></div>
   </section>
 
-  <section class="component-categories">
-    <h2 id="categorias">Component Categories</h2>
+  <section class="individual-examples">
+    <h2 id="individual-examples">Section-by-Section Examples</h2>
     <p>
-      The categories defined in <code>paths.components</code> determine the types of components you can create with the Slice.js CLI. Each category has a specific purpose and can contain different types of components.
+      Detailed configuration examples for each section, showing different use cases and scenarios.
+    </p>
+
+    <div class="config-section-examples">
+      <h3 id="debugger-examples">Debugger Configuration</h3>
+      <p>
+        Configure the development debugger that allows real-time component inspection, Static Props visualization, and property editing.
+      </p>
+      <div class="debugger-config-example"></div>
+
+      <h3 id="theme-examples">Theme Manager Configuration</h3>
+      <p>
+        Control theme behavior, default themes, user preferences, and browser theme detection.
+      </p>
+      <div class="theme-config-example"></div>
+
+      <h3 id="router-examples">Router Configuration</h3>
+      <p>
+        Configure routing behavior, default routes, link interception, and navigation mode.
+      </p>
+      <div class="router-config-example"></div>
+
+      <h3 id="logger-examples">Logger Configuration</h3>
+      <p>
+        Set up logging levels, console output, and debugging information display.
+      </p>
+      <div class="logger-config-example"></div>
+
+      <h3 id="loading-examples">Loading Component Configuration</h3>
+      <p>
+        Control the global loading indicator behavior during navigation and async operations.
+      </p>
+      <div class="loading-config-example"></div>
+
+      <h3 id="paths-examples">Paths Configuration</h3>
+      <p>
+        Define component directories, resource locations, and project structure mapping.
+      </p>
+      <div class="paths-config-example"></div>
+    </div>
+  </section>
+
+  <section class="practical-examples">
+    <h2 id="practical-examples">Practical Configuration Examples</h2>
+    <p>
+      Real-world configuration examples for different scenarios and project types.
+    </p>
+
+    <h3 id="environment-configs">Development vs Production</h3>
+    <p>
+      Recommended configurations for different environments, optimizing for development experience or production performance.
+    </p>
+    <div class="env-examples"></div>
+
+    <h3 id="large-project-configs">Large Project Setup</h3>
+    <p>
+      Configuration example for complex applications with multiple component categories and custom project structure.
+    </p>
+    <div class="multi-project-examples"></div>
+  </section>
+
+  <section class="component-categories">
+    <h2 id="component-categories">Component Categories</h2>
+    <p>
+      The <code>paths.components</code> section defines different types of components you can create. Each category serves a specific purpose in your application architecture.
     </p>
 
     <div class="category-explanation">
       <div class="category-card app-components">
         <h3 id="app-components">AppComponents</h3>
         <p>
-          <strong>AppComponents</strong> are application-specific components, generally composed of multiple visual components. These components form the main pages and sections of your interface.
+          <strong>AppComponents</strong> are high-level, application-specific components that typically represent complete pages, sections, or major features. They orchestrate multiple Visual components and contain business logic.
         </p>
         <ul class="category-features">
-          <li>High-level components that represent complete functionalities</li>
-          <li>Can contain business logic and visual components</li>
-          <li>Typically correspond to specific routes or sections of the application</li>
+          <li>Complete page or section components</li>
+          <li>Business logic and data management</li>
+          <li>Composition of multiple Visual components</li>
+          <li>Route-level components</li>
         </ul>
-        <div class="app-components-example"></div>
+        <p><strong>Examples:</strong> HomePage, UserDashboard, ProductCatalog, CheckoutPage</p>
       </div>
 
       <div class="category-card visual-components">
-        <h3 id="visual-components">Visual</h3>
+        <h3 id="visual-components">Visual Components</h3>
         <p>
-          <strong>Visual</strong> components are the fundamental building blocks of the user interface. They are reusable components that represent visual elements such as buttons, cards, inputs, etc.
+          <strong>Visual</strong> components are reusable UI building blocks that represent specific interface elements. They focus on presentation and user interaction without business logic.
         </p>
         <ul class="category-features">
-          <li>Reusable UI components across the entire application</li>
-          <li>Contain HTML and CSS in addition to JavaScript code</li>
-          <li>Focused on presentation and basic interaction</li>
+          <li>Reusable UI elements</li>
+          <li>Consistent styling and behavior</li>
+          <li>Static Props support for configuration</li>
+          <li>Event handling and user interaction</li>
         </ul>
-        <div class="visual-components-example"></div>
+        <p><strong>Examples:</strong> Button, Input, Card, Modal, Dropdown, Grid</p>
       </div>
 
       <div class="category-card service-components">
-        <h3 id="service-components">Service</h3>
+        <h3 id="service-components">Service Components</h3>
         <p>
-          <strong>Service</strong> components encapsulate business logic and services without visual interface. They provide functionalities such as data management, API connections, storage, etc.
+          <strong>Service</strong> components handle business logic, data operations, and API communication without any visual representation. They provide functionality that can be shared across Visual and AppComponents.
         </p>
         <ul class="category-features">
-          <li>Components without user interface (no HTML or CSS)</li>
-          <li>Provide services and functionalities to other components</li>
-          <li>Manage communication with APIs, storage, and complex logic</li>
+          <li>Data fetching and processing</li>
+          <li>Business logic implementation</li>
+          <li>API communication</li>
+          <li>Shared functionality across components</li>
         </ul>
-        <div class="service-components-example"></div>
+        <p><strong>Examples:</strong> AuthService, ApiClient, DataValidator, CacheManager</p>
+      </div>
+
+      <div class="category-card structural-components">
+        <h3 id="structural-components">Structural Components</h3>
+        <p>
+          <strong>Structural</strong> components are framework-level components that provide core functionality. These are not created by users but are part of the Slice.js framework itself.
+        </p>
+        <ul class="category-features">
+          <li>Framework core functionality</li>
+          <li>Router, Controller, Logger, Debugger</li>
+          <li>Pre-initialized by the framework</li>
+          <li>Not user-creatable</li>
+        </ul>
+        <p><strong>Examples:</strong> Router, Controller, StylesManager, Logger, Debugger</p>
       </div>
     </div>
   </section>
 
-  <section class="customization-section">
-    <h2 id="personalizacion">Customizing Core Components</h2>
+  <section class="configuration-tips">
+    <h2 id="configuration-tips">Configuration Tips & Best Practices</h2>
     
-    <div class="customization-subsection">
-      <h3 id="loading-customization">Customizing the Loading Component</h3>
-      <p>
-        The <strong>Loading</strong> component is displayed during navigation between routes when <code>loading.enabled</code> is activated. You can completely customize this component by modifying the files in <code>src/Components/Visual/Loading/</code>.
-      </p>
-      <div class="loading-example"></div>
-    </div>
-    
-    <div class="customization-subsection">
-      <h3 id="theme-customization">Creating Custom Themes</h3>
-      <p>
-        You can create custom themes by adding new CSS files in <code>src/Themes/</code> and then configuring <code>themeManager.defaultTheme</code> to use your custom theme.
-      </p>
-      <div class="theme-example"></div>
+    <div class="tips-grid">
+      <div class="tip-card development">
+        <h4>🛠️ Development Tips</h4>
+        <ul>
+          <li>Enable debugger and verbose logging for better development experience</li>
+          <li>Use <code>saveThemeLocally: true</code> to persist theme choices during development</li>
+          <li>Enable loading component to visualize navigation</li>
+          <li>Enable all log levels for comprehensive debugging information</li>
+        </ul>
+      </div>
+
+      <div class="tip-card production">
+        <h4>🚀 Production Tips</h4>
+        <ul>
+          <li>Disable debugger completely for production builds</li>
+          <li>Enable only error logging to reduce console noise</li>
+          <li>Use <code>useBrowserTheme: true</code> for better user experience</li>
+          <li>Enable production mode for optimized resource loading</li>
+        </ul>
+      </div>
+
+      <div class="tip-card organization">
+        <h4>📁 Project Organization</h4>
+        <ul>
+          <li>Group related components in custom categories for large projects</li>
+          <li>Use descriptive category names that reflect your application architecture</li>
+          <li>Keep paths consistent with your team's conventions</li>
+          <li>Consider separate directories for different feature modules</li>
+        </ul>
+      </div>
+
+      <div class="tip-card performance">
+        <h4>⚡ Performance Tips</h4>
+        <ul>
+          <li>Use appropriate loading configuration for your application needs</li>
+          <li>Configure router with appropriate default route for your app structure</li>
+          <li>Enable production mode for production deployments</li>
+          <li>Use browser theme detection to reduce initial paint time</li>
+        </ul>
+      </div>
     </div>
   </section>
 
-  <section class="config-updating">
-    <h2 id="actualizacion">Updating the Configuration</h2>
+  <section class="troubleshooting">
+    <h2 id="troubleshooting">Troubleshooting Configuration Issues</h2>
+    
+    <div class="troubleshooting-items">
+      <div class="troubleshoot-item">
+        <h4>❌ Components not loading</h4>
+        <p>Check that component paths in <code>paths.components</code> are correct and the directories exist. Ensure component names match exactly between configuration and file system.</p>
+      </div>
+
+      <div class="troubleshoot-item">
+        <h4>❌ Themes not applying</h4>
+        <p>Verify that <code>themeManager.enabled</code> is <code>true</code> and the theme name matches a CSS file in your themes directory. Check browser console for loading errors.</p>
+      </div>
+
+      <div class="troubleshoot-item">
+        <h4>❌ Debugger not working</h4>
+        <p>Ensure <code>debugger.enabled</code> is <code>true</code> and you're using the correct click type ("left" or "right"). The debugger only works in development mode.</p>
+      </div>
+
+      <div class="troubleshoot-item">
+        <h4>❌ Routing issues</h4>
+        <p>Check that your routes file exists at the specified path and exports a valid routes array. Verify the <code>router.defaultRoute</code> corresponds to an existing route.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="migration-notes">
+    <h2 id="migration-notes">Configuration Migration</h2>
     <p>
-      Modifying the <code>sliceConfig.json</code> file allows you to completely customize Slice.js behavior to adapt it to your application's needs. Changes to this file will take effect the next time you start the application.
+      When updating your Slice.js application, you may need to update your <code>sliceConfig.json</code> file to take advantage of enhanced features:
     </p>
-    <div class="config-update-example"></div>
-  </section>
-
-  <section class="best-practices">
-    <h2 id="mejores-practicas">Best Practices</h2>
-    <div class="practices-list">
-      <div class="practice-item">
-        <span class="practice-icon">✓</span>
-        <div class="practice-content">
-          <h4>Maintain Category Structure</h4>
-          <p>Respecting the category structure (AppComponents, Visual, Service) improves code organization and maintainability.</p>
-        </div>
-      </div>
-      
-      <div class="practice-item">
-        <span class="practice-icon">✓</span>
-        <div class="practice-content">
-          <h4>Enable the Debugger During Development</h4>
-          <p>Activating <code>debugger.enabled</code> during development facilitates component inspection and testing.</p>
-        </div>
-      </div>
-      
-      <div class="practice-item">
-        <span class="practice-icon">✓</span>
-        <div class="practice-content">
-          <h4>Customize Loading to Improve UX</h4>
-          <p>Adapt the Loading component to match your application's aesthetics and improve user experience.</p>
-        </div>
-      </div>
-      
-      <div class="practice-item">
-        <span class="practice-icon">✓</span>
-        <div class="practice-content">
-          <h4>Create Consistent Themes</h4>
-          <p>When creating custom themes, make sure to define all necessary CSS variables to maintain visual consistency.</p>
-        </div>
-      </div>
-      
-      <div class="practice-item">
-        <span class="practice-icon">✓</span>
-        <div class="practice-content">
-          <h4>Disable Logger in Production</h4>
-          <p>Consider disabling <code>logger.enabled</code> in production to improve performance, or at least, deactivate <code>info</code> type logs.</p>
-        </div>
-      </div>
-    </div>
+    
+    <ul>
+      <li><strong>Static Props support:</strong> No configuration changes needed - works automatically with existing setup</li>
+      <li><strong>Enhanced Router:</strong> Works with existing router configuration - no changes needed</li>
+      <li><strong>Improved Debugger:</strong> No changes needed - enhanced debugging works with existing debugger configuration</li>
+      <li><strong>Loading Component:</strong> Simple enable/disable configuration available</li>
+    </ul>
   </section>
 </div>

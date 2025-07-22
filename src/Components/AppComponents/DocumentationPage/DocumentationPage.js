@@ -33,6 +33,12 @@ export default class DocumentationPage extends HTMLElement {
          gettingStarted: {
             title: 'Getting Started',
             items: [
+
+               {
+                        title: 'SliceConfig.json',
+                        path: '/Documentation/SliceConfig',
+                        component: 'SliceConfigDocumentation'
+                     },
                {
                   title: 'Components',
                   items: [
@@ -55,14 +61,11 @@ export default class DocumentationPage extends HTMLElement {
                         title: 'Services',
                         path: '/Documentation/Service',
                         component: 'ServiceDocumentation'
-                     },
-                     {
-                        title: 'SliceConfig.json',
-                        path: '/Documentation/SliceConfig',
-                        component: 'SliceConfigDocumentation'
                      }
+                     
                   ]
                },
+
                {
                   title: 'Routing',
                   path: '/Documentation/Routing',

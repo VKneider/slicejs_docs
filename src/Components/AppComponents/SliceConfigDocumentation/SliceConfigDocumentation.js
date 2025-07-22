@@ -3,8 +3,8 @@ export default class SliceConfigDocumentation extends HTMLElement {
       super();
       slice.attachTemplate(this);
       
-      this.$configViewer = this.querySelector('.config-json-preview');
-      this.$categoryExamples = this.querySelector('.component-category-examples');
+      this.$configViewer = this.querySelector(".config-json-preview");
+      this.$categoryExamples = this.querySelector(".component-category-examples");
       
       slice.controller.setComponentProps(this, props);
       this.debuggerProps = [];
@@ -12,328 +12,487 @@ export default class SliceConfigDocumentation extends HTMLElement {
 
    async init() {
       // Create JSON configuration viewer
-      const configVisualizer = await slice.build('CodeVisualizer', {
-         value: this.getFormattedConfig(),
-         language: 'javascript'
+      const configVisualizer = await slice.build("CodeVisualizer", {
+         value: this.getCompleteConfigExample(),
+         language: "json"
       });
       
       this.$configViewer.appendChild(configVisualizer);
       
-      // Create CLI command examples for each category
-      await this.createCategoryExamples();
-      
-      // Create code examples for each main section
+      // Create individual section examples
       await this.createSectionExamples();
       
       // Initialize expandable details
       await this.initializeDetailsComponents();
+      
+      // Create practical examples
+      await this.createPracticalExamples();
    }
    
-   getFormattedConfig() {
+   getCompleteConfigExample() {
       return `{
-    "debugger": {
-        "enabled": false,
-        "click": "right"
-    },
-    "stylesManager":{
-        "requestedStyles":["sliceStyles"]
-    },
-    "themeManager": {
-        "enabled": true,
-        "defaultTheme": "Slice",
-        "saveThemeLocally": false,
-        "useBrowserTheme": false
-    },
-    "logger": {
-        "enabled": true,
-        "showLogs": {
-            "console": {
-                "error": true,
-                "warning": true,
-                "info": false
-            }
-        }
-    },
-    "paths": {
-        "components": {
-            "AppComponents":{
-                "path":"/Components/AppComponents",
-                "type":"Visual"
-            },
-            "Visual":{
-                "path":"/Components/Visual",
-                "type":"Visual"
-            },
-            "Service":{
-                "path":"/Components/Service",
-                "type":"Service"
-            }
-        },
-        "themes": "/Themes",
-        "styles": "/Styles",
-        "routesFile":"/routes.js"
-    },
-    "router":{
-        "defaultRoute": "/"
-    },
-    "loading":{
-        "enabled": true
-    },
-    "production": {
-        "enabled": false
+  "debugger": {
+    "enabled": false,
+    "click": "right"
+  },
+  "stylesManager": {
+    "requestedStyles": ["sliceStyles"]
+  },
+  "themeManager": {
+    "enabled": true,
+    "defaultTheme": "Slice",
+    "saveThemeLocally": false,
+    "useBrowserTheme": false
+  },
+  "logger": {
+    "enabled": true,
+    "showLogs": {
+      "console": {
+        "error": true,
+        "warning": true,
+        "info": false
+      }
     }
+  },
+  "router": {
+    "defaultRoute": "/"
+  },
+  "loading": {
+    "enabled": true
+  },
+  "production": {
+    "enabled": false
+  },
+  "paths": {
+    "components": {
+      "AppComponents": {
+        "path": "/src/Components/AppComponents",
+        "type": "Visual"
+      },
+      "Visual": {
+        "path": "/src/Components/Visual",
+        "type": "Visual"
+      },
+      "Service": {
+        "path": "/src/Components/Service",
+        "type": "Service"
+      },
+      "Structural": {
+        "path": "/Slice/Components/Structural",
+        "type": "Structural"
+      }
+    },
+    "routes": "/src/routes.js",
+    "themes": "/src/Themes",
+    "styles": "/src/Styles"
+  }
 }`;
    }
    
-   async createCategoryExamples() {
-      // Create examples for component categories
-      
-      // AppComponents
-      const appComponentExample = await slice.build('CodeVisualizer', {
-         value: `// Create an AppComponent from CLI
-npm run slice:create AppComponents MyDashboard
-
-// Resulting structure
-├── src/
-│   ├── Components/
-│   │   ├── AppComponents/
-│   │   │   ├── MyDashboard/
-│   │   │   │   ├── MyDashboard.js
-│   │   │   │   ├── MyDashboard.html
-│   │   │   │   └── MyDashboard.css`,
-         language: 'bash'
-      });
-      
-      // Visual
-      const visualComponentExample = await slice.build('CodeVisualizer', {
-         value: `// Create a Visual component from CLI
-npm run slice:create Visual DataTable
-
-// Resulting structure
-├── src/
-│   ├── Components/
-│   │   ├── Visual/
-│   │   │   ├── DataTable/
-│   │   │   │   ├── DataTable.js
-│   │   │   │   ├── DataTable.html
-│   │   │   │   └── DataTable.css`,
-         language: 'bash'
-      });
-      
-      // Service
-      const serviceComponentExample = await slice.build('CodeVisualizer', {
-         value: `// Create a Service component from CLI
-npm run slice:create Service DataProvider
-
-// Resulting structure
-├── src/
-│   ├── Components/
-│   │   ├── Service/
-│   │   │   ├── DataProvider/
-│   │   │   │   └── DataProvider.js`,
-         language: 'bash'
-      });
-      
-      // Add content to corresponding sections
-      this.querySelector('.app-components-example').appendChild(appComponentExample);
-      this.querySelector('.visual-components-example').appendChild(visualComponentExample);
-      this.querySelector('.service-components-example').appendChild(serviceComponentExample);
-   }
-   
    async createSectionExamples() {
-      // Loading customization example
-      const loadingExample = await slice.build('CodeVisualizer', {
-         value: `// Customize the Loading component in src/Components/Visual/Loading/Loading.js
+      // Debugger configuration example
+      const debuggerExample = await slice.build("CodeVisualizer", {
+         value: `// Debugger Configuration Examples
 
-export default class Loading extends HTMLElement {
-   constructor(props) {
-      super();
-      slice.attachTemplate(this);
-      slice.controller.setComponentProps(this, props);
-      this.debuggerProps = ['isActive'];
-   }
-
-   init() {
-      // Customize initial behavior
-      const loadingSpinner = this.querySelector('.loading-spinner');
-      loadingSpinner.style.borderColor = 'var(--custom-spinner-color)';
-   }
-
-   start() {
-      // Show component and custom loading animation
-      document.body.appendChild(this);
-      this._isActive = true;
-      
-      // Custom loading start logic
-      console.log('Custom loading started');
-   }
-
-   stop() {
-      // Stop and hide the animation
-      this.remove();
-      this._isActive = false;
-      
-      // Custom logic when loading finishes
-      console.log('Custom loading finished');
-   }
+// Enable debugger with right-click (default)
+{
+  "debugger": {
+    "enabled": true,
+    "click": "right"
+  }
 }
 
-customElements.define('slice-loading', Loading);`,
-         language: 'javascript'
-      });
-      
-      // Theme customization example
-      const themeExample = await slice.build('CodeVisualizer', {
-         value: `// Create a new theme in src/Themes/MyCustomTheme.css
-
-:root {
-  /* Main colors */
-  --font-primary-color: #333333;
-  --font-secondary-color: #666666;
-  
-  /* Primary */
-  --primary-color: #5D4FEB;
-  --primary-color-rgb: 93, 79, 235;
-  --primary-background-color: #F8F9FA;
-  --primary-color-contrast: #FFFFFF;
-  --primary-color-shade: #4A3FC9;
-  
-  /* Secondary */
-  --secondary-color: #30B8C4;
-  --secondary-color-rgb: 48, 184, 196;
-  --secondary-background-color: #EDF7F8;
-  --secondary-color-contrast: #FFFFFF;
-  
-  /* Tertiary */
-  --tertiary-background-color: #F0F1F6;
-  
-  /* States */
-  --success-color: #28C76F;
-  --success-contrast: #FFFFFF;
-  --warning-color: #FFAB00;
-  --warning-contrast: #FFFFFF;
-  --danger-color: #EA5455;
-  --danger-contrast: #FFFFFF;
-  --medium-color: #ABB4BD;
-  --medium-contrast: #FFFFFF;
-  --disabled-color: #C3C3C3;
-  
-  /* Borders and radiusing */
-  --border-radius-slice: 8px;
-  --slice-border: 1px;
-}`,
-         language: 'css'
-      });
-      
-      // Configuration update example
-      const updateConfigExample = await slice.build('CodeVisualizer', {
-         value: `// Modify sliceConfig.json to use the new theme and enable the debugger
-
+// Enable debugger with left-click
 {
-    "debugger": {
-        "enabled": true,  // Enable the debugger
-        "click": "left"   // Change to left click
-    },
-    "themeManager": {
-        "enabled": true,
-        "defaultTheme": "MyCustomTheme",  // Use the new theme
-        "saveThemeLocally": true,         // Save preference in localStorage
-        "useBrowserTheme": false
-    },
-    "logger": {
-        "enabled": true,
-        "showLogs": {
-            "console": {
-                "error": true,
-                "warning": true,
-                "info": true  // Also show info messages
-            }
-        }
-    }
-    // Rest of the configuration...
+  "debugger": {
+    "enabled": true,
+    "click": "left"
+  }
+}
+
+// Disable debugger completely (production recommended)
+{
+  "debugger": {
+    "enabled": false
+  }
 }`,
-         language: 'javascript'
+         language: "json"
       });
       
-      // Add examples to corresponding sections
-      this.querySelector('.loading-example').appendChild(loadingExample);
-      this.querySelector('.theme-example').appendChild(themeExample);
-      this.querySelector('.config-update-example').appendChild(updateConfigExample);
+      // Theme Manager example
+      const themeExample = await slice.build("CodeVisualizer", {
+         value: `// Theme Manager Configuration Examples
+
+// Basic theme configuration
+{
+  "themeManager": {
+    "enabled": true,
+    "defaultTheme": "Light",
+    "saveThemeLocally": true,
+    "useBrowserTheme": false
+  }
+}
+
+// Auto browser theme detection
+{
+  "themeManager": {
+    "enabled": true,
+    "defaultTheme": "Light",
+    "saveThemeLocally": true,
+    "useBrowserTheme": true  // Uses system preference
+  }
+}
+
+// Custom theme configuration
+{
+  "themeManager": {
+    "enabled": true,
+    "defaultTheme": "MyCustomTheme",
+    "saveThemeLocally": false,
+    "useBrowserTheme": false
+  }
+}`,
+         language: "json"
+      });
+
+      // Router configuration example
+      const routerExample = await slice.build("CodeVisualizer", {
+         value: `// Router Configuration Examples
+
+// Basic router configuration
+{
+  "router": {
+    "defaultRoute": "/"
+  }
+}
+
+// Custom default route
+{
+  "router": {
+    "defaultRoute": "/dashboard"
+  }
+}
+
+// Home page as default
+{
+  "router": {
+    "defaultRoute": "/home"
+  }
+}`,
+         language: "json"
+      });
+
+      // Logger configuration example
+      const loggerExample = await slice.build("CodeVisualizer", {
+         value: `// Logger Configuration Examples
+
+// Development configuration (verbose)
+{
+  "logger": {
+    "enabled": true,
+    "showLogs": {
+      "console": {
+        "error": true,
+        "warning": true,
+        "info": true
+      }
+    }
+  }
+}
+
+// Production configuration (errors only)
+{
+  "logger": {
+    "enabled": true,
+    "showLogs": {
+      "console": {
+        "error": true,
+        "warning": false,
+        "info": false
+      }
+    }
+  }
+}
+
+// Completely disable logging
+{
+  "logger": {
+    "enabled": false
+  }
+}`,
+         language: "json"
+      });
+
+      // Loading configuration example
+      const loadingExample = await slice.build("CodeVisualizer", {
+         value: `// Loading Component Configuration Examples
+
+// Enable loading component
+{
+  "loading": {
+    "enabled": true
+  }
+}
+
+// Disable loading component
+{
+  "loading": {
+    "enabled": false
+  }
+}`,
+         language: "json"
+      });
+
+      // Paths configuration example
+      const pathsExample = await slice.build("CodeVisualizer", {
+         value: `// Paths Configuration Examples
+
+// Default paths configuration
+{
+  "paths": {
+    "components": {
+      "AppComponents": {
+        "path": "/src/Components/AppComponents",
+        "type": "Visual"
+      },
+      "Visual": {
+        "path": "/src/Components/Visual", 
+        "type": "Visual"
+      },
+      "Service": {
+        "path": "/src/Components/Service",
+        "type": "Service"
+      }
+    },
+    "routes": "/src/routes.js",
+    "themes": "/src/Themes",
+    "styles": "/src/Styles"
+  }
+}
+
+// Custom paths configuration
+{
+  "paths": {
+    "components": {
+      "Pages": {
+        "path": "/src/Pages",
+        "type": "Visual"
+      },
+      "Widgets": {
+        "path": "/src/Widgets",
+        "type": "Visual"
+      },
+      "Services": {
+        "path": "/src/Services",
+        "type": "Service"
+      }
+    },
+    "routes": "/src/config/routes.js",
+    "themes": "/assets/themes",
+    "styles": "/assets/styles"
+  }
+}`,
+         language: "json"
+      });
+
+      // Add examples to DOM
+      this.querySelector(".debugger-config-example").appendChild(debuggerExample);
+      this.querySelector(".theme-config-example").appendChild(themeExample);
+      this.querySelector(".router-config-example").appendChild(routerExample);
+      this.querySelector(".logger-config-example").appendChild(loggerExample);
+      this.querySelector(".loading-config-example").appendChild(loadingExample);
+      this.querySelector(".paths-config-example").appendChild(pathsExample);
+   }
+
+   async createPracticalExamples() {
+      // Development vs Production example
+      const envExample = await slice.build("CodeVisualizer", {
+         value: `// Development Environment Configuration
+{
+  "debugger": { "enabled": true, "click": "right" },
+  "logger": {
+    "enabled": true,
+    "showLogs": {
+      "console": { "error": true, "warning": true, "info": true }
+    }
+  },
+  "production": { "enabled": false },
+  "loading": { "enabled": true },
+  "themeManager": {
+    "enabled": true,
+    "defaultTheme": "Light",
+    "saveThemeLocally": true
+  }
+}
+
+// Production Environment Configuration  
+{
+  "debugger": { "enabled": false },
+  "logger": {
+    "enabled": true,
+    "showLogs": {
+      "console": { "error": true, "warning": false, "info": false }
+    }
+  },
+  "production": { "enabled": true },
+  "loading": { "enabled": true },
+  "themeManager": {
+    "enabled": true,
+    "defaultTheme": "Light",
+    "saveThemeLocally": true,
+    "useBrowserTheme": true
+  }
+}`,
+         language: "json"
+      });
+
+      // Multi-project setup example
+      const multiProjectExample = await slice.build("CodeVisualizer", {
+         value: `// Large Application Configuration
+{
+  "paths": {
+    "components": {
+      "AdminComponents": {
+        "path": "/src/Admin/Components",
+        "type": "Visual"
+      },
+      "UserComponents": {
+        "path": "/src/User/Components", 
+        "type": "Visual"
+      },
+      "SharedComponents": {
+        "path": "/src/Shared/Components",
+        "type": "Visual"
+      },
+      "ApiServices": {
+        "path": "/src/Services/Api",
+        "type": "Service"
+      },
+      "UtilServices": {
+        "path": "/src/Services/Utils",
+        "type": "Service"
+      }
+    },
+    "routes": "/src/config/routes.js",
+    "themes": "/src/assets/themes",
+    "styles": "/src/assets/styles"
+  },
+  "router": {
+    "defaultRoute": "/dashboard"
+  },
+  "themeManager": {
+    "enabled": true,
+    "defaultTheme": "Corporate",
+    "saveThemeLocally": true,
+    "useBrowserTheme": false
+  },
+  "loading": {
+    "enabled": true
+  }
+}`,
+         language: "json"
+      });
+
+      this.querySelector(".env-examples").appendChild(envExample);
+      this.querySelector(".multi-project-examples").appendChild(multiProjectExample);
    }
    
    async initializeDetailsComponents() {
-      // Create expandable detail components for each section
       const sections = [
          {
             title: "Debugger Configuration",
-            text: `The 'debugger' section controls debugging tools for visual components. When enabled, it allows inspecting and modifying component properties in real-time.
+            text: `Controls the debugging tools for development. The debugger allows you to inspect and modify component properties in real-time, view Static Props configuration, and monitor component states.
 
-Options:
-- enabled: Activates/deactivates the debugger (true/false)
-- click: Defines which click will activate the debugger ('left' or 'right')`
+Key Options:
+• enabled (boolean): Activates/deactivates the debugger
+• click ("left" | "right"): Defines which mouse click activates the debugger
+
+The debugger automatically detects Static Props and shows enhanced information including prop configuration, default values, and prop states (Used/Missing/Optional). It includes anti-interference protection to prevent conflicts with Router events.
+
+Best Practice: Enable in development, disable in production.`
          },
          {
-            title: "Styles Manager",
-            text: `The 'stylesManager' section controls global styles that will be loaded automatically.
+            title: "Theme Manager Configuration", 
+            text: `Controls the application"s theme system, allowing dynamic theme switching and consistent styling across components.
 
-Options:
-- requestedStyles: Array with CSS filenames to load from the styles folder.`
+Key Options:
+• enabled (boolean): Activates/deactivates the theme system
+• defaultTheme (string): Default theme name to use on startup
+• saveThemeLocally (boolean): Saves user theme preference in localStorage
+• useBrowserTheme (boolean): Uses system preference (light/dark mode)
+
+Themes are CSS files located in the themes directory. The system uses CSS variables for consistent styling across components. Built-in themes include "Light", "Dark", and "Slice".
+
+Usage: slice.setTheme("ThemeName") for runtime theme switching.`
          },
          {
-            title: "Theme Manager",
-            text: `The 'themeManager' section controls the application's theme system.
+            title: "Router Configuration",
+            text: `Configures the application"s routing system, which handles navigation between views using the History API.
 
-Options:
-- enabled: Activates/deactivates the theme system (true/false)
-- defaultTheme: Default theme to use
-- saveThemeLocally: Saves theme preference in localStorage
-- useBrowserTheme: Uses the browser theme (light/dark)`
+Key Options:
+• defaultRoute (string): Default route when none is specified
+
+The router automatically intercepts clicks on anchor elements for internal navigation. Links that are NOT intercepted include external links, special protocols (mailto:, tel:), download links, target="_blank", and elements with "external-link" or "no-intercept" classes.
+
+The router supports dynamic routes, nested routes, component pooling, and provides statistics for monitoring.`
          },
          {
-            title: "Logger",
-            text: `The 'logger' section configures the logging system for debugging and tracking.
+            title: "Logger Configuration",
+            text: `Configures the logging system for debugging, error tracking, and application monitoring.
 
-Options:
-- enabled: Activates/deactivates the logger (true/false)
-- showLogs: Configures which types of messages to show and where
-  - console: Configuration for the browser console
-    - error: Shows error messages
-    - warning: Shows warnings
-    - info: Shows informational messages`
-         },
-        
-         {
-            title: "Router",
-            text: `The 'router' section configures the application router.
+Key Options:
+• enabled (boolean): Activates/deactivates the logger
+• showLogs.console.error (boolean): Shows error messages in console
+• showLogs.console.warning (boolean): Shows warning messages in console  
+• showLogs.console.info (boolean): Shows informational messages in console
 
-Options:
-- defaultRoute: Default route when none is specified.`
+The logger provides structured logging with component context. Use slice.logger.logError(), slice.logger.logWarning(), and slice.logger.logInfo() methods. You can filter logs by type or component and clear logs when needed.
+
+Best Practice: Enable all levels in development, only errors in production.`
          },
          {
-            title: "Loading",
-            text: `The 'loading' section configures the global loading component.
+            title: "Loading Component Configuration",
+            text: `Controls the global loading component that displays during navigation and async operations.
 
-Options:
-- enabled: Activates/deactivates the loading component (true/false)
+Key Options:
+• enabled (boolean): Activates/deactivates the loading component
 
-When activated, the Router will use the Loading component during navigation. This component can be customized by modifying the files in src/Components/Visual/Loading/.`
+When enabled, the Router automatically uses the Loading component during navigation. The component can be customized by modifying files in the Visual/Loading directory. Use slice.loading.start() and slice.loading.stop() for manual control.`
          },
          {
-            title: "Production",
-            text: `The 'production' section configures options for the production environment.
+            title: "Production Configuration",
+            text: `Configures optimizations and features for production deployment.
 
-Options:
-- enabled: Activates/deactivates production mode (true/false)
+Key Options:
+• enabled (boolean): Activates production mode
 
-When activated, optimized and minified versions of resources will be used.`
+When production mode is enabled, the framework may apply performance optimizations and disable development warnings. This setting affects how the application behaves in production environment.
+
+Best Practice: Enable for production builds, disable for development.`
+         },
+         {
+            title: "Paths Configuration",
+            text: `Defines the directory structure and paths for different types of components and resources.
+
+Key Sections:
+• components: Maps component categories to their filesystem paths
+• routes: Location of the routes configuration file
+• themes: Directory containing theme CSS files
+• styles: Directory containing global style files
+
+Each component category in the "components" object defines:
+• path: Filesystem location relative to project root
+• type: Component type ("Visual", "Service", or "Structural")
+
+This configuration is used by the Slice CLI for component generation and by the framework for resource loading. Custom paths allow flexible project structures.`
          }
       ];
       
       for (const section of sections) {
-         const details = await slice.build('Details', section);
-         this.querySelector('.config-details-container').appendChild(details);
+         const details = await slice.build("Details", section);
+         this.querySelector(".config-details-container").appendChild(details);
       }
    }
 }
 
-customElements.define('slice-config-documentation', SliceConfigDocumentation);
+customElements.define("slice-config-documentation", SliceConfigDocumentation);

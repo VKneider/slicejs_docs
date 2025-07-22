@@ -3,20 +3,43 @@
   <p>
     To build a simple Slice Button you only need to use the "slice.build"
     method, just like that you have a Slice Button that you can customize with a
-    value prop.
+    value prop. The Button component automatically applies default values 
+    and provides enhanced debugging capabilities through Static Props.
   </p>
 </div>
 <div class="colorButton">
   <h2 id="customization">Customization</h2>
   <p>
-    You can also cutomize your Slice Button specifying it's background color
-    with "customColor.button" and it's font color with "customColor.label".
+    You can also customize your Slice Button specifying its background color
+    with "customColor.button" and its font color with "customColor.label". 
+    Static Props ensure that the customColor property is properly typed as an object 
+    and defaults to null when not specified.
   </p>
 </div>
 <div class="onClick">
   <h2 id="onClickCallback">onClickCallback</h2>
   <p>
     At last but not least you can add a function to your button with the prop
-    "onClickCallback".
+    "onClickCallback". The Static Props system types this callback as a function 
+    and defaults to null, with automatic validation in development mode.
   </p>
 </div>
+
+<h2 id="staticPropsOverview">Static Props Integration</h2>
+<p>
+  The Button component leverages Static Props for improved developer experience:
+</p>
+<ul>
+  <li><strong>Automatic defaults:</strong> All props have sensible defaults applied automatically</li>
+  <li><strong>Type validation:</strong> Development-time warnings for incorrect prop types</li>
+  <li><strong>Enhanced debugging:</strong> Right-click any button to see detailed prop information</li>
+  <li><strong>Self-documenting:</strong> Props are clearly defined with types and defaults</li>
+</ul>
+
+<h3>Button Static Props Configuration:</h3>
+<pre><code>static props = {
+   value: { type: 'string', default: 'Button', required: false },
+   onClickCallback: { type: 'function', default: null },
+   customColor: { type: 'object', default: null },
+   icon: { type: 'object', default: null }
+};</code></pre>
