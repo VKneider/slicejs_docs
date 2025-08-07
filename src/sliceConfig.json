@@ -1,6 +1,6 @@
 {
     "debugger": {
-        "enabled":true,
+        "enabled":false,
         "click": "right"
     },
     "stylesManager":{
