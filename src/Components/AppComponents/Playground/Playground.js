@@ -30,6 +30,10 @@ export default class Playground extends HTMLElement {
                path: '/Playground',
             },
             {
+               text: 'Theme Creator',
+               path: '/ThemeCreator',
+            },
+            {
                text: 'About',
                path: '/About',
             }

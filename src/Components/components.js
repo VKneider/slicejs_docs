@@ -22,6 +22,7 @@ const components = {
   "StructuralDocumentation": "AppComponents",
   "SwitchDocumentation": "AppComponents",
   "TheBuildMethod": "AppComponents",
+  "ThemeCreator": "AppComponents",
   "ThemesDocumentation": "AppComponents",
   "TheSliceTeam": "AppComponents",
   "VisualDocumentation": "AppComponents",

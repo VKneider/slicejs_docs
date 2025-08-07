@@ -1,0 +1,178 @@
+<div class="theme-creator">
+    <div class="navbar-container"></div>
+
+    <div class="theme-creator-header">
+        <h1>🎨 Theme Creator</h1>
+        <p>Create and customize themes for slice.js with real-time preview</p>
+    </div>
+
+    <div class="theme-creator-content">
+        <!-- Controls Panel -->
+        <div class="controls-panel">
+            <div class="control-section">
+                <h3>📝 Theme Information</h3>
+                <div class="input-group">
+                    <label for="theme-name">Theme Name:</label>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <h3>🎨 Primary Colors</h3>
+                <div class="color-controls">
+                    <div class="color-input">
+                        <label for="primary-color">Primary Color:</label>
+                        <input type="color" id="primary-color" value="#0066ff">
+                    </div>
+                    <div class="color-input">
+                        <label for="primary-bg">Primary Background:</label>
+                        <input type="color" id="primary-bg" value="#ffffff">
+                    </div>
+                    <div class="color-input">
+                        <label for="primary-contrast">Primary Contrast:</label>
+                        <input type="color" id="primary-contrast" value="#000000">
+                    </div>
+                    <div class="color-input">
+                        <label for="primary-shade">Primary Shade:</label>
+                        <input type="color" id="primary-shade" value="#dddddd">
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <h3>🔵 Secondary Colors</h3>
+                <div class="color-controls">
+                    <div class="color-input">
+                        <label for="secondary-color">Secondary Color:</label>
+                        <input type="color" id="secondary-color" value="#63ccfd">
+                    </div>
+                    <div class="color-input">
+                        <label for="secondary-bg">Secondary Background:</label>
+                        <input type="color" id="secondary-bg" value="#dddddd">
+                    </div>
+                    <div class="color-input">
+                        <label for="secondary-contrast">Secondary Contrast:</label>
+                        <input type="color" id="secondary-contrast" value="#ffffff">
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <h3>🎯 Status Colors</h3>
+                <div class="color-controls">
+                    <div class="color-input">
+                        <label for="success-color">Success:</label>
+                        <input type="color" id="success-color" value="#00ff40">
+                    </div>
+                    <div class="color-input">
+                        <label for="warning-color">Warning:</label>
+                        <input type="color" id="warning-color" value="#ffff40">
+                    </div>
+                    <div class="color-input">
+                        <label for="danger-color">Danger:</label>
+                        <input type="color" id="danger-color" value="#ff0000">
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <h3>📝 Typography</h3>
+                <div class="color-controls">
+                    <div class="color-input">
+                        <label for="font-primary">Primary Text Color:</label>
+                        <input type="color" id="font-primary" value="#000000">
+                    </div>
+                    <div class="color-input">
+                        <label for="font-secondary">Secondary Text Color:</label>
+                        <input type="color" id="font-secondary" value="#474747">
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <h3>⚙️ Other Colors</h3>
+                <div class="color-controls">
+                    <div class="color-input">
+                        <label for="tertiary-bg">Tertiary Background:</label>
+                        <input type="color" id="tertiary-bg" value="#c4c4c4">
+                    </div>
+                    <div class="color-input">
+                        <label for="medium-color">Medium Color:</label>
+                        <input type="color" id="medium-color" value="#92949c">
+                    </div>
+                    <div class="color-input">
+                        <label for="disabled-color">Disabled Color:</label>
+                        <input type="color" id="disabled-color" value="#7f7f7f">
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <h3>💾 Actions</h3>
+                <div class="action-buttons">
+                    <button id="reset-theme" class="btn btn-secondary">🔄 Reset</button>
+                    <button id="export-theme" class="btn btn-primary">📥 Export Theme</button>
+                    <button id="preview-theme" class="btn btn-success">👁️ Preview</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Panel -->
+        <div class="preview-panel">
+            <h3>👁️ Preview</h3>
+            <div class="preview-container">
+                <div class="preview-header">
+                    <h4>Components with Current Theme</h4>
+                </div>
+                <div class="preview-content">
+                    <div class="preview-section">
+                        <h5>Buttons</h5>
+                        <div class="preview-buttons"></div>
+                    </div>
+                    <div class="preview-section">
+                        <h5>Checkboxes</h5>
+                        <div class="preview-cards"></div>
+                    </div>
+                    <div class="preview-section">
+                        <h5>Inputs</h5>
+                        <div class="preview-inputs"></div>
+                    </div>
+                    <div class="preview-section">
+                        <h5>Switches</h5>
+                        <div class="preview-switches"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div id="export-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📥 Export Theme</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="export-options">
+                    <div class="export-option">
+                        <h4>📄 CSS File</h4>
+                        <p>Download the CSS file for the theme</p>
+                        <button id="export-css" class="btn btn-primary">Download CSS</button>
+                    </div>
+                    <div class="export-option">
+                        <h4>📋 CSS Code</h4>
+                        <p>Copy the CSS code to use in your project</p>
+                        <textarea id="css-code" readonly></textarea>
+                        <button id="copy-css" class="btn btn-secondary">📋 Copy Code</button>
+                    </div>
+                    <div class="export-option">
+                        <h4>⚙️ sliceConfig.json Configuration</h4>
+                        <p>Configuration to use the theme in slice.js</p>
+                        <textarea id="config-code" readonly></textarea>
+                        <button id="copy-config" class="btn btn-secondary">📋 Copy Config</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

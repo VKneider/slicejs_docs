@@ -35,10 +35,10 @@ export default class DocumentationPage extends HTMLElement {
             items: [
 
                {
-                        title: 'SliceConfig.json',
-                        path: '/Documentation/SliceConfig',
-                        component: 'SliceConfigDocumentation'
-                     },
+                  title: 'SliceConfig.json',
+                  path: '/Documentation/SliceConfig',
+                  component: 'SliceConfigDocumentation'
+               },
                {
                   title: 'Components',
                   items: [
@@ -62,7 +62,7 @@ export default class DocumentationPage extends HTMLElement {
                         path: '/Documentation/Service',
                         component: 'ServiceDocumentation'
                      }
-                     
+
                   ]
                },
 
@@ -124,6 +124,7 @@ export default class DocumentationPage extends HTMLElement {
             { text: 'Home', path: '/' },
             { text: 'Documentation', path: '/Documentation' },
             { text: 'Playground', path: '/Playground' },
+            { text: 'Theme Creator', path: '/ThemeCreator' },
             { text: 'About', path: '/About' }
          ],
          buttons: [

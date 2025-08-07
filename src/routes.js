@@ -19,24 +19,24 @@ const routes = [
          },
 
          {
-            path:'/Visual',
+            path: '/Visual',
             component: 'VisualDocumentation',
          },
          {
-            path:'/Service',
+            path: '/Service',
             component: 'ServiceDocumentation',
          },
          {
-            path:'/Structural',
+            path: '/Structural',
             component: 'StructuralDocumentation',
          },
 
          {
-            path:'/Themes',
+            path: '/Themes',
             component: 'ThemesDocumentation',
          },
          {
-            path:'/Routing',
+            path: '/Routing',
             component: 'RoutingDocumentation',
          },
          {
@@ -48,9 +48,9 @@ const routes = [
             component: 'TheBuildMethod',
          },
          {
-            path:'/Components',
+            path: '/Components',
             component: 'DocumentationPage',
-            children:[
+            children: [
                {
                   path: '/Visual',
                   component: 'VisualDocumentation',
@@ -60,19 +60,19 @@ const routes = [
                         component: 'CardDocumentation',
                      },
                      {
-                        path:'/Button',
+                        path: '/Button',
                         component: 'ButtonDocumentation',
                      },
                      {
-                        path:'/Switch',
+                        path: '/Switch',
                         component: 'SwitchDocumentation',
                      },
                      {
-                        path:'/Checkbox',
+                        path: '/Checkbox',
                         component: 'CheckboxDocumentation',
                      },
                      {
-                        path:'/Input',
+                        path: '/Input',
                         component: 'InputDocumentation',
                      }
                   ]
@@ -88,11 +88,12 @@ const routes = [
                   ]
                }*/
             ]
-         } 
+         }
       ]
    },
    // Otras rutas
    { path: '/Playground', component: 'Playground' },
+   { path: '/ThemeCreator', component: 'ThemeCreator' },
    { path: '/404', component: 'NotFound' },
    {
       path: '/Docum/${category}/${id}',

@@ -18,10 +18,10 @@
   "description": "",
   "type": "module",
   "engines": {
-    "node": ">=20.x"
+    "node": "20.x"
   },
   "dependencies": {
-    "slicejs-cli": "latest",
-    "slicejs-web-framework": "latest"
+    "slicejs-cli": "^2.0.15",
+    "slicejs-web-framework": "^1.0.34"
   }
 }
