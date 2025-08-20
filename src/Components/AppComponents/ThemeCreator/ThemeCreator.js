@@ -8,22 +8,38 @@ export default class ThemeCreator extends HTMLElement {
     super();
     slice.attachTemplate(this);
     slice.controller.setComponentProps(this, props);
+    
+    // Guardar el tema original para restaurarlo cuando sea necesario
+    this.originalThemeValues = null;
   }
 
   async init() {
     this.initializeElements();
-    await this.createNavbar();
     this.setupEventListeners();
-    this.loadDefaultTheme();
-    this.createPreviewComponents();
-    this.updatePreview();
+    
+    // Guardar el tema original antes de cualquier modificación
+    this.saveOriginalTheme();
+    
+    this.loadCurrentThemeValues(); // Cargar valores del tema actual en lugar de valores por defecto
+    
+    // Crear componentes programáticamente
+    await this.createActionButtons();
+    await this.createThemeNameInput();
+    
+    // Crear navbar primero, luego componentes de preview secuencialmente
+    await this.createNavbar();
+    await this.createPreviewComponents();
+    
+    // NO llamar updatePreview() aquí para evitar modificar el tema global
+    // this.updatePreview();
   }
 
   initializeElements() {
-    // Elementos de control
-    this.$resetBtn = this.querySelector('#reset-theme');
-    this.$exportBtn = this.querySelector('#export-theme');
-    this.$previewBtn = this.querySelector('#preview-theme');
+    // Contenedores para componentes
+    this.$resetBtnContainer = this.querySelector('#reset-theme-container');
+    this.$exportBtnContainer = this.querySelector('#export-theme-container');
+    this.$previewBtnContainer = this.querySelector('#preview-theme-container');
+    this.$themeNameContainer = this.querySelector('#theme-name-container');
 
     // Elementos de color primario
     this.$primaryColor = this.querySelector('#primary-color');
@@ -68,6 +84,8 @@ export default class ThemeCreator extends HTMLElement {
 
   async createNavbar() {
     const navbarContainer = this.querySelector('.navbar-container');
+    if (!navbarContainer) return;
+    
     let theme = slice.stylesManager.themeManager.currentTheme;
 
     const navBar = await slice.build('Navbar', {
@@ -97,30 +115,22 @@ export default class ThemeCreator extends HTMLElement {
               await slice.setTheme('Slice');
               theme = 'Slice';
             }
+            // Pequeño delay para asegurar que el tema se haya aplicado completamente
+            setTimeout(() => {
+              this.loadCurrentThemeValues();
+            }, 100);
           },
         },
       ],
     });
 
-    if (navbarContainer) {
-      navbarContainer.appendChild(navBar);
-    }
+    navbarContainer.appendChild(navBar); 
+  
   }
 
   setupEventListeners() {
     // Eventos para controles de color
     this.setupColorInputs();
-
-    // Eventos para botones de acción
-    if (this.$resetBtn) {
-      this.$resetBtn.addEventListener('click', () => this.resetTheme());
-    }
-    if (this.$exportBtn) {
-      this.$exportBtn.addEventListener('click', () => this.showExportModal());
-    }
-    if (this.$previewBtn) {
-      this.$previewBtn.addEventListener('click', () => this.updatePreview());
-    }
 
     // Eventos del modal
     if (this.$closeModal) {
@@ -144,6 +154,61 @@ export default class ThemeCreator extends HTMLElement {
         }
       });
     }
+  }
+
+  async createActionButtons() {
+    // Crear botón Reset
+    if (this.$resetBtnContainer) {
+      this.$resetBtn = await slice.build('Button', {
+        value: '🔄 Reset',
+        customColor: {
+          button: 'var(--secondary-color)',
+          label: 'var(--secondary-color-contrast)'
+        },
+        onClickCallback: () => this.resetTheme()
+      });
+      this.$resetBtnContainer.appendChild(this.$resetBtn);
+    }
+
+    // Crear botón Export
+    if (this.$exportBtnContainer) {
+      this.$exportBtn = await slice.build('Button', {
+        value: '📥 Export Theme',
+        customColor: {
+          button: 'var(--primary-color)',
+          label: 'var(--primary-color-contrast)'
+        },
+        onClickCallback: () => this.showExportModal()
+      });
+      this.$exportBtnContainer.appendChild(this.$exportBtn);
+    }
+
+    // Crear botón Preview
+    if (this.$previewBtnContainer) {
+      this.$previewBtn = await slice.build('Button', {
+        value: '👁️ Preview',
+        customColor: {
+          button: 'var(--secondary-color)',
+          label: 'var(--secondary-color-contrast)'
+        },
+        onClickCallback: () => this.updatePreview()
+      });
+      this.$previewBtnContainer.appendChild(this.$previewBtn);
+    }
+  }
+
+  async createThemeNameInput() {
+    if (this.$themeNameContainer) {
+      this.$themeName = await slice.build('Input', {
+        value: 'CustomTheme',
+        placeholder: 'Enter theme name'
+      });
+      this.$themeNameContainer.appendChild(this.$themeName);
+    }
+  }
+
+  setupButtonCallbacks() {
+    // Los callbacks ya se configuran en createActionButtons()
   }
 
   setupColorInputs() {
@@ -197,7 +262,51 @@ export default class ThemeCreator extends HTMLElement {
     this.applyThemeValues(defaultTheme);
   }
 
+  loadCurrentThemeValues() {
+    // Obtener el elemento style del ThemeManager en el head
+    const themeStyleElement = slice.stylesManager.themeManager.themeStyle;
+    const cssContent = themeStyleElement.textContent;
+    
+    console.log('ThemeCreator - CSS del tema actual:', cssContent);
+    
+    // Extraer valores de CSS variables usando regex
+    const extractCssValue = (varName) => {
+      const regex = new RegExp(`${varName}:\\s*([^;]+);`);
+      const match = cssContent.match(regex);
+      return match ? match[1].trim() : null;
+    };
+    
+    const themeValues = {
+      primaryColor: extractCssValue('--primary-color'),
+      primaryBg: extractCssValue('--primary-background-color'),
+      primaryContrast: extractCssValue('--primary-color-contrast'),
+      primaryShade: extractCssValue('--primary-color-shade'),
+      secondaryColor: extractCssValue('--secondary-color'),
+      secondaryBg: extractCssValue('--secondary-background-color'),
+      secondaryContrast: extractCssValue('--secondary-color-contrast'),
+      successColor: extractCssValue('--success-color'),
+      warningColor: extractCssValue('--warning-color'),
+      dangerColor: extractCssValue('--danger-color'),
+      fontPrimary: extractCssValue('--font-primary-color'),
+      fontSecondary: extractCssValue('--font-secondary-color'),
+      tertiaryBg: extractCssValue('--tertiary-background-color'),
+      mediumColor: extractCssValue('--medium-color'),
+      disabledColor: extractCssValue('--disabled-color')
+    };
+
+    console.log('ThemeCreator - Valores extraídos:', themeValues);
+    
+    // Solo aplicar si tenemos al menos algunos valores válidos
+    if (themeValues.primaryColor) {
+      this.applyThemeValues(themeValues);
+    } else {
+      console.log('ThemeCreator - No se pudieron extraer valores del CSS del tema');
+    }
+  }
+
   applyThemeValues(theme) {
+    console.log('ThemeCreator - Aplicando valores:', theme);
+    
     const inputs = [
       { element: this.$primaryColor, value: theme.primaryColor },
       { element: this.$primaryBg, value: theme.primaryBg },
@@ -217,98 +326,102 @@ export default class ThemeCreator extends HTMLElement {
     ];
 
     inputs.forEach(({ element, value }) => {
-      if (element && value) {
+      if (element && value && value !== null) {
         element.value = value;
+        console.log(`ThemeCreator - Aplicado ${value} a ${element.id}`);
+      } else if (element && !value) {
+        console.log(`ThemeCreator - Valor nulo para ${element.id}`);
       }
     });
   }
 
   async createPreviewComponents() {
-    // Crear botones de previsualización
-    const primaryButton = await slice.build('Button', {
+    // Crear componentes secuencialmente para evitar conflictos con Slice
+    const components = [];
+
+    // Botones de previsualización
+    components.push(await slice.build('Button', {
       value: 'Primary Button',
       customColor: {
         button: 'var(--primary-color)',
         label: 'var(--primary-color-contrast)'
       }
-    });
+    }));
 
-    const secondaryButton = await slice.build('Button', {
+    components.push(await slice.build('Button', {
       value: 'Secondary Button',
       customColor: {
         button: 'var(--secondary-color)',
         label: 'var(--secondary-color-contrast)'
       }
-    });
+    }));
 
-    const successButton = await slice.build('Button', {
+    components.push(await slice.build('Button', {
       value: 'Success',
       customColor: {
         button: 'var(--success-color)',
         label: 'var(--success-contrast)'
       }
-    });
+    }));
 
-    if (this.$previewButtons) {
-      this.$previewButtons.appendChild(primaryButton);
-      this.$previewButtons.appendChild(secondaryButton);
-      this.$previewButtons.appendChild(successButton);
-    }
-
-    // Crear checkboxes de previsualización
-    const checkbox1 = await slice.build('Checkbox', {
+    // Checkboxes de previsualización
+    components.push(await slice.build('Checkbox', {
       label: 'Primary Checkbox',
-      value: true,
-      position: 'right'
-    });
+      checked: true,
+      labelPlacement: 'right'
+    }));
 
-    const checkbox2 = await slice.build('Checkbox', {
+    components.push(await slice.build('Checkbox', {
       label: 'Secondary Checkbox',
-      value: false,
-      position: 'right'
-    });
+      checked: false,
+      labelPlacement: 'right'
+    }));
 
-    if (this.$previewCards) {
-      this.$previewCards.appendChild(checkbox1);
-      this.$previewCards.appendChild(checkbox2);
-    }
-
-    // Crear inputs de previsualización
-    const input1 = await slice.build('Input', {
+    // Inputs de previsualización
+    components.push(await slice.build('Input', {
       placeholder: 'Primary Input',
       value: 'Example text'
-    });
+    }));
 
-    const input2 = await slice.build('Input', {
+    components.push(await slice.build('Input', {
       placeholder: 'Secondary Input',
       value: 'Another text'
-    });
+    }));
 
-    if (this.$previewInputs) {
-      this.$previewInputs.appendChild(input1);
-      this.$previewInputs.appendChild(input2);
+    // Switches de previsualización
+    components.push(await slice.build('Switch', {
+      checked: true,
+      label: 'Primary Switch'
+    }));
+
+    components.push(await slice.build('Switch', {
+      checked: false,
+      label: 'Secondary Switch'
+    }));
+
+    // Agregar componentes a sus contenedores
+    if (this.$previewButtons) {
+      components.slice(0, 3).forEach(component => this.$previewButtons.appendChild(component));
     }
 
-    // Crear switches de previsualización
-    const switch1 = await slice.build('Switch', {
-      value: true,
-      label: 'Primary Switch'
-    });
+    if (this.$previewCards) {
+      components.slice(3, 5).forEach(component => this.$previewCards.appendChild(component));
+    }
 
-    const switch2 = await slice.build('Switch', {
-      value: false,
-      label: 'Secondary Switch'
-    });
+    if (this.$previewInputs) {
+      components.slice(5, 7).forEach(component => this.$previewInputs.appendChild(component));
+    }
 
     if (this.$previewSwitches) {
-      this.$previewSwitches.appendChild(switch1);
-      this.$previewSwitches.appendChild(switch2);
+      components.slice(7, 9).forEach(component => this.$previewSwitches.appendChild(component));
     }
   }
 
+
+
   updatePreview() {
     const themeValues = this.getCurrentThemeValues();
-    this.applyThemeToDocument(themeValues);
+    this.applyThemeToPreviewContainer(themeValues);
   }
 
   getCurrentThemeValues() {
@@ -337,11 +450,61 @@ export default class ThemeCreator extends HTMLElement {
     };
   }
 
-  applyThemeToDocument(themeValues) {
-    const root = document.documentElement;
-    Object.entries(themeValues).forEach(([property, value]) => {
-      root.style.setProperty(property, value);
+  getThemeName() {
+    // Obtener el valor del componente Input creado programáticamente
+    if (this.$themeName) {
+      // El componente Input tiene una propiedad value
+      return this.$themeName.value || 'CustomTheme';
+    }
+    return 'CustomTheme';
+  }
+
+  applyThemeToPreviewContainer(themeValues) {
+    // Aplicar el tema solo al contenedor de preview, no al documento completo
+    const previewContainer = this.querySelector('.preview-container');
+    if (previewContainer) {
+      Object.entries(themeValues).forEach(([property, value]) => {
+        if (value && value !== null) {
+          previewContainer.style.setProperty(property, value);
+        }
+      });
+    }
+  }
+
+  saveOriginalTheme() {
+    // Guardar las variables CSS originales del tema actual
+    const computedStyle = getComputedStyle(document.documentElement);
+    this.originalThemeValues = {};
+    
+    const cssVars = [
+      '--primary-color', '--primary-background-color', '--primary-color-contrast', '--primary-color-shade',
+      '--secondary-color', '--secondary-background-color', '--secondary-color-contrast',
+      '--success-color', '--warning-color', '--danger-color',
+      '--font-primary-color', '--font-secondary-color',
+      '--tertiary-background-color', '--medium-color', '--disabled-color'
+    ];
+    
+    cssVars.forEach(varName => {
+      this.originalThemeValues[varName] = computedStyle.getPropertyValue(varName).trim();
     });
+  }
+
+  restoreOriginalTheme() {
+    // Restaurar las variables CSS originales
+    if (this.originalThemeValues) {
+      const root = document.documentElement;
+      Object.entries(this.originalThemeValues).forEach(([property, value]) => {
+        if (value) {
+          root.style.setProperty(property, value);
+        }
+      });
+    }
+  }
+
+  // Método para limpiar cuando el componente se destruya
+  disconnectedCallback() {
+    // Restaurar el tema original cuando se salga del ThemeCreator
+    this.restoreOriginalTheme();
   }
 
   hexToRgb(hex) {
@@ -352,7 +515,7 @@ export default class ThemeCreator extends HTMLElement {
   }
 
   resetTheme() {
-    this.loadDefaultTheme();
+    this.loadCurrentThemeValues(); // Reset a los valores del tema actual en lugar de valores por defecto
     this.updatePreview();
   }
 
@@ -371,7 +534,7 @@ export default class ThemeCreator extends HTMLElement {
 
   populateExportContent() {
     const themeValues = this.getCurrentThemeValues();
-    const themeName = 'CustomTheme';
+    const themeName = this.getThemeName();
 
     // Generar código CSS
     const cssCode = this.generateCssCode(themeValues, themeName);
@@ -411,7 +574,7 @@ export default class ThemeCreator extends HTMLElement {
   }
 
   downloadCssFile() {
-    const themeName = 'CustomTheme';
+    const themeName = this.getThemeName();
     const cssCode = this.$cssCode?.value || '';
 
     const blob = new Blob([cssCode], { type: 'text/css' });

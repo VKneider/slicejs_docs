@@ -1,4 +1,17 @@
 export default class TreeView extends HTMLElement {
+
+   static props = {
+      items: { 
+         type: 'array', 
+         default: [], 
+         required: false 
+      },
+      onClickCallback: { 
+         type: 'function', 
+         default: null 
+      }
+   };
+
    constructor(props) {
       super();
       slice.attachTemplate(this);
@@ -10,8 +23,6 @@ export default class TreeView extends HTMLElement {
       if (props.onClickCallback) {
          this.onClickCallback = props.onClickCallback;
       }
-
-      this.debuggerProps = [];
    }
 
    async init() {

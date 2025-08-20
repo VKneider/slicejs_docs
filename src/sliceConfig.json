@@ -1,6 +1,6 @@
 {
     "debugger": {
-        "enabled":false,
+        "enabled":true,
         "click": "right"
     },
     "stylesManager":{
@@ -13,7 +13,7 @@
         "useBrowserTheme": false
     },
     "logger": {
-        "enabled": false,
+        "enabled": true,
         "showLogs": {
             "console": {
                 "error": true,

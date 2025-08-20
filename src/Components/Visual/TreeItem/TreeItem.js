@@ -1,11 +1,33 @@
 export default class TreeItem extends HTMLElement {
+
+   static props = {
+      value: { 
+         type: 'string', 
+         default: '', 
+         required: false 
+      },
+      path: { 
+         type: 'string', 
+         default: '', 
+         required: false 
+      },
+      onClickCallback: { 
+         type: 'function', 
+         default: null 
+      },
+      items: { 
+         type: 'array', 
+         default: [], 
+         required: false 
+      }
+   };
+
    constructor(props) {
       super();
       slice.attachTemplate(this);
 
       this.$item = this.querySelector('.slice_tree_item');
 
-      this.debuggerProps = ['value', 'path', 'onClickCallback'];
       slice.controller.setComponentProps(this, props);
 
       if (props.onClickCallback) {

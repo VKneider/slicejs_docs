@@ -1,4 +1,18 @@
 export default class Details extends HTMLElement {
+
+   static props = {
+      title: { 
+         type: 'string', 
+         default: '', 
+         required: false 
+      },
+      text: { 
+         type: 'string', 
+         default: '', 
+         required: false 
+      }
+   };
+
    constructor(props) {
       super();
       slice.attachTemplate(this);
@@ -14,7 +28,6 @@ export default class Details extends HTMLElement {
       });
 
       slice.controller.setComponentProps(this, props);
-      this.debuggerProps = ['title', 'text'];
    }
 
    toggleDetails() {

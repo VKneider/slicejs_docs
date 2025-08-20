@@ -25,7 +25,7 @@
   --danger-contrast: #fff;
   /** medium **/
   --medium-color: #92949c;
-  --medium--contrast: #000;
-
+  --medium-contrast: #000;
+  /** disabled **/
   --disabled-color: #7f7f7f;
 }

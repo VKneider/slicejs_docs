@@ -1,9 +1,17 @@
 export default class Loading extends HTMLElement {
+
+   static props = {
+      isActive: { 
+         type: 'boolean', 
+         default: false, 
+         required: false 
+      }
+   };
+
    constructor(props) {
       super();
       slice.attachTemplate(this);
       slice.controller.setComponentProps(this, props);
-      this.debuggerProps = ['isActive'];
    }
 
    init() {}

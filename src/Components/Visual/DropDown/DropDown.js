@@ -1,4 +1,18 @@
 export default class DropDown extends HTMLElement {
+
+   static props = {
+      label: { 
+         type: 'string', 
+         default: '', 
+         required: false 
+      },
+      options: { 
+         type: 'array', 
+         default: [], 
+         required: false 
+      }
+   };
+
    constructor(props) {
       super();
       slice.attachTemplate(this);
@@ -17,7 +31,6 @@ export default class DropDown extends HTMLElement {
       });
 
       slice.controller.setComponentProps(this, props);
-      this.debuggerProps = ['label', 'dropbox'];
    }
 
    init() {}
@@ -27,7 +40,7 @@ export default class DropDown extends HTMLElement {
    }
 
    set label(value) {
-      this._label;
+      this._label = value;
       this.$label.textContent = value;
    }
 

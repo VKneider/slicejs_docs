@@ -1,4 +1,23 @@
 export default class Grid extends HTMLElement {
+
+   static props = {
+      columns: { 
+         type: 'number', 
+         default: 1, 
+         required: false 
+      },
+      rows: { 
+         type: 'number', 
+         default: 1, 
+         required: false 
+      },
+      items: { 
+         type: 'array', 
+         default: [], 
+         required: false 
+      }
+   };
+
    constructor(props) {
       super();
       slice.attachTemplate(this);
@@ -6,13 +25,11 @@ export default class Grid extends HTMLElement {
       this.$grid = this.querySelector('.grid-container');
 
       slice.controller.setComponentProps(this, props);
-      this.debuggerProps = ['columns', 'rows'];
    }
 
    async init() {
-      if (!this.rows || !this.columns) {
-         throw new Error('Grid cannot be build if rows or columns are not created.');
-      }
+      // Static props ensure columns and rows have default values
+      // No need for manual validation
    }
 
    set columns(value) {

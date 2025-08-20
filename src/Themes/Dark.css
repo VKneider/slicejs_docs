@@ -1,5 +1,6 @@
 :root {
   --font-primary-color: #fff;
+  --font-secondary-color: #474747;
 
   /** primary **/
   --primary-color: #0066ff;
@@ -37,6 +38,6 @@
   --medium-color: #92949c;
   --medium-contrast: #fff;
 
-  /* Disabled color */
+  /** disabled **/
   --disabled-color: #7f7f7f;
 }

@@ -1,10 +1,23 @@
 export default class Layout extends HTMLElement {
+
+   static props = {
+      layout: { 
+         type: 'object', 
+         default: null, 
+         required: false 
+      },
+      view: { 
+         type: 'object', 
+         default: null, 
+         required: false 
+      }
+   };
+
    constructor(props) {
       super();
       slice.attachTemplate(this);
 
       slice.controller.setComponentProps(this, props);
-      this.debuggerProps = [];
       this.currentView = null;
    }
 

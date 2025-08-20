@@ -1,9 +1,12 @@
 <div class="theme-creator">
     <div class="navbar-container"></div>
 
-    <div class="theme-creator-header">
-        <h1>🎨 Theme Creator</h1>
-        <p>Create and customize themes for slice.js with real-time preview</p>
+    <div class="action-buttons-container">
+        <div class="action-buttons-grid">
+            <div class="action-button-item" id="reset-theme-container"></div>
+            <div class="action-button-item" id="export-theme-container"></div>
+            <div class="action-button-item" id="preview-theme-container"></div>
+        </div>
     </div>
 
     <div class="theme-creator-content">
@@ -12,7 +15,7 @@
             <div class="control-section">
                 <h3>📝 Theme Information</h3>
                 <div class="input-group">
-                    <label for="theme-name">Theme Name:</label>
+                    <div id="theme-name-container"></div>
                 </div>
             </div>
 
@@ -106,14 +109,7 @@
                 </div>
             </div>
 
-            <div class="control-section">
-                <h3>💾 Actions</h3>
-                <div class="action-buttons">
-                    <button id="reset-theme" class="btn btn-secondary">🔄 Reset</button>
-                    <button id="export-theme" class="btn btn-primary">📥 Export Theme</button>
-                    <button id="preview-theme" class="btn btn-success">👁️ Preview</button>
-                </div>
-            </div>
+
         </div>
 
         <!-- Preview Panel -->

@@ -1,4 +1,35 @@
 export default class Select extends HTMLElement {
+
+   static props = {
+      options: { 
+         type: 'array', 
+         default: [], 
+         required: false 
+      },
+      disabled: { 
+         type: 'boolean', 
+         default: false 
+      },
+      label: { 
+         type: 'string', 
+         default: '', 
+         required: false 
+      },
+      multiple: { 
+         type: 'boolean', 
+         default: false 
+      },
+      visibleProp: { 
+         type: 'string', 
+         default: 'text', 
+         required: false 
+      },
+      onOptionSelect: { 
+         type: 'function', 
+         default: null 
+      }
+   };
+
    constructor(props) {
       super();
       slice.attachTemplate(this);
@@ -18,26 +49,14 @@ export default class Select extends HTMLElement {
          this.$caret.classList.remove('caret_open');
       });
 
-      if (props.visibleProp) {
-         this.visibleProp = props.visibleProp;
-      }
       this._value = [];
 
-      if (props.onOptionSelect) {
-         this.onOptionSelect = props.onOptionSelect;
-      }
       slice.controller.setComponentProps(this, props);
-      this.debuggerProps = ['options', 'disabled', 'label', 'multiple', 'visibleProp'];
    }
 
    init() {
-      if (!this.disabled) {
-         this._disabled = false;
-      }
-
-      if (!this._multiple) {
-         this._multiple = false;
-      }
+      // Static props ensure all properties have default values
+      // No need for manual default checking
    }
 
    get options() {
@@ -157,6 +176,22 @@ export default class Select extends HTMLElement {
 
    set disabled(value) {
       this._disabled = value;
+   }
+
+   get visibleProp() {
+      return this._visibleProp;
+   }
+
+   set visibleProp(value) {
+      this._visibleProp = value;
+   }
+
+   get onOptionSelect() {
+      return this._onOptionSelect;
+   }
+
+   set onOptionSelect(value) {
+      this._onOptionSelect = value;
    }
 
    isObjectInArray(objeto, arreglo) {

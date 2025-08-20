@@ -1,16 +1,32 @@
 export default class Icon extends HTMLElement {
+
+   static props = {
+      name: { 
+         type: 'string', 
+         default: 'youtube', 
+         required: false 
+      },
+      size: { 
+         type: 'string', 
+         default: 'small' 
+      },
+      color: { 
+         type: 'string', 
+         default: 'black' 
+      },
+      iconStyle: { 
+         type: 'string', 
+         default: 'filled' 
+      }
+   };
+
    constructor(props) {
       super();
 
       slice.attachTemplate(this);
       this.$icon = this.querySelector('i');
 
-      if (!this.iconStyle) {
-         this._iconStyle = 'filled';
-      }
-
       slice.controller.setComponentProps(this, props);
-      this.debuggerProps = ['name', 'size', 'color', 'iconStyle'];
    }
 
    get random() {
@@ -20,17 +36,8 @@ export default class Icon extends HTMLElement {
    set random(value) {}
 
    init() {
-      if (!this._name) {
-         this.name = 'youtube';
-      }
-
-      if (!this._size) {
-         this.size = 'small';
-      }
-
-      if (!this._color) {
-         this.color = 'black';
-      }
+      // Static props ensure all properties have default values
+      // No need for manual default checking
    }
 
    get name() {

@@ -1,10 +1,14 @@
 export default class NotFound extends HTMLElement {
+
+   static props = {
+      // No props needed for this component
+   };
+
    constructor(props) {
       super();
       slice.attachTemplate(this);
 
       slice.controller.setComponentProps(this, props);
-      this.debuggerProps = [];
    }
 
    init() {

@@ -34,6 +34,7 @@
   position: absolute;
   transition: all 0.5s;
   user-select: none;
+  cursor: text;
 }
 .slice_input_value {
   scale: 0.8;

@@ -1,4 +1,33 @@
 export default class Navbar extends HTMLElement {
+
+   static props = {
+      logo: { 
+         type: 'object', 
+         default: null, 
+         required: false 
+      },
+      items: { 
+         type: 'array', 
+         default: [], 
+         required: false 
+      },
+      buttons: { 
+         type: 'array', 
+         default: [], 
+         required: false 
+      },
+      position: { 
+         type: 'string', 
+         default: 'static', 
+         required: false 
+      },
+      direction: { 
+         type: 'string', 
+         default: 'normal', 
+         required: false 
+      }
+   };
+
    constructor(props) {
       super();
       slice.attachTemplate(this);
@@ -21,7 +50,6 @@ export default class Navbar extends HTMLElement {
       });
 
       slice.controller.setComponentProps(this, props);
-      this.debuggerProps = ['logo', 'items'];
    }
 
    async init() {

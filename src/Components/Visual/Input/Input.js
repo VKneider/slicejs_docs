@@ -6,6 +6,11 @@ export default class Input extends HTMLElement {
          default: '', 
          required: false 
       },
+      value: { 
+         type: 'string', 
+         default: '', 
+         required: false 
+      },
       type: { 
          type: 'string', 
          default: 'text' 
@@ -31,7 +36,7 @@ export default class Input extends HTMLElement {
    constructor(props) {
       super();
       slice.attachTemplate(this);
-      this.$inputContainer = this.querySelector('.slice_input_container');
+      this.$inputContainer = this.querySelector('.slice_input');
       this.$input = this.querySelector('input');
       this.$placeholder = this.querySelector('.slice_input_placeholder');
       this.$eyeIcon = this.querySelector('.slice_eye_icon');
@@ -46,6 +51,12 @@ export default class Input extends HTMLElement {
       // Set up placeholder behavior
       if (this.placeholder) {
          this.$placeholder.textContent = this.placeholder;
+      }
+
+      // ✅ AÑADIDO: Set up default value
+      if (this.value) {
+         this.$input.value = this.value;
+         this.updateInputState();
       }
 
       // Set up disabled state
@@ -68,7 +79,17 @@ export default class Input extends HTMLElement {
 
       // Set up event listeners
       this.$input.addEventListener('input', () => {
-         this.update();
+         this.updateInputState();
+      });
+
+      // ✅ AÑADIDO: Permitir clic en el placeholder para enfocar el input
+      this.$placeholder.addEventListener('click', () => {
+         this.$input.focus();
+      });
+
+      // ✅ AÑADIDO: También permitir clic en el contenedor para enfocar el input
+      this.$inputContainer.addEventListener('click', () => {
+         this.$input.focus();
       });
    }
 
@@ -117,7 +138,7 @@ export default class Input extends HTMLElement {
       this._conditions = new RegExp(regexPattern);
    }
 
-   update() {
+   updateInputState() {
       if (this.$input.value !== '') {
          this.$placeholder.classList.add('slice_input_value');
          this.triggerSuccess();
@@ -163,7 +184,7 @@ export default class Input extends HTMLElement {
 
    set value(newValue) {
       this.$input.value = newValue;
-      this.update();
+      this.updateInputState();
    }
 
    get placeholder() {
