@@ -8,9 +8,18 @@
     "slice:list": "node node_modules/slicejs-cli/client.js component list",
     "slice:delete": "node node_modules/slicejs-cli/client.js component delete",
     "slice:init": "node node_modules/slicejs-cli/client.js init",
-    "run": "node api/index.js",
-    "slice:start": "node api/index.js",
-    "development": "node api/index.js"
+    "run": "node api/index.js --development",
+    "slice:start": "node api/index.js --development",
+    "development": "node api/index.js --development",
+    "slice:dev": "node api/index.js --development",
+    "slice:version": "node node_modules/slicejs-cli/client.js version",
+    "slice:update": "node node_modules/slicejs-cli/client.js update",
+    "slice:get": "node node_modules/slicejs-cli/client.js get",
+    "slice:browse": "node node_modules/slicejs-cli/client.js browse",
+    "slice:sync": "node node_modules/slicejs-cli/client.js sync",
+    "slice:registry-get": "node node_modules/slicejs-cli/client.js registry get",
+    "slice:registry-list": "node node_modules/slicejs-cli/client.js registry list",
+    "slice:registry-sync": "node node_modules/slicejs-cli/client.js registry sync"
   },
   "keywords": [],
   "author": "",
@@ -18,10 +27,10 @@
   "description": "",
   "type": "module",
   "engines": {
-    "node": "20.x"
+    "node": ">=20.0.0"
   },
   "dependencies": {
-    "slicejs-cli": "latest",
-    "slicejs-web-framework": "latest"
+    "slicejs-cli": "^2.2.7",
+    "slicejs-web-framework": "^2.0.3"
   }
 }

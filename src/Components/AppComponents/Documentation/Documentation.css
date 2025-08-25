@@ -1,0 +1,172 @@
+/* Documentation Component Styles */
+slice-documentation {
+    display: block;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: var(--font-family);
+    line-height: 1.6;
+    color: var(--font-primary-color);
+    overflow: visible;
+}
+
+slice-documentation h1 {
+    color: var(--font-primary-color);
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    text-align: center;
+    border-bottom: 3px solid var(--primary-color);
+    padding-bottom: 15px;
+}
+
+slice-documentation h2 {
+    color: var(--font-secondary-color);
+    font-size: 1.8em;
+    margin: 30px 0 20px 0;
+    padding: 10px 0;
+    border-left: 4px solid var(--primary-color);
+    padding-left: 15px;
+}
+
+slice-documentation h3 {
+    color: var(--font-primary-color);
+    font-size: 1.4em;
+    margin: 25px 0 15px 0;
+}
+
+slice-documentation p {
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+slice-documentation span {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* Visual Components Section */
+slice-documentation .visualComponents {
+    padding: 25px 0 35px 0; /* Extra bottom padding for hover space */
+    margin: 30px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: visible; /* Ensure hover effects are visible */
+}
+
+slice-documentation .visualComponents h2 {
+    color: var(--primary-color);
+    border-left: 4px solid var(--primary-color);
+    margin-top: 0;
+    align-self: flex-start;
+}
+
+slice-documentation .visualComponents p {
+    align-self: flex-start;
+    width: 100%;
+}
+
+/* Center the Grid containing Cards */
+slice-documentation .visualComponents slice-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 10px 0; /* Extra space for hover elevation */
+    gap: 20px;
+    flex-wrap: wrap;
+    background: none; /* Remove any background */
+}
+
+/* Ensure Grid items (Cards) are properly spaced */
+slice-documentation .visualComponents slice-grid .grid-item {
+    margin: 0 10px;
+}
+
+/* Structural Components Section */
+slice-documentation .structuralComponents {
+    padding: 25px 0;
+    margin: 30px 0;
+}
+
+slice-documentation .structuralComponents h2 {
+    color: var(--danger-color);
+    border-left: 4px solid var(--danger-color);
+    margin-top: 0;
+}
+
+/* Service Components Section */
+slice-documentation .serviceComponents {
+    padding: 25px 0;
+    margin: 30px 0;
+}
+
+slice-documentation .serviceComponents h2 {
+    color: var(--accent-color);
+    border-left: 4px solid var(--accent-color);
+    margin-top: 0;
+}
+
+/* Q&A Section */
+slice-documentation .qna {
+    margin: 40px 0;
+    padding: 20px 0;
+}
+
+/* Static Props Section */
+slice-documentation .static-props {
+    margin: 40px 0;
+    padding: 25px 0;
+}
+
+slice-documentation .static-props h2 {
+    color: var(--primary-color);
+    border-left: 4px solid var(--primary-color);
+    margin-top: 0;
+}
+
+slice-documentation .static-props p {
+    color: var(--font-primary-color);
+    font-size: 1.1em;
+    margin-bottom: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    slice-documentation {
+        padding: 15px;
+    }
+    
+    slice-documentation h1 {
+        font-size: 2em;
+    }
+    
+    slice-documentation h2 {
+        font-size: 1.5em;
+    }
+    
+    slice-documentation .visualComponents,
+    slice-documentation .structuralComponents,
+    slice-documentation .serviceComponents,
+    slice-documentation .static-props {
+        padding: 20px 0;
+        margin: 20px 0;
+    }
+    
+    /* Mobile: Stack Cards vertically and center them */
+    slice-documentation .visualComponents slice-grid {
+        flex-direction: column;
+        gap: 15px;
+        max-width: 100%;
+    }
+    
+    slice-documentation .visualComponents slice-grid .grid-item {
+        margin: 0;
+        display: flex;
+        justify-content: center;
+    }
+}
+
+/* Dark theme support is handled by CSS variables */

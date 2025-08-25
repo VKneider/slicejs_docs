@@ -57,12 +57,12 @@ slice-team-card {
 .team_card_role {
   margin: 5px 0;
   font-size: 1rem;
-  color: var(--medium-contrast);
+  color: var(--font-primary-color);
 }
 
 .team_card_description {
   font-size: 0.9rem;
-  color: var(--medium-contrast);
+  color: var(--font-primary-color);
   margin-top: 5px;
 }
 

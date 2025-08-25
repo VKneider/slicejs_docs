@@ -33,7 +33,7 @@
 
   /** Medium - Gris con toque púrpura más contrastante **/
   --medium-color: #6B7280; /* Gris más oscuro para mejor legibilidad */
-  --medium-contrast: #FFFFFF;
+  --medium-contrast: #6B7280; /* Gris oscuro para texto sobre fondos claros */
 
   /** Disabled - Manteniendo contraste adecuado **/
   --disabled-color: #D1D5DB; /* Gris más neutro pero visible */

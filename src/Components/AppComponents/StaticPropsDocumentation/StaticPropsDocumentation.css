@@ -1,0 +1,173 @@
+/* Static Props Documentation Component Styles */
+slice-staticpropsdocumentation {
+    display: block;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: var(--font-family);
+    line-height: 1.6;
+    color: var(--font-primary-color);
+}
+
+slice-staticpropsdocumentation h1 {
+    color: var(--font-primary-color);
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    text-align: center;
+    border-bottom: 3px solid var(--primary-color);
+    padding-bottom: 15px;
+}
+
+slice-staticpropsdocumentation h2 {
+    color: var(--font-secondary-color);
+    font-size: 1.8em;
+    margin: 30px 0 20px 0;
+    padding: 10px 0;
+    border-left: 4px solid var(--primary-color);
+    padding-left: 15px;
+}
+
+slice-staticpropsdocumentation h3 {
+    color: var(--font-primary-color);
+    font-size: 1.4em;
+    margin: 25px 0 15px 0;
+}
+
+slice-staticpropsdocumentation p {
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+slice-staticpropsdocumentation code {
+    font-family: monospace;
+    background-color: var(--secondary-background-color);
+    padding: 2px 6px;
+    border-radius: var(--border-radius-slice);
+    color: var(--danger-color);
+    font-size: 0.9em;
+}
+
+/* Introduction Section */
+slice-staticpropsdocumentation .intro-section {
+    margin: 30px 0;
+    text-align: center;
+}
+
+/* Content Sections */
+slice-staticpropsdocumentation .content-sections {
+    margin: 40px 0;
+}
+
+slice-staticpropsdocumentation .content-sections > div {
+    margin: 30px 0;
+    padding: 20px 0;
+}
+
+/* Summary Section */
+slice-staticpropsdocumentation .summary {
+    margin: 40px 0;
+    padding: 30px 0;
+}
+
+slice-staticpropsdocumentation .summary h2 {
+    color: var(--font-primary-color);
+    border-left: 4px solid var(--primary-color);
+    margin-top: 0;
+}
+
+slice-staticpropsdocumentation .summary h3 {
+    color: var(--font-secondary-color);
+    margin-top: 25px;
+}
+
+/* Key Points */
+slice-staticpropsdocumentation .key-points {
+    margin: 25px 0;
+    padding: 20px 0;
+    border-left: 3px solid var(--primary-color);
+    padding-left: 20px;
+}
+
+slice-staticpropsdocumentation .key-points ul {
+    margin: 15px 0;
+    padding-left: 20px;
+}
+
+slice-staticpropsdocumentation .key-points li {
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+slice-staticpropsdocumentation .key-points strong {
+    color: var(--primary-color);
+}
+
+/* Next Steps */
+slice-staticpropsdocumentation .next-steps {
+    margin: 25px 0;
+    padding: 20px 0;
+    border-left: 3px solid var(--success-color);
+    padding-left: 20px;
+}
+
+/* Card Component Styling */
+slice-staticpropsdocumentation .card {
+    margin: 20px 0;
+}
+
+/* Details Component Styling */
+slice-staticpropsdocumentation .details {
+    margin: 20px 0;
+}
+
+/* Code Visualizer Styling */
+slice-staticpropsdocumentation .codevisualizer_container {
+    margin: 15px 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    slice-staticpropsdocumentation {
+        padding: 15px;
+    }
+    
+    slice-staticpropsdocumentation h1 {
+        font-size: 2em;
+    }
+    
+    slice-staticpropsdocumentation h2 {
+        font-size: 1.5em;
+    }
+    
+    slice-staticpropsdocumentation .content-sections > div {
+        padding: 15px 0;
+        margin: 20px 0;
+    }
+    
+    slice-staticpropsdocumentation .summary {
+        padding: 20px 0;
+    }
+}
+
+/* Dark theme support is handled by CSS variables */
+
+/* Print Styles */
+@media print {
+    slice-staticpropsdocumentation {
+        max-width: none;
+        padding: 0;
+    }
+    
+    slice-staticpropsdocumentation .content-sections > div {
+        break-inside: avoid;
+        margin: 15px 0;
+        padding: 15px;
+        border: 1px solid var(--primary-color-shade);
+        background: var(--primary-background-color);
+    }
+    
+    slice-staticpropsdocumentation .summary {
+        background: var(--primary-background-color);
+        border: 2px solid var(--primary-color);
+    }
+}

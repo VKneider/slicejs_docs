@@ -48,6 +48,14 @@ const routes = [
             component: 'TheBuildMethod',
          },
          {
+            path: '/Static-Props',
+            component: 'StaticPropsDocumentation',
+         },
+         {
+            path: '/LifeCycle-Methods',
+            component: 'LifeCycleMethods',
+         },
+         {
             path: '/Components',
             component: 'DocumentationPage',
             children: [

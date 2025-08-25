@@ -41,44 +41,45 @@ slice-commandsdocumentation code {
   font-size: 0.9em;
 }
 
+/* Command Sections */
+slice-commandsdocumentation .commands-section {
+  margin: 3rem 0;
+  padding: 1rem 0;
+}
+
+slice-commandsdocumentation .commands-section h2 {
+  color: var(--primary-color);
+  font-size: 1.6rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--primary-color-shade);
+}
+
 slice-commandsdocumentation .commands-grid {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
-  gap: 2rem;
+  gap: 1.5rem;
   margin: 2rem 0;
 }
 
 slice-commandsdocumentation .command-card {
-  border: 1px solid var(--primary-color-shade);
-  border-radius: var(--border-radius-slice);
   padding: 1.5rem;
-  background-color: var(--secondary-background-color);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  margin-bottom: 1rem;
 }
 
 slice-commandsdocumentation .command-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  /* Remove hover effects */
 }
 
-slice-commandsdocumentation .command-card h2 {
+slice-commandsdocumentation .command-card h3 {
   margin-top: 0;
-  position: relative;
-  padding-left: 1.8rem;
-}
-
-slice-commandsdocumentation .command-card h2::before {
-  content: '>';
-  position: absolute;
-  left: 0;
   color: var(--primary-color);
-  font-weight: bold;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
 }
 
 slice-commandsdocumentation .command-description {
-  padding-left: 1rem;
-  border-left: 3px solid var(--primary-color);
+  margin-left: 0;
 }
 
 slice-commandsdocumentation .codevisualizer_container {
@@ -87,11 +88,9 @@ slice-commandsdocumentation .codevisualizer_container {
 }
 
 slice-commandsdocumentation .best-practices {
-  background-color: var(--secondary-background-color);
-  border-left: 4px solid var(--primary-color);
-  padding: 1.5rem;
+  border-left: 3px solid var(--primary-color);
+  padding: 1.5rem 1.5rem 1.5rem 2rem;
   margin: 2rem 0;
-  border-radius: 0 var(--border-radius-slice) var(--border-radius-slice) 0;
 }
 
 slice-commandsdocumentation .best-practices ul {
@@ -104,11 +103,8 @@ slice-commandsdocumentation .best-practices li {
 }
 
 slice-commandsdocumentation .cli-tips {
-  background-color: var(--secondary-background-color);
   padding: 1.5rem;
   margin: 2rem 0;
-  border-radius: var(--border-radius-slice);
-  border: 1px solid var(--primary-color-shade);
 }
 
 slice-commandsdocumentation .cli-tips ul {
@@ -128,14 +124,27 @@ slice-commandsdocumentation .command-demo {
   padding: 0.5rem 0;
 }
 
+/* Removed section-specific styling backgrounds */
+
 /* Responsive styling */
-@media (min-width: 992px) {
+@media (min-width: 768px) {
+  slice-commandsdocumentation .commands-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
   slice-commandsdocumentation .commands-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 768px) {
+  slice-commandsdocumentation .commands-section {
+    padding: 1rem;
+    margin: 2rem 0;
+  }
+  
   slice-commandsdocumentation .command-card {
     padding: 1rem;
   }

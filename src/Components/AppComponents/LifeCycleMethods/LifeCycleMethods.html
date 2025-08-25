@@ -1,0 +1,83 @@
+<h1 id="lifecycle-methods">LifeCycle Methods in Slice.js</h1>
+<p>
+  Slice.js components have a well-defined lifecycle that allows you to hook into different phases of a component's
+  existence. Understanding these lifecycle methods is crucial for proper component management, especially when working
+  with routing and dynamic content.
+</p>
+
+<h2 id="overview">Overview</h2>
+<p>
+  Every Slice.js component goes through several phases during its lifetime:
+</p>
+<ul>
+  <li><strong>Creation</strong> - When the component instance is first created</li>
+  <li><strong>Initialization</strong> - When the component is set up and ready to be used</li>
+  <li><strong>Updates</strong> - When the component needs to refresh its state or DOM</li>
+  <li><strong>Destruction</strong> - When the component is no longer needed (handled automatically)</li>
+</ul>
+
+<h2 id="lifecycle-flow">LifeCycle Flow</h2>
+<div class="lifecycle-flow-visualization"></div>
+
+<h2 id="init-method">The init() Method</h2>
+<p>
+  The <code>init()</code> method is called <strong>once</strong> after the component is created and its template is attached.
+  This is where you should perform initial setup, fetch data, create child components, and establish event listeners.
+</p>
+
+<h3 id="init-usage">When to use init()</h3>
+<ul>
+  <li>Initial data fetching</li>
+  <li>Setting up event listeners</li>
+  <li>Creating and configuring child components</li>
+  <li>One-time DOM manipulations</li>
+  <li>Establishing component state</li>
+</ul>
+
+<div class="init-example"></div>
+
+<h2 id="update-method">The update() Method</h2>
+<p>
+  The <code>update()</code> method is called <strong>every time</strong> the component needs to refresh itself.
+  This happens when the router re-uses cached components during navigation, or when you manually trigger updates.
+</p>
+
+<h3 id="update-usage">When to use update()</h3>
+<ul>
+  <li>Refreshing data that might have changed</li>
+  <li>Re-applying styles or DOM modifications</li>
+  <li>Updating component state based on new props</li>
+  <li>Synchronizing with external state changes</li>
+</ul>
+
+<div class="update-example"></div>
+
+<h2 id="router-integration">Router Integration</h2>
+<p>
+  The lifecycle methods are particularly important when working with Slice.js routing. The router intelligently
+  manages component instances to optimize performance:
+</p>
+
+<h3 id="component-caching">Component Caching</h3>
+<p>
+  When you navigate between routes, the <code>MultiRoute</code> component caches previously created components.
+  This means:
+</p>
+<ul>
+  <li><strong>First visit</strong>: constructor → init() → component ready</li>
+  <li><strong>Return visits</strong>: update() → component refreshed</li>
+</ul>
+
+<div class="router-integration-example"></div>
+
+<h2 id="best-practices">Best Practices</h2>
+
+<h3 id="init-best-practices">init() Best Practices</h3>
+<div class="init-best-practices"></div>
+
+<h3 id="update-best-practices">update() Best Practices</h3>
+<div class="update-best-practices"></div>
+
+<h2 id="common-pitfalls">Common Pitfalls</h2>
+<div class="common-pitfalls"></div>
+

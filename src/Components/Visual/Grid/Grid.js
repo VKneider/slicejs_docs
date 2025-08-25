@@ -60,15 +60,24 @@ export default class Grid extends HTMLElement {
    }
 
    async setItem(item) {
+      if (!item || !item.classList) {
+         console.warn('Grid: Invalid item provided to setItem', item);
+         return;
+      }
       item.classList.add('grid-item');
       this.$grid.appendChild(item);
    }
 
    async setItems(items) {
+      if (!items || !Array.isArray(items)) {
+         console.warn('Grid: Invalid items array provided', items);
+         return;
+      }
       for (let i = 0; i < items.length; i++) {
-         this.setItem(items[i]);
+         await this.setItem(items[i]);
       }
    }
 }
 
 customElements.define('slice-grid', Grid);
+

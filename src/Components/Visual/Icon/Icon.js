@@ -40,14 +40,27 @@ export default class Icon extends HTMLElement {
       // No need for manual default checking
    }
 
+   update() {
+      // Re-apply all properties to ensure proper styling after router navigation
+      // This method is called on each re-render by MultiRoute
+      if (this.$icon) {
+         if (this._name) this.name = this._name;
+         if (this._iconStyle) this.iconStyle = this._iconStyle;
+         if (this._size) this.size = this._size;
+         if (this._color) this.color = this._color;
+      }
+   }
+
    get name() {
       return this._name;
    }
 
    set name(value) {
       this._name = value;
-      this.$icon.className = '';
-      this.$icon.classList.add(`slc-${styleTypes[this._iconStyle]}${value}`);
+      if (this.$icon) {
+         this.$icon.className = '';
+         this.$icon.classList.add(`slc-${styleTypes[this._iconStyle]}${value}`);
+      }
    }
 
    get iconStyle() {
@@ -79,7 +92,9 @@ export default class Icon extends HTMLElement {
             this._size = value;
       }
 
-      this.$icon.style.fontSize = value;
+      if (this.$icon) {
+         this.$icon.style.fontSize = this._size;
+      }
    }
 
    get color() {
@@ -88,7 +103,9 @@ export default class Icon extends HTMLElement {
 
    set color(value) {
       this._color = value;
-      this.$icon.style.color = value;
+      if (this.$icon) {
+         this.$icon.style.color = value;
+      }
    }
 }
 

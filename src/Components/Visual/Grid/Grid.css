@@ -4,4 +4,12 @@
   grid-template-rows: repeat(1, 1fr);
   gap: 10px;
   margin: 0 auto;
+  background: none;
+  background-color: transparent;
+}
+
+/* Ensure slice-grid component has no background */
+slice-grid {
+  background: none !important;
+  background-color: transparent !important;
 }

@@ -47,6 +47,16 @@ export default class DocumentationPage extends HTMLElement {
                         path: '/Documentation/The-build-method',
                         component: 'TheBuildMethod'
                      },
+                                    {
+                  title: 'Static Props',
+                  path: '/Documentation/Static-Props',
+                  component: 'StaticPropsDocumentation'
+               },
+               {
+                  title: 'LifeCycle Methods',
+                  path: '/Documentation/LifeCycle-Methods',
+                  component: 'LifeCycleMethods'
+               },
                      {
                         title: 'Visual',
                         path: '/Documentation/Visual',

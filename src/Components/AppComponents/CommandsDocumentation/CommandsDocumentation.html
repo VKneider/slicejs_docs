@@ -1,70 +1,133 @@
 <h1 id="cli-commands">Slice.js CLI Commands</h1>
 <p>
   Slice.js comes with a powerful command-line interface (CLI) that helps you create, manage, and run your Slice.js applications. 
-  These commands are defined in your <code>package.json</code> file and can be run using npm.
+  The CLI is organized into logical command groups for better workflow management.
 </p>
 
-<div class="commands-grid">
-  <div class="command-card">
-    <h2 id="init-command">Initialize Project</h2>
-    <div class="command-description">
-      <p>
-        The <code>slice:init</code> command sets up a new Slice.js project with the proper folder structure and configuration files.
-        It's the first command you should run when starting a new Slice.js project.
-      </p>
-      <div class="init-example"></div>
+<div class="commands-section">
+  <h2 id="project-lifecycle">Project Lifecycle Commands</h2>
+  <div class="commands-grid">
+    <div class="command-card">
+      <h3 id="init-command">Initialize Project</h3>
+      <div class="command-description">
+        <p>
+          The <code>slice:init</code> command sets up a new Slice.js project with the proper folder structure and configuration files.
+          It's the first command you should run when starting a new Slice.js project.
+        </p>
+        <div class="init-example"></div>
+      </div>
     </div>
-  </div>
 
-  <div class="command-card">
-    <h2 id="create-command">Create Component</h2>
-    <div class="command-description">
-      <p>
-        The <code>slice:create</code> command helps you create new components with the proper structure.
-        It generates the JavaScript, HTML, and CSS files for your component.
-      </p>
-      <div class="create-example"></div>
-    </div>
-  </div>
-
-  <div class="command-card">
-    <h2 id="list-command">List Components</h2>
-    <div class="command-description">
-      <p>
-        The <code>slice:list</code> command shows you all available components in your project.
-        This is useful for seeing what components you have and where they're located.
-      </p>
-      <div class="list-example"></div>
-    </div>
-  </div>
-
-  <div class="command-card">
-    <h2 id="delete-command">Delete Component</h2>
-    <div class="command-description">
-      <p>
-        The <code>slice:delete</code> command allows you to safely remove components from your project.
-        It ensures all files related to the component are properly deleted.
-      </p>
-      <div class="delete-example"></div>
-    </div>
-  </div>
-
-  <div class="command-card">
-    <h2 id="start-command">Start Server</h2>
-    <div class="command-description">
-      <p>
-        The <code>slice:start</code> command starts the development server for your Slice.js application.
-        It serves your application and provides an interactive server menu.
-      </p>
-      <div class="start-example"></div>
+    <div class="command-card">
+      <h3 id="dev-command">Development Server</h3>
+      <div class="command-description">
+        <p>
+          The <code>slice:dev</code> or <code>slice:start</code> command starts the development server for your Slice.js application.
+          It serves your application from the /src directory and provides live reloading.
+        </p>
+        <div class="dev-example"></div>
+      </div>
     </div>
   </div>
 </div>
 
-<h2 id="workflow">Typical Command Workflow</h2>
+<div class="commands-section">
+  <h2 id="local-components">Local Component Management</h2>
+  <div class="commands-grid">
+    <div class="command-card">
+      <h3 id="create-command">Create Component</h3>
+      <div class="command-description">
+        <p>
+          The <code>slice:component create</code> command helps you create new local components with the proper structure.
+          It generates the JavaScript, HTML, and CSS files for your component.
+        </p>
+        <div class="create-example"></div>
+      </div>
+    </div>
+
+    <div class="command-card">
+      <h3 id="list-command">List Components</h3>
+      <div class="command-description">
+        <p>
+          The <code>slice:component list</code> command shows you all available components in your local project.
+          This is useful for seeing what components you have and where they're located.
+        </p>
+        <div class="list-example"></div>
+      </div>
+    </div>
+
+    <div class="command-card">
+      <h3 id="delete-command">Delete Component</h3>
+      <div class="command-description">
+        <p>
+          The <code>slice:component delete</code> command allows you to safely remove components from your local project.
+          It ensures all files related to the component are properly deleted.
+        </p>
+        <div class="delete-example"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="commands-section">
+  <h2 id="registry-components">Registry Component Management</h2>
+  <div class="commands-grid">
+    <div class="command-card">
+      <h3 id="get-command">Get Components</h3>
+      <div class="command-description">
+        <p>
+          The <code>slice:get</code> command downloads and installs components from the official Slice.js repository.
+          You can install multiple components at once and specify options like force overwrite or service components.
+        </p>
+        <div class="get-example"></div>
+      </div>
+    </div>
+
+    <div class="command-card">
+      <h3 id="browse-command">Browse Components</h3>
+      <div class="command-description">
+        <p>
+          The <code>slice:browse</code> command shows you all available components in the official repository.
+          This helps you discover new components and understand what's available for installation.
+        </p>
+        <div class="browse-example"></div>
+      </div>
+    </div>
+
+    <div class="command-card">
+      <h3 id="sync-command">Sync Components</h3>
+      <div class="command-description">
+        <p>
+          The <code>slice:sync</code> command updates all your local components to the latest versions from the repository.
+          This ensures you have the most recent bug fixes and improvements.
+        </p>
+        <div class="sync-example"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="commands-section">
+  <h2 id="maintenance">Maintenance Commands</h2>
+  <div class="commands-grid">
+    <div class="command-card">
+      <h3 id="version-command">Version & Updates</h3>
+      <div class="command-description">
+        <p>
+          The <code>slice:version</code> and <code>slice:update</code> commands help you check your current version
+          and look for available updates for both the CLI and the Slice.js framework.
+        </p>
+        <div class="version-example"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2 id="workflow">Complete CLI Workflow</h2>
 <p>
-  When developing with Slice.js, you typically follow a workflow that involves multiple commands
-  in a specific sequence. Here's how the commands work together:
+  When developing with Slice.js, you typically follow a comprehensive workflow that involves multiple command categories
+  working together. Here's how all the commands work together:
 </p>
 <div class="command-workflow"></div>
 
@@ -72,25 +135,44 @@
   <h2 id="best-practices">CLI Best Practices</h2>
   <ul>
     <li>Always run <code>slice:init</code> first when creating a new project</li>
-    <li>Use <code>slice:create</code> to ensure components follow the proper structure</li>
-    <li>Run <code>slice:list</code> when you need to reference existing components</li>
-    <li>Use <code>slice:delete</code> instead of manually deleting component files</li>
-    <li>Keep the server running with <code>slice:start</code> during development</li>
+    <li>Use <code>slice:dev</code> for development and keep it running during development</li>
+    <li>Use <code>slice:component create</code> to ensure components follow the proper structure</li>
+    <li>Use <code>slice:get</code> to install official components from the repository</li>
+    <li>Run <code>slice:sync</code> regularly to keep components updated</li>
+    <li>Use <code>slice:build</code> before deploying to production</li>
+    <li>Check for updates with <code>slice:update</code> periodically</li>
   </ul>
 </div>
 
 <div class="cli-tips">
   <h3>Pro Tips</h3>
   <p>
-    <strong>Multiple Terminals:</strong> For the best development experience, keep one terminal running 
-    <code>slice:start</code> and use another terminal for other commands.
+    <strong>Command Groups:</strong> The CLI is organized into logical groups for better workflow management:
   </p>
+  <ul>
+    <li><strong>Project Lifecycle:</strong> <code>init</code>, <code>dev</code>, <code>start</code></li>
+    <li><strong>Local Components:</strong> <code>component create</code>, <code>component list</code>, <code>component delete</code></li>
+    <li><strong>Registry Operations:</strong> <code>get</code>, <code>browse</code>, <code>sync</code></li>
+    <li><strong>Production:</strong> <code>build</code></li>
+    <li><strong>Maintenance:</strong> <code>version</code>, <code>update</code></li>
+  </ul>
+  
+  <p>
+    <strong>Multiple Terminals:</strong> For the best development experience, keep one terminal running 
+    <code>slice:dev</code> and use another terminal for other commands.
+  </p>
+  
   <p>
     <strong>Component Categories:</strong> When creating components, choose the appropriate category:
   </p>
   <ul>
-    <li><strong>Visual:</strong> For UI components that users interact with</li>
-    <li><strong>Service:</strong> For components that provide functionality but no UI</li>
-    <li><strong>AppComponents:</strong> For application-specific components</li>
+    <li><strong>Visual:</strong> For UI components that users interact with (requires HTML, CSS, JS)</li>
+    <li><strong>Service:</strong> For components that provide functionality but no UI (JS only)</li>
+    <li><strong>AppComponents:</strong> For application-specific components (JS only)</li>
   </ul>
+  
+  <p>
+    <strong>Registry vs Local:</strong> Use <code>slice:get</code> for official components and 
+    <code>slice:component create</code> for custom components specific to your project.
+  </p>
 </div>
