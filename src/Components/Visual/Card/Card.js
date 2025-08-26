@@ -78,14 +78,16 @@ export default class Card extends HTMLElement {
       this.$badge = this.querySelector('.card-badge');
       this.$toggle = this.querySelector('.card-toggle');
       this.$progress = this.querySelector('.card-progress');
-      
-      slice.controller.setComponentProps(this, props);
-   }
-
-   async init() {
       // Cache remaining DOM elements (only ones not needed for setters)
       this.$mediaContent = this.querySelector('.card-media-content');
       this.$actions = this.querySelector('.card-actions');
+      slice.controller.setComponentProps(this, props);
+
+   }
+
+   async init() {
+      
+      
       
       // Setup everything
       this.setupVariant();
