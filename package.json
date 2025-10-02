@@ -30,7 +30,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "slicejs-cli": "^2.2.7",
+    "slicejs-cli": "^2.3.0",
     "slicejs-web-framework": "^2.0.3"
   }
 }
