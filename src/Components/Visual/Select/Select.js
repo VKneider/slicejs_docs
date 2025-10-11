@@ -100,6 +100,7 @@ export default class Select extends HTMLElement {
 
    set options(values) {
       this._options = values;
+      if (this.$menu) this.$menu.innerHTML = '';
       values.forEach((option) => {
          const opt = document.createElement('div');
          opt.textContent = option[this.visibleProp];
@@ -184,6 +185,10 @@ export default class Select extends HTMLElement {
 
    set visibleProp(value) {
       this._visibleProp = value;
+      // Si existía ya this._options, regenerar los divs de opciones
+      if (this._options) {
+         this.options = this._options;
+      }
    }
 
    get onOptionSelect() {
