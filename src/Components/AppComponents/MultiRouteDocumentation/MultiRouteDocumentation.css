@@ -1,16 +1,132 @@
-.multiRouteGrid {
-  width: 100%;
+slice-multiroutedocumentation h1 {
+  color: var(--font-primary-color);
+  margin-bottom: 20px;
 }
-.multiRoutes {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+
+slice-multiroutedocumentation h2 {
+  color: var(--font-primary-color);
+  margin-top: 40px;
+  margin-bottom: 20px;
 }
+
+slice-multiroutedocumentation h3 {
+  color: var(--font-primary-color);
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+slice-multiroutedocumentation h4 {
+  color: var(--font-primary-color);
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+
+slice-multiroutedocumentation p {
+  color: var(--font-secondary-color);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+slice-multiroutedocumentation ul {
+  color: var(--font-secondary-color);
+  line-height: 1.8;
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+
+slice-multiroutedocumentation pre {
+  background-color: var(--secondary-background-color);
+  padding: 15px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+slice-multiroutedocumentation code {
+  font-family: 'Courier New', monospace;
+  color: var(--font-primary-color);
+  background-color: var(--secondary-background-color);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
 .multiRouteContainer {
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
-  /* width: 100%; */
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.multiRouteExample {
+  border: 1px solid var(--primary-color-shade);
+  border-radius: 8px;
+  padding: 20px;
+  background-color: var(--secondary-background-color);
+  margin-bottom: 10px;
+  min-height: 100px;
+}
+
+.static-props-example {
+  margin-top: 20px;
+}
+
+.route-info {
+  margin-top: 10px;
+  padding: 15px;
+  background-color: var(--tertiary-background-color);
+  border-radius: 6px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.route-info strong {
+  color: var(--primary-color);
+}
+
+.cache-status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.cache-status.cached {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.cache-status.new {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Estilos para botones de navegación */
+.nav-buttons-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  padding: 15px;
+  background-color: var(--tertiary-background-color);
+  border-radius: 8px;
+}
+
+.nav-button-active {
+  background-color: var(--secondary-color) !important;
+  border-color: var(--secondary-color) !important;
+}
+
+@media only screen and (max-width: 770px) {
+  slice-multiroutedocumentation {
+    padding: 10px;
+  }
+  
+  .multiRouteExample {
+    padding: 10px;
+  }
+  
+  .nav-buttons-container {
+    padding: 10px;
+  }
 }

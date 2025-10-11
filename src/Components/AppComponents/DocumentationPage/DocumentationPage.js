@@ -69,7 +69,6 @@ export default class DocumentationPage extends HTMLElement {
          onClickCallback: async (item) => {
             if (item.path) {
                await slice.router.navigate(item.path);
-               myNavigation.page = VisualComponentsMultiRoute;
             }
          },
       });

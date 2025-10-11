@@ -1,3 +1,74 @@
-<div class="selectdocumentation">
-  SelectDocumentation
+<h1 id="sliceSelect">Slice Select</h1>
+<div class="mySelect">
+  <p>
+    The Select component provides a customizable dropdown selector with support for single 
+    and multiple selection modes. It automatically handles option rendering and selection state.
+    The component uses Static Props for automatic defaults and enhanced debugging.
+  </p>
 </div>
+
+<div class="basicSelect">
+  <h2 id="basicUsage">Basic Usage</h2>
+  <p>
+    Create a simple Select with an array of options. Each option is an object where you can 
+    specify which property to display using the visibleProp. By default, it looks for a 'text' 
+    property in each option object.
+  </p>
+</div>
+
+<div class="labelSelect">
+  <h2 id="withLabel">With Label</h2>
+  <p>
+    Add a label (placeholder) to your Select to indicate what the user should select. 
+    The label disappears when an option is selected and reappears when cleared.
+  </p>
+</div>
+
+<div class="multipleSelect">
+  <h2 id="multipleSelection">Multiple Selection</h2>
+  <p>
+    Enable multiple selection mode to allow users to select more than one option. 
+    Selected options are displayed as a comma-separated list. Static Props ensure 
+    the multiple property is properly typed as boolean with a default of false.
+  </p>
+</div>
+
+<div class="callbackSelect">
+  <h2 id="onOptionSelect">onOptionSelect Callback</h2>
+  <p>
+    Use the onOptionSelect callback to execute custom logic when an option is selected 
+    or deselected. This is perfect for form validation, API calls, or updating other 
+    components based on the selection.
+  </p>
+</div>
+
+<div class="visiblePropSelect">
+  <h2 id="visibleProp">Custom Visible Property</h2>
+  <p>
+    Use the visibleProp to specify which property of your option objects should be 
+    displayed in the dropdown. This allows you to work with complex data structures 
+    while displaying user-friendly labels.
+  </p>
+</div>
+
+<div class="disabledSelect">
+  <h2 id="disabledState">Disabled State</h2>
+  <p>
+    Set the disabled property to true to prevent user interaction with the Select. 
+    This is useful for readonly forms or conditional form fields.
+  </p>
+</div>
+
+<h2 id="staticPropsOverview">Static Props Integration</h2>
+<p>
+  The Select component leverages Static Props for improved developer experience:
+</p>
+<ul>
+  <li><strong>Automatic defaults:</strong> All props have sensible defaults applied automatically</li>
+  <li><strong>Type validation:</strong> Development-time warnings for incorrect prop types</li>
+  <li><strong>Enhanced debugging:</strong> Right-click any select to see detailed prop information</li>
+  <li><strong>Self-documenting:</strong> Props are clearly defined with types and defaults</li>
+</ul>
+
+<h3 id="staticPropsConfig">Select Static Props Configuration:</h3>
+<div class="static-props-example"></div>

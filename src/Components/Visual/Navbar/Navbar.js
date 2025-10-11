@@ -53,10 +53,10 @@ export default class Navbar extends HTMLElement {
    }
 
    async init() {
-      if (this.items) {
+      if (this.items && this.items.length > 0) {
          await this.addItems(this.items);
       }
-      if (this.buttons) {
+      if (this.buttons && this.buttons.length > 0) {
          this.buttons.forEach(async (item) => {
             await this.addButton(item, this.$buttonsContainer);
          });
@@ -90,6 +90,9 @@ export default class Navbar extends HTMLElement {
 
    set logo(value) {
       this._logo = value;
+      // ✅ CORREGIDO: Validar que value no sea null antes de usarlo
+      if (!value) return;
+      
       const img = document.createElement('img');
       img.src = value.src;
       this.$logoContainer.appendChild(img);
@@ -118,6 +121,7 @@ export default class Navbar extends HTMLElement {
 
    set direction(value) {
       this._direction = value;
+      // ✅ MEJORADO: Validar valor antes de aplicar clase
       if (value === 'reverse') {
          this.$header.classList.add('direction-row-reverse');
       }
@@ -127,9 +131,11 @@ export default class Navbar extends HTMLElement {
       const item = document.createElement('li');
       const hover = document.createElement('div');
       hover.classList.add('anim-item');
+      
       if (!value.type) {
          value.type = 'text';
       }
+      
       if (value.type === 'text') {
          const link = await slice.build('Link', {
             text: value.text,
@@ -138,6 +144,7 @@ export default class Navbar extends HTMLElement {
          });
          item.appendChild(link);
       }
+      
       if (value.type === 'dropdown') {
          const d = await slice.build('DropDown', {
             label: value.text,
@@ -146,6 +153,7 @@ export default class Navbar extends HTMLElement {
          d.classList.add('item');
          item.appendChild(d);
       }
+      
       item.appendChild(hover);
       addTo.appendChild(item);
    }
@@ -157,13 +165,16 @@ export default class Navbar extends HTMLElement {
             button: 'var(--primary-background-color)',
          };
       }
+      
       const button = await slice.build('Button', {
          value: value.value,
          customColor: value.color,
          icon: value.icon,
          onClickCallback: value.onClickCallback,
       });
+      
       addTo.appendChild(button);
    }
 }
+
 window.customElements.define('slice-nav-bar', Navbar);
