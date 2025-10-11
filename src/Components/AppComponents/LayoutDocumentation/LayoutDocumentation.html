@@ -1,3 +1,132 @@
-<div class="layoutdocumentation">
-  LayoutDocumentation
+<h1 id="sliceLayout">Slice Layout</h1>
+<div class="basicLayout">
+  <h2 id="basicUsage">Basic Layout with View</h2>
+  <p>
+    The simplest way to use Layout is with just a view prop. The <strong>VIEW</strong> (labeled in blue)
+    is the main content area. Notice the visual label <code>📄 VIEW</code> that identifies this element.
+  </p>
 </div>
+
+<div class="layoutAndView">
+  <h2 id="layoutAndView">Layout with Navbar and View</h2>
+  <p>
+    This example shows both props in action. The <strong style="color: var(--success-color);">LAYOUT</strong> 
+    (navbar, labeled in green) is passed via the <code>layout</code> prop, while the 
+    <strong style="color: var(--primary-color);">VIEW</strong> (content, labeled in blue) is passed via 
+    the <code>view</code> prop. See how they're visually labeled and color-coded!
+  </p>
+</div>
+
+<div class="onLayoutMethod">
+  <h2 id="onLayoutMethod">Multiple Fixed Elements with onLayOut()</h2>
+  <p>
+    Here's where it gets powerful! The <strong style="color: var(--warning-color);">onLayOut()</strong> 
+    method adds fixed elements (labeled in orange). In this example, both the navbar and sidebar are added 
+    with <code>onLayOut()</code>, while the main content is in the <strong style="color: var(--primary-color);">VIEW</strong> 
+    (labeled in blue). Notice how each element is clearly labeled with its method of addition!
+  </p>
+  <p>
+    <strong>Key point:</strong> Elements added with <code>onLayOut()</code> persist across all view changes.
+  </p>
+</div>
+
+<div class="showingMethod">
+  <h2 id="showingMethod">Interactive Demo: showing() Method</h2>
+  <p>
+    This interactive example demonstrates the <code>showing()</code> method. The navbar and control buttons 
+    are <strong style="color: var(--success-color);">FIXED</strong> (added with <code>onLayOut()</code>, labeled in green). 
+    The page content is the <strong>VIEW</strong> that changes.
+  </p>
+  <p>
+    <strong>Try it:</strong> Click the buttons below to switch between Home and About pages. 
+    Watch how only the <code>📄 VIEW</code> area changes while the fixed elements stay in place!
+  </p>
+</div>
+
+<h2 id="visualLegend">Visual Legend</h2>
+<div style="background-color: var(--secondary-background-color); padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+  <p style="color: var(--font-secondary-color); margin-bottom: 15px;">
+    The examples above use color-coded labels to identify each type of element:
+  </p>
+  <ul style="list-style: none; padding: 0;">
+    <li style="margin: 10px 0; padding: 10px; background-color: var(--primary-background-color); border-radius: 4px; border-left: 4px solid var(--success-color);">
+      <strong style="color: var(--success-color);">🔧 LAYOUT</strong> or <strong style="color: var(--success-color);">🔒 FIXED</strong> 
+      <span style="color: var(--font-secondary-color);"> - Element passed via <code>layout</code> prop or added with <code>onLayOut()</code></span>
+    </li>
+    <li style="margin: 10px 0; padding: 10px; background-color: var(--primary-background-color); border-radius: 4px; border-left: 4px solid var(--primary-color);">
+      <strong style="color: var(--primary-color);">📄 VIEW</strong>
+      <span style="color: var(--font-secondary-color);"> - Main content area passed via <code>view</code> prop (can be changed with <code>showing()</code>)</span>
+    </li>
+    <li style="margin: 10px 0; padding: 10px; background-color: var(--primary-background-color); border-radius: 4px; border-left: 4px solid var(--warning-color);">
+      <strong style="color: var(--warning-color);">⚙️ Added with onLayOut()</strong>
+      <span style="color: var(--font-secondary-color);"> - Fixed element added dynamically with the <code>onLayOut()</code> method</span>
+    </li>
+  </ul>
+</div>
+
+<h2 id="staticPropsOverview">Static Props Integration</h2>
+<p>
+  The Layout component leverages Static Props for improved developer experience:
+</p>
+<ul>
+  <li><strong>Automatic defaults:</strong> All props have sensible defaults applied automatically</li>
+  <li><strong>Type validation:</strong> Development-time warnings for incorrect prop types</li>
+  <li><strong>Enhanced debugging:</strong> Right-click any layout to see detailed prop information</li>
+  <li><strong>Flexible structure:</strong> Accepts any HTMLElement or SliceJS component</li>
+</ul>
+
+<h3 id="staticPropsConfig">Layout Static Props Configuration:</h3>
+<div class="static-props-example"></div>
+
+<h2 id="keyDifferences">Key Differences</h2>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+  <div style="background-color: var(--secondary-background-color); padding: 20px; border-radius: 8px; border-top: 4px solid var(--primary-color);">
+    <h3 style="color: var(--primary-color); margin-top: 0;">layout prop</h3>
+    <ul>
+      <li>For a <strong>single</strong> fixed element</li>
+      <li>Set during initialization</li>
+      <li>Appears first in DOM order</li>
+      <li>Good for simple structures</li>
+    </ul>
+  </div>
+  <div style="background-color: var(--secondary-background-color); padding: 20px; border-radius: 8px; border-top: 4px solid var(--warning-color);">
+    <h3 style="color: var(--warning-color); margin-top: 0;">onLayOut() method</h3>
+    <ul>
+      <li>For <strong>multiple</strong> fixed elements</li>
+      <li>Can be called multiple times</li>
+      <li>Adds elements in call order</li>
+      <li>More flexible and powerful</li>
+    </ul>
+  </div>
+</div>
+
+<h2 id="methodBehavior">Method Behavior Explained</h2>
+<div style="background-color: var(--tertiary-background-color); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+  <h3 style="color: var(--warning-color);">onLayOut(element) - Additive</h3>
+  <ul>
+    <li>✅ Can be called multiple times</li>
+    <li>✅ Each call adds a new fixed element</li>
+    <li>✅ Elements persist across all view changes</li>
+    <li>✅ Perfect for navbars, sidebars, footers, control panels</li>
+  </ul>
+</div>
+
+<div style="background-color: var(--tertiary-background-color); padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+  <h3 style="color: var(--primary-color);">showing(element) - Replacement</h3>
+  <ul>
+    <li>🔄 Replaces the current view completely</li>
+    <li>🔄 Only one view is visible at a time</li>
+    <li>🔄 Removes the previous view from DOM</li>
+    <li>🔄 Fixed elements from onLayOut() remain unchanged</li>
+    <li>🔄 Perfect for page navigation and content switching</li>
+  </ul>
+</div>
+
+<h2 id="useCases">Common Use Cases</h2>
+<ul>
+  <li><strong>Application Shell:</strong> Navbar + Sidebar + Dynamic Content</li>
+  <li><strong>Dashboard:</strong> Fixed navigation with switchable panels</li>
+  <li><strong>Documentation Site:</strong> Persistent menu with page content (like this site!)</li>
+  <li><strong>Multi-page App:</strong> Layout + MultiRoute for automatic routing</li>
+  <li><strong>Admin Panel:</strong> Header + Sidebar + Main content area</li>
+</ul>

@@ -1,3 +1,161 @@
-<div class="griddocumentation">
-  GridDocumentation
+<h1 id="sliceGrid">Slice Grid</h1>
+<div class="basicGrid">
+  <h2 id="basicUsage">Basic Grid Layout</h2>
+  <p>
+    The Grid component provides a CSS Grid-based layout system. Simply specify the number of 
+    <code>columns</code> and <code>rows</code>, then add items using the <code>setItem()</code> method. 
+    Each grid uses equal-width columns (<code>1fr</code>) by default.
+  </p>
+  <p>
+    <strong>See it in action:</strong> A basic 2-column grid displaying two cards with equal spacing.
+  </p>
+</div>
+
+<div class="threeColumnsGrid">
+  <h2 id="threeColumns">Three Column Layout</h2>
+  <p>
+    Perfect for dashboards displaying multiple metrics or data points. The Grid automatically 
+    distributes items equally across the specified columns. Great for data visualization and 
+    metric displays.
+  </p>
+</div>
+
+<div class="itemsInitGrid">
+  <h2 id="itemsInit">Items on Initialization</h2>
+  <p>
+    You can pass an <code>items</code> array when building the Grid to automatically populate it. 
+    This is perfect when you have all your content ready upfront. The Grid will add all items 
+    in order automatically.
+  </p>
+</div>
+
+<div class="responsiveGrid">
+  <h2 id="responsiveGrid">Responsive Grid</h2>
+  <p>
+    Adapt the grid layout based on screen size by changing the <code>columns</code> property. 
+    This example shows 4 columns on desktop and 2 columns on mobile. You can dynamically 
+    adjust the layout based on <code>window.innerWidth</code> or media queries.
+  </p>
+</div>
+
+<h2 id="staticPropsOverview">Static Props Integration</h2>
+<p>
+  The Grid component leverages Static Props for improved developer experience:
+</p>
+<ul>
+  <li><strong>Automatic defaults:</strong> All props have sensible defaults applied automatically</li>
+  <li><strong>Type validation:</strong> Development-time warnings for incorrect prop types</li>
+  <li><strong>Enhanced debugging:</strong> Right-click any grid to see detailed prop information</li>
+  <li><strong>Flexible sizing:</strong> Uses CSS Grid with equal fractional units (1fr)</li>
+</ul>
+
+<h3 id="staticPropsConfig">Grid Static Props Configuration:</h3>
+<div class="static-props-example"></div>
+
+<h2 id="usagePatterns">Common Usage Patterns</h2>
+
+<h3 id="dashboardPattern">Dashboard with Metrics</h3>
+<pre><code>const grid = await slice.build("Grid", {
+   columns: 3,
+   rows: 1
+});
+
+// Add metric cards
+const revenueCard = await slice.build("Card", {
+   title: "Revenue",
+   text: "$125,000"
+});
+const usersCard = await slice.build("Card", {
+   title: "Active Users",
+   text: "1,250"
+});
+const salesCard = await slice.build("Card", {
+   title: "Sales",
+   text: "450"
+});
+
+await grid.setItem(revenueCard);
+await grid.setItem(usersCard);
+await grid.setItem(salesCard);
+
+document.body.appendChild(grid);</code></pre>
+
+<h3 id="productGalleryPattern">Product Gallery</h3>
+<pre><code>const grid = await slice.build("Grid", {
+   columns: 4,
+   rows: 2,
+   gap: "20px"
+});
+
+// Load products dynamically
+const products = await fetchProducts();
+products.forEach(async (product) => {
+   const productCard = await slice.build("Card", {
+      title: product.name,
+      text: product.price
+   });
+   await grid.setItem(productCard);
+});
+
+this.appendChild(grid);</code></pre>
+
+<h3 id="dynamicContentPattern">Dynamic Content Management</h3>
+<pre><code>const grid = await slice.build("Grid", {
+   columns: 3,
+   rows: 1
+});
+
+// Add initial items
+initialItems.forEach(async (item) => {
+   await grid.setItem(item);
+});
+
+// Add new item dynamically
+async function addNewItem(data) {
+   const card = await slice.build("Card", data);
+   await grid.setItem(card);
+}
+
+// Clear and rebuild
+function rebuildGrid(newItems) {
+   grid.clear();
+   newItems.forEach(async (item) => {
+      await grid.setItem(item);
+   });
+}</code></pre>
+
+<h2 id="keyFeatures">Key Features</h2>
+<ul>
+  <li><strong>Equal Column Widths:</strong> Uses 1fr for each column (equal distribution)</li>
+  <li><strong>Flexible Gap:</strong> Customizable spacing between items</li>
+  <li><strong>Dynamic Addition:</strong> Add items one by one or all at once</li>
+  <li><strong>Auto Grid Item Class:</strong> Each item gets <code>grid-item</code> class automatically</li>
+  <li><strong>Responsive Ready:</strong> Easy to adapt based on screen size</li>
+  <li><strong>Static Props:</strong> Automatic validation and defaults</li>
+</ul>
+
+<h2 id="bestPractices">Tips & Best Practices</h2>
+<ul>
+  <li>Use the <code>items</code> array prop when all content is ready upfront</li>
+  <li>Use <code>setItem()</code> for dynamic content addition</li>
+  <li>Adjust <code>columns</code> based on <code>window.innerWidth</code> for responsive layouts</li>
+  <li>Use consistent <code>gap</code> values across your application for visual harmony</li>
+  <li>Call <code>clear()</code> before rebuilding grid content to avoid duplicates</li>
+  <li>Each item should have a min-height to maintain grid structure</li>
+  <li>Consider using <code>rows: 1</code> for auto-growing grids</li>
+  <li>Grid items receive <code>grid-item</code> class for custom styling</li>
+</ul>
+
+<h2 id="cssGrid">Understanding CSS Grid</h2>
+<p>
+  The Grid component uses native CSS Grid with <code>repeat(n, 1fr)</code> for columns and rows. 
+  This means each column/row takes an equal fraction of available space. The <code>gap</code> 
+  property controls spacing between items.
+</p>
+<div style="background-color: var(--secondary-background-color); padding: 20px; border-radius: 8px; margin-top: 10px;">
+  <p style="color: var(--font-secondary-color); margin: 0;">
+    <strong>Note:</strong> The Grid component is optimized for equal-width layouts. For more complex 
+    grid patterns (like different column widths), consider using custom CSS Grid directly or extending 
+    the Grid component with <code>columnTemplate</code> and <code>rowTemplate</code> props.
+  </p>
 </div>
