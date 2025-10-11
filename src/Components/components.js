@@ -3,18 +3,26 @@ const components = {
   "CardDocumentation": "AppComponents",
   "CheckboxDocumentation": "AppComponents",
   "CommandsDocumentation": "AppComponents",
+  "DetailsDocumentation": "AppComponents",
   "Documentation": "AppComponents",
   "DocumentationPage": "AppComponents",
+  "DropDownDocumentation": "AppComponents",
+  "GridDocumentation": "AppComponents",
   "InputDocumentation": "AppComponents",
   "Installation": "AppComponents",
   "LandingMenu": "AppComponents",
   "LandingPage": "AppComponents",
+  "LayoutDocumentation": "AppComponents",
   "LifeCycleMethods": "AppComponents",
+  "LoadingDocumentation": "AppComponents",
   "MainMenu": "AppComponents",
+  "MultiRouteDocumentation": "AppComponents",
   "MyLayout": "AppComponents",
   "MyNavigation": "AppComponents",
+  "NavBarDocumentation": "AppComponents",
   "Playground": "AppComponents",
   "RoutingDocumentation": "AppComponents",
+  "SelectDocumentation": "AppComponents",
   "ServiceDocumentation": "AppComponents",
   "SliceConfigDocumentation": "AppComponents",
   "SliceStylesDocumentation": "AppComponents",
@@ -26,6 +34,7 @@ const components = {
   "ThemeCreator": "AppComponents",
   "ThemesDocumentation": "AppComponents",
   "TheSliceTeam": "AppComponents",
+  "TreeViewDocumentation": "AppComponents",
   "VisualDocumentation": "AppComponents",
   "WhatIsSlice": "AppComponents",
   "Button": "Visual",
@@ -52,4 +61,6 @@ const components = {
   "Link": "Service",
   "LocalStorageManager": "Service",
   "Translator": "Service"
-}; export default components;
+};
+
+export default components;

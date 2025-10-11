@@ -82,6 +82,42 @@ const routes = [
                      {
                         path: '/Input',
                         component: 'InputDocumentation',
+                     },
+                     {
+                        path: '/MultiRoute',
+                        component: 'MultiRouteDocumentation',
+                     },
+                     {
+                        path: '/DropDown',
+                        component: 'DropDownDocumentation',
+                     },
+                     {
+                        path: '/Layout',
+                        component: 'LayoutDocumentation',
+                     },
+                     {
+                        path: '/Loading',
+                        component: 'LoadingDocumentation',
+                     },
+                     {
+                        path: '/Details',
+                        component: 'DetailsDocumentation',
+                     },
+                     {
+                        path: '/TreeView',
+                        component: 'TreeViewDocumentation',
+                     },
+                     {
+                        path: '/Grid',
+                        component: 'GridDocumentation',
+                     },
+                     {
+                        path: '/NavBar',
+                        component: 'NavBarDocumentation',
+                     },
+                     {
+                        path: '/Select',
+                        component: 'SelectDocumentation',
                      }
                   ]
                },

@@ -1,0 +1,35 @@
+<h1 id="sliceMultiRoute">Slice MultiRoute</h1>
+<div class="myMultiRoute">
+  <p>
+    To build a simple Slice MultiRoute you only need to use the "slice.build"
+    method with a routes array prop. The MultiRoute component automatically applies default values 
+    and provides enhanced debugging capabilities through Static Props. It handles dynamic component 
+    rendering based on the current URL pathname with built-in component caching for optimal performance.
+  </p>
+</div>
+<div class="advancedExample">
+  <h2 id="advancedUsage">Advanced Usage</h2>
+  <p>
+    You can configure multiple routes with different components. The MultiRoute component 
+    automatically matches the current pathname with your defined routes and renders the 
+    corresponding component. Static Props ensure that the routes property is properly typed as an array 
+    and provides validation in development mode.
+  </p>
+</div>
+
+<h2 id="staticPropsOverview">Static Props Integration</h2>
+<p>
+  The MultiRoute component leverages Static Props for improved developer experience:
+</p>
+<ul>
+  <li><strong>Automatic defaults:</strong> All props have sensible defaults applied automatically</li>
+  <li><strong>Type validation:</strong> Development-time warnings for incorrect prop types</li>
+  <li><strong>Enhanced debugging:</strong> Right-click any MultiRoute to see detailed prop information</li>
+  <li><strong>Self-documenting:</strong> Props are clearly defined with types and defaults</li>
+  <li><strong>Component caching:</strong> Built-in performance optimization with component reuse</li>
+</ul>
+
+<h3>MultiRoute Static Props Configuration:</h3>
+<pre><code>static props = {
+   routes: { type: 'array', default: [], required: true }
+};</code></pre>

@@ -1,0 +1,16 @@
+.multiRouteGrid {
+  width: 100%;
+}
+.multiRoutes {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.multiRouteContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  /* width: 100%; */
+}
