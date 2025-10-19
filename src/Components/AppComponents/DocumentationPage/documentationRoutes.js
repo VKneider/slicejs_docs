@@ -64,9 +64,20 @@ export const documentationRoutes = {
             ]
          },
          {
-            title: 'Routing',
-            path: '/Documentation/Routing',
-            component: 'RoutingDocumentation'
+            title: 'Slice Routing',
+            items:[
+               {
+                  title: 'Navigation',
+                  path: '/Documentation/Routing',
+                  component: 'RoutingDocumentation'
+               },
+               {
+                  title: 'Route Guards',
+                  path: '/Documentation/Routing/Guards',
+                  component: 'RouterGuardsDocumentation'
+               },
+
+            ]
          },
          {
             title: 'Themes',

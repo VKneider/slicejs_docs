@@ -21,6 +21,7 @@ const components = {
   "MyNavigation": "AppComponents",
   "NavBarDocumentation": "AppComponents",
   "Playground": "AppComponents",
+  "RouterGuardsDocumentation": "AppComponents",
   "RoutingDocumentation": "AppComponents",
   "SelectDocumentation": "AppComponents",
   "ServiceDocumentation": "AppComponents",
