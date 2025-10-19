@@ -1,1 +1,119 @@
-/* Styles for LayoutDocumentation component */
+slice-layoutdocumentation {
+  display: block;
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+slice-layoutdocumentation h1 {
+  color: var(--font-primary-color);
+  margin-bottom: 20px;
+}
+
+slice-layoutdocumentation h2 {
+  color: var(--font-primary-color);
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+slice-layoutdocumentation h3 {
+  color: var(--font-primary-color);
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+slice-layoutdocumentation h4 {
+  color: var(--font-primary-color);
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+
+slice-layoutdocumentation p {
+  color: var(--font-secondary-color);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+slice-layoutdocumentation ul {
+  color: var(--font-secondary-color);
+  line-height: 1.8;
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+
+slice-layoutdocumentation ul li::marker {
+  color: var(--primary-color);
+}
+
+slice-layoutdocumentation code {
+  background-color: var(--tertiary-background-color);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  color: var(--primary-color);
+  font-size: 0.9em;
+}
+
+slice-layoutdocumentation .layoutExample {
+  border: 1px solid var(--primary-color-shade);
+  border-radius: 8px;
+  padding: 20px;
+  background-color: var(--secondary-background-color);
+  margin-bottom: 30px;
+}
+
+slice-layoutdocumentation .layoutPreview {
+  border: 2px solid var(--primary-color-shade);
+  border-radius: 8px;
+  padding: 15px;
+  background-color: var(--primary-background-color);
+  margin-bottom: 20px;
+  min-height: 200px;
+}
+
+slice-layoutdocumentation .static-props-example {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: var(--secondary-background-color);
+  border-radius: 8px;
+  border: 1px solid var(--primary-color-shade);
+}
+
+slice-layoutdocumentation .static-props-example h2 {
+  margin-top: 0;
+}
+
+slice-layoutdocumentation .static-props-example h4 {
+  margin-top: 30px;
+}
+
+slice-layoutdocumentation .static-props-example p {
+  margin-bottom: 20px;
+}
+
+slice-layoutdocumentation .methods-example {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: var(--secondary-background-color);
+  border-radius: 8px;
+  border: 1px solid var(--primary-color-shade);
+}
+
+slice-layoutdocumentation .methods-example h4 {
+  margin-top: 30px;
+}
+
+@media only screen and (max-width: 770px) {
+  slice-layoutdocumentation {
+    padding: 10px;
+  }
+  
+  slice-layoutdocumentation .layoutExample {
+    padding: 10px;
+  }
+
+  slice-layoutdocumentation .static-props-example,
+  slice-layoutdocumentation .methods-example {
+    padding: 15px;
+  }
+}

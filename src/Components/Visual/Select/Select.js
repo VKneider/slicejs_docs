@@ -41,9 +41,12 @@ export default class Select extends HTMLElement {
       this.$caret = this.querySelector('.caret');
 
       this.$selectContainer.addEventListener('click', () => {
-         this.$menu.classList.toggle('menu_open');
-         this.$caret.classList.toggle('caret_open');
+         if (!this.disabled) {
+            this.$menu.classList.toggle('menu_open');
+            this.$caret.classList.toggle('caret_open');
+         }
       });
+      
       this.$dropdown.addEventListener('mouseleave', () => {
          this.$menu.classList.remove('menu_open');
          this.$caret.classList.remove('caret_open');
@@ -56,18 +59,55 @@ export default class Select extends HTMLElement {
 
    init() {
       // Static props ensure all properties have default values
-      // No need for manual default checking
    }
 
    get options() {
       return this._options;
    }
 
+   set options(values) {
+      // ✅ Validar que values no sea null o undefined
+      if (!values || !Array.isArray(values)) return;
+      
+      this._options = values;
+      
+      // ✅ Limpiar menú si existe
+      if (this.$menu) {
+         this.$menu.innerHTML = '';
+      }
+      
+      values.forEach((option) => {
+         const opt = document.createElement('div');
+         opt.textContent = option[this.visibleProp];
+         opt.addEventListener('click', async () => {
+            if (this.$menu.querySelector('.active') && !this.multiple) {
+               this.$menu.querySelector('.active').classList.remove('active');
+            }
+
+            if (this._value.length === 1 && !this.multiple) {
+               this.removeOptionFromValue(this._value[0]);
+               this.addSelectedOption(option);
+               if (this.onOptionSelect) await this.onOptionSelect.call(this);
+               return;
+            }
+
+            if (this.isObjectInArray(option, this._value).found) {
+               this.removeOptionFromValue(option);
+               opt.classList.remove('active');
+            } else {
+               this.addSelectedOption(option);
+               opt.classList.add('active');
+            }
+            if (this.onOptionSelect) await this.onOptionSelect.call(this);
+         });
+         this.$menu.appendChild(opt);
+      });
+   }
+
    removeOptionFromValue(option) {
       const optionIndex = this.isObjectInArray(option, this._value).index;
       if (optionIndex !== -1) {
          this._value.splice(optionIndex, 1);
-         // Actualizar la representación visual en el elemento select
          this.updateSelectLabel();
       }
 
@@ -77,10 +117,8 @@ export default class Select extends HTMLElement {
    }
 
    updateSelectLabel() {
-      // Limpiar el contenido actual del elemento select
       this.$select.value = '';
 
-      // Volver a agregar los valores seleccionados
       if (this._value.length > 0) {
          this.$select.value = this._value.map((option) => option[this.visibleProp]).join(', ');
          this.$label.classList.add('slice_select_value');
@@ -98,37 +136,6 @@ export default class Select extends HTMLElement {
       }
    }
 
-   set options(values) {
-      this._options = values;
-      if (this.$menu) this.$menu.innerHTML = '';
-      values.forEach((option) => {
-         const opt = document.createElement('div');
-         opt.textContent = option[this.visibleProp];
-         opt.addEventListener('click', async () => {
-            if (this.$menu.querySelector('.active') && !this.multiple) {
-               this.$menu.querySelector('.active').classList.remove('active');
-            }
-
-            if (this._value.length === 1 && !this.multiple) {
-               this.removeOptionFromValue(this._value[0]);
-               this.addSelectedOption(option);
-               if (this.onOptionSelect) await this.onOptionSelect();
-               return;
-            }
-
-            if (this.isObjectInArray(option, this._value).found) {
-               this.removeOptionFromValue(option);
-               opt.classList.remove('active');
-            } else {
-               this.addSelectedOption(option);
-               opt.classList.add('active');
-            }
-            if (this.onOptionSelect) await this.onOptionSelect();
-         });
-         this.$menu.appendChild(opt);
-      });
-   }
-
    get value() {
       if (this._value.length === 1) {
          return this._value[0];
@@ -137,20 +144,31 @@ export default class Select extends HTMLElement {
    }
 
    set value(valueParam) {
+      // ✅ Validar que valueParam sea un array
+      if (!valueParam || !Array.isArray(valueParam)) return;
+      
       this._value = [];
 
       if (valueParam.length > 1 && !this.multiple) {
-         return console.error('Select is not multiple, you can only select one option');
-      }
-
-      const validOptions = valueParam.every((option) => this.isObjectInArray(option, this._options).found);
-
-      if (!validOptions) {
-         console.error('Error: Al menos una de las opciones proporcionadas no está en this.options.');
+         console.error('Select is not multiple, you can only select one option');
          return;
       }
 
-      // Agregar las opciones a _value
+      // ✅ Validar que exista this._options antes de verificar
+      if (!this._options) {
+         console.error('Cannot set value before options are defined');
+         return;
+      }
+
+      const validOptions = valueParam.every((option) => 
+         this.isObjectInArray(option, this._options).found
+      );
+
+      if (!validOptions) {
+         console.error('Error: At least one of the provided options is not in this.options');
+         return;
+      }
+
       this.$label.classList.add('slice_select_value');
       valueParam.forEach((option) => this.addSelectedOption(option));
    }
@@ -161,12 +179,16 @@ export default class Select extends HTMLElement {
 
    set label(value) {
       this._label = value;
-      this.$label.textContent = value;
+      // ✅ Validar que value no sea null o undefined
+      if (value !== null && value !== undefined && this.$label) {
+         this.$label.textContent = value;
+      }
    }
 
    get multiple() {
       return this._multiple;
    }
+   
    set multiple(value) {
       this._multiple = value;
    }
@@ -177,6 +199,16 @@ export default class Select extends HTMLElement {
 
    set disabled(value) {
       this._disabled = value;
+      // ✅ Actualizar estado visual del select cuando cambia disabled
+      if (this.$selectContainer) {
+         if (value) {
+            this.$selectContainer.style.opacity = '0.5';
+            this.$selectContainer.style.cursor = 'not-allowed';
+         } else {
+            this.$selectContainer.style.opacity = '1';
+            this.$selectContainer.style.cursor = 'pointer';
+         }
+      }
    }
 
    get visibleProp() {
@@ -186,7 +218,7 @@ export default class Select extends HTMLElement {
    set visibleProp(value) {
       this._visibleProp = value;
       // Si existía ya this._options, regenerar los divs de opciones
-      if (this._options) {
+      if (this._options && this._options.length > 0) {
          this.options = this._options;
       }
    }
@@ -207,6 +239,7 @@ export default class Select extends HTMLElement {
       }
       return { found: false, index: -1 };
    }
+   
    sameObject(objetoA, objetoB) {
       const keysA = Object.keys(objetoA);
       const keysB = Object.keys(objetoB);

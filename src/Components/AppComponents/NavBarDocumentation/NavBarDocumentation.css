@@ -1,1 +1,116 @@
-/* Styles for NavBarDocumentation component */
+slice-navbardocumentation h1 {
+  color: var(--font-primary-color);
+  margin-bottom: 20px;
+}
+
+slice-navbardocumentation h2 {
+  color: var(--font-primary-color);
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+slice-navbardocumentation h3 {
+  color: var(--font-primary-color);
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+slice-navbardocumentation h4 {
+  color: var(--font-primary-color);
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+
+slice-navbardocumentation p {
+  color: var(--font-secondary-color);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+slice-navbardocumentation ul {
+  color: var(--font-secondary-color);
+  line-height: 1.8;
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+
+slice-navbardocumentation pre {
+  background-color: var(--secondary-background-color);
+  padding: 15px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+slice-navbardocumentation code {
+  font-family: 'Courier New', monospace;
+  color: var(--font-primary-color);
+}
+
+.navbarContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.navbarExample {
+  border: 1px solid var(--primary-color-shade);
+  border-radius: 8px;
+  padding: 20px;
+  background-color: var(--secondary-background-color);
+  margin-bottom: 10px;
+}
+
+.static-props-example {
+  margin-top: 20px;
+}
+
+@media only screen and (max-width: 770px) {
+  slice-navbardocumentation {
+    padding: 10px;
+  }
+  
+  .navbarExample {
+    padding: 10px;
+  }
+}
+
+.navbarGrid {
+  width: 100%;
+}
+
+.navbarContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.navbarExample {
+  border: 1px solid var(--primary-color-shade);
+  border-radius: 8px;
+  padding: 20px;
+  background-color: var(--secondary-background-color);
+}
+
+.static-props-example {
+  margin-top: 40px;
+  padding: 20px;
+  background-color: var(--secondary-background-color);
+  border-radius: 8px;
+}
+
+.static-props-example h2 {
+  margin-top: 0;
+}
+
+.static-props-example p {
+  margin-bottom: 20px;
+}
+
+@media only screen and (max-width: 770px) {
+  .navbardocumentation {
+    padding: 10px;
+  }
+}

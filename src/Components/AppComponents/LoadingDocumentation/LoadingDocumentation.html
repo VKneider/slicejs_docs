@@ -1,3 +1,198 @@
-<div class="loadingdocumentation">
-  LoadingDocumentation
+<h1 id="sliceLoading">Slice Loading</h1>
+<div class="basicLoading">
+  <h2 id="basicUsage">Basic Loading Control</h2>
+  <p>
+    The Loading component provides a simple way to display a loading spinner overlay. Use the 
+    <code>start()</code> method to show it and <code>stop()</code> to hide it. The component 
+    automatically appends itself to <code>document.body</code> as a full-screen overlay.
+  </p>
+  <p>
+    <strong>Try it:</strong> Click the buttons below to show and hide the loading spinner!
+  </p>
 </div>
+
+<div class="isActiveLoading">
+  <h2 id="isActiveProperty">Using isActive Property</h2>
+  <p>
+    Instead of calling methods directly, you can control the loading state using the 
+    <code>isActive</code> property. Setting it to <code>true</code> shows the loading 
+    (calls <code>start()</code>), and setting it to <code>false</code> hides it (calls 
+    <code>stop()</code>).
+  </p>
+  <p>
+    <strong>Try it:</strong> Click the toggle button to switch loading on and off!
+  </p>
+</div>
+
+<div class="containerLoading">
+  <h2 id="containerLoading">Loading in Specific Container</h2>
+  <p>
+    Instead of showing a fullscreen loading overlay, you can display the loading spinner inside 
+    a specific container by passing it as a parameter to <code>start()</code>. This is perfect 
+    for loading individual cards, sections, or components without blocking the entire page.
+  </p>
+  <p>
+    <strong>Try it:</strong> Click each card's button to see loading appear only in that card!
+  </p>
+</div>
+
+<div class="asyncLoading">
+  <h2 id="asyncExample">Async Operation Example</h2>
+  <p>
+    The most common use case for Loading is during asynchronous operations like API calls. 
+    This example simulates a 3-second API call, showing the loading spinner during the operation 
+    and hiding it when complete.
+  </p>
+  <p>
+    <strong>Try it:</strong> Click the button to simulate an API call with loading state!
+  </p>
+</div>
+
+<h2 id="staticPropsOverview">Static Props Integration</h2>
+<p>
+  The Loading component leverages Static Props for improved developer experience:
+</p>
+<ul>
+  <li><strong>Automatic defaults:</strong> The <code>isActive</code> prop defaults to <code>false</code></li>
+  <li><strong>Type validation:</strong> Development-time warnings for incorrect prop types</li>
+  <li><strong>Enhanced debugging:</strong> Right-click any loading to see detailed prop information</li>
+  <li><strong>Simple API:</strong> Only one prop to manage the loading state</li>
+</ul>
+
+<h3 id="staticPropsConfig">Loading Static Props Configuration:</h3>
+<div class="static-props-example"></div>
+
+<h2 id="methodsOverview">Methods & Properties</h2>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+  <div style="background-color: var(--secondary-background-color); padding: 20px; border-radius: 8px; border-top: 4px solid var(--primary-color);">
+    <h3 style="color: var(--primary-color); margin-top: 0;">Methods</h3>
+    <p style="color: var(--font-secondary-color); font-size: 0.95em;">
+      <strong>start(container):</strong><br>
+      Shows the loading spinner. If <code>container</code> is provided, shows inside that element (localized). Otherwise shows fullscreen on document.body
+    </p>
+    <p style="color: var(--font-secondary-color); font-size: 0.95em;">
+      <strong>stop():</strong><br>
+      Hides the loading spinner and removes it from the DOM
+    </p>
+  </div>
+  <div style="background-color: var(--secondary-background-color); padding: 20px; border-radius: 8px; border-top: 4px solid var(--secondary-color);">
+    <h3 style="color: var(--secondary-color); margin-top: 0;">Properties</h3>
+    <p style="color: var(--font-secondary-color); font-size: 0.95em;">
+      <strong>isActive:</strong><br>
+      Boolean property to control loading state<br>
+      <code>true</code> = visible, <code>false</code> = hidden
+    </p>
+    <p style="color: var(--font-secondary-color); font-size: 0.95em; margin-top: 15px;">
+      <strong>container:</strong><br>
+      Default container element<br>
+      <code>null</code> = document.body (fullscreen)
+    </p>
+  </div>
+</div>
+
+<h2 id="usagePatterns">Common Usage Patterns</h2>
+
+<h3 id="apiCallPattern">API Call with Loading</h3>
+<pre><code>const loading = await slice.build("Loading", {});
+
+async function fetchUserData() {
+   loading.start();
+   
+   try {
+      const response = await fetch("/api/user");
+      const data = await response.json();
+      console.log("User data:", data);
+   } catch (error) {
+      console.error("Error fetching data:", error);
+   } finally {
+      loading.stop(); // Always hide loading
+   }
+}
+
+await fetchUserData();</code></pre>
+
+<h3 id="formSubmitPattern">Form Submission with Loading</h3>
+<pre><code>const loading = await slice.build("Loading", {});
+
+async function handleSubmit(formData) {
+   loading.isActive = true;
+   
+   try {
+      const response = await fetch("/api/submit", {
+         method: "POST",
+         body: formData
+      });
+      
+      if (response.ok) {
+         alert("Form submitted successfully!");
+      }
+   } finally {
+      loading.isActive = false;
+   }
+}</code></pre>
+
+<h3 id="containerPattern">Loading in Specific Container</h3>
+<pre><code>const loading = await slice.build("Loading", {});
+
+// Get container reference
+const productCard = document.querySelector(".product-card");
+
+async function loadProduct(id) {
+   // Show loading only in this card
+   loading.start(productCard);
+   
+   try {
+      const response = await fetch(\`/api/product/\${id}\`);
+      const product = await response.json();
+      
+      // Update card content
+      productCard.innerHTML = \`
+         &lt;h3&gt;\${product.name}&lt;/h3&gt;
+         &lt;p&gt;\${product.description}&lt;/p&gt;
+      \`;
+   } finally {
+      loading.stop();
+   }
+}
+
+// Or set container as default
+const cardLoading = await slice.build("Loading", {
+   container: productCard
+});
+cardLoading.start(); // Shows in productCard</code></pre>
+
+<h3 id="routeChangePattern">Route Change with Loading</h3>
+<pre><code>const loading = await slice.build("Loading", {});
+
+slice.router.onBeforeNavigate = () => {
+   loading.start();
+};
+
+slice.router.onAfterNavigate = () => {
+   loading.stop();
+};</code></pre>
+
+<h2 id="keyFeatures">Key Features</h2>
+<ul>
+  <li><strong>Fullscreen or Localized:</strong> Can cover entire viewport or specific containers</li>
+  <li><strong>Flexible Container:</strong> Pass container as parameter or set as default prop</li>
+  <li><strong>Automatic Positioning:</strong> Handles position styling automatically for containers</li>
+  <li><strong>Automatic DOM Management:</strong> Appends/removes itself from target container</li>
+  <li><strong>Simple API:</strong> Two methods, two properties</li>
+  <li><strong>Reusable:</strong> Create once, use with different containers</li>
+  <li><strong>Static Props:</strong> Automatic validation and defaults</li>
+</ul>
+
+<h2 id="bestPractices">Tips & Best Practices</h2>
+<ul>
+  <li>Always use try/catch/finally to ensure loading stops even on errors</li>
+  <li>Create a single loading instance and reuse it throughout your app</li>
+  <li><strong>Use container parameter for localized loading</strong> (cards, sections)</li>
+  <li><strong>Use fullscreen loading</strong> (no container) for app-wide operations</li>
+  <li>Combine with status messages for better user feedback</li>
+  <li>Consider using <code>isActive</code> property for cleaner, more readable code</li>
+  <li>Don't forget to call <code>stop()</code> - forgotten loading spinners frustrate users</li>
+  <li>Use for operations that take more than 1 second to complete</li>
+  <li>Avoid showing loading for very quick operations (< 300ms)</li>
+  <li><strong>When using containers, ensure they have content/min-height</strong></li>
+</ul>

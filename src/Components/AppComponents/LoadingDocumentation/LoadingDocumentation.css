@@ -1,1 +1,130 @@
-/* Styles for LoadingDocumentation component */
+slice-loadingdocumentation {
+  display: block;
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+slice-loadingdocumentation h1 {
+  color: var(--font-primary-color);
+  margin-bottom: 20px;
+}
+
+slice-loadingdocumentation h2 {
+  color: var(--font-primary-color);
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+slice-loadingdocumentation h3 {
+  color: var(--font-primary-color);
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+slice-loadingdocumentation h4 {
+  color: var(--font-primary-color);
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+
+slice-loadingdocumentation p {
+  color: var(--font-secondary-color);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+slice-loadingdocumentation ul {
+  color: var(--font-secondary-color);
+  line-height: 1.8;
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+
+slice-loadingdocumentation ul li::marker {
+  color: var(--primary-color);
+}
+
+slice-loadingdocumentation code {
+  background-color: var(--tertiary-background-color);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  color: var(--primary-color);
+  font-size: 0.9em;
+}
+
+slice-loadingdocumentation pre {
+  background-color: var(--secondary-background-color);
+  padding: 15px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 20px;
+  border: 1px solid var(--primary-color-shade);
+}
+
+slice-loadingdocumentation pre code {
+  background-color: transparent;
+  padding: 0;
+  color: var(--font-primary-color);
+}
+
+slice-loadingdocumentation .loadingExample {
+  border: 1px solid var(--primary-color-shade);
+  border-radius: 8px;
+  padding: 20px;
+  background-color: var(--secondary-background-color);
+  margin-bottom: 30px;
+}
+
+slice-loadingdocumentation .loadingPreview {
+  border: 2px solid var(--primary-color-shade);
+  border-radius: 8px;
+  padding: 15px;
+  background-color: var(--primary-background-color);
+  margin-bottom: 20px;
+  min-height: 150px;
+}
+
+slice-loadingdocumentation .static-props-example {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: var(--secondary-background-color);
+  border-radius: 8px;
+  border: 1px solid var(--primary-color-shade);
+}
+
+slice-loadingdocumentation .static-props-example h2 {
+  margin-top: 0;
+}
+
+slice-loadingdocumentation .static-props-example h4 {
+  margin-top: 30px;
+}
+
+slice-loadingdocumentation .static-props-example p {
+  margin-bottom: 20px;
+}
+
+@media only screen and (max-width: 770px) {
+  slice-loadingdocumentation {
+    padding: 10px;
+  }
+  
+  slice-loadingdocumentation .loadingExample {
+    padding: 10px;
+  }
+
+  slice-loadingdocumentation .loadingPreview {
+    padding: 10px;
+    min-height: 120px;
+  }
+
+  slice-loadingdocumentation .static-props-example {
+    padding: 15px;
+  }
+
+  slice-loadingdocumentation div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+}

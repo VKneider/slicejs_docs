@@ -1,3 +1,55 @@
-<div class="navbardocumentation">
-  NavBarDocumentation
+<h1 id="sliceNavbar">Slice Navbar</h1>
+<div class="myNavbar">
+  <p>
+    The Navbar component provides a responsive navigation bar with support for logo, menu items, 
+    and action buttons. It automatically adapts to mobile devices with a hamburger menu.
+    The component uses Static Props for automatic defaults and enhanced debugging.
+  </p>
 </div>
+
+<div class="logoNavbar">
+  <h2 id="withLogo">With Logo</h2>
+  <p>
+    Add a logo to your navbar with the logo prop. The logo object requires a 'src' 
+    for the image path and a 'path' for navigation when clicked. Static Props ensure 
+    proper object typing and default to null when not specified.
+  </p>
+</div>
+
+<div class="fullNavbar">
+  <h2 id="fullFeatures">Full Features</h2>
+  <p>
+    Combine logo, navigation items, and action buttons to create a complete navbar. 
+    The component automatically adjusts spacing based on the available elements.
+  </p>
+</div>
+
+<div class="fixedNavbar">
+  <h2 id="fixedPosition">Fixed Position</h2>
+  <p>
+    Set position to 'fixed' to make the navbar stay at the top of the viewport 
+    while scrolling. This is perfect for applications that need persistent navigation.
+  </p>
+</div>
+
+<div class="reverseNavbar">
+  <h2 id="reverseDirection">Reverse Direction</h2>
+  <p>
+    Use direction 'reverse' to flip the layout, placing the logo on the right side 
+    and menu on the left. This provides layout flexibility for different design needs.
+  </p>
+</div>
+
+<h2 id="staticPropsOverview">Static Props Integration</h2>
+<p>
+  The Navbar component leverages Static Props for improved developer experience:
+</p>
+<ul>
+  <li><strong>Automatic defaults:</strong> All props have sensible defaults applied automatically</li>
+  <li><strong>Type validation:</strong> Development-time warnings for incorrect prop types</li>
+  <li><strong>Enhanced debugging:</strong> Right-click any navbar to see detailed prop information</li>
+  <li><strong>Responsive behavior:</strong> Automatically switches to mobile menu at 1020px breakpoint</li>
+</ul>
+
+<h3 id="staticPropsConfig">Navbar Static Props Configuration:</h3>
+<div class="static-props-example"></div>

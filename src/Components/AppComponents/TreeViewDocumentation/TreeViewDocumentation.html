@@ -1,3 +1,75 @@
-<div class="treeviewdocumentation">
-  TreeViewDocumentation
-</div>
+   <div class="treeviewdocumentation">
+      <h1>TreeView Component</h1>
+      <p>
+         The TreeView component provides a hierarchical navigation structure with expandable/collapsible nodes.
+         Perfect for creating nested menus, file structures, and multi-level navigation systems.
+      </p>
+
+      <h2>Basic TreeView</h2>
+      <p>
+         A simple TreeView with flat items. Each item can have a value and an optional path for navigation.
+      </p>
+      <div class="treeviewContainer">
+         <div class="treeviewExample">
+            <div class="basicTreeView"></div>
+         </div>
+      </div>
+
+      <h2>Hierarchical Structure</h2>
+      <p>
+         Create nested menu structures by adding items arrays to parent items. Parent items (without path) 
+         automatically become expandable/collapsible nodes.
+      </p>
+      <div class="treeviewContainer">
+         <div class="treeviewExample">
+            <div class="hierarchicalTreeView"></div>
+         </div>
+      </div>
+
+      <h2>Navigation TreeView</h2>
+      <p>
+         A more complex example showing deep nesting with multiple levels. Perfect for documentation sites
+         or application menus with categories and subcategories.
+      </p>
+      <div class="treeviewContainer">
+         <div class="treeviewExample">
+            <div class="navigationTreeView"></div>
+         </div>
+      </div>
+
+      <h2>Static Props Configuration</h2>
+      <p>
+         The TreeView component uses Static Props for automatic prop validation and default values.
+         This ensures consistent behavior and reduces boilerplate code.
+      </p>
+      <div class="static-props-example"></div>
+
+      <h2>TreeItem Component</h2>
+      <p>
+         TreeView is composed of TreeItem components. Each TreeItem can contain nested TreeItems,
+         creating the hierarchical structure. Understanding TreeItem props helps you build complex
+         navigation structures.
+      </p>
+      <div class="treeitem-props-example"></div>
+
+    
+      <h2>Key Features</h2>
+      <ul>
+         <li><strong>Automatic State Persistence:</strong> TreeView remembers which nodes are expanded/collapsed</li>
+         <li><strong>Smooth Animations:</strong> Elegant expand/collapse transitions built-in</li>
+         <li><strong>Flexible Navigation:</strong> Use with slice.router or custom callbacks</li>
+         <li><strong>Unlimited Nesting:</strong> Create structures as deep as needed</li>
+         <li><strong>Smart Click Handling:</strong> Items with path navigate, parents toggle expansion</li>
+         <li><strong>Static Props:</strong> Automatic validation and defaults for reliable behavior</li>
+      </ul>
+
+      <h2>Tips & Best Practices</h2>
+      <ul>
+         <li>Use descriptive value properties for better accessibility and state management</li>
+         <li>Reserve path property only for leaf nodes (items without children)</li>
+         <li>Keep nesting levels reasonable (3-4 levels max) for better UX</li>
+         <li>Use onClickCallback for consistent navigation across all items</li>
+         <li>Group related items logically for intuitive navigation</li>
+         <li>Consider mobile viewports when designing deep tree structures</li>
+      </ul>
+   </div>

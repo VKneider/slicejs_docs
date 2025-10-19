@@ -21,13 +21,17 @@ export default class Details extends HTMLElement {
       this.$detailsText = this.querySelector('.details_text');
       this.$details = this.querySelector('.full_details');
       this.$summary = this.querySelector('.details_summary');
-      this.$container = this.querySelector('.details_container'); // Referencia al contenedor
+      this.$container = this.querySelector('.details_container');
 
       this.$summary.addEventListener('click', () => {
          this.toggleDetails();
       });
 
       slice.controller.setComponentProps(this, props);
+   }
+
+   init() {
+      // Component initialization
    }
 
    toggleDetails() {
@@ -69,7 +73,10 @@ export default class Details extends HTMLElement {
 
    set title(value) {
       this._title = value;
-      this.$detailsTitle.textContent = value;
+      // ✅ Validar que value no sea null o undefined
+      if (value !== null && value !== undefined && this.$detailsTitle) {
+         this.$detailsTitle.textContent = value;
+      }
    }
 
    get text() {
@@ -78,11 +85,22 @@ export default class Details extends HTMLElement {
 
    set text(value) {
       this._text = value;
-      this.$detailsText.textContent = value;
+      // ✅ Validar que value no sea null o undefined
+      if (value !== null && value !== undefined && this.$detailsText) {
+         this.$detailsText.textContent = value;
+      }
    }
 
    addDetail(value) {
-      this.$details.appendChild(value);
+      // ✅ Validar que value sea un nodo válido
+      if (!value || !(value instanceof Node)) {
+         console.warn('Details.addDetail: value must be a valid DOM Node');
+         return;
+      }
+      
+      if (this.$details) {
+         this.$details.appendChild(value);
+      }
    }
 }
 

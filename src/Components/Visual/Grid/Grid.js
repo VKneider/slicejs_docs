@@ -15,6 +15,21 @@ export default class Grid extends HTMLElement {
          type: 'array', 
          default: [], 
          required: false 
+      },
+      gap: {
+         type: 'string',
+         default: '10px',
+         required: false
+      },
+      columnTemplate: {
+         type: 'string',
+         default: null,
+         required: false
+      },
+      rowTemplate: {
+         type: 'string',
+         default: null,
+         required: false
       }
    };
 
@@ -29,12 +44,18 @@ export default class Grid extends HTMLElement {
 
    async init() {
       // Static props ensure columns and rows have default values
-      // No need for manual validation
+      // Apply gap if provided
+      if (this.gap) {
+         this.$grid.style.gap = this.gap;
+      }
    }
 
    set columns(value) {
       this._columns = value;
-      this.$grid.style.gridTemplateColumns = `repeat(${value}, 1fr)`;
+      // Si hay un template personalizado, usarlo; sino usar repeat
+      if (!this.columnTemplate) {
+         this.$grid.style.gridTemplateColumns = `repeat(${value}, 1fr)`;
+      }
    }
 
    get columns() {
@@ -42,12 +63,48 @@ export default class Grid extends HTMLElement {
    }
 
    set rows(value) {
-      this.$grid.style.gridTemplateRows = `repeat(${value}, 1fr)`;
       this._rows = value;
+      // Si hay un template personalizado, usarlo; sino usar repeat
+      if (!this.rowTemplate) {
+         this.$grid.style.gridTemplateRows = `repeat(${value}, 1fr)`;
+      }
    }
 
    get rows() {
       return this._rows;
+   }
+
+   set gap(value) {
+      this._gap = value;
+      if (this.$grid) {
+         this.$grid.style.gap = value;
+      }
+   }
+
+   get gap() {
+      return this._gap;
+   }
+
+   set columnTemplate(value) {
+      this._columnTemplate = value;
+      if (value && this.$grid) {
+         this.$grid.style.gridTemplateColumns = value;
+      }
+   }
+
+   get columnTemplate() {
+      return this._columnTemplate;
+   }
+
+   set rowTemplate(value) {
+      this._rowTemplate = value;
+      if (value && this.$grid) {
+         this.$grid.style.gridTemplateRows = value;
+      }
+   }
+
+   get rowTemplate() {
+      return this._rowTemplate;
    }
 
    set items(values) {
@@ -77,7 +134,13 @@ export default class Grid extends HTMLElement {
          await this.setItem(items[i]);
       }
    }
+
+   // Método para limpiar el grid
+   clear() {
+      if (this.$grid) {
+         this.$grid.innerHTML = '';
+      }
+   }
 }
 
 customElements.define('slice-grid', Grid);
-

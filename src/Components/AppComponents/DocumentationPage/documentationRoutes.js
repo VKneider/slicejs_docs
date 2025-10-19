@@ -108,7 +108,6 @@ export const documentationRoutes = {
                   path: '/Documentation/Components/Visual/MultiRoute',
                   component: 'MultiRouteDocumentation'
                },
-               { title: 'DropDown', path: '/Documentation/Components/Visual/DropDown', component: 'DropDownDocumentation' },
                { title: 'Layout', path: '/Documentation/Components/Visual/Layout', component: 'LayoutDocumentation' },
                { title: 'Loading', path: '/Documentation/Components/Visual/Loading', component: 'LoadingDocumentation' },
                { title: 'Details', path: '/Documentation/Components/Visual/Details', component: 'DetailsDocumentation' },

@@ -1,19 +1,71 @@
 <h1 id="sliceMultiRoute">Slice MultiRoute</h1>
 <div class="myMultiRoute">
   <p>
-    To build a simple Slice MultiRoute you only need to use the "slice.build"
-    method with a routes array prop. The MultiRoute component automatically applies default values 
-    and provides enhanced debugging capabilities through Static Props. It handles dynamic component 
-    rendering based on the current URL pathname with built-in component caching for optimal performance.
+    The MultiRoute component allows you to define multiple routes in a single container. 
+    It automatically renders the appropriate component based on the current URL pathname, 
+    with built-in component caching for optimal performance. The component uses Static Props 
+    for automatic defaults and enhanced debugging.
+  </p>
+  <div style="padding: 15px; background-color: var(--tertiary-background-color); border-radius: 8px; border-left: 4px solid var(--primary-color); margin-top: 20px;">
+    <strong style="color: var(--primary-color);">🎮 Interactive Demo:</strong>
+    <p style="margin: 10px 0 0 0; color: var(--font-secondary-color);">
+      Click the navigation buttons below each example to test the MultiRoute in action! 
+      Watch how components are created, cached, and reused. Check the browser console 
+      for detailed logs about component lifecycle.
+    </p>
+  </div>
+</div>
+
+<div class="basicMultiRoute">
+  <h2 id="basicUsage">Basic Usage</h2>
+  <p>
+    Create a simple MultiRoute with an array of route objects. Each route must have 
+    a <code>path</code> and a <code>component</code> name. The MultiRoute will 
+    automatically match the current URL and render the corresponding component.
   </p>
 </div>
-<div class="advancedExample">
-  <h2 id="advancedUsage">Advanced Usage</h2>
+
+<div class="dashboardMultiRoute">
+  <h2 id="dashboardExample">Dashboard Example</h2>
   <p>
-    You can configure multiple routes with different components. The MultiRoute component 
-    automatically matches the current pathname with your defined routes and renders the 
-    corresponding component. Static Props ensure that the routes property is properly typed as an array 
-    and provides validation in development mode.
+    A common use case for MultiRoute is creating dashboard sections with multiple views. 
+    Each view can have its own route while sharing the same container and layout.
+  </p>
+</div>
+
+<div class="nestedMultiRoute">
+  <h2 id="nestedRoutes">Nested Routes</h2>
+  <p>
+    MultiRoute components can handle nested route structures. This is useful for 
+    organizing complex applications with multiple levels of navigation.
+  </p>
+</div>
+
+<div class="cachingMultiRoute">
+  <h2 id="componentCaching">Component Caching Demo</h2>
+  <p>
+    MultiRoute automatically caches rendered components for better performance. 
+    When navigating back to a previously visited route, the cached component is reused 
+    instead of creating a new instance. If the component has an <code>update()</code> 
+    method, it will be called when the cached component is displayed.
+  </p>
+  <div style="padding: 15px; background-color: var(--secondary-background-color); border-radius: 8px; margin-top: 15px;">
+    <strong style="color: var(--primary-color);">🔍 What to observe:</strong>
+    <ul style="margin: 10px 0 0 20px; color: var(--font-secondary-color);">
+      <li>All three routes use the <strong>same ButtonDocumentation component</strong></li>
+      <li>The component is created only once on first navigation</li>
+      <li>Check the browser console to see <code>route-rendered</code> events</li>
+      <li>Component gets reused from cache on subsequent navigations</li>
+      <li>Open DevTools → Console to see: <code>🔄 MultiRoute rendered: ButtonDocumentation at /cache/doc1</code></li>
+    </ul>
+  </div>
+</div>
+
+<div class="dynamicMultiRoute">
+  <h2 id="dynamicRoutes">Dynamic Routes</h2>
+  <p>
+    You can add or modify routes dynamically by updating the routes array. 
+    This is useful for applications with user-based navigation or conditional routing.
   </p>
 </div>
 
@@ -22,14 +74,12 @@
   The MultiRoute component leverages Static Props for improved developer experience:
 </p>
 <ul>
-  <li><strong>Automatic defaults:</strong> All props have sensible defaults applied automatically</li>
+  <li><strong>Automatic defaults:</strong> Routes prop defaults to an empty array</li>
   <li><strong>Type validation:</strong> Development-time warnings for incorrect prop types</li>
   <li><strong>Enhanced debugging:</strong> Right-click any MultiRoute to see detailed prop information</li>
-  <li><strong>Self-documenting:</strong> Props are clearly defined with types and defaults</li>
-  <li><strong>Component caching:</strong> Built-in performance optimization with component reuse</li>
+  <li><strong>Component caching:</strong> Built-in performance optimization with automatic component reuse</li>
+  <li><strong>Event emission:</strong> Emits 'route-rendered' event when content changes</li>
 </ul>
 
-<h3>MultiRoute Static Props Configuration:</h3>
-<pre><code>static props = {
-   routes: { type: 'array', default: [], required: true }
-};</code></pre>
+<h3 id="staticPropsConfig">MultiRoute Static Props Configuration:</h3>
+<div class="static-props-example"></div>
