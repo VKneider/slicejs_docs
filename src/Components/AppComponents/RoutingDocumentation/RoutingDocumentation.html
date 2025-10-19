@@ -1,193 +1,181 @@
-<h1 id="routing">Routing in Slice.js</h1>
-<p>
-  Slice.js provides a powerful and flexible routing system that allows you to create single-page applications
-  with multiple views. The routing system is built on top of the browser's History API and offers both
-  declarative and programmatic ways to define and navigate between routes.
-</p>
+<div class="routingdocumentation">
+  <h1 id="routing">Routing in Slice.js</h1>
+  <p>
+    The routing system in Slice.js provides a powerful, declarative way to define and manage navigation
+    in your single-page applications. It automatically handles browser history, component rendering, and
+    provides multiple ways to define and organize routes.
+  </p>
 
-<h2 id="router-setup">Router Setup</h2>
-<p>
-  Slice.js routing starts with defining your routes in a configuration file. By default, Slice.js looks for
-  this configuration in <code>src/routes.js</code>, but you can customize the path in <code>sliceConfig.json</code>.
-</p>
+  <h2 id="router-components">Router Components</h2>
+  <p>
+    Slice.js offers three main components for routing, each designed for different use cases:
+  </p>
+  <ul>
+    <li>
+      <strong>Route</strong>: Renders a single route component based on the current path.
+      Ideal for simple routing scenarios.
+    </li>
+    <li>
+      <strong>MultiRoute</strong>: Manages multiple related routes in a single container.
+      Perfect for organizing sections of your app with shared layouts or nested routes.
+    </li>
+    <li>
+      <strong>Router (Structural)</strong>: The core routing engine that powers both Route and MultiRoute.
+      Handles navigation, history, and route matching.
+    </li>
+  </ul>
 
-<div class="routes-config-example"></div>
+  <h2 id="basic-routing">Basic Routing with Route Component</h2>
+  <p>
+    The Route component is the simplest way to implement routing. It takes a single route configuration
+    and renders the appropriate component when the path matches.
+  </p>
 
-<p>
-  The route configuration consists of an array of route objects, each with at least a <code>path</code> and a 
-  <code>component</code> property. The router uses this configuration to match URL paths to components.
-</p>
+  <div class="basic-route-example"></div>
 
-<div class="routing-visualization"></div>
+  <h2 id="route-configuration">Route Configuration</h2>
+  <p>
+    Routes are typically defined in a central <code>routes.js</code> file. Each route object specifies
+    a path, the component to render, and optional metadata.
+  </p>
 
-<h2 id="route-component">Using the Route Component</h2>
-<p>
-  The <code>slice-route</code> component is the simplest way to define a route in your components. It renders the specified
-  component when the current URL matches the defined path.
-</p>
+  <div class="route-config-example"></div>
 
-<div class="route-component-example"></div>
+  <h2 id="multi-route">MultiRoute Component</h2>
+  <p>
+    When you need to manage multiple routes in a section of your application, use the MultiRoute component.
+    It's particularly useful for organizing related routes and implementing layouts with nested content areas.
+  </p>
 
-<p>
-  When defining a route component, you need to specify:
-</p>
-<ul>
-  <li><strong>path</strong>: The URL path that triggers this route</li>
-  <li><strong>component</strong>: The name of the component to render when the path matches</li>
-</ul>
+  <div class="multi-route-example"></div>
 
-<h2 id="multi-route-component">Using the MultiRoute Component</h2>
-<p>
-  The <code>slice-multi-route</code> component allows you to define multiple routes in a single component. This
-  is particularly useful for sections of your application that have multiple related views, like dashboards or
-  content management systems.
-</p>
+  <h2 id="dynamic-routes">Dynamic Route Parameters</h2>
+  <p>
+    Slice.js supports dynamic route segments using the <code>${paramName}</code> syntax in route paths.
+    These parameters are then passed to your component through the <code>props.params</code> object.
+  </p>
 
-<div class="multi-route-example"></div>
+  <div class="dynamic-routes-example"></div>
 
-<p>
-  The MultiRoute component takes an array of route objects through its <code>routes</code> property. Each route
-  object has the same structure as in the main routes configuration.
-</p>
+  <p>
+    When a dynamic route matches, the parameters are extracted from the URL and made available to your component.
+    This allows you to create reusable components that can display different content based on the URL parameters.
+  </p>
 
-<h2 id="dynamic-routes">Dynamic Routes with Parameters</h2>
-<p>
-  Slice.js supports dynamic routes with URL parameters. You can define parameters in your route paths using the
-  <code>${paramName}</code> syntax. These parameters are then passed to your component through the <code>props.params</code> object.
-</p>
+  <h2 id="navigation-methods">Navigation Methods</h2>
+  <p>
+    Slice.js provides multiple ways to navigate between routes: programmatically using the router API, 
+    and automatically through anchor elements.
+  </p>
 
-<div class="dynamic-routes-example"></div>
+  <h3 id="programmatic-navigation">Programmatic Navigation</h3>
+  <p>
+    Use the <code>slice.router.navigate()</code> method for programmatic navigation in your JavaScript code.
+    This is ideal for conditional navigation, redirects, or navigation triggered by user actions other than link clicks.
+  </p>
 
-<p>
-  When a dynamic route matches, the parameters are extracted from the URL and made available to your component.
-  This allows you to create reusable components that can display different content based on the URL parameters.
-</p>
+  <h3 id="anchor-navigation">Anchor Element Navigation</h3>
+  <p>
+    The router automatically intercepts clicks on anchor elements (<code>&lt;a href="/path"&gt;</code>) 
+    for internal links, providing seamless navigation without page reloads. No special setup is required - 
+    just use standard HTML anchor elements and the router handles the rest.
+  </p>
 
-<h2 id="navigation-methods">Navigation Methods</h2>
-<p>
-  Slice.js provides multiple ways to navigate between routes: programmatically using the router API, 
-  and automatically through anchor elements.
-</p>
+  <h4>Links that are NOT intercepted</h4>
+  <ul>
+    <li><strong>External links</strong>: Links to different domains</li>
+    <li><strong>Special protocols</strong>: Links using <code>mailto:</code>, <code>tel:</code>, <code>ftp:</code>, etc.</li>
+    <li><strong>Hash links</strong>: Links starting with <code>#</code> for same-page anchors</li>
+    <li><strong>Download links</strong>: Links with the <code>download</code> attribute</li>
+    <li><strong>Target attributes</strong>: Links with <code>target="_blank"</code>, <code>target="_top"</code>, etc.</li>
+    <li><strong>Marked as external</strong>: Links with <code>class="external-link"</code></li>
+  </ul>
 
-<h3 id="programmatic-navigation">Programmatic Navigation</h3>
-<p>
-  Use the <code>slice.router.navigate()</code> method for programmatic navigation in your JavaScript code.
-  This is ideal for conditional navigation, redirects, or navigation triggered by user actions other than link clicks.
-</p>
+  <div class="programmatic-nav-example"></div>
 
-<h3 id="anchor-navigation">Anchor Element Navigation</h3>
-<p>
-  The router automatically intercepts clicks on anchor elements (<code>&lt;a href="/path"&gt;</code>) 
-  for internal links, providing seamless navigation without page reloads. No special setup is required - 
-  just use standard HTML anchor elements and the router handles the rest.
-</p>
+  <h2 id="navigation-guards">Navigation Guards</h2>
+  <p>
+    Navigation Guards are powerful hooks that allow you to control and respond to navigation events. They're
+    essential for implementing authentication, authorization, data prefetching, analytics, and other
+    navigation-related logic.
+  </p>
 
-<h4>Automatic Link Interception</h4>
-<p>
-  Any anchor element with an <code>href</code> attribute pointing to an internal path will be automatically 
-  handled by the router. The browser's default navigation is prevented, and the router performs the navigation 
-  using the History API instead.
-</p>
+  <h3 id="guard-hooks">Guard Hooks</h3>
+  <p>
+    Slice.js provides two navigation guard hooks that must be defined <strong>before</strong> starting the router:
+  </p>
 
-<h4>Links that are NOT intercepted</h4>
-<p>
-  The router intelligently avoids intercepting certain types of links to preserve expected browser behavior:
-</p>
-<ul>
-  <li><strong>External links</strong>: Links to different domains (<code>https://example.com</code>)</li>
-  <li><strong>Special protocols</strong>: Links using <code>mailto:</code>, <code>tel:</code>, <code>ftp:</code>, etc.</li>
-  <li><strong>Hash links</strong>: Links starting with <code>#</code> for same-page anchors</li>
-  <li><strong>Download links</strong>: Links with the <code>download</code> attribute</li>
-  <li><strong>Target attributes</strong>: Links with <code>target="_blank"</code>, <code>target="_top"</code>, etc.</li>
-  <li><strong>Marked as external</strong>: Links with <code>class="external-link"</code> or <code>class="no-intercept"</code></li>
-  <li><strong>Data attributes</strong>: Links with <code>data-no-intercept</code> or <code>data-external</code></li>
-</ul>
+  <ul>
+    <li>
+      <strong>beforeEach</strong>: Called before every navigation. Can prevent or redirect navigation.
+      Perfect for authentication checks, route protection, and data validation.
+    </li>
+    <li>
+      <strong>afterEach</strong>: Called after navigation completes. Ideal for analytics tracking,
+      updating page titles, resetting scroll position, and cleanup tasks.
+    </li>
+  </ul>
 
-<div class="programmatic-nav-example"></div>
+  <div class="navigation-guards-example"></div>
 
-<h2 id="enhanced-link-component">Enhanced Link Component</h2>
-<p>
-  For situations where you need additional functionality beyond standard anchor elements, Slice.js provides 
-  a Link component that can be built programmatically with enhanced features.
-</p>
+  <p>
+    <strong>📚 Complete Guide:</strong> For comprehensive documentation on Navigation Guards including
+    authentication patterns, role-based authorization, data prefetching, composable guards, and best practices,
+    see the <strong>Router Guards Documentation</strong>.
+  </p>
 
-<h2 id="nested-routes">Nested Routes and Layouts</h2>
-<p>
-  Slice.js supports nested routes, which are powerful for creating complex UIs with shared layouts. You can
-  define child routes in the route configuration, and they will inherit the parent route's path as a prefix.
-</p>
+  <h3 id="starting-router">Starting the Router</h3>
+  <p>
+    When using navigation guards, you must explicitly start the router <strong>after</strong> defining all guards.
+    If you don't define any guards, the router starts automatically during initialization.
+  </p>
 
-<div class="nested-routes-example"></div>
+  <div class="starting-router-example"></div>
 
-<p>
-  In this example, the AdminLayout component acts as a container for all administrative pages, providing a
-  consistent layout while the content area changes based on the current route.
-</p>
+  <h2 id="nested-routes">Nested Routes and Layouts</h2>
+  <p>
+    Slice.js supports nested routes, which are powerful for creating complex UIs with shared layouts. You can
+    define child routes in the route configuration, and they will inherit the parent route's path as a prefix.
+  </p>
 
-<h2 id="dynamic-route-management">Dynamic Route Management</h2>
-<p>
-  The router supports adding, removing, and updating routes at runtime, providing flexibility for dynamic applications:
-</p>
-<ul>
-  <li><strong>Add routes</strong>: <code>slice.router.addRoute({ path: "/new", component: "NewComponent" })</code></li>
-  <li><strong>Remove routes</strong>: <code>slice.router.removeRoute("/old-path")</code></li>
-  <li><strong>Update routes</strong>: <code>slice.router.updateRoutes(newRoutesArray)</code></li>
-  <li><strong>Get all routes</strong>: <code>slice.router.getAllRoutes()</code></li>
-</ul>
+  <div class="nested-routes-example"></div>
 
-<h2 id="router-statistics">Router Statistics and Monitoring</h2>
-<p>
-  The router provides detailed statistics for monitoring and debugging:
-</p>
-<ul>
-  <li><strong>Initialization status</strong>: Check if the router is fully initialized</li>
-  <li><strong>Navigation state</strong>: Monitor if navigation is currently in progress</li>
-  <li><strong>Active route</strong>: Get information about the currently active route</li>
-  <li><strong>Cache statistics</strong>: Monitor component caching performance</li>
-  <li><strong>Route matcher stats</strong>: Get information about registered routes</li>
-</ul>
+  <h2 id="dynamic-route-management">Dynamic Route Management</h2>
+  <p>
+    The router supports adding, removing, and updating routes at runtime, providing flexibility for dynamic applications:
+  </p>
+  <ul>
+    <li><strong>Add routes</strong>: <code>slice.router.addRoute({ path: "/new", component: "NewComponent" })</code></li>
+    <li><strong>Remove routes</strong>: <code>slice.router.removeRoute("/old-path")</code></li>
+    <li><strong>Update routes</strong>: <code>slice.router.updateRoutes(newRoutesArray)</code></li>
+    <li><strong>Get all routes</strong>: <code>slice.router.getAllRoutes()</code></li>
+  </ul>
 
-<h2 id="route-lifecycle">Route Lifecycle and Events</h2>
-<p>
-  When a route changes, Slice.js router triggers several events:
-</p>
-<ol>
-  <li>The previous component is removed from the DOM (with component pooling for reuse)</li>
-  <li>The new component is built and inserted into the DOM</li>
-  <li>If the new component has an <code>init</code> method, it's called</li>
-  <li>If switching between routes that use the same component, the <code>update</code> method is called instead</li>
-</ol>
+  <h2 id="route-lifecycle">Route Lifecycle and Events</h2>
+  <p>
+    When a route changes, Slice.js router triggers several events in sequence:
+  </p>
+  <ol>
+    <li>Navigation is triggered (link click, browser back/forward, or programmatic navigation)</li>
+    <li><strong>beforeEach</strong> guard is called (if defined)</li>
+    <li>The previous component is removed from the DOM</li>
+    <li>The new component is built and inserted into the DOM</li>
+    <li>Component <code>init()</code> method is called (if exists)</li>
+    <li><strong>afterEach</strong> hook is called (if defined)</li>
+  </ol>
 
-<h2 id="performance-optimization">Performance Optimization</h2>
-<p>
-  The router includes several performance optimizations:
-</p>
-<ul>
-  <li><strong>Component pooling</strong>: Reuses component instances when possible to reduce memory allocation</li>
-  <li><strong>Route caching</strong>: Caches route matching results for faster navigation</li>
-  <li><strong>Event throttling</strong>: Prevents rapid successive navigation events from overwhelming the system</li>
-  <li><strong>Lazy loading</strong>: Components are only loaded when their routes are accessed</li>
-</ul>
+  <h2 id="route-best-practices">Best Practices for Routing</h2>
+  <ul>
+    <li>Organize your routes logically, grouping related routes together</li>
+    <li>Use the most specific component for your routing needs</li>
+    <li>Keep route parameters simple and descriptive</li>
+    <li>Add a catch-all 404 route to handle unmatched paths</li>
+    <li>Use standard anchor elements for navigation links</li>
+    <li>Define navigation guards before starting the router for authentication</li>
+    <li>Use route metadata to store configuration rather than hardcoding logic</li>
+    <li>Take advantage of dynamic route management when needed</li>
+  </ul>
 
-<h2 id="route-best-practices">Best Practices for Routing</h2>
-<ul>
-  <li>Organize your routes logically, grouping related routes together with nested routes</li>
-  <li>Use the most specific component for your routing needs - Route for single routes, MultiRoute for related groups</li>
-  <li>Keep route parameters simple and descriptive</li>
-  <li>Add a catch-all 404 route to handle unmatched paths</li>
-  <li>Use standard anchor elements (<code>&lt;a href="/path"&gt;</code>) for navigation links - the router handles them automatically</li>
-  <li>Use the Link component for enhanced functionality when you need additional features</li>
-  <li>Mark external links appropriately with <code>target="_blank"</code> or <code>class="external-link"</code> to prevent router interception</li>
-  <li>Consider adding loading indicators during navigation, especially for routes that fetch data</li>
-  <li>Use the programmatic navigation API for complex navigation scenarios like redirects or conditional navigation</li>
-  <li>Take advantage of dynamic route management for applications with changing route requirements</li>
-  <li>Monitor router statistics in development to optimize performance</li>
-</ul>
-
-<h2 id="troubleshooting">Troubleshooting Common Issues</h2>
-<ul>
-  <li><strong>Links not working</strong>: Check if the link is being intercepted correctly or if it falls into one of the excluded categories</li>
-  <li><strong>Route not found</strong>: Verify that the route is properly defined in your routes configuration</li>
-  <li><strong>Components not loading</strong>: Ensure component names match exactly between routes and component registration</li>
-  <li><strong>Performance issues</strong>: Use router statistics to identify bottlenecks and optimize accordingly</li>
-</ul>
+  <h2 id="faq">Frequently Asked Questions</h2>
+  <div class="faq-section"></div>
+</div>

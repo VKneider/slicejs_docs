@@ -1,149 +1,228 @@
+
 export default class RoutingDocumentation extends HTMLElement {
-    constructor(props) {
-        super();
-        slice.attachTemplate(this);
+   constructor(props) {
+      super();
+      slice.attachTemplate(this);
+      slice.controller.setComponentProps(this, props);
+   }
 
-        slice.controller.setComponentProps(this, props);
-        this.debuggerProps = [];
-    }
+   async init() {
+      await this.createExamples();
+      await this.createFAQ();
+   }
 
-    async init() {
-        // Code examples for the documentation
-        const routesConfigExample = await slice.build("CodeVisualizer", {
-            language: "javascript",
-            value: `// src/routes.js
+   async createExamples() {
+      // Basic Route Example
+      const basicRouteExample = await slice.build("CodeVisualizer", {
+         language: "javascript",
+         value: `// Simple single route example
+const route = await slice.build("Route", {
+   path: "/home",
+   component: "HomePage"
+});
+
+document.body.appendChild(route);`
+      });
+      this.querySelector(".basic-route-example").appendChild(basicRouteExample);
+
+      // Route Configuration Example
+      const routeConfigExample = await slice.build("CodeVisualizer", {
+         language: "javascript",
+         value: `// routes.js - Central route configuration
 const routes = [
-   { path: "/", component: "HomePage" },
-   { path: "/about", component: "AboutPage" },
-   { path: "/contact", component: "ContactPage" },
    { 
-      path: "/blog", 
-      component: "BlogPage",
-      children: [
-         { path: "/post/:id", component: "BlogPostPage" },
-         { path: "/category/:category", component: "BlogCategoryPage" }
-      ] 
+      path: "/", 
+      component: "HomePage",
+      metadata: {
+         title: "Home - My App"
+      }
    },
-   { path: "/dashboard", component: "DashboardPage" },
-   { path: "/404", component: "NotFoundPage" }
+   { 
+      path: "/about", 
+      component: "AboutPage",
+      metadata: {
+         title: "About Us"
+      }
+   },
+   { 
+      path: "/contact", 
+      component: "ContactPage",
+      metadata: {
+         title: "Contact Us",
+         description: "Get in touch with our team"
+      }
+   },
+   { 
+      path: "/user/\${id}", 
+      component: "UserProfile",
+      metadata: {
+         title: "User Profile",
+         private: true // Requires authentication
+      }
+   },
+   { 
+      path: "/404", 
+      component: "NotFound",
+      metadata: {
+         title: "Page Not Found"
+      }
+   }
 ];
 
 export default routes;`
-        });
-        this.querySelector(".routes-config-example").appendChild(routesConfigExample);
+      });
+      this.querySelector(".route-config-example").appendChild(routeConfigExample);
 
-        const routeComponentExample = await slice.build("CodeVisualizer", {
-            language: "javascript",
-            value: `// Creating a Route component programmatically
-const userProfileRoute = await slice.build("Route", {
-  path: "/profile",
-  component: "UserProfile"
-});
-this.querySelector(".content-container").appendChild(userProfileRoute);`
-        });
+      // MultiRoute Example
+      const multiRouteExample = await slice.build("CodeVisualizer", {
+         language: "javascript",
+         value: `// MultiRoute for managing multiple related routes
+import routes from "./routes.js";
 
-        this.querySelector(".route-component-example").appendChild(routeComponentExample);
-
-        const multiRouteExample = await slice.build("CodeVisualizer", {
-            language: "javascript",
-            value: `// Creating a MultiRoute component for related routes
-const dashboardRoutes = await slice.build("MultiRoute", {
-  routes: [
-    { path: "/dashboard", component: "DashboardHome" },
-    { path: "/dashboard/analytics", component: "DashboardAnalytics" },
-    { path: "/dashboard/settings", component: "DashboardSettings" },
-    { path: "/dashboard/profile", component: "DashboardProfile" }
-  ]
+const multiRoute = await slice.build("MultiRoute", {
+   routes: routes
 });
 
-// Append to your main content area
-document.getElementById("main-content").appendChild(dashboardRoutes);`
-        });
+document.querySelector("#app").appendChild(multiRoute);`
+      });
+      this.querySelector(".multi-route-example").appendChild(multiRouteExample);
 
-        this.querySelector(".multi-route-example").appendChild(multiRouteExample);
-
-        const dynamicRoutesExample = await slice.build("CodeVisualizer", {
-            language: "javascript",
-            value: `// Dynamic routes configuration
+      // Dynamic Routes Example
+      const dynamicRoutesExample = await slice.build("CodeVisualizer", {
+         language: "javascript",
+         value: `// Define route with dynamic parameter
 const routes = [
-  { path: "/user/\$id", component: "UserProfile" },
-  { path: "/blog/\$category/\$slug", component: "BlogPost" },
-  { path: "/shop/\$category", component: "CategoryPage" }
+   {
+      path: "/user/\${id}",
+      component: "UserProfile"
+   },
+   {
+      path: "/product/\${category}/\${id}",
+      component: "ProductDetail"
+   }
 ];
 
-// Component receiving route parameters
+// Component receives params automatically
 export default class UserProfile extends HTMLElement {
-  constructor(props) {
-    super();
-    slice.attachTemplate(this);
-    
-    // Access route parameters
-    this.userId = props.params?.id;
-    
-    slice.controller.setComponentProps(this, props);
-  }
-  
-  async init() {
-    if (this.userId) {
-      await this.loadUserData(this.userId);
-    }
-  }
-}`
-        });
-
-        this.querySelector(".dynamic-routes-example").appendChild(dynamicRoutesExample);
-
-        // Programmatic navigation example - UPDATED with anchor elements
-        const programmaticNavExample = await slice.build("CodeVisualizer", {
-            language: "javascript",
-            value: `// Programmatic navigation using slice.router.navigate()
-async function navigateToProfile(userId) {
-  await slice.router.navigate(\`/user/\${userId}\`);
+   constructor(props) {
+      super();
+      slice.attachTemplate(this);
+      
+      // Access route parameters
+      const userId = props.params.id;
+      console.log("User ID:", userId);
+      
+      this.loadUserData(userId);
+   }
+   
+   async loadUserData(userId) {
+      const response = await fetch(\`/api/users/\${userId}\`);
+      const userData = await response.json();
+      this.renderUserData(userData);
+   }
 }
 
-// Navigate with options
-await slice.router.navigate("/dashboard", {
-  replace: true,  // Replace current history entry
-  state: { from: "home" }  // Add state data
-});
+// Navigate to user profile: /user/123
+await slice.router.navigate("/user/123");`
+      });
+      this.querySelector(".dynamic-routes-example").appendChild(dynamicRoutesExample);
 
-// Navigation using anchor elements (automatic interception)
-// The router automatically intercepts clicks on internal links
-const navLink = document.createElement("a");
-navLink.href = "/about";
-navLink.textContent = "About Us";
-// No special setup needed - router handles the click automatically
+      // Programmatic Navigation Example
+      const programmaticNavExample = await slice.build("CodeVisualizer", {
+         language: "javascript",
+         value: `// Programmatic navigation methods
+// Basic navigation
+await slice.router.navigate("/about");
 
-// HTML anchor elements work out of the box:
+// HTML anchor elements work automatically
 // <a href="/contact">Contact</a>
 // <a href="/user/123">View User</a>
 
-// Using the Link component for enhanced functionality
-const enhancedLink = await slice.build("Link", {
-  href: "/dashboard",
-  text: "Go to Dashboard",
-  classes: "nav-link"
-});
-
-// Links that are NOT intercepted by the router:
-// External links: <a href="https://example.com">External</a>
-// Hash links: <a href="#section">Jump to Section</a>
-// Special protocols: <a href="mailto:test@example.com">Email</a>
-// Download links: <a href="/file.pdf" download>Download</a>
-// Target blank: <a href="/page" target="_blank">Open in New Tab</a>
-// Marked as external: <a href="/page" class="external-link">External</a>
-// No intercept attribute: <a href="/page" data-no-intercept>No Intercept</a>
+// Links NOT intercepted by router:
+// <a href="https://example.com">External</a>
+// <a href="#section">Jump to Section</a>
+// <a href="mailto:test@example.com">Email</a>
+// <a href="/file.pdf" download>Download</a>
+// <a href="/page" target="_blank">New Tab</a>
+// <a href="/page" class="external-link">External</a>
 
 // Browser navigation methods
 slice.router.back();     // Go back in history
 slice.router.forward();  // Go forward in history`
-        });
+      });
+      this.querySelector(".programmatic-nav-example").appendChild(programmaticNavExample);
 
-        this.querySelector(".programmatic-nav-example").appendChild(programmaticNavExample);
+      // Navigation Guards Example
+      const navigationGuardsExample = await slice.build("CodeVisualizer", {
+         language: "javascript",
+         value: `// Navigation Guards - Control navigation flow
+import Slice from "/Slice/Slice.js";
 
-        const nestedRoutesExample = await slice.build("CodeVisualizer", {
-            language: "javascript",
-            value: `// Nested routes example - AdminLayout component
+// beforeEach: Called before every navigation
+slice.router.beforeEach(async (to, from, next) => {
+   console.log("Navigating from:", from?.path);
+   console.log("Navigating to:", to.path);
+   
+   // Check if route requires authentication
+   if (to.metadata?.private) {
+      const isAuthenticated = await checkAuthentication();
+      
+      if (!isAuthenticated) {
+         // Redirect to login page - ALWAYS use return
+         return next({ path: "/login" });
+      }
+   }
+   
+   // Continue navigation - ALWAYS use return
+   return next();
+});
+
+// afterEach: Called after navigation completes
+slice.router.afterEach((to, from) => {
+   // Update page title
+   document.title = to.metadata?.title || "My App";
+   
+   // Track page view
+   console.log("Page loaded:", to.path);
+   
+   // Scroll to top
+   window.scrollTo(0, 0);
+});
+
+// Helper function
+async function checkAuthentication() {
+   const token = localStorage.getItem("authToken");
+   return !!token;
+}
+
+// IMPORTANT: Start router AFTER defining guards
+await slice.router.start();`
+      });
+      this.querySelector(".navigation-guards-example").appendChild(navigationGuardsExample);
+
+      // Starting Router Example
+      const startingRouterExample = await slice.build("CodeVisualizer", {
+         language: "javascript",
+         value: `// Define guards first
+slice.router.beforeEach(async (to, from, next) => {
+   // Guard logic
+   // ALWAYS use return next()
+   return next();
+});
+
+slice.router.afterEach((to, from) => {
+   // Post-navigation logic
+});
+
+// Start router AFTER guards are defined
+await slice.router.start();`
+      });
+      this.querySelector(".starting-router-example").appendChild(startingRouterExample);
+
+      // Nested Routes Example
+      const nestedRoutesExample = await slice.build("CodeVisualizer", {
+         language: "javascript",
+         value: `// Nested routes example - AdminLayout component
 export default class AdminLayout extends HTMLElement {
    constructor(props) {
       super();
@@ -152,50 +231,90 @@ export default class AdminLayout extends HTMLElement {
       
       slice.controller.setComponentProps(this, props);
    }
-
+   
    async init() {
-      // Create nested routes for admin section
-      const childRoutes = await slice.build("MultiRoute", {
-         routes: [
-            { path: "/admin", component: "AdminDashboard" },
-            { path: "/admin/users", component: "UserManagement" },
-            { path: "/admin/settings", component: "AdminSettings" }
-         ]
+      // Create nested MultiRoute for admin section
+      const adminRoutes = [
+         { path: "/admin/dashboard", component: "AdminDashboard" },
+         { path: "/admin/users", component: "UserManagement" },
+         { path: "/admin/settings", component: "AdminSettings" }
+      ];
+      
+      const nestedRouter = await slice.build("MultiRoute", {
+         routes: adminRoutes
       });
       
-      this.contentArea.appendChild(childRoutes);
+      this.contentArea.appendChild(nestedRouter);
    }
-}`
-        });
-        this.querySelector(".nested-routes-example").appendChild(nestedRoutesExample);
+}
 
-        // Create navigation visualization examples
-        const navVisualization = document.createElement("div");
-        navVisualization.classList.add("route-visualization");
+// Route configuration with nesting
+const routes = [
+   {
+      path: "/admin",
+      component: "AdminLayout",
+      children: [
+         { path: "/admin/dashboard", component: "AdminDashboard" },
+         { path: "/admin/users", component: "UserManagement" },
+         { path: "/admin/settings", component: "AdminSettings" }
+      ],
+      metadata: {
+         private: true,
+         requiredRole: "admin"
+      }
+   }
+];`
+      });
+      this.querySelector(".nested-routes-example").appendChild(nestedRoutesExample);
+   }
 
-        const routeDiv = document.createElement("div");
-        routeDiv.classList.add("visualization-route");
-        routeDiv.innerHTML = `
-         <div class="vis-route-path">/about</div>
-         <div class="vis-route-component">AboutPage Component</div>
-      `;
+   async createFAQ() {
+      const faqQuestions = [
+         {
+            title: "What's the difference between Route and MultiRoute?",
+            text: "Route is for a single route configuration, while MultiRoute manages multiple routes in a container. Use Route for simple cases and MultiRoute when you have several related routes in a section of your app."
+         },
+         {
+            title: "How do I handle 404 pages?",
+            text: "Add a route with path '/404' and component 'NotFound' to your routes configuration. The router automatically redirects to this route when no other route matches the current path."
+         },
+         {
+            title: "Can I use query parameters in routes?",
+            text: "Yes, you can access query parameters using URLSearchParams. For example: const params = new URLSearchParams(window.location.search); const id = params.get('id');"
+         },
+         {
+            title: "How do I protect routes with authentication?",
+            text: "Use the beforeEach navigation guard to check if a route requires authentication (via metadata.private) and redirect to login if the user is not authenticated. See the Router Guards documentation for detailed examples."
+         },
+         {
+            title: "Can I pass data between routes?",
+            text: "You can use URL parameters for simple data (like IDs), or store data in localStorage/sessionStorage for more complex scenarios. Route metadata can also be used to pass configuration to components."
+         },
+         {
+            title: "How do nested routes work?",
+            text: "Nested routes are defined using the children property in a route configuration. The parent component renders a MultiRoute for its children, creating a hierarchical routing structure."
+         },
+         {
+            title: "Can I add routes dynamically?",
+            text: "Yes, use slice.router.addRoute() to add routes at runtime, slice.router.removeRoute() to remove them, and slice.router.updateRoutes() to replace the entire route configuration."
+         },
+         {
+            title: "How do I scroll to top on route change?",
+            text: "Use the afterEach navigation guard to reset scroll position: slice.router.afterEach(() => { window.scrollTo(0, 0); });"
+         }
+      ];
 
-        const multiRouteDiv = document.createElement("div");
-        multiRouteDiv.classList.add("visualization-multiroute");
-        multiRouteDiv.innerHTML = `
-         <div class="vis-route-container">
-            <div class="vis-route-path">/dashboard</div>
-            <div class="vis-route-path">/dashboard/profile</div>
-            <div class="vis-route-path">/dashboard/settings</div>
-         </div>
-         <div class="vis-route-component">Currently Active Component</div>
-      `;
-
-        navVisualization.appendChild(routeDiv);
-        navVisualization.appendChild(multiRouteDiv);
-
-        this.querySelector(".routing-visualization").appendChild(navVisualization);
-    }
+      const faqContainer = this.querySelector(".faq-section");
+      
+      for (const question of faqQuestions) {
+         const detailsComponent = await slice.build("Details", {
+            title: question.title,
+            text: question.text
+         });
+         
+         faqContainer.appendChild(detailsComponent);
+      }
+   }
 }
 
 customElements.define("slice-routingdocumentation", RoutingDocumentation);

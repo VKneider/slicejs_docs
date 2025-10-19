@@ -1,1 +1,226 @@
-/* Styles for RouterGuardsDocumentation component */
+/* RouterGuardsDocumentation Component Styles */
+
+slice-routerguardsdocumentation {
+  color: var(--font-primary-color);
+}
+
+slice-routerguardsdocumentation h1,
+slice-routerguardsdocumentation h2,
+slice-routerguardsdocumentation h3 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+slice-routerguardsdocumentation h2 {
+  margin-top: 30px;
+  border-bottom: 1px solid var(--primary-color-shade);
+  padding-bottom: 8px;
+}
+
+slice-routerguardsdocumentation p {
+  line-height: 1.6;
+  margin: 1em 0;
+}
+
+slice-routerguardsdocumentation ul,
+slice-routerguardsdocumentation ol {
+  margin: 1em 0;
+  padding-left: 2em;
+}
+
+slice-routerguardsdocumentation li {
+  margin-bottom: 0.5em;
+}
+
+slice-routerguardsdocumentation code {
+  font-family: monospace;
+  background-color: var(--secondary-background-color);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+slice-routerguardsdocumentation .basic-before-example,
+slice-routerguardsdocumentation .auth-guard-example,
+slice-routerguardsdocumentation .role-guard-example,
+slice-routerguardsdocumentation .after-each-example,
+slice-routerguardsdocumentation .combined-example,
+slice-routerguardsdocumentation .cancel-example,
+slice-routerguardsdocumentation .prefetch-example,
+slice-routerguardsdocumentation .error-example,
+slice-routerguardsdocumentation .metadata-example,
+slice-routerguardsdocumentation .state-use-cases-example,
+slice-routerguardsdocumentation .state-in-guards-example {
+  margin: 1.5em 0;
+}
+
+slice-routerguardsdocumentation strong {
+  color: var(--primary-color);
+}
+
+slice-routerguardsdocumentation .faq-section {
+  margin: 2em 0;
+}
+
+slice-routerguardsdocumentation .faq-section slice-details {
+  margin-bottom: 1em;
+}
+
+/* Comparison table styling */
+slice-routerguardsdocumentation .comparison-table {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--primary-color-shade);
+  border-radius: 4px;
+  margin: 1.5em 0;
+  overflow: hidden;
+}
+
+slice-routerguardsdocumentation .comparison-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  border-bottom: 1px solid var(--primary-color-shade);
+}
+
+slice-routerguardsdocumentation .comparison-row:last-child {
+  border-bottom: none;
+}
+
+slice-routerguardsdocumentation .comparison-header {
+  background-color: var(--primary-color);
+  color: var(--primary-color-contrast);
+  font-weight: bold;
+}
+
+slice-routerguardsdocumentation .comparison-cell {
+  padding: 1em;
+  border-right: 1px solid var(--primary-color-shade);
+}
+
+slice-routerguardsdocumentation .comparison-cell:last-child {
+  border-right: none;
+}
+
+slice-routerguardsdocumentation .comparison-row:nth-child(even):not(.comparison-header) {
+  background-color: var(--secondary-background-color);
+}
+
+@media (max-width: 768px) {
+  slice-routerguardsdocumentation .comparison-row {
+    grid-template-columns: 1fr;
+  }
+  
+  slice-routerguardsdocumentation .comparison-cell {
+    border-right: none;
+    border-bottom: 1px solid var(--primary-color-shade);
+  }
+  
+  slice-routerguardsdocumentation .comparison-cell:last-child {
+    border-bottom: none;
+  }
+}
+
+slice-routerguardsdocumentation strong {
+  color: var(--primary-color);
+}
+
+slice-routerguardsdocumentation .faq-section {
+  margin: 2em 0;
+}
+
+slice-routerguardsdocumentation .faq-section slice-details {
+  margin-bottom: 1em;
+}
+
+/* Parameter boxes styling */
+slice-routerguardsdocumentation .parameter-box {
+  background-color: var(--secondary-background-color);
+  border-left: 4px solid var(--primary-color);
+  padding: 1.5em;
+  margin: 1.5em 0;
+  border-radius: 4px;
+}
+
+slice-routerguardsdocumentation .parameter-header {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  margin-bottom: 0.8em;
+}
+
+slice-routerguardsdocumentation .parameter-name {
+  font-size: 1.2em;
+  font-weight: bold;
+  background-color: var(--primary-color);
+  color: var(--primary-color-contrast);
+  padding: 0.3em 0.6em;
+  border-radius: 4px;
+}
+
+slice-routerguardsdocumentation .parameter-type {
+  font-size: 0.9em;
+  color: var(--font-secondary-color);
+  font-style: italic;
+}
+
+slice-routerguardsdocumentation .parameter-description {
+  margin: 0 0 1em 0;
+  font-size: 1em;
+  line-height: 1.5;
+}
+
+slice-routerguardsdocumentation .parameter-properties {
+  background-color: var(--primary-background-color);
+  padding: 1em;
+  border-radius: 4px;
+}
+
+slice-routerguardsdocumentation .property-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8em;
+  padding: 0.6em 0;
+  border-bottom: 1px solid var(--primary-color-shade);
+}
+
+slice-routerguardsdocumentation .property-item:last-child {
+  border-bottom: none;
+}
+
+slice-routerguardsdocumentation .property-item code {
+  font-weight: bold;
+  min-width: 150px;
+  background-color: transparent;
+  color: var(--primary-color);
+}
+
+slice-routerguardsdocumentation .property-type {
+  font-size: 0.85em;
+  color: var(--font-secondary-color);
+  font-style: italic;
+  min-width: 80px;
+}
+
+slice-routerguardsdocumentation .property-desc {
+  flex: 1;
+  min-width: 200px;
+}
+
+slice-routerguardsdocumentation .parameter-note {
+  margin-top: 1em;
+  padding: 0.8em;
+  background-color: var(--warning-color);
+  color: var(--warning-contrast);
+  border-radius: 4px;
+  font-size: 0.95em;
+}
+
+slice-routerguardsdocumentation .parameter-note strong {
+  color: inherit;
+}
+
+slice-routerguardsdocumentation .parameter-note code {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: inherit;
+}

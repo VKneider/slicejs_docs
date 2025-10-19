@@ -40,6 +40,10 @@ const routes = [
             component: 'RoutingDocumentation',
          },
          {
+            path:'/Routing/Guards',
+            component: 'RouterGuardsDocumentation',
+         },
+         {
             path: '/Installation',
             component: 'Installation',
          },

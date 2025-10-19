@@ -1,3 +1,242 @@
 <div class="routerguardsdocumentation">
-  RouterGuardsDocumentation
+  <h1 id="router-guards">Router Navigation Guards</h1>
+  <p>
+    Navigation Guards are hooks provided by the Slice.js Router that allow you to control and respond to navigation events.
+    They are essential for implementing authentication, authorization, data prefetching, analytics tracking, and other
+    navigation-related logic in your application.
+  </p>
+
+  <h2 id="overview">Overview</h2>
+  <p>
+    Slice.js provides two primary navigation guard hooks:
+  </p>
+  <ul>
+    <li><strong>beforeEach</strong>: Called before each navigation, allows you to guard or redirect routes</li>
+    <li><strong>afterEach</strong>: Called after each navigation completes, ideal for tracking and cleanup</li>
+  </ul>
+
+  <p>
+    <strong>⚠️ Important:</strong> Navigation guards must be defined <strong>before</strong> calling 
+    <code>slice.router.start()</code>. Once the router is started, guards are locked in and cannot be modified.
+  </p>
+
+  <p>
+    <strong>⚠️ Critical:</strong> Always use <code>return next()</code> instead of just <code>next()</code>. 
+    The <code>return</code> statement ensures that no code continues executing after the navigation is resolved, 
+    preventing unexpected behavior and duplicate navigation calls.
+  </p>
+
+  <h2 id="beforeEach">beforeEach Hook</h2>
+  <p>
+    The <code>beforeEach</code> hook is called before every route navigation. It receives three parameters and
+    must call the <code>next()</code> function to resolve the navigation.
+  </p>
+
+  <h3 id="beforeEach-parameters">Parameters</h3>
+  
+  <div class="parameter-box">
+    <div class="parameter-header">
+      <code class="parameter-name">to</code>
+      <span class="parameter-type">Object</span>
+    </div>
+    <p class="parameter-description">The target route being navigated to</p>
+    <div class="parameter-properties">
+      <div class="property-item">
+        <code>to.path</code>
+        <span class="property-type">string</span>
+        <span class="property-desc">The route path (e.g., "/dashboard")</span>
+      </div>
+      <div class="property-item">
+        <code>to.component</code>
+        <span class="property-type">string</span>
+        <span class="property-desc">The component name to render</span>
+      </div>
+      <div class="property-item">
+        <code>to.params</code>
+        <span class="property-type">Object</span>
+        <span class="property-desc">Route parameters extracted from dynamic segments</span>
+      </div>
+      <div class="property-item">
+        <code>to.metadata</code>
+        <span class="property-type">Object</span>
+        <span class="property-desc">Custom metadata defined in route configuration</span>
+      </div>
+      <div class="property-item">
+        <code>to.fullPath</code>
+        <span class="property-type">string</span>
+        <span class="property-desc">Complete path including parent paths</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="parameter-box">
+    <div class="parameter-header">
+      <code class="parameter-name">from</code>
+      <span class="parameter-type">Object | null</span>
+    </div>
+    <p class="parameter-description">The current route being navigated away from</p>
+    <div class="parameter-properties">
+      <div class="property-item">
+        <span class="property-desc">Same structure as <code>to</code> parameter</span>
+      </div>
+      <div class="property-item">
+        <span class="property-desc">Will be <code>null</code> on initial page load</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="parameter-box">
+    <div class="parameter-header">
+      <code class="parameter-name">next</code>
+      <span class="parameter-type">Function</span>
+    </div>
+    <p class="parameter-description">Callback function to resolve the navigation</p>
+    <div class="parameter-properties">
+      <div class="property-item">
+        <code>next()</code>
+        <span class="property-desc">Continue navigation to the intended route</span>
+      </div>
+      <div class="property-item">
+        <code>next(false)</code>
+        <span class="property-desc">Cancel the navigation</span>
+      </div>
+      <div class="property-item">
+        <code>next({ path: '/login' })</code>
+        <span class="property-desc">Redirect to a different route</span>
+      </div>
+    </div>
+    <p class="parameter-note">
+      <strong>Important:</strong> Always use <code>return next()</code> to prevent code execution after navigation resolution.
+    </p>
+  </div>
+
+  <h3 id="basic-before-example">Basic beforeEach Example</h3>
+  <div class="basic-before-example"></div>
+
+  <h2 id="authentication">Authentication Guard</h2>
+  <p>
+    One of the most common use cases for <code>beforeEach</code> is protecting private routes with authentication checks.
+    Routes can define a <code>metadata.private</code> property to indicate they require authentication.
+  </p>
+
+  <div class="auth-guard-example"></div>
+
+  <h2 id="authorization">Role-Based Authorization</h2>
+  <p>
+    Beyond simple authentication, you can implement role-based access control by checking user roles against
+    required permissions defined in route metadata.
+  </p>
+
+  <div class="role-guard-example"></div>
+
+  <h2 id="afterEach">afterEach Hook</h2>
+  <p>
+    The <code>afterEach</code> hook is called after navigation completes successfully. It's perfect for analytics,
+    logging, updating UI elements, and other post-navigation tasks. Unlike <code>beforeEach</code>, it cannot
+    prevent or redirect navigation.
+  </p>
+
+  <h3 id="afterEach-parameters">Parameters</h3>
+  
+  <div class="parameter-box">
+    <div class="parameter-header">
+      <code class="parameter-name">to</code>
+      <span class="parameter-type">Object</span>
+    </div>
+    <p class="parameter-description">The route that was navigated to (same structure as beforeEach)</p>
+  </div>
+
+  <div class="parameter-box">
+    <div class="parameter-header">
+      <code class="parameter-name">from</code>
+      <span class="parameter-type">Object | null</span>
+    </div>
+    <p class="parameter-description">The route that was navigated away from</p>
+  </div>
+
+  <div class="after-each-example"></div>
+
+  <h2 id="combined-usage">Combined Usage</h2>
+  <p>
+    In real-world applications, you'll typically use both <code>beforeEach</code> and <code>afterEach</code>
+    together to handle the complete navigation lifecycle.
+  </p>
+
+  <div class="combined-example"></div>
+
+  <h2 id="navigation-cancellation">Navigation Cancellation</h2>
+  <p>
+    You can prevent navigation entirely by calling <code>next(false)</code> or by not calling <code>next()</code>
+    at all. This is useful for confirming navigation when there's unsaved data.
+  </p>
+
+  <div class="cancel-example"></div>
+
+  <h2 id="data-prefetching">Data Prefetching</h2>
+  <p>
+    Use <code>beforeEach</code> to load data before the route component is rendered. This improves user experience
+    by ensuring data is ready when the component mounts.
+  </p>
+
+  <div class="prefetch-example"></div>
+
+  <h2 id="error-handling">Error Handling</h2>
+  <p>
+    Always wrap async operations in guards with proper error handling to prevent navigation from getting stuck.
+  </p>
+
+  <div class="error-example"></div>
+
+  <h2 id="route-metadata">Route Metadata Configuration</h2>
+  <p>
+    Guards work best when combined with route metadata. Define custom properties in your route configuration
+    that guards can check to determine behavior.
+  </p>
+
+  <div class="metadata-example"></div>
+
+  <h2 id="execution-order">Execution Order</h2>
+  <p>
+    Understanding the execution order of guards is crucial for proper navigation flow:
+  </p>
+
+  <ol>
+    <li>User triggers navigation (click link, browser back/forward, or <code>slice.router.navigate()</code>)</li>
+    <li><code>beforeEach</code> hook is called</li>
+    <li>If <code>next()</code> is called: navigation continues</li>
+    <li>If <code>next(false)</code> is called: navigation is cancelled</li>
+    <li>If <code>next({ path })</code> is called: navigation redirects to new path (triggers beforeEach again)</li>
+    <li>Route component is loaded and rendered</li>
+    <li><code>afterEach</code> hook is called</li>
+    <li>Component <code>init()</code> method is called (if exists)</li>
+  </ol>
+
+  <h2 id="best-practices">Best Practices</h2>
+  <ul>
+    <li><strong>Always use return next():</strong> Use <code>return next()</code> instead of just <code>next()</code> to prevent code execution after navigation</li>
+    <li><strong>Call next() in all paths:</strong> Ensure <code>next()</code> is called in every possible code path, including error handlers</li>
+    <li><strong>Handle async operations:</strong> Use async/await in guards and wrap in try-catch for error handling</li>
+    <li><strong>Keep guards fast:</strong> Guards run on every navigation, so keep logic efficient</li>
+    <li><strong>Use metadata:</strong> Store route-specific requirements in metadata rather than hardcoding paths</li>
+    <li><strong>Single responsibility:</strong> Each guard should have a clear, single purpose</li>
+    <li><strong>Order matters:</strong> Define guards in order of importance (authentication before analytics)</li>
+    <li><strong>Don't mutate route objects:</strong> The <code>to</code> and <code>from</code> objects should be treated as read-only</li>
+    <li><strong>Test thoroughly:</strong> Guards control critical app flow, so test all scenarios</li>
+  </ul>
+
+  <h2 id="common-use-cases">Common Use Cases</h2>
+  <ul>
+    <li><strong>Authentication:</strong> Redirect unauthenticated users to login page</li>
+    <li><strong>Authorization:</strong> Check user roles and permissions</li>
+    <li><strong>Analytics:</strong> Track page views and user navigation patterns</li>
+    <li><strong>Loading states:</strong> Show/hide loading indicators during navigation</li>
+    <li><strong>Page titles:</strong> Update document title and meta tags</li>
+    <li><strong>Breadcrumbs:</strong> Update breadcrumb navigation</li>
+    <li><strong>Data prefetching:</strong> Load data before route component renders</li>
+    <li><strong>Scroll behavior:</strong> Reset scroll position or restore previous position</li>
+    <li><strong>Form validation:</strong> Confirm navigation when leaving forms with unsaved changes</li>
+  </ul>
+
+  <h2 id="faq">Frequently Asked Questions</h2>
+  <div class="faq-section"></div>
 </div>
