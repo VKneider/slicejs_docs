@@ -1,172 +1,372 @@
-/* Documentation Component Styles */
+/* Documentation Main View Styles - Complete Redesign */
+
 slice-documentation {
-    display: block;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: var(--font-family);
-    line-height: 1.6;
-    color: var(--font-primary-color);
-    overflow: visible;
+  color: var(--font-primary-color);
+  display: block;
 }
 
-slice-documentation h1 {
-    color: var(--font-primary-color);
-    font-size: 2.5em;
-    margin-bottom: 20px;
-    text-align: center;
-    border-bottom: 3px solid var(--primary-color);
-    padding-bottom: 15px;
+/* Intro Section - Hero with split layout */
+.documentation .intro-section {
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  padding: 2em;
+  background: linear-gradient(135deg, var(--primary-background-color) 0%, var(--secondary-background-color) 100%);
+  border-bottom: 2px solid var(--primary-color);
 }
 
-slice-documentation h2 {
-    color: var(--font-secondary-color);
-    font-size: 1.8em;
-    margin: 30px 0 20px 0;
-    padding: 10px 0;
-    border-left: 4px solid var(--primary-color);
-    padding-left: 15px;
+.documentation .intro-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4em;
+  max-width: 1400px;
+  margin: 0 auto;
+  align-items: center;
 }
 
-slice-documentation h3 {
-    color: var(--font-primary-color);
-    font-size: 1.4em;
-    margin: 25px 0 15px 0;
+.documentation .intro-text h1 {
+  font-size: 3.5em;
+  margin: 0 0 0.3em 0;
+  color: var(--primary-color);
+  line-height: 1.1;
 }
 
-slice-documentation p {
-    margin-bottom: 15px;
-    font-size: 1.1em;
+.documentation .tagline {
+  font-size: 1.4em;
+  color: var(--font-primary-color);
+  margin: 0 0 1em 0;
+  font-weight: 500;
 }
 
-slice-documentation span {
-    color: var(--primary-color);
-    font-weight: 600;
+.documentation .description {
+  font-size: 1.1em;
+  color: var(--font-secondary-color);
+  line-height: 1.7;
+  margin: 0 0 2em 0;
 }
 
-/* Visual Components Section */
-slice-documentation .visualComponents {
-    padding: 25px 0 35px 0; /* Extra bottom padding for hover space */
-    margin: 30px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow: visible; /* Ensure hover effects are visible */
+.documentation .cta-buttons {
+  display: flex;
+  gap: 1em;
+  flex-wrap: wrap;
 }
 
-slice-documentation .visualComponents h2 {
-    color: var(--primary-color);
-    border-left: 4px solid var(--primary-color);
-    margin-top: 0;
-    align-self: flex-start;
+.documentation .intro-visual {
+  position: relative;
 }
 
-slice-documentation .visualComponents p {
-    align-self: flex-start;
-    width: 100%;
+.documentation .code-preview {
+  background-color: var(--primary-background-color);
+  border: 2px solid var(--primary-color-shade);
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 
-/* Center the Grid containing Cards */
-slice-documentation .visualComponents slice-grid {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 10px 0; /* Extra space for hover elevation */
-    gap: 20px;
-    flex-wrap: wrap;
-    background: none; /* Remove any background */
+/* Features Section */
+.documentation .features-section {
+  padding: 4em 2em;
+  background-color: var(--primary-background-color);
 }
 
-/* Ensure Grid items (Cards) are properly spaced */
-slice-documentation .visualComponents slice-grid .grid-item {
-    margin: 0 10px;
+.documentation .features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2em;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-/* Structural Components Section */
-slice-documentation .structuralComponents {
-    padding: 25px 0;
-    margin: 30px 0;
+.documentation .feature-card {
+  background-color: var(--secondary-background-color);
+  padding: 2em;
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
-slice-documentation .structuralComponents h2 {
-    color: var(--danger-color);
-    border-left: 4px solid var(--danger-color);
-    margin-top: 0;
+.documentation .feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
 }
 
-/* Service Components Section */
-slice-documentation .serviceComponents {
-    padding: 25px 0;
-    margin: 30px 0;
+.documentation .feature-icon {
+  font-size: 2.5em;
+  margin-bottom: 0.5em;
+  display: block;
 }
 
-slice-documentation .serviceComponents h2 {
-    color: var(--accent-color);
-    border-left: 4px solid var(--accent-color);
-    margin-top: 0;
+.documentation .feature-card h3 {
+  margin: 0.5em 0;
+  color: var(--primary-color);
+  font-size: 1.3em;
 }
 
-/* Q&A Section */
-slice-documentation .qna {
-    margin: 40px 0;
-    padding: 20px 0;
+.documentation .feature-card p {
+  margin: 0;
+  color: var(--font-secondary-color);
+  line-height: 1.6;
 }
 
-/* Static Props Section */
-slice-documentation .static-props {
-    margin: 40px 0;
-    padding: 25px 0;
+/* Architecture Section */
+.documentation .architecture-section {
+  padding: 4em 2em;
+  background-color: var(--secondary-background-color);
 }
 
-slice-documentation .static-props h2 {
-    color: var(--primary-color);
-    border-left: 4px solid var(--primary-color);
-    margin-top: 0;
+.documentation .architecture-section h2,
+.documentation .workflow-section h2,
+.documentation .examples-section h2,
+.documentation .learning-paths h2 {
+  text-align: center;
+  font-size: 2.5em;
+  margin: 0 0 0.5em 0;
+  color: var(--primary-color);
 }
 
-slice-documentation .static-props p {
-    color: var(--font-primary-color);
-    font-size: 1.1em;
-    margin-bottom: 20px;
+.documentation .section-subtitle {
+  text-align: center;
+  font-size: 1.1em;
+  color: var(--font-secondary-color);
+  margin: 0 auto 3em auto;
+  max-width: 700px;
+}
+
+.documentation .architecture-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2em;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.documentation .arch-card {
+  background-color: var(--primary-background-color);
+  padding: 2.5em;
+  border-radius: 8px;
+  text-align: center;
+  border-top: 4px solid;
+  transition: transform 0.3s;
+  cursor: pointer;
+}
+
+.documentation .arch-card:hover {
+  transform: scale(1.05);
+}
+
+.documentation .arch-card.visual {
+  border-color: var(--primary-color);
+}
+
+.documentation .arch-card.structural {
+  border-color: var(--danger-color);
+}
+
+.documentation .arch-card.service {
+  border-color: var(--secondary-color);
+}
+
+.documentation .arch-icon {
+  font-size: 4em;
+  margin-bottom: 0.3em;
+  display: block;
+}
+
+.documentation .arch-card h3 {
+  margin: 0.5em 0;
+  font-size: 1.5em;
+}
+
+.documentation .arch-card .component-count {
+  display: inline-block;
+  margin: 1em 0;
+  padding: 0.5em 1em;
+  background-color: var(--secondary-background-color);
+  border-radius: 20px;
+  font-size: 0.9em;
+  font-weight: 600;
+}
+
+.documentation .arch-card p {
+  margin: 1em 0;
+  line-height: 1.6;
+  color: var(--font-secondary-color);
+}
+
+/* Workflow Section */
+.documentation .workflow-section {
+  padding: 4em 2em;
+  background-color: var(--primary-background-color);
+}
+
+.documentation .workflow-steps {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2em;
+  max-width: 1400px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.documentation .workflow-step {
+  flex: 1;
+  min-width: 200px;
+  max-width: 250px;
+  text-align: center;
+  position: relative;
+}
+
+.documentation .step-number {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1em auto;
+  background-color: var(--primary-color);
+  color: var(--primary-color-contrast);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8em;
+  font-weight: bold;
+}
+
+.documentation .workflow-step h4 {
+  margin: 0.5em 0;
+  color: var(--primary-color);
+}
+
+.documentation .workflow-step p {
+  margin: 0;
+  color: var(--font-secondary-color);
+  font-size: 0.95em;
+}
+
+.documentation .arrow {
+  font-size: 2em;
+  color: var(--primary-color);
+  align-self: center;
+}
+
+/* Examples Section */
+.documentation .examples-section {
+  padding: 4em 2em;
+  background-color: var(--secondary-background-color);
+}
+
+.documentation .examples-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2em;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Learning Paths */
+.documentation .learning-paths {
+  padding: 4em 2em 6em 2em;
+  background-color: var(--primary-background-color);
+}
+
+.documentation .paths-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2em;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.documentation .path-card {
+  background-color: var(--secondary-background-color);
+  padding: 2.5em;
+  border-radius: 8px;
+  border: 2px solid var(--primary-color-shade);
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.documentation .path-card:hover {
+  border-color: var(--primary-color);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+}
+
+.documentation .path-header {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  margin-bottom: 1em;
+}
+
+.documentation .path-icon {
+  font-size: 2.5em;
+}
+
+.documentation .path-card h3 {
+  margin: 0;
+  color: var(--primary-color);
+  font-size: 1.4em;
+}
+
+.documentation .path-card p {
+  margin: 1em 0;
+  line-height: 1.6;
+  color: var(--font-secondary-color);
+}
+
+.documentation .path-link {
+  display: inline-block;
+  margin-top: 1em;
+  color: var(--primary-color);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.documentation .path-link:hover {
+  text-decoration: underline;
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-    slice-documentation {
-        padding: 15px;
-    }
-    
-    slice-documentation h1 {
-        font-size: 2em;
-    }
-    
-    slice-documentation h2 {
-        font-size: 1.5em;
-    }
-    
-    slice-documentation .visualComponents,
-    slice-documentation .structuralComponents,
-    slice-documentation .serviceComponents,
-    slice-documentation .static-props {
-        padding: 20px 0;
-        margin: 20px 0;
-    }
-    
-    /* Mobile: Stack Cards vertically and center them */
-    slice-documentation .visualComponents slice-grid {
-        flex-direction: column;
-        gap: 15px;
-        max-width: 100%;
-    }
-    
-    slice-documentation .visualComponents slice-grid .grid-item {
-        margin: 0;
-        display: flex;
-        justify-content: center;
-    }
+@media (max-width: 1200px) {
+  .documentation .intro-content {
+    grid-template-columns: 1fr;
+    gap: 3em;
+  }
+  
+  .documentation .architecture-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
-/* Dark theme support is handled by CSS variables */
+@media (max-width: 768px) {
+  .documentation .intro-text h1 {
+    font-size: 2.5em;
+  }
+  
+  .documentation .tagline {
+    font-size: 1.2em;
+  }
+  
+  .documentation .intro-section {
+    min-height: auto;
+    padding: 3em 1em;
+  }
+  
+  .documentation .features-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .documentation .workflow-steps {
+    flex-direction: column;
+  }
+  
+  .documentation .arrow {
+    transform: rotate(90deg);
+  }
+  
+  .documentation .architecture-section h2,
+  .documentation .workflow-section h2,
+  .documentation .examples-section h2,
+  .documentation .learning-paths h2 {
+    font-size: 2em;
+  }
+}
