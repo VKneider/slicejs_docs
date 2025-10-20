@@ -150,9 +150,6 @@ const routes = [
    {
       path: '/About',
       component: 'TheSliceTeam',
-      metadata:{
-         private:true
-      }
    },
 
 ];

@@ -83,7 +83,7 @@ const multiRoute = await slice.build("MultiRoute", {
    routes: routes
 });
 
-document.querySelector("#app").appendChild(multiRoute);`
+`
       });
       this.querySelector(".multi-route-example").appendChild(multiRouteExample);
 

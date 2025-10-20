@@ -6,7 +6,6 @@ const components = {
   "DetailsDocumentation": "AppComponents",
   "Documentation": "AppComponents",
   "DocumentationPage": "AppComponents",
-  "DropDownDocumentation": "AppComponents",
   "GridDocumentation": "AppComponents",
   "InputDocumentation": "AppComponents",
   "Installation": "AppComponents",

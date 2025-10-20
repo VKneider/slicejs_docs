@@ -46,8 +46,6 @@ const card = await slice.build("Card", {
    text: "Start building amazing apps"
 });
 
-// Add to your page
-document.querySelector("#app").appendChild(card);
 
 // That's it! No complex setup needed.`
       });
