@@ -15,11 +15,7 @@
     "slice:version": "node node_modules/slicejs-cli/client.js version",
     "slice:update": "node node_modules/slicejs-cli/client.js update",
     "slice:get": "node node_modules/slicejs-cli/client.js get",
-    "slice:browse": "node node_modules/slicejs-cli/client.js browse",
-    "slice:sync": "node node_modules/slicejs-cli/client.js sync",
-    "slice:registry-get": "node node_modules/slicejs-cli/client.js registry get",
-    "slice:registry-list": "node node_modules/slicejs-cli/client.js registry list",
-    "slice:registry-sync": "node node_modules/slicejs-cli/client.js registry sync"
+    "slice:browse": "node node_modules/slicejs-cli/client.js browse"
   },
   "keywords": [],
   "author": "",
