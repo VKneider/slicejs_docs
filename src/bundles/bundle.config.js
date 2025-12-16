@@ -1,6 +1,6 @@
 /**
  * Slice.js Bundle Configuration
- * Generated: 2025-12-16T04:19:20.331Z
+ * Generated: 2025-12-16T05:09:38.989Z
  * Strategy: hybrid
  */
 
@@ -8,7 +8,7 @@
 export const SLICE_BUNDLE_CONFIG = {
   "version": "2.0.0",
   "strategy": "hybrid",
-  "generated": "2025-12-16T04:19:20.330Z",
+  "generated": "2025-12-16T05:09:38.987Z",
   "stats": {
     "totalComponents": 62,
     "totalRoutes": 35,
@@ -26,6 +26,30 @@ export const SLICE_BUNDLE_CONFIG = {
       ]
     },
     "routes": {
+      "multiroute-DocumentationPage": {
+        "path": [
+          "/Documentation",
+          "/Components"
+        ],
+        "file": "slice-bundle.multiroute-DocumentationPage.js",
+        "size": 1512174,
+        "components": [
+          "DocumentationPage",
+          "Navbar",
+          "Link",
+          "DropDown",
+          "Button",
+          "Icon",
+          "MultiRoute",
+          "TreeView",
+          "TreeItem",
+          "MainMenu",
+          "MyNavigation"
+        ],
+        "dependencies": [
+          "critical"
+        ]
+      },
       "home": {
         "path": [
           "/"
@@ -39,32 +63,6 @@ export const SLICE_BUNDLE_CONFIG = {
           "DropDown",
           "Button",
           "Icon",
-          "LandingMenu"
-        ],
-        "dependencies": [
-          "critical"
-        ]
-      },
-      "documentation": {
-        "path": [
-          "/Documentation",
-          "/Docum/${category}/${id}"
-        ],
-        "file": "slice-bundle.documentation.js",
-        "size": 1517710,
-        "components": [
-          "DocumentationPage",
-          "Navbar",
-          "Link",
-          "DropDown",
-          "Button",
-          "Icon",
-          "MultiRoute",
-          "TreeView",
-          "TreeItem",
-          "MainMenu",
-          "MyNavigation",
-          "LandingPage",
           "LandingMenu"
         ],
         "dependencies": [
@@ -121,7 +119,6 @@ export const SLICE_BUNDLE_CONFIG = {
       "components": {
         "path": [
           "/Visual",
-          "/Components",
           "/Card",
           "/Button",
           "/Switch",
@@ -137,24 +134,15 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Select"
         ],
         "file": "slice-bundle.components.js",
-        "size": 1853111,
+        "size": 1832700,
         "components": [
           "VisualDocumentation",
           "CodeVisualizer",
           "Details",
-          "DocumentationPage",
-          "Navbar",
-          "Link",
-          "DropDown",
-          "Button",
-          "Icon",
-          "MultiRoute",
-          "TreeView",
-          "TreeItem",
-          "MainMenu",
-          "MyNavigation",
           "CardDocumentation",
           "Card",
+          "Icon",
+          "Button",
           "ButtonDocumentation",
           "Grid",
           "SwitchDocumentation",
@@ -164,11 +152,17 @@ export const SLICE_BUNDLE_CONFIG = {
           "InputDocumentation",
           "Input",
           "MultiRouteDocumentation",
+          "MultiRoute",
           "LayoutDocumentation",
+          "Navbar",
+          "Link",
+          "DropDown",
           "LoadingDocumentation",
           "Loading",
           "DetailsDocumentation",
           "TreeViewDocumentation",
+          "TreeView",
+          "TreeItem",
           "GridDocumentation",
           "NavBarDocumentation",
           "SelectDocumentation",
@@ -273,6 +267,25 @@ export const SLICE_BUNDLE_CONFIG = {
           "Button",
           "Icon",
           "SliceTeamCard"
+        ],
+        "dependencies": [
+          "critical"
+        ]
+      },
+      "documentation": {
+        "path": [
+          "/Docum/${category}/${id}"
+        ],
+        "file": "slice-bundle.documentation.js",
+        "size": 1483535,
+        "components": [
+          "LandingPage",
+          "Navbar",
+          "Link",
+          "DropDown",
+          "Button",
+          "Icon",
+          "LandingMenu"
         ],
         "dependencies": [
           "critical"
