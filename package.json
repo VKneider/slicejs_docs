@@ -35,7 +35,11 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "slicejs-cli": "^2.5.0",
-    "slicejs-web-framework": "^2.2.6"
+    "slicejs-cli": "^2.7.7",
+    "slicejs-web-framework": "^2.2.7"
+  },
+  "devDependencies": {
+    "@babel/parser": "^7.28.5",
+    "@babel/traverse": "^7.28.5"
   }
 }
