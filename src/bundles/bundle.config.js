@@ -1,4 +1,11 @@
-{
+/**
+ * Slice.js Bundle Configuration
+ * Generated: 2026-01-24T05:46:36.806Z
+ * Strategy: hybrid
+ */
+
+// Direct bundle configuration (no fetch required)
+export const SLICE_BUNDLE_CONFIG = {
   "version": "2.0.0",
   "strategy": "hybrid",
   "generated": "2026-01-24T05:46:36.804Z",
@@ -286,5 +293,18 @@
         ]
       }
     }
+  }
+};
+
+// Auto-initialization if slice is available
+if (typeof window !== 'undefined' && window.slice && window.slice.controller) {
+  window.slice.controller.bundleConfig = SLICE_BUNDLE_CONFIG;
+
+  // Load critical bundle automatically
+  if (SLICE_BUNDLE_CONFIG.bundles.critical && !window.slice.controller.criticalBundleLoaded) {
+    import('./slice-bundle.critical.js').catch(err =>
+      console.warn('Failed to load critical bundle:', err)
+    );
+    window.slice.controller.criticalBundleLoaded = true;
   }
 }
