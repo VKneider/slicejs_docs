@@ -151,6 +151,10 @@ const routes = [
       path: '/About',
       component: 'TheSliceTeam',
    },
+   {
+      path: '/about',
+      component: 'TheSliceTeam',
+   },
 
 ];
 
