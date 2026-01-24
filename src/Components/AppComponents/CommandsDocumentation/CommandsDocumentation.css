@@ -3,153 +3,459 @@ slice-commandsdocumentation {
   color: var(--font-primary-color);
   display: block;
   width: 100%;
+  line-height: 1.6;
 }
 
+/* Typography */
 slice-commandsdocumentation h1 {
   margin-top: 2rem;
-  margin-bottom: 1.5rem;
-  font-size: 2.2rem;
-  border-bottom: 1px solid var(--primary-color-shade);
-  padding-bottom: 0.5rem;
-}
-
-slice-commandsdocumentation h2 {
-  margin-top: 1.5rem;
-  margin-bottom: 1rem;
-  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  border-bottom: 3px solid var(--primary-color);
+  padding-bottom: 1rem;
+  font-weight: 700;
   color: var(--primary-color);
 }
 
+slice-commandsdocumentation h2 {
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 slice-commandsdocumentation h3 {
-  margin-top: 1.2rem;
+  margin-top: 0;
   margin-bottom: 0.8rem;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
+  font-weight: 600;
   color: var(--font-primary-color);
 }
 
+slice-commandsdocumentation h4 {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
 slice-commandsdocumentation p {
-  line-height: 1.6;
+  line-height: 1.7;
   margin-bottom: 1rem;
   text-align: justify;
 }
 
 slice-commandsdocumentation code {
-  font-family: monospace;
+  font-family: 'Courier New', Courier, monospace;
   background-color: var(--secondary-background-color);
-  padding: 0.2rem 0.4rem;
-  border-radius: var(--border-radius-slice);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
   font-size: 0.9em;
-}
-
-/* Command Sections */
-slice-commandsdocumentation .commands-section {
-  margin: 3rem 0;
-  padding: 1rem 0;
-}
-
-slice-commandsdocumentation .commands-section h2 {
+  font-weight: 500;
   color: var(--primary-color);
-  font-size: 1.6rem;
+  border: 1px solid rgba(var(--primary-color-rgb), 0.2);
+}
+
+/* Section Icons */
+slice-commandsdocumentation .section-icon {
+  font-size: 1.5em;
+  vertical-align: middle;
+}
+
+/* Introduction Section */
+slice-commandsdocumentation .intro-section {
+  background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.05), rgba(var(--primary-color-rgb), 0.02));
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 3rem;
+  border: 1px solid rgba(var(--primary-color-rgb), 0.1);
+}
+
+slice-commandsdocumentation .intro-section > p {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+/* Installation Info */
+slice-commandsdocumentation .installation-info h3 {
+  color: var(--primary-color);
   margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--primary-color-shade);
+  font-size: 1.4rem;
+}
+
+slice-commandsdocumentation .install-methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+slice-commandsdocumentation .method-card {
+  background: var(--background-color);
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 2px solid rgba(var(--primary-color-rgb), 0.15);
+  transition: all 0.3s ease;
+}
+
+slice-commandsdocumentation .method-card:hover {
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(var(--primary-color-rgb), 0.15);
+}
+
+slice-commandsdocumentation .method-card h4 {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+slice-commandsdocumentation .method-card p {
+  font-size: 0.95rem;
+  color: var(--font-secondary-color);
+  margin-top: 1rem;
+}
+
+/* Commands Section */
+slice-commandsdocumentation .commands-section {
+  margin: 4rem 0;
+}
+
+slice-commandsdocumentation .section-description {
+  font-size: 1.05rem;
+  color: var(--font-secondary-color);
+  margin-bottom: 2rem;
+  font-style: italic;
 }
 
 slice-commandsdocumentation .commands-grid {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
   margin: 2rem 0;
 }
 
+/* Command Cards */
 slice-commandsdocumentation .command-card {
-  padding: 1.5rem;
-  margin-bottom: 1rem;
+  background: var(--background-color);
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(var(--primary-color-rgb), 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+slice-commandsdocumentation .command-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-color-shade));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+slice-commandsdocumentation .command-card:hover::before {
+  opacity: 1;
 }
 
 slice-commandsdocumentation .command-card:hover {
-  /* Remove hover effects */
+  border-color: var(--primary-color);
+  box-shadow: 0 8px 24px rgba(var(--primary-color-rgb), 0.12);
+  transform: translateY(-4px);
 }
 
-slice-commandsdocumentation .command-card h3 {
-  margin-top: 0;
+slice-commandsdocumentation .command-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+slice-commandsdocumentation .command-header h3 {
+  margin: 0;
   color: var(--primary-color);
   font-size: 1.3rem;
-  margin-bottom: 1rem;
+}
+
+/* Command Badges */
+slice-commandsdocumentation .command-badge {
+  padding: 0.35rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(var(--primary-color-rgb), 0.1);
+  color: var(--primary-color);
+  border: 1px solid rgba(var(--primary-color-rgb), 0.3);
+}
+
+slice-commandsdocumentation .command-badge.primary {
+  background: rgba(66, 135, 245, 0.15);
+  color: #4287f5;
+  border-color: #4287f5;
+}
+
+slice-commandsdocumentation .command-badge.success {
+  background: rgba(76, 175, 80, 0.15);
+  color: #4caf50;
+  border-color: #4caf50;
+}
+
+slice-commandsdocumentation .command-badge.info {
+  background: rgba(41, 182, 246, 0.15);
+  color: #29b6f6;
+  border-color: #29b6f6;
+}
+
+slice-commandsdocumentation .command-badge.warning {
+  background: rgba(255, 167, 38, 0.15);
+  color: #ffa726;
+  border-color: #ffa726;
+}
+
+slice-commandsdocumentation .command-badge.danger {
+  background: rgba(239, 83, 80, 0.15);
+  color: #ef5350;
+  border-color: #ef5350;
 }
 
 slice-commandsdocumentation .command-description {
-  margin-left: 0;
+  margin-top: 1rem;
 }
 
 slice-commandsdocumentation .codevisualizer_container {
-  margin-top: 1rem;
-  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
 }
 
-slice-commandsdocumentation .best-practices {
-  border-left: 3px solid var(--primary-color);
-  padding: 1.5rem 1.5rem 1.5rem 2rem;
-  margin: 2rem 0;
+/* Workflow Section */
+slice-commandsdocumentation .workflow-section {
+  background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.03), transparent);
+  padding: 2.5rem;
+  border-radius: 12px;
+  margin: 4rem 0;
+  border: 1px solid rgba(var(--primary-color-rgb), 0.15);
 }
 
-slice-commandsdocumentation .best-practices ul {
-  margin-left: 1.5rem;
-  line-height: 1.7;
-}
-
-slice-commandsdocumentation .best-practices li {
-  margin-bottom: 0.7rem;
-}
-
-slice-commandsdocumentation .cli-tips {
-  padding: 1.5rem;
-  margin: 2rem 0;
-}
-
-slice-commandsdocumentation .cli-tips ul {
-  margin-left: 1.5rem;
-  line-height: 1.7;
-}
-
-slice-commandsdocumentation .cli-tips li strong {
-  color: var(--primary-color);
+slice-commandsdocumentation .workflow-section h2 {
+  margin-top: 0;
 }
 
 slice-commandsdocumentation .command-workflow {
-  margin: 1.5rem 0;
+  margin: 2rem 0;
 }
 
-slice-commandsdocumentation .command-demo {
-  padding: 0.5rem 0;
+/* Best Practices */
+slice-commandsdocumentation .best-practices {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.05), rgba(76, 175, 80, 0.02));
+  border-left: 4px solid #4caf50;
+  padding: 2rem;
+  border-radius: 8px;
+  margin: 3rem 0;
 }
 
-/* Removed section-specific styling backgrounds */
+slice-commandsdocumentation .best-practices h2 {
+  margin-top: 0;
+  color: #4caf50;
+}
 
-/* Responsive styling */
-@media (min-width: 768px) {
+slice-commandsdocumentation .practices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+slice-commandsdocumentation .practice-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1.5rem;
+  background: var(--background-color);
+  border-radius: 10px;
+  border: 1px solid rgba(76, 175, 80, 0.2);
+  transition: all 0.3s ease;
+}
+
+slice-commandsdocumentation .practice-item:hover {
+  transform: translateX(5px);
+  border-color: #4caf50;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15);
+}
+
+slice-commandsdocumentation .practice-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+slice-commandsdocumentation .practice-content strong {
+  display: block;
+  color: #4caf50;
+  margin-bottom: 0.5rem;
+  font-size: 1.05rem;
+}
+
+slice-commandsdocumentation .practice-content p {
+  margin: 0;
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+/* CLI Tips */
+slice-commandsdocumentation .cli-tips {
+  padding: 2rem;
+  margin: 3rem 0;
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.05), rgba(255, 193, 7, 0.02));
+  border-radius: 12px;
+  border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+slice-commandsdocumentation .cli-tips h2 {
+  margin-top: 0;
+  color: #ffc107;
+}
+
+slice-commandsdocumentation .tip-card {
+  background: var(--background-color);
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255, 193, 7, 0.2);
+  transition: all 0.3s ease;
+}
+
+slice-commandsdocumentation .tip-card:hover {
+  border-color: #ffc107;
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.15);
+}
+
+slice-commandsdocumentation .tip-card h3 {
+  color: #ffc107;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+slice-commandsdocumentation .tip-card p {
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+slice-commandsdocumentation .tip-card ul {
+  margin: 1rem 0 0 1.5rem;
+  line-height: 1.8;
+}
+
+slice-commandsdocumentation .tip-card li {
+  margin-bottom: 0.8rem;
+}
+
+slice-commandsdocumentation .tip-card li strong {
+  color: var(--primary-color);
+}
+
+/* Command Groups */
+slice-commandsdocumentation .command-groups {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+slice-commandsdocumentation .group-item {
+  padding: 1rem;
+  background: rgba(var(--primary-color-rgb), 0.05);
+  border-radius: 8px;
+  border-left: 3px solid var(--primary-color);
+}
+
+slice-commandsdocumentation .group-item strong {
+  color: var(--primary-color);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+slice-commandsdocumentation .group-item code {
+  margin-right: 0.5rem;
+}
+
+/* Shortcuts List */
+slice-commandsdocumentation .shortcuts-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+slice-commandsdocumentation .shortcut-item {
+  padding: 0.75rem;
+  background: rgba(var(--primary-color-rgb), 0.05);
+  border-radius: 6px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  text-align: center;
+  border: 1px solid rgba(var(--primary-color-rgb), 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
   slice-commandsdocumentation .commands-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
-}
-
-@media (min-width: 1200px) {
-  slice-commandsdocumentation .commands-grid {
-    grid-template-columns: repeat(2, 1fr);
+  
+  slice-commandsdocumentation .practices-grid {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
-  slice-commandsdocumentation .commands-section {
-    padding: 1rem;
-    margin: 2rem 0;
+  slice-commandsdocumentation h1 {
+    font-size: 2rem;
+  }
+  
+  slice-commandsdocumentation h2 {
+    font-size: 1.5rem;
+  }
+  
+  slice-commandsdocumentation .intro-section,
+  slice-commandsdocumentation .workflow-section,
+  slice-commandsdocumentation .best-practices,
+  slice-commandsdocumentation .cli-tips {
+    padding: 1.5rem;
   }
   
   slice-commandsdocumentation .command-card {
-    padding: 1rem;
+    padding: 1.5rem;
   }
   
-  slice-commandsdocumentation .command-description {
-    padding-left: 0.5rem;
+  slice-commandsdocumentation .install-methods {
+    grid-template-columns: 1fr;
+  }
+  
+  slice-commandsdocumentation .shortcuts-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  slice-commandsdocumentation h1 {
+    font-size: 1.75rem;
+  }
+  
+  slice-commandsdocumentation .command-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  slice-commandsdocumentation .practice-item {
+    flex-direction: column;
   }
 }

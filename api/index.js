@@ -1,15 +1,20 @@
+// api/index.js - Seguridad automática sin configuración
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import inquirer from 'inquirer';
+import { 
+  securityMiddleware, 
+  sliceFrameworkProtection, 
+  suspiciousRequestLogger
+} from './middleware/securityMiddleware.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 import sliceConfig from '../src/sliceConfig.json' with { type: 'json' };
 
 let server;
-
 const app = express();
 
 // Parsear argumentos de línea de comandos
@@ -22,14 +27,48 @@ const folderDeployed = 'src';
 // Obtener puerto desde sliceConfig.json, con fallback a process.env.PORT
 const PORT = sliceConfig.server?.port || process.env.PORT || 3001;
 
-console.log(`🚀 Starting Slice.js server in ${runMode} mode`);
-console.log(`📁 Serving files from: /${folderDeployed}`);
+// ==============================================
+// MIDDLEWARES DE SEGURIDAD (APLICAR PRIMERO)
+// ==============================================
 
-app.use('/Slice/', express.static(path.join(__dirname, '..', 'node_modules', 'slicejs-web-framework', 'Slice')));
+// 1. Logger de peticiones sospechosas (solo observación, no bloquea)
+app.use(suspiciousRequestLogger());
 
+// 2. Protección del framework - TOTALMENTE AUTOMÁTICA
+// Detecta automáticamente el dominio desde los headers
+// Funciona en localhost, IP, y cualquier dominio
+app.use(sliceFrameworkProtection());
 
-// Middleware para servir archivos estáticos
-app.use(express.static(path.join(__dirname, `../${folderDeployed}`)));
+// 3. Middleware de seguridad general
+app.use(securityMiddleware({
+  allowedExtensions: [
+    '.js', '.css', '.html', '.json', 
+    '.svg', '.png', '.jpg', '.jpeg', '.gif', 
+    '.woff', '.woff2', '.ttf', '.ico'
+  ],
+  blockedPaths: [
+    '/node_modules',
+    '/package.json',
+    '/package-lock.json',
+    '/.env',
+    '/.git',
+    '/api/middleware'
+  ],
+  allowPublicAssets: true
+}));
+
+// ==============================================
+// MIDDLEWARES DE APLICACIÓN
+// ==============================================
+
+// Middleware global para archivos JavaScript con MIME types correctos
+app.use((req, res, next) => {
+  if (req.path.endsWith('.js')) {
+    // Forzar headers correctos para TODOS los archivos .js
+    res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+  }
+  next();
+});
 
 // Middleware para parsear JSON y formularios
 app.use(express.json());
@@ -48,6 +87,90 @@ app.use((req, res, next) => {
   }
 });
 
+// ==============================================
+// ARCHIVOS ESTÁTICOS (DESPUÉS DE SEGURIDAD)
+// ==============================================
+
+// Función de utilidad para verificar si existe el directorio bundles
+function bundlesDirectoryExists() {
+  const bundleDir = path.join(__dirname, `../${folderDeployed}`, 'bundles');
+  return fs.existsSync(bundleDir) && fs.statSync(bundleDir).isDirectory();
+}
+
+// Capturar todas las peticiones a bundles para debugging
+app.use('/bundles/', (req, res, next) => {
+  console.log(`🔍 Bundle request: ${req.method} ${req.originalUrl}`);
+  next();
+});
+
+// Middleware personalizado para archivos de bundles con MIME types correctos
+// ⚠️ DEBE IR ANTES del middleware general para tener prioridad
+app.use('/bundles/', (req, res, next) => {
+  // Verificar si existe el directorio bundles
+  if (!bundlesDirectoryExists()) {
+    console.log(`ℹ️ Bundles directory does not exist, skipping bundle processing`);
+    return next(); // Continuar con el siguiente middleware
+  }
+
+  // Solo procesar archivos .js
+  if (req.path.endsWith('.js')) {
+    const filePath = path.join(__dirname, `../${folderDeployed}`, 'bundles', req.path);
+    console.log(`📂 Processing bundle: ${req.path} -> ${filePath}`);
+
+    // Verificar que el archivo existe
+    if (fs.existsSync(filePath)) {
+      try {
+        // Leer y servir el archivo con headers correctos
+        const fileContent = fs.readFileSync(filePath, 'utf8');
+        res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate'); // No cachear para permitir actualizaciones en tiempo real
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+        console.log(`✅ Serving bundle: ${req.path} (${fileContent.length} bytes, ${Buffer.byteLength(fileContent, 'utf8')} bytes UTF-8)`);
+        return res.send(fileContent);
+      } catch (error) {
+        console.log(`❌ Error reading bundle file: ${error.message}`);
+        return res.status(500).send('Error reading bundle file');
+      }
+    } else {
+      console.log(`❌ Bundle file not found: ${filePath}`);
+      // Listar archivos disponibles para debugging
+      try {
+        const bundleDir = path.join(__dirname, `../${folderDeployed}`, 'bundles');
+        if (fs.existsSync(bundleDir)) {
+          const files = fs.readdirSync(bundleDir);
+          console.log(`📁 Available files in bundles: ${files.join(', ')}`);
+        }
+      } catch (e) {
+        console.log(`❌ Could not list bundle directory: ${e.message}`);
+      }
+      return res.status(404).send('Bundle file not found');
+    }
+  }
+
+  // Para archivos no .js, continuar con el middleware estático normal
+  next();
+});
+
+// Servir otros archivos de bundles (CSS, etc.) con el middleware estático normal
+// Solo si existe el directorio bundles
+if (bundlesDirectoryExists()) {
+  app.use('/bundles/', express.static(path.join(__dirname, `../${folderDeployed}`, 'bundles')));
+  console.log(`📦 Bundles directory found, serving static files`);
+} else {
+  console.log(`ℹ️ Bundles directory not found, skipping static bundle serving`);
+}
+
+// Servir framework Slice.js
+app.use('/Slice/', express.static(path.join(__dirname, '..', 'node_modules', 'slicejs-web-framework', 'Slice')));
+
+// Servir archivos estáticos del proyecto
+app.use(express.static(path.join(__dirname, `../${folderDeployed}`)));
+
+// ==============================================
+// RUTAS DE API
+// ==============================================
+
 // Ruta de ejemplo para API
 app.get('/api/status', (req, res) => {
   res.json({
@@ -56,13 +179,23 @@ app.get('/api/status', (req, res) => {
     folder: folderDeployed,
     timestamp: new Date().toISOString(),
     framework: 'Slice.js',
-    version: '2.0.0'
+    version: '2.0.0',
+    security: {
+      enabled: true,
+      mode: 'automatic',
+      description: 'Zero-config security - works with any domain'
+    }
   });
 });
 
+
+// ==============================================
+// SPA FALLBACK
+// ==============================================
+
 // SPA fallback - servir index.html para rutas no encontradas
 app.get('*', (req, res) => {
-  const indexPath = path.join(__dirname, `../${folderDeployed}`,"App", 'index.html');
+  const indexPath = path.join(__dirname, `../${folderDeployed}`, "App", 'index.html');
   res.sendFile(indexPath, (err) => {
     if (err) {
       res.status(404).send(`
@@ -78,83 +211,15 @@ app.get('*', (req, res) => {
   });
 });
 
+// ==============================================
+// INICIO DEL SERVIDOR
+// ==============================================
+
 function startServer() {
   server = app.listen(PORT, () => {
-    // Limpiar consola y mostrar banner de inicio
-    console.clear();
-    showWelcomeBanner();
-    
-    // Información del servidor
-    console.log(`✅ Server running at ${'\x1b[36m'}http://localhost:${PORT}${'\x1b[0m'}`);
-    console.log(`📂 Mode: ${'\x1b[32m'}${runMode}${'\x1b[0m'} (serving from ${'\x1b[33m'}/${folderDeployed}${'\x1b[0m'})`);
-    console.log(`🔄 ${'\x1b[32m'}Development mode${'\x1b[0m'}: Changes in /src are served instantly`);
-    console.log(`🛑 Press ${'\x1b[31m'}Ctrl+C${'\x1b[0m'} to stop\n`);
+    console.log(`🔒 Security middleware: active (zero-config, automatic)`);
+    console.log(`🚀 Slice.js server running on port ${PORT}`);
   });
-
-  // Mostrar menú interactivo después de un momento
-  setTimeout(showInteractiveMenu, 1500);
-}
-
-function showWelcomeBanner() {
-  const banner = `
-${'\x1b[36m'}╔══════════════════════════════════════════════════╗${'\x1b[0m'}
-${'\x1b[36m'}║${'\x1b[0m'}              ${'\x1b[1m'}🍰 SLICE.JS SERVER${'\x1b[0m'}                ${'\x1b[36m'}║${'\x1b[0m'}
-${'\x1b[36m'}║${'\x1b[0m'}            ${'\x1b[90m'}Development Environment${'\x1b[0m'}             ${'\x1b[36m'}║${'\x1b[0m'}
-${'\x1b[36m'}╚══════════════════════════════════════════════════╝${'\x1b[0m'}
-`;
-  console.log(banner);
-}
-
-async function showInteractiveMenu() {
-  while (true) {
-    try {
-      console.log('\n' + '='.repeat(50));
-      
-      const { action } = await inquirer.prompt([
-        {
-          type: 'list',
-          name: 'action',
-          message: '🎛️  Server Control Menu',
-          choices: [
-            '📊 Server Status',
-            '🌐 Open in Browser',
-            '🔄 Restart Server',
-            '🛑 Stop Server'
-          ]
-        }
-      ]);
-
-      if (action === '📊 Server Status') {
-        console.log(`\n📈 Server Status:`);
-        console.log(`   🔗 URL: http://localhost:${PORT}`);
-        console.log(`   📁 Mode: ${runMode}`);
-        console.log(`   📂 Serving: /${folderDeployed}`);
-        console.log(`   ⏰ Uptime: ${Math.floor(process.uptime())}s`);
-      } else if (action === '🌐 Open in Browser') {
-        const { default: open } = await import('open');
-        await open(`http://localhost:${PORT}`);
-        console.log('🌐 Opening browser...');
-      } else if (action === '🛑 Stop Server') {
-        console.log('\n🛑 Stopping server...');
-        server.close(() => {
-          console.log('✅ Server stopped successfully');
-          process.exit(0);
-        });
-        break;
-      } else if (action === '🔄 Restart Server') {
-        console.log('\nRestarting server...');
-        server.close(() => {
-          console.log('Server stopped. Restarting...');
-          startServer();
-        });
-        break;
-      }
-    } catch (error) {
-      // Si hay error con inquirer, continuar sin menú
-      console.log('\n💡 Interactive menu not available - Press Ctrl+C to stop');
-      break;
-    }
-  }
 }
 
 // Manejar cierre del proceso
