@@ -59,6 +59,32 @@ const myButton = await slice.build("Button", {
       
       this.querySelector(".controller-example").appendChild(controllerExample);
 
+      const controllerDestroyExample = await slice.build("CodeVisualizer", {
+         value: `// Component destruction to avoid memory leaks
+// 1) Destroy by container (recommended for dynamic lists)
+const container = this.querySelector(".items");
+slice.controller.destroyByContainer(container);
+container.innerHTML = "";
+
+// 2) Destroy by component or sliceId
+slice.controller.destroyComponent(myComponent);
+slice.controller.destroyComponent("product-42");
+
+// 3) Destroy by pattern
+slice.controller.destroyByPattern(/^item-/);
+
+// beforeDestroy hook runs automatically
+export default class MyComponent extends HTMLElement {
+   beforeDestroy() {
+      // Cleanup timers, subscriptions, or pending work
+      clearInterval(this._pollingId);
+   }
+}`,
+         language: "javascript"
+      });
+
+      this.querySelector(".controller-destroy-example").appendChild(controllerDestroyExample);
+
       // Router documentation section - ACTUALIZADO
       const routerExample = await slice.build("CodeVisualizer", {
          value: `// Declaring routes in routes.js (unchanged)

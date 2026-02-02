@@ -202,8 +202,8 @@ customElements.define('slice-product-list', ProductList);`,
       value: `// How Router Manages Component LifeCycle
 
 // MultiRoute component behavior:
-export default class MultiRoute extends HTMLElement {
-  async render() {
+ export default class MultiRoute extends HTMLElement {
+   async renderRoute() {
     const currentPath = window.location.pathname;
     const routeMatch = this.props.routes.find(route => route.path === currentPath);
 
@@ -214,7 +214,7 @@ export default class MultiRoute extends HTMLElement {
         // 🔄 Component exists in cache - call update()
         const cachedComponent = this.renderedComponents.get(component);
         
-        this.innerHTML = "";
+         this.innerHTML = "";
         
         // This triggers the update() method
         if (cachedComponent.update) {
@@ -229,7 +229,7 @@ export default class MultiRoute extends HTMLElement {
         });
         
         // This triggers: constructor → init()
-        this.innerHTML = "";
+         this.innerHTML = "";
         this.appendChild(newComponent);
         
         // Cache for future navigations
@@ -239,7 +239,7 @@ export default class MultiRoute extends HTMLElement {
   }
 }
 
-// Navigation flow example:
+ // Navigation flow example:
 // User navigates to /dashboard (first time)
 //   → constructor → init()
 //
@@ -275,8 +275,8 @@ async init() {
   // 4. Set up event listeners ONCE
   this.$submitButton.addEventListener("click", this.handleSubmit.bind(this));
   
-  // 5. Initial render
-  this.render();
+  // 5. Initial UI update
+  this.updateUserUI();
 }
 
 // ❌ AVOID - Don't do these in init()
@@ -409,7 +409,7 @@ async update() {
 }
 
 // ❌ PITFALL 3: Not using consistent sliceIds
-async render() {
+  async update() {
   // ❌ WRONG: Random IDs prevent efficient cleanup
   const component = await slice.build("Item", {
     sliceId: \`item-\${Math.random()}\`,
@@ -418,7 +418,7 @@ async render() {
 }
 
 // ✅ SOLUTION: Use consistent IDs based on data
-async render() {
+  async update() {
   // ✅ CORRECT: Predictable IDs for easy cleanup
   const component = await slice.build("Item", {
     sliceId: \`item-\${item.id}\`,
@@ -490,7 +490,7 @@ export default class ProductList extends HTMLElement {
   async init() {
     this.$container = this.querySelector('.products-container');
     await this.loadProducts();
-    await this.renderProducts();
+    await this.buildProductCards();
   }
 
   async update() {
@@ -508,7 +508,7 @@ export default class ProductList extends HTMLElement {
     // this.$container.innerHTML = '';
     
     await this.loadProducts();
-    await this.renderProducts();
+    await this.buildProductCards();
   }
 
   async loadProducts() {
@@ -516,7 +516,7 @@ export default class ProductList extends HTMLElement {
     this.products = await response.json();
   }
 
-  async renderProducts() {
+  async buildProductCards() {
     for (const product of this.products) {
       const card = await slice.build('ProductCard', {
         sliceId: \`product-\${product.id}\`, // Consistent ID
@@ -551,11 +551,11 @@ async update() {
   const container = this.querySelector('.items');
   slice.controller.destroyByContainer(container); // Simple!
   container.innerHTML = '';
-  await this.renderItems();
+  await this.buildItems();
 }
 
 // 2. Use consistent sliceIds based on data
-async renderProducts() {
+async buildProductCards() {
   for (const product of this.products) {
     await slice.build('ProductCard', {
       sliceId: \`product-\${product.id}\`, // ✅ Consistent
@@ -575,15 +575,16 @@ async update() {
   // ✅ ALWAYS: Destroy → Clear → Recreate
   slice.controller.destroyByContainer(this.$container);
   this.$container.innerHTML = '';
-  await this.renderItems();
+  await this.buildItems();
 }
 
 // 5. Use beforeDestroy hook for cleanup
 export default class MyComponent extends HTMLElement {
   beforeDestroy() {
-    // Custom cleanup logic
-    console.log('Cleaning up component');
-    this.cancelPendingRequests();
+    // Cleanup timers, subscriptions, or pending work
+    clearInterval(this._pollingId);
+    this.abortController?.abort();
+    window.removeEventListener('resize', this._onResize);
   }
 }`,
       language: 'javascript'
@@ -637,7 +638,7 @@ async update() {
 
 
 // PITFALL 3: Using random or inconsistent IDs
-async render() {
+async update() {
   // ❌ WRONG: Can't destroy efficiently later
   await slice.build('Card', {
     sliceId: \`card-\${Math.random()}\`
@@ -645,7 +646,7 @@ async render() {
 }
 
 // ✅ CORRECT: Predictable IDs
-async render() {
+async update() {
   await slice.build('Card', {
     sliceId: \`card-\${item.id}\`
   });

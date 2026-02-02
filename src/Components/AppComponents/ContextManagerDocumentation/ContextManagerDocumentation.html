@@ -1,0 +1,68 @@
+<div class="contextmanagerdocumentation">
+  <h1 id="context-manager">ContextManager</h1>
+  <p>
+    ContextManager provides shared state with watchers and optional persistence. It uses EventManager
+    internally to notify watchers and supports selectors for efficient updates.
+  </p>
+
+  <h2 id="enable-context-manager">Enable ContextManager</h2>
+  <p>
+    ContextManager is a structural component. Enable it in <code>sliceConfig.json</code>.
+  </p>
+  <div class="context-config-example"></div>
+
+  <h2 id="core-api">Core API</h2>
+  <ul>
+    <li><strong>create</strong>: Create a named context with initial state and optional persistence.</li>
+    <li><strong>getState</strong>: Read the current state.</li>
+    <li><strong>setState</strong>: Update state with an object or functional updater.</li>
+    <li><strong>watch</strong>: Watch a context with auto-cleanup and optional selector.</li>
+    <li><strong>has</strong>: Check if a context exists.</li>
+    <li><strong>destroy</strong>: Remove a context and its persisted storage.</li>
+    <li><strong>list</strong>: List all context names.</li>
+  </ul>
+
+  <div class="create-context-example"></div>
+
+  <h2 id="component-usage">Component Usage</h2>
+  <p>
+    Watchers are bound to components for auto-cleanup. Use selectors to avoid unnecessary updates.
+  </p>
+  <div class="watcher-example"></div>
+
+  <h2 id="selectors">Selectors and Derived Data</h2>
+  <p>
+    Selectors should be fast and side-effect free. They run on every update.
+  </p>
+  <div class="selector-example"></div>
+
+  <h2 id="persistence">Persistence</h2>
+  <p>
+    Persist a context to <code>localStorage</code> for session survival.
+  </p>
+  <div class="persistence-example"></div>
+
+  <h2 id="functional-updates">Functional Updates</h2>
+  <p>
+    Use functional updates when new state depends on the previous state.
+  </p>
+  <div class="functional-update-example"></div>
+
+  <h2 id="best-practices">Best Practices</h2>
+  <ul>
+    <li>Keep contexts small and focused by domain.</li>
+    <li>Use selectors to reduce re-renders.</li>
+    <li>Prefer functional updates for derived state.</li>
+    <li>Persist only stable, serializable data.</li>
+    <li>Destroy contexts when they are no longer needed.</li>
+  </ul>
+
+  <h2 id="shared-ui">Shared UI State Example</h2>
+  <p>
+    Use contexts to keep shared UI state consistent across components.
+  </p>
+  <div class="shared-ui-example"></div>
+
+  <h2 id="faq">FAQ</h2>
+  <div class="faq-section"></div>
+</div>

@@ -10,6 +10,7 @@ export default class DocumentationPage extends HTMLElement {
    }
 
    async init() {
+     
       // Usar la configuración de rutas centralizada
       const routesConfig = documentationRoutes;
 

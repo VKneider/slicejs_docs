@@ -43,8 +43,28 @@ export const documentationRoutes = {
                },
                {
                   title: 'LifeCycle Methods',
-                  path: '/Documentation/LifeCycle-Methods',
-                  component: 'LifeCycleMethods'
+                  items: [
+                     {
+                        title: 'Overview',
+                        path: '/Documentation/LifeCycle-Methods',
+                        component: 'LifeCycleMethods'
+                     },
+                     {
+                        title: 'init()',
+                        path: '/Documentation/LifeCycle-Methods/init',
+                        component: 'InitMethodDocumentation'
+                     },
+                     {
+                        title: 'update()',
+                        path: '/Documentation/LifeCycle-Methods/update',
+                        component: 'UpdateMethodDocumentation'
+                     },
+                     {
+                        title: 'beforeDestroy()',
+                        path: '/Documentation/LifeCycle-Methods/beforeDestroy',
+                        component: 'BeforeDestroyDocumentation'
+                     }
+                  ]
                },
                {
                   title: 'Visual',
@@ -78,6 +98,16 @@ export const documentationRoutes = {
                },
 
             ]
+         },
+         {
+            title: 'Events',
+            path: '/Documentation/Structural/EventManager',
+            component: 'EventManagerDocumentation'
+         },
+         {
+            title: 'Contexts',
+            path: '/Documentation/Structural/ContextManager',
+            component: 'ContextManagerDocumentation'
          },
          {
             title: 'Themes',
@@ -165,54 +195,37 @@ export const getAllRoutes = (routesObj) => {
 
 // Función para convertir el config de rutas al formato del TreeView
 export const createTreeViewItems = (routesConfig) => {
-   return [
-      {
-         value: routesConfig.introduction.title,
-         items: routesConfig.introduction.items.map(item => ({
+   const buildTreeItems = (items) => {
+      if (!items) return [];
+
+      return items.map(item => {
+         if (item.items) {
+            return {
+               value: item.title,
+               items: buildTreeItems(item.items)
+            };
+         }
+
+         return {
             value: item.title,
             path: item.path,
             component: item.component
-         }))
+         };
+      });
+   };
+
+   return [
+      {
+         value: routesConfig.introduction.title,
+         items: buildTreeItems(routesConfig.introduction.items)
       },
       {
          value: routesConfig.gettingStarted.title,
-         items: routesConfig.gettingStarted.items.map(item => {
-            if (item.items) {
-               return {
-                  value: item.title,
-                  items: item.items.map(subItem => ({
-                     value: subItem.title,
-                     path: subItem.path,
-                     component: subItem.component
-                  }))
-               };
-            }
-            return {
-               value: item.title,
-               path: item.path,
-               component: item.component
-            };
-         })
+         items: buildTreeItems(routesConfig.gettingStarted.items)
       },
       {
          value: routesConfig.componentsLibrary.title,
-         items: routesConfig.componentsLibrary.items.map(item => {
-            if (item.items) {
-               return {
-                  value: item.title,
-                  items: item.items.map(subItem => ({
-                     value: subItem.title,
-                     path: subItem.path,
-                     component: subItem.component
-                  }))
-               };
-            }
-            return {
-               value: item.title,
-               path: item.path,
-               component: item.component
-            };
-         })
+         items: buildTreeItems(routesConfig.componentsLibrary.items)
       }
    ];
 };

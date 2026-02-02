@@ -30,6 +30,14 @@ const routes = [
             path: '/Structural',
             component: 'StructuralDocumentation',
          },
+         {
+            path: '/Structural/EventManager',
+            component: 'EventManagerDocumentation',
+         },
+         {
+            path: '/Structural/ContextManager',
+            component: 'ContextManagerDocumentation',
+         },
 
          {
             path: '/Themes',
@@ -58,6 +66,18 @@ const routes = [
          {
             path: '/LifeCycle-Methods',
             component: 'LifeCycleMethods',
+         },
+         {
+            path: '/LifeCycle-Methods/init',
+            component: 'InitMethodDocumentation',
+         },
+         {
+            path: '/LifeCycle-Methods/update',
+            component: 'UpdateMethodDocumentation',
+         },
+         {
+            path: '/LifeCycle-Methods/beforeDestroy',
+            component: 'BeforeDestroyDocumentation',
          },
          {
             path: '/Components',

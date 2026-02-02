@@ -1,0 +1,61 @@
+/* beforeDestroy() Method Documentation Styles */
+
+slice-beforedestroydocumentation {
+  color: var(--font-primary-color);
+  display: block;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+slice-beforedestroydocumentation h1,
+slice-beforedestroydocumentation h2,
+slice-beforedestroydocumentation h3 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+slice-beforedestroydocumentation h1 {
+  text-align: center;
+  border-bottom: 3px solid var(--primary-color);
+  padding-bottom: 12px;
+}
+
+slice-beforedestroydocumentation h2 {
+  border-bottom: 1px solid var(--primary-color-shade);
+  padding-bottom: 8px;
+}
+
+slice-beforedestroydocumentation p {
+  margin: 1em 0;
+}
+
+slice-beforedestroydocumentation ul {
+  margin: 1em 0;
+  padding-left: 2em;
+}
+
+slice-beforedestroydocumentation li {
+  margin-bottom: 0.5em;
+}
+
+slice-beforedestroydocumentation code {
+  font-family: monospace;
+  background-color: var(--secondary-background-color);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+slice-beforedestroydocumentation .before-destroy-example,
+slice-beforedestroydocumentation .best-practices,
+slice-beforedestroydocumentation .pitfalls {
+  margin: 1.5em 0;
+}
+
+@media (max-width: 768px) {
+  slice-beforedestroydocumentation {
+    padding: 15px;
+  }
+}

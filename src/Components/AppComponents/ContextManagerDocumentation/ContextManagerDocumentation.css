@@ -1,0 +1,78 @@
+/* ContextManager Documentation Component Styles */
+
+slice-contextmanagerdocumentation {
+  color: var(--font-primary-color);
+  display: block;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+slice-contextmanagerdocumentation h1,
+slice-contextmanagerdocumentation h2,
+slice-contextmanagerdocumentation h3,
+slice-contextmanagerdocumentation h4 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+slice-contextmanagerdocumentation h1 {
+  text-align: center;
+  border-bottom: 3px solid var(--primary-color);
+  padding-bottom: 12px;
+}
+
+slice-contextmanagerdocumentation h2 {
+  border-bottom: 1px solid var(--primary-color-shade);
+  padding-bottom: 8px;
+}
+
+slice-contextmanagerdocumentation p {
+  margin: 1em 0;
+}
+
+slice-contextmanagerdocumentation ul {
+  margin: 1em 0;
+  padding-left: 2em;
+}
+
+slice-contextmanagerdocumentation li {
+  margin-bottom: 0.5em;
+}
+
+slice-contextmanagerdocumentation code {
+  font-family: monospace;
+  background-color: var(--secondary-background-color);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+slice-contextmanagerdocumentation .context-config-example,
+slice-contextmanagerdocumentation .create-context-example,
+slice-contextmanagerdocumentation .watcher-example,
+slice-contextmanagerdocumentation .selector-example,
+slice-contextmanagerdocumentation .persistence-example,
+slice-contextmanagerdocumentation .functional-update-example,
+slice-contextmanagerdocumentation .shared-ui-example {
+  margin: 1.5em 0;
+}
+
+slice-contextmanagerdocumentation strong {
+  color: var(--primary-color);
+}
+
+slice-contextmanagerdocumentation .faq-section {
+  margin: 2em 0;
+}
+
+slice-contextmanagerdocumentation .faq-section slice-details {
+  margin-bottom: 1em;
+}
+
+@media (max-width: 768px) {
+  slice-contextmanagerdocumentation {
+    padding: 15px;
+  }
+}

@@ -1,0 +1,83 @@
+/* Base styles for documentation pages */
+
+:root {
+  --doc-content-max-width: 1200px;
+  --doc-section-gap: 1.5em;
+  --doc-border-color: var(--primary-color-shade);
+  --doc-code-bg: var(--secondary-background-color);
+}
+
+.documentation-content {
+  color: var(--font-primary-color);
+  max-width: var(--doc-content-max-width);
+  margin: 0 auto;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+.documentation-content h1,
+.documentation-content h2,
+.documentation-content h3,
+.documentation-content h4 {
+  margin-top: var(--doc-section-gap);
+  margin-bottom: 0.5em;
+}
+
+.documentation-content h1 {
+  text-align: center;
+  border-bottom: 3px solid var(--primary-color);
+  padding-bottom: 12px;
+}
+
+.documentation-content h2 {
+  border-bottom: 1px solid var(--doc-border-color);
+  padding-bottom: 8px;
+}
+
+.documentation-content p {
+  margin: 1em 0;
+}
+
+.documentation-content ul,
+.documentation-content ol {
+  margin: 1em 0;
+  padding-left: 2em;
+}
+
+.documentation-content li {
+  margin-bottom: 0.5em;
+}
+
+.documentation-content code {
+  font-family: monospace;
+  background-color: var(--doc-code-bg);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.documentation-content .doc-block {
+  margin: 1.5em 0;
+}
+
+.documentation-content .doc-callout {
+  background: var(--doc-code-bg);
+  border-left: 4px solid var(--primary-color);
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin: 1.25em 0;
+}
+
+.documentation-content .doc-callout.tip {
+  border-left-color: var(--success-color);
+}
+
+.documentation-content .doc-callout.warning {
+  border-left-color: var(--danger-color);
+}
+
+@media (max-width: 768px) {
+  .documentation-content {
+    padding: 15px;
+  }
+}

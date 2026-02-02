@@ -1,0 +1,78 @@
+/* EventManager Documentation Component Styles */
+
+slice-eventmanagerdocumentation {
+  color: var(--font-primary-color);
+  display: block;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+slice-eventmanagerdocumentation h1,
+slice-eventmanagerdocumentation h2,
+slice-eventmanagerdocumentation h3,
+slice-eventmanagerdocumentation h4 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+slice-eventmanagerdocumentation h1 {
+  text-align: center;
+  border-bottom: 3px solid var(--primary-color);
+  padding-bottom: 12px;
+}
+
+slice-eventmanagerdocumentation h2 {
+  border-bottom: 1px solid var(--primary-color-shade);
+  padding-bottom: 8px;
+}
+
+slice-eventmanagerdocumentation p {
+  margin: 1em 0;
+}
+
+slice-eventmanagerdocumentation ul {
+  margin: 1em 0;
+  padding-left: 2em;
+}
+
+slice-eventmanagerdocumentation li {
+  margin-bottom: 0.5em;
+}
+
+slice-eventmanagerdocumentation code {
+  font-family: monospace;
+  background-color: var(--secondary-background-color);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+slice-eventmanagerdocumentation .event-config-example,
+slice-eventmanagerdocumentation .basic-example,
+slice-eventmanagerdocumentation .component-binding-example,
+slice-eventmanagerdocumentation .component-options-example,
+slice-eventmanagerdocumentation .subscribe-once-example,
+slice-eventmanagerdocumentation .manual-cleanup-example,
+slice-eventmanagerdocumentation .event-driven-ui-example {
+  margin: 1.5em 0;
+}
+
+slice-eventmanagerdocumentation strong {
+  color: var(--primary-color);
+}
+
+slice-eventmanagerdocumentation .faq-section {
+  margin: 2em 0;
+}
+
+slice-eventmanagerdocumentation .faq-section slice-details {
+  margin-bottom: 1em;
+}
+
+@media (max-width: 768px) {
+  slice-eventmanagerdocumentation {
+    padding: 15px;
+  }
+}
