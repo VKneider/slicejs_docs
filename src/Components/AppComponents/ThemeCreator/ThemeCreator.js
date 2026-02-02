@@ -86,8 +86,6 @@ export default class ThemeCreator extends HTMLElement {
     const navbarContainer = this.querySelector('.navbar-container');
     if (!navbarContainer) return;
     
-    let theme = slice.stylesManager.themeManager.currentTheme;
-
     const navBar = await slice.build('Navbar', {
       position: 'fixed',
       logo: {
@@ -101,30 +99,45 @@ export default class ThemeCreator extends HTMLElement {
         { text: 'Theme Creator', path: '/ThemeCreator' },
         { text: 'About', path: '/About' }
       ],
-      buttons: [
-        {
-          value: 'Change Theme',
-          onClickCallback: async () => {
-            if (theme === 'Slice') {
-              await slice.setTheme('Light');
-              theme = 'Light';
-            } else if (theme === 'Light') {
-              await slice.setTheme('Dark');
-              theme = 'Dark';
-            } else if (theme === 'Dark') {
-              await slice.setTheme('Slice');
-              theme = 'Slice';
-            }
-            // Pequeño delay para asegurar que el tema se haya aplicado completamente
-            setTimeout(() => {
-              this.loadCurrentThemeValues();
-            }, 100);
-          },
-        },
-      ],
+      buttons: [],
     });
 
+    const themeSelector = await slice.build('ThemeSelector', {
+      themes: [
+        {
+          name: 'EmeraldLight',
+          colors: { primary: '#10B981', secondary: '#FEFFFE' },
+          description: 'Official Slice.js theme'
+        },
+        {
+          name: 'Light',
+          colors: { primary: '#F3F4F6', secondary: '#374151' },
+          description: 'Clean and bright'
+        },
+        {
+          name: 'Dark',
+          colors: { primary: '#18181B', secondary: '#F3F4F6' },
+          description: 'Easy on the eyes'
+        },
+        {
+          name: 'CobaltBlue',
+          colors: { primary: '#1D4ED8', secondary: '#F97316' },
+          description: 'Professional blue with orange accents and light background'
+        },
+        {
+          name: 'Purple',
+          colors: { primary: '#9333EA', secondary: '#10B981' },
+          description: 'Creative purple'
+        }
+      ]
+    });
+
+    navBar.querySelector('.nav_bar_buttons')?.appendChild(themeSelector);
     navbarContainer.appendChild(navBar); 
+
+    setTimeout(() => {
+      this.loadCurrentThemeValues();
+    }, 100);
   
   }
 

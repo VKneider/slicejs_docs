@@ -8,8 +8,6 @@ export default class Playground extends HTMLElement {
    }
 
    async init() {
-      let theme = slice.stylesManager.themeManager.currentTheme;
-
       const navBar = await slice.build('Navbar', {
          // position: "fixed",
          logo: {
@@ -38,26 +36,40 @@ export default class Playground extends HTMLElement {
                path: '/About',
             }
          ],
-         buttons: [
-            {
-               value: 'Change Theme',
-               // color:
-               onClickCallback: async () => {
-                  if (theme === 'Slice') {
-                     await slice.setTheme('Light');
-                     theme = 'Light';
-                  } else if (theme === 'Light') {
-                     await slice.setTheme('Dark');
-                     theme = 'Dark';
-                  } else if (theme === 'Dark') {
-                     await slice.setTheme('Slice');
-                     theme = 'Slice';
-                  }
-               },
-            },
-         ],
+         buttons: [],
       });
 
+      const themeSelector = await slice.build('ThemeSelector', {
+         themes: [
+            {
+               name: 'EmeraldLight',
+               colors: { primary: '#10B981', secondary: '#FEFFFE' },
+               description: 'Official Slice.js theme'
+            },
+            {
+               name: 'Light',
+               colors: { primary: '#F3F4F6', secondary: '#374151' },
+               description: 'Clean and bright'
+            },
+            {
+               name: 'Dark',
+               colors: { primary: '#18181B', secondary: '#F3F4F6' },
+               description: 'Easy on the eyes'
+            },
+            {
+               name: 'CobaltBlue',
+               colors: { primary: '#1D4ED8', secondary: '#F97316' },
+               description: 'Professional blue with orange accents and light background'
+            },
+            {
+               name: 'Purple',
+               colors: { primary: '#9333EA', secondary: '#10B981' },
+               description: 'Creative purple'
+            }
+         ]
+      });
+
+      navBar.querySelector('.nav_bar_buttons')?.appendChild(themeSelector);
       this.appendChild(navBar);
 
       const sliceButton = await slice.build('Button', {
