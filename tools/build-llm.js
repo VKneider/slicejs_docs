@@ -7,7 +7,7 @@ const OUTPUT_PATH = path.join(ROOT, 'llm.txt');
 
 const shouldSkip = (filePath) => {
   const base = path.basename(filePath).toLowerCase();
-  return base === 'markdown_spec.md' || base === 'index.md';
+  return base === 'markdown_spec.md' || base === 'index.md' || base === 'markdown-guide.md';
 };
 
 const stripFrontMatter = (content) => {

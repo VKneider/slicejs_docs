@@ -28,7 +28,7 @@ ${html}
 `;
 };
 
-const generateJs = (componentClass, jsBlocks, tagName, markdownPath = '') => {
+const generateJs = (componentClass, jsBlocks, tagName, markdownPath = '', markdownContent = '', enableCopy = true) => {
   const buildCodeBlocks = jsBlocks
     .map((block) => {
       if (block.type === 'code') {
@@ -161,8 +161,11 @@ const generateJs = (componentClass, jsBlocks, tagName, markdownPath = '') => {
   }
 
   async init() {
-    this.markdownPath = ${JSON.stringify(markdownPath)};
-    this.setupCopyButton();
+    this.markdownPath = ${enableCopy ? JSON.stringify(markdownPath) : "''"};
+    this.markdownContent = ${enableCopy ? JSON.stringify(markdownContent) : "''"};
+    if (${enableCopy ? 'true' : 'false'}) {
+      this.setupCopyButton();
+    }
 ${buildCodeBlocks || '    // No dynamic blocks'}
   }
 
@@ -180,6 +183,7 @@ ${buildCodeBlocks || '    // No dynamic blocks'}
 
     const copyMenu = await slice.build('CopyMarkdownMenu', {
       markdownPath: this.markdownPath,
+      markdownContent: this.markdownContent,
       label: '❐'
     });
 
@@ -208,7 +212,10 @@ const writeComponentFiles = ({ frontMatter, html, jsBlocks }, outputDir, markdow
   ensureDir(folderPath);
 
   const htmlContent = generateHtml(componentClass, html);
-  const jsContent = generateJs(componentClass, jsBlocks, tagName, markdownPath);
+  const generateFlag = frontMatter?.generate;
+  const enableCopy = !(generateFlag === false || String(generateFlag).toLowerCase() === 'false');
+  const markdownContent = enableCopy ? (frontMatter?.markdownSource || '') : '';
+  const jsContent = generateJs(componentClass, jsBlocks, tagName, markdownPath, markdownContent, enableCopy);
   const cssContent = defaultCss(tagName);
 
   fs.writeFileSync(path.join(folderPath, `${componentClass}.html`), htmlContent, 'utf8');

@@ -57,7 +57,12 @@ const run = () => {
         console.log(`Skipped ${path.relative(ROOT, filePath)} (no front matter)`);
         continue;
       }
-      if (parsed.frontMatter.generate === false) {
+      const generateFlag = parsed.frontMatter.generate;
+      const shouldSkip =
+        generateFlag === false ||
+        String(generateFlag).toLowerCase() === 'false' ||
+        path.basename(filePath).toLowerCase() === 'markdown-guide.md';
+      if (shouldSkip) {
         console.log(`Skipped ${path.relative(ROOT, filePath)} (generate: false)`);
         continue;
       }

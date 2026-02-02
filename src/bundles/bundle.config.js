@@ -1,6 +1,6 @@
 /**
  * Slice.js Bundle Configuration
- * Generated: 2026-02-02T07:22:07.466Z
+ * Generated: 2026-02-02T13:15:10.397Z
  * Strategy: hybrid
  */
 
@@ -8,13 +8,13 @@
 export const SLICE_BUNDLE_CONFIG = {
   "version": "2.0.0",
   "strategy": "hybrid",
-  "generated": "2026-02-02T07:22:07.465Z",
+  "generated": "2026-02-02T13:15:10.396Z",
   "stats": {
     "totalComponents": 70,
     "totalRoutes": 41,
     "sharedComponents": 1,
     "sharedPercentage": "4.3",
-    "totalSize": 2276733,
+    "totalSize": 2339121,
     "criticalSize": 1174
   },
   "bundles": {
@@ -79,7 +79,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/ThemeCreator"
         ],
         "file": "slice-bundle.configuration.js",
-        "size": 1660652,
+        "size": 1666675,
         "components": [
           "WhatIsSlice",
           "SliceConfigDocumentation",
@@ -109,7 +109,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Service"
         ],
         "file": "slice-bundle.services.js",
-        "size": 1552723,
+        "size": 1563373,
         "components": [
           "CommandsDocumentation",
           "CodeVisualizer",
@@ -141,7 +141,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Select"
         ],
         "file": "slice-bundle.components.js",
-        "size": 1810202,
+        "size": 1813341,
         "components": [
           "VisualDocumentation",
           "CodeVisualizer",
@@ -193,7 +193,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/LifeCycle-Methods/beforeDestroy"
         ],
         "file": "slice-bundle.advanced.js",
-        "size": 1597293,
+        "size": 1625133,
         "components": [
           "StructuralDocumentation",
           "Table",
@@ -221,7 +221,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Routing/Guards"
         ],
         "file": "slice-bundle.routing.js",
-        "size": 1522577,
+        "size": 1525926,
         "components": [
           "RoutingDocumentation",
           "Table",

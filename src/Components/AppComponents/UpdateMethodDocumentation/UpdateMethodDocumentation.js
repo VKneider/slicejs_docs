@@ -8,7 +8,10 @@ export default class UpdateMethodDocumentation extends HTMLElement {
 
   async init() {
     this.markdownPath = "getting-started/update-method.md";
-    this.setupCopyButton();
+    this.markdownContent = "---\ntitle: update()\nroute: /Documentation/LifeCycle-Methods/update\nnavLabel: update()\nsection: Getting Started\ngroup: Components\norder: 42\ndescription: Refresh dynamic UI in Slice.js components.\ncomponent: UpdateMethodDocumentation\ntags: [lifecycle, update]\n---\n\n# update()\n\n## Overview\n`update()` runs whenever a component needs to refresh. The router calls it when a cached\ncomponent is reused by `Route` or `MultiRoute`. You can also call it manually after changing\nprops or state.\n\n## API\n| Method | Signature | Returns | Notes |\n| --- | --- | --- | --- |\n| `update` | `async update()` | `Promise<void>` | Called on cached components when revisited. |\n\n## Ideal Use Cases\n- Re-fetch data that can change\n- Rebuild dynamic child components\n- Re-apply dynamic state to the DOM\n\n## Example\n```javascript title=\"Rebuild dynamic UI in update()\"\nexport default class ProductList extends HTMLElement {\n  async init() {\n    this.$productContainer = this.querySelector('.products-container');\n    await this.loadAndRenderProducts();\n  }\n\n  async update() {\n    slice.controller.destroyByContainer(this.$productContainer);\n    this.$productContainer.innerHTML = '';\n    await this.loadAndRenderProducts();\n  }\n\n  async loadAndRenderProducts() {\n    this.products = await this.fetchProducts();\n\n    for (const product of this.products) {\n      const productCard = await slice.build('ProductCard', {\n        sliceId: `product-${product.id}`,\n        title: product.title,\n        price: product.price,\n        image: product.image\n      });\n\n      this.$productContainer.appendChild(productCard);\n    }\n  }\n}\n```\n\n## Best Practices\n:::steps\n1. Destroy old components with `destroyByContainer`.\n2. Clear the container.\n3. Fetch fresh data.\n4. Rebuild components with stable `sliceId`s.\n:::\n\n:::tip\nKeep `update()` idempotent and safe to call multiple times.\n:::\n\n## Gotchas\n:::warning\nClearing `innerHTML` alone does not destroy Slice components.\n:::\n\n:::warning\nDo not rebuild static UI in `update()` unless it depends on changing data.\n:::\n";
+    if (true) {
+      this.setupCopyButton();
+    }
       {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
@@ -101,6 +104,7 @@ export default class UpdateMethodDocumentation extends HTMLElement {
 
     const copyMenu = await slice.build('CopyMarkdownMenu', {
       markdownPath: this.markdownPath,
+      markdownContent: this.markdownContent,
       label: '❐'
     });
 

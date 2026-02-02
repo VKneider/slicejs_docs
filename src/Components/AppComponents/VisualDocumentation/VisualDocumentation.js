@@ -8,7 +8,10 @@ export default class VisualDocumentation extends HTMLElement {
 
   async init() {
     this.markdownPath = "getting-started/visual-components.md";
-    this.setupCopyButton();
+    this.markdownContent = "---\ntitle: Visual\nroute: /Documentation/Visual\nnavLabel: Visual\nsection: Getting Started\ngroup: Components\norder: 32\ndescription: Visual components and usage patterns in Slice.js.\ncomponent: VisualDocumentation\ntags: [visual, components]\n---\n\n# Visual Components\n\n## Overview\nVisual components are UI elements like Button, Card, Input, and Layout. They rely on Static\nProps, load templates and CSS automatically, and follow the same lifecycle patterns as any\nSlice component.\n\n## Building Visual Components\n```javascript title=\"Build a visual component\"\nconst myButton = await slice.build('Button', {\n  value: 'Click me!',\n  onClickCallback: () => console.log('Clicked')\n});\n\ndocument.querySelector('#container').appendChild(myButton);\n```\n\n## Visual Component Catalog\n| Component | Purpose |\n| --- | --- |\n| `Button` | Clickable button UI. |\n| `Card` | Structured content card. |\n| `Checkbox` | Checkbox input. |\n| `CodeVisualizer` | Code rendering blocks. |\n| `Details` | Expandable details/summary. |\n| `DropDown` | Dropdown menu. |\n| `Grid` | Grid layout container. |\n| `Icon` | Icon rendering. |\n| `Input` | Text input field. |\n| `Layout` | Page layout structure. |\n| `Loading` | Loading indicator. |\n| `MultiRoute` | Route container for multiple routes. |\n| `Navbar` | Navigation bar. |\n| `NotFound` | 404 UI component. |\n| `Route` | Route container for a single path. |\n| `Select` | Select input. |\n| `Switch` | Toggle switch. |\n| `TreeItem` | Tree view item. |\n| `TreeView` | Tree view container. |\n\n## Custom Props and Defaults\n```javascript title=\"Defaults applied automatically\"\nconst simpleButton = await slice.build('Button', {\n  // value defaults to \"Button\"\n  // onClickCallback defaults to null\n  // customColor defaults to null\n  // icon defaults to null\n});\n```\n\n## Authoring a Visual Component\n```javascript title=\"Visual component structure\"\nexport default class CustomVisualComponent extends HTMLElement {\n  static props = {\n    value: { type: 'string', default: 'Default Text' },\n    color: { type: 'string', default: '#000000' },\n    disabled: { type: 'boolean', default: false },\n    items: { type: 'array', default: [] },\n    config: { type: 'object', default: null },\n    onClickCallback: { type: 'function', default: null }\n  };\n\n  constructor(props) {\n    super();\n    slice.attachTemplate(this);\n    this.$button = this.querySelector('.my-button');\n    slice.controller.setComponentProps(this, props);\n  }\n\n  async init() {\n    // One-time setup\n  }\n\n  async update() {\n    // Refresh UI\n  }\n}\n```\n\n## Best Practices\n:::tip\nUse Static Props for all public inputs.\n:::\n\n:::tip\nAvoid DOM queries in the constructor unless the template is attached.\n:::\n\n## Gotchas\n:::warning\nVisual components must be registered in `components.js` to be built.\n:::\n";
+    if (true) {
+      this.setupCopyButton();
+    }
       {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
@@ -133,6 +136,7 @@ export default class VisualDocumentation extends HTMLElement {
 
     const copyMenu = await slice.build('CopyMarkdownMenu', {
       markdownPath: this.markdownPath,
+      markdownContent: this.markdownContent,
       label: '❐'
     });
 

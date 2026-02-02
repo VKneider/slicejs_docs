@@ -5,6 +5,11 @@ export default class CopyMarkdownMenu extends HTMLElement {
       default: '',
       required: false
     },
+    markdownContent: {
+      type: 'string',
+      default: '',
+      required: false
+    },
     label: {
       type: 'string',
       default: '❐',
@@ -34,6 +39,14 @@ export default class CopyMarkdownMenu extends HTMLElement {
 
   get markdownPath() {
     return this._markdownPath;
+  }
+
+  set markdownContent(value) {
+    this._markdownContent = value;
+  }
+
+  get markdownContent() {
+    return this._markdownContent;
   }
 
   set label(value) {
@@ -80,25 +93,12 @@ export default class CopyMarkdownMenu extends HTMLElement {
   }
 
   async copyMarkdown() {
-    if (!this.markdownPath) return;
+    if (!this.markdownContent) return;
     try {
-      const markdown = await this.fetchMarkdown();
-      if (!markdown) return;
-      await navigator.clipboard.writeText(markdown);
+      await navigator.clipboard.writeText(this.markdownContent);
       this.showCopySuccess();
     } catch (error) {
       console.warn('Copy markdown failed:', error);
-    }
-  }
-
-  async fetchMarkdown() {
-    try {
-      const response = await fetch('/markdown/' + this.markdownPath);
-      if (!response.ok) return null;
-      return await response.text();
-    } catch (error) {
-      console.warn('Fetch markdown failed:', error);
-      return null;
     }
   }
 
