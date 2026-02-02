@@ -8,6 +8,7 @@ order: 50
 description: Router setup, navigation, and guards.
 component: RoutingDocumentation
 tags: [routing, router, guards]
+generate: false
 ---
 
 # Slice Routing

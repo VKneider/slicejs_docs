@@ -57,6 +57,10 @@ const run = () => {
         console.log(`Skipped ${path.relative(ROOT, filePath)} (no front matter)`);
         continue;
       }
+      if (parsed.frontMatter.generate === false) {
+        console.log(`Skipped ${path.relative(ROOT, filePath)} (generate: false)`);
+        continue;
+      }
       const markdownPath = path.relative(MARKDOWN_DIR, filePath).replace(/\\/g, '/');
       const result = writeComponentFiles(parsed, OUTPUT_DIR, markdownPath);
       generated.push({ filePath, component: result.componentClass });
