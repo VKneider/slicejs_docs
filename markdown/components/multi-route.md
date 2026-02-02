@@ -7,6 +7,7 @@ group: Visual
 order: 60
 description: Route container with caching and dynamic navigation.
 tags: [routing, multiroute, caching]
+generate: false
 ---
 
 # MultiRoute

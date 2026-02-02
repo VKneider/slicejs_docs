@@ -31,6 +31,14 @@ slice-landing-menu {
     color: var(--primary-color);
     animation: fade-in-logo 5s ease, beat 10s ease infinite 5s;
   }
+
+  .intro .sliceLogo svg {
+    display: block;
+  }
+
+  .intro .sliceLogo path {
+    fill: currentColor;
+  }
   .info {
     bottom: 0;
     position: absolute;

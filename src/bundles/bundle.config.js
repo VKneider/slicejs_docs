@@ -1,6 +1,6 @@
 /**
  * Slice.js Bundle Configuration
- * Generated: 2026-02-02T06:53:10.650Z
+ * Generated: 2026-02-02T07:22:07.466Z
  * Strategy: hybrid
  */
 
@@ -8,13 +8,13 @@
 export const SLICE_BUNDLE_CONFIG = {
   "version": "2.0.0",
   "strategy": "hybrid",
-  "generated": "2026-02-02T06:53:10.649Z",
+  "generated": "2026-02-02T07:22:07.465Z",
   "stats": {
     "totalComponents": 70,
     "totalRoutes": 41,
     "sharedComponents": 1,
     "sharedPercentage": "4.3",
-    "totalSize": 2277371,
+    "totalSize": 2276733,
     "criticalSize": 1174
   },
   "bundles": {
@@ -56,7 +56,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/"
         ],
         "file": "slice-bundle.home.js",
-        "size": 1483535,
+        "size": 1496169,
         "components": [
           "LandingPage",
           "Navbar",
@@ -64,6 +64,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "DropDown",
           "Button",
           "Icon",
+          "ThemeSelector",
           "LandingMenu"
         ],
         "dependencies": [
@@ -78,7 +79,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/ThemeCreator"
         ],
         "file": "slice-bundle.configuration.js",
-        "size": 1649365,
+        "size": 1660652,
         "components": [
           "WhatIsSlice",
           "SliceConfigDocumentation",
@@ -93,6 +94,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "Navbar",
           "Link",
           "DropDown",
+          "ThemeSelector",
           "Input",
           "Checkbox",
           "Switch"
@@ -252,7 +254,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Playground"
         ],
         "file": "slice-bundle.tools.js",
-        "size": 1542171,
+        "size": 1554096,
         "components": [
           "Playground",
           "Navbar",
@@ -260,6 +262,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "DropDown",
           "Button",
           "Icon",
+          "ThemeSelector",
           "Input",
           "Checkbox",
           "Switch",
@@ -278,7 +281,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/about"
         ],
         "file": "slice-bundle.misc.js",
-        "size": 1497288,
+        "size": 1509496,
         "components": [
           "NotFound",
           "TheSliceTeam",
@@ -287,6 +290,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "DropDown",
           "Button",
           "Icon",
+          "ThemeSelector",
           "SliceTeamCard"
         ],
         "dependencies": [
@@ -298,7 +302,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Docum/${category}/${id}"
         ],
         "file": "slice-bundle.documentation.js",
-        "size": 1483535,
+        "size": 1496169,
         "components": [
           "LandingPage",
           "Navbar",
@@ -306,6 +310,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "DropDown",
           "Button",
           "Icon",
+          "ThemeSelector",
           "LandingMenu"
         ],
         "dependencies": [

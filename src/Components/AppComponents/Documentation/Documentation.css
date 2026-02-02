@@ -1,372 +1,352 @@
-/* Documentation Main View Styles - Complete Redesign */
-
 slice-documentation {
   color: var(--font-primary-color);
   display: block;
 }
 
-/* Intro Section - Hero with split layout */
-.documentation .intro-section {
-  min-height: 85vh;
-  display: flex;
-  align-items: center;
-  padding: 2em;
-  background: linear-gradient(135deg, var(--primary-background-color) 0%, var(--secondary-background-color) 100%);
-  border-bottom: 2px solid var(--primary-color);
+.docs-landing {
+  padding: 0 24px 80px;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(16, 185, 129, 0.12), transparent 45%),
+    radial-gradient(circle at 80% 0%, rgba(29, 78, 216, 0.12), transparent 40%),
+    linear-gradient(180deg, var(--primary-background-color), var(--secondary-background-color));
+  min-height: 100vh;
 }
 
-.documentation .intro-content {
+.docs-hero {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4em;
-  max-width: 1400px;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 32px;
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 80px 0 40px;
   align-items: center;
 }
 
-.documentation .intro-text h1 {
-  font-size: 3.5em;
-  margin: 0 0 0.3em 0;
+.hero-content h1 {
+  font-size: clamp(2.4rem, 4vw, 3.6rem);
+  line-height: 1.05;
+  margin: 16px 0;
   color: var(--primary-color);
-  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
-.documentation .tagline {
-  font-size: 1.4em;
-  color: var(--font-primary-color);
-  margin: 0 0 1em 0;
-  font-weight: 500;
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--primary-color);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
-.documentation .description {
-  font-size: 1.1em;
+.hero-lede {
+  font-size: 1.1rem;
   color: var(--font-secondary-color);
   line-height: 1.7;
-  margin: 0 0 2em 0;
+  max-width: 560px;
+  margin-bottom: 24px;
 }
 
-.documentation .cta-buttons {
+.hero-cta {
   display: flex;
-  gap: 1em;
   flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
-.documentation .intro-visual {
-  position: relative;
-}
-
-.documentation .code-preview {
-  background-color: var(--primary-background-color);
-  border: 2px solid var(--primary-color-shade);
-  border-radius: 8px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-}
-
-/* Features Section */
-.documentation .features-section {
-  padding: 4em 2em;
-  background-color: var(--primary-background-color);
-}
-
-.documentation .features-grid {
+.hero-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2em;
-  max-width: 1400px;
-  margin: 0 auto;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
 }
 
-.documentation .feature-card {
-  background-color: var(--secondary-background-color);
-  padding: 2em;
-  border-radius: 8px;
-  border-left: 4px solid var(--primary-color);
-  transition: transform 0.3s, box-shadow 0.3s;
+.stat-card {
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
 }
 
-.documentation .feature-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-}
-
-.documentation .feature-icon {
-  font-size: 2.5em;
-  margin-bottom: 0.5em;
-  display: block;
-}
-
-.documentation .feature-card h3 {
-  margin: 0.5em 0;
-  color: var(--primary-color);
-  font-size: 1.3em;
-}
-
-.documentation .feature-card p {
-  margin: 0;
-  color: var(--font-secondary-color);
-  line-height: 1.6;
-}
-
-/* Architecture Section */
-.documentation .architecture-section {
-  padding: 4em 2em;
-  background-color: var(--secondary-background-color);
-}
-
-.documentation .architecture-section h2,
-.documentation .workflow-section h2,
-.documentation .examples-section h2,
-.documentation .learning-paths h2 {
-  text-align: center;
-  font-size: 2.5em;
-  margin: 0 0 0.5em 0;
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 700;
   color: var(--primary-color);
 }
 
-.documentation .section-subtitle {
-  text-align: center;
-  font-size: 1.1em;
+.stat-label {
+  font-size: 0.85rem;
   color: var(--font-secondary-color);
-  margin: 0 auto 3em auto;
-  max-width: 700px;
+  margin-top: 4px;
 }
 
-.documentation .architecture-grid {
+.hero-side {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2em;
-  max-width: 1400px;
-  margin: 0 auto;
+  gap: 18px;
 }
 
-.documentation .arch-card {
-  background-color: var(--primary-background-color);
-  padding: 2.5em;
-  border-radius: 8px;
-  text-align: center;
-  border-top: 4px solid;
-  transition: transform 0.3s;
-  cursor: pointer;
+.hero-panel {
+  background: var(--primary-background-color);
+  border-radius: 18px;
+  border: 1px solid var(--primary-color-shade);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
 }
 
-.documentation .arch-card:hover {
-  transform: scale(1.05);
-}
-
-.documentation .arch-card.visual {
-  border-color: var(--primary-color);
-}
-
-.documentation .arch-card.structural {
-  border-color: var(--danger-color);
-}
-
-.documentation .arch-card.service {
-  border-color: var(--secondary-color);
-}
-
-.documentation .arch-icon {
-  font-size: 4em;
-  margin-bottom: 0.3em;
-  display: block;
-}
-
-.documentation .arch-card h3 {
-  margin: 0.5em 0;
-  font-size: 1.5em;
-}
-
-.documentation .arch-card .component-count {
-  display: inline-block;
-  margin: 1em 0;
-  padding: 0.5em 1em;
-  background-color: var(--secondary-background-color);
-  border-radius: 20px;
-  font-size: 0.9em;
+.hero-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: var(--secondary-background-color);
+  border-bottom: 1px solid var(--primary-color-shade);
   font-weight: 600;
 }
 
-.documentation .arch-card p {
-  margin: 1em 0;
-  line-height: 1.6;
-  color: var(--font-secondary-color);
-}
-
-/* Workflow Section */
-.documentation .workflow-section {
-  padding: 4em 2em;
-  background-color: var(--primary-background-color);
-}
-
-.documentation .workflow-steps {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2em;
-  max-width: 1400px;
-  margin: 0 auto;
-  flex-wrap: wrap;
-}
-
-.documentation .workflow-step {
-  flex: 1;
-  min-width: 200px;
-  max-width: 250px;
-  text-align: center;
-  position: relative;
-}
-
-.documentation .step-number {
-  width: 60px;
-  height: 60px;
-  margin: 0 auto 1em auto;
-  background-color: var(--primary-color);
+.hero-panel-pill {
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--primary-color);
   color: var(--primary-color-contrast);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.8em;
-  font-weight: bold;
 }
 
-.documentation .workflow-step h4 {
-  margin: 0.5em 0;
-  color: var(--primary-color);
+.hero-code {
+  padding: 12px 12px 18px;
 }
 
-.documentation .workflow-step p {
-  margin: 0;
-  color: var(--font-secondary-color);
-  font-size: 0.95em;
-}
-
-.documentation .arrow {
-  font-size: 2em;
-  color: var(--primary-color);
-  align-self: center;
-}
-
-/* Examples Section */
-.documentation .examples-section {
-  padding: 4em 2em;
-  background-color: var(--secondary-background-color);
-}
-
-.documentation .examples-grid {
+.hero-links {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2em;
-  max-width: 1400px;
-  margin: 0 auto;
+  gap: 12px;
 }
 
-/* Learning Paths */
-.documentation .learning-paths {
-  padding: 4em 2em 6em 2em;
-  background-color: var(--primary-background-color);
-}
-
-.documentation .paths-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2em;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.documentation .path-card {
-  background-color: var(--secondary-background-color);
-  padding: 2.5em;
-  border-radius: 8px;
-  border: 2px solid var(--primary-color-shade);
-  transition: all 0.3s;
+.hero-link {
+  border: 1px solid var(--primary-color-shade);
+  background: var(--primary-background-color);
+  border-radius: 14px;
+  padding: 16px;
+  text-align: left;
   cursor: pointer;
+  display: grid;
+  gap: 6px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-.documentation .path-card:hover {
+.hero-link:hover {
+  transform: translateY(-2px);
   border-color: var(--primary-color);
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
 }
 
-.documentation .path-header {
-  display: flex;
-  align-items: center;
-  gap: 1em;
-  margin-bottom: 1em;
-}
-
-.documentation .path-icon {
-  font-size: 2.5em;
-}
-
-.documentation .path-card h3 {
-  margin: 0;
+.hero-link-title {
+  font-weight: 600;
   color: var(--primary-color);
-  font-size: 1.4em;
 }
 
-.documentation .path-card p {
-  margin: 1em 0;
-  line-height: 1.6;
+.hero-link-desc {
+  font-size: 0.9rem;
   color: var(--font-secondary-color);
 }
 
-.documentation .path-link {
-  display: inline-block;
-  margin-top: 1em;
+.hero-link-arrow {
+  font-size: 1rem;
+  color: var(--primary-color);
+}
+
+.docs-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 0;
+}
+
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.section-head h2 {
+  font-size: 2rem;
+  margin: 0;
+  color: var(--primary-color);
+}
+
+.section-head p {
+  margin: 0;
+  color: var(--font-secondary-color);
+  max-width: 420px;
+}
+
+.path-grid,
+.category-grid,
+.tooling-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.doc-card {
+  background: var(--primary-background-color);
+  border-radius: 18px;
+  padding: 20px;
+  border: 1px solid var(--primary-color-shade);
+  display: grid;
+  gap: 12px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.doc-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary-color);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
+}
+
+.doc-pill {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: var(--primary-color-contrast);
+  padding: 4px 10px;
+  border-radius: 999px;
+  justify-self: start;
+}
+
+.doc-card[data-accent="primary"] .doc-pill {
+  background: var(--primary-color);
+}
+
+.doc-card[data-accent="secondary"] .doc-pill {
+  background: var(--secondary-color);
+}
+
+.doc-card[data-accent="success"] .doc-pill {
+  background: #10b981;
+}
+
+.doc-card[data-accent="warning"] .doc-pill {
+  background: #f97316;
+}
+
+.doc-card h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.doc-card p {
+  margin: 0;
+  color: var(--font-secondary-color);
+  line-height: 1.5;
+}
+
+.doc-link {
   color: var(--primary-color);
   font-weight: 600;
-  text-decoration: none;
 }
 
-.documentation .path-link:hover {
-  text-decoration: underline;
+.doc-icon {
+  font-size: 1.6rem;
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .documentation .intro-content {
+.doc-card-compact {
+  min-height: 180px;
+}
+
+.doc-card-tool {
+  min-height: 160px;
+  background: var(--secondary-background-color);
+}
+
+.docs-next {
+  padding-bottom: 0;
+}
+
+.next-steps-panel {
+  background: var(--primary-color);
+  color: var(--primary-color-contrast);
+  padding: 28px 32px;
+  border-radius: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+.next-steps-panel h2 {
+  margin: 0 0 8px;
+  font-size: 1.8rem;
+}
+
+.next-steps-panel p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.next-steps-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.next-step-link {
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: transparent;
+  color: var(--primary-color-contrast);
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.next-step-link:hover {
+  background: var(--primary-color-contrast);
+  color: var(--primary-color);
+}
+
+@media (max-width: 1024px) {
+  .docs-hero {
     grid-template-columns: 1fr;
-    gap: 3em;
+    padding-top: 60px;
   }
-  
-  .documentation .architecture-grid {
-    grid-template-columns: 1fr;
+
+  .section-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .section-head p {
+    max-width: none;
   }
 }
 
 @media (max-width: 768px) {
-  .documentation .intro-text h1 {
-    font-size: 2.5em;
+  .docs-landing {
+    padding: 0 16px 60px;
   }
-  
-  .documentation .tagline {
-    font-size: 1.2em;
+
+  .docs-hero {
+    padding-top: 48px;
   }
-  
-  .documentation .intro-section {
-    min-height: auto;
-    padding: 3em 1em;
-  }
-  
-  .documentation .features-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .documentation .workflow-steps {
+
+  .hero-cta {
     flex-direction: column;
+    align-items: stretch;
   }
-  
-  .documentation .arrow {
-    transform: rotate(90deg);
-  }
-  
-  .documentation .architecture-section h2,
-  .documentation .workflow-section h2,
-  .documentation .examples-section h2,
-  .documentation .learning-paths h2 {
-    font-size: 2em;
+
+  .next-steps-panel {
+    padding: 24px;
   }
 }

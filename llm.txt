@@ -1,0 +1,2113 @@
+=== markdown/cli-commands.md ===
+# Slice.js CLI
+
+## Overview
+The Slice.js CLI (`slice`) helps you initialize projects, manage components, run the dev server,
+and maintain your toolchain. It is distributed as `slicejs-cli` and can be used via `npx` or a local
+npm script.
+
+## Installation
+```bash title="Global (recommended)"
+npm install -g slicejs-cli
+```
+
+```bash title="Local"
+npm install slicejs-cli --save-dev
+```
+
+## Command Summary
+| Command | Alias | Purpose |
+| --- | --- | --- |
+| `slice init` | - | Initialize project structure and install Visual components. |
+| `slice dev` | `slice start` | Start development server. |
+| `slice bundle` | - | Generate production bundles. |
+| `slice bundle clean` | - | Remove generated bundles. |
+| `slice bundle info` | - | Show bundle configuration summary. |
+| `slice component create` | `slice comp new` | Create a local component. |
+| `slice component list` | `slice comp ls` | List local components. |
+| `slice component delete` | `slice comp remove` | Delete a local component. |
+| `slice get` | `slice registry get` | Install components from registry. |
+| `slice browse` | `slice registry list` | List official registry components. |
+| `slice sync` | `slice registry sync` | Sync local Visual components from registry. |
+| `slice list` | - | Shortcut for `slice component list`. |
+| `slice version` | `slice -v` | Show CLI version. |
+| `slice update` | `slice upgrade` | Update CLI/framework. |
+| `slice doctor` | `slice diagnose` | Run project diagnostics. |
+| `slice help` | `slice --help` | Show CLI help. |
+
+## init
+Initializes a new project with the framework structure and installs Visual components from the
+official registry.
+
+```bash title="Initialize a project"
+slice init
+```
+
+What it does:
+- Ensures latest `slicejs-web-framework` is installed.
+- Creates `api/` and `src/` structure from framework base.
+- Installs all Visual components from the registry.
+- Configures `package.json` scripts (dev, start, get, browse, sync, etc.).
+
+## dev / start
+Starts the development server. Optionally generates bundles before startup and watches files.
+
+```bash title="Start dev server"
+slice dev
+```
+
+### Options
+| Flag | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `-p, --port` | `number` | `3000` | Uses config `server.port` if defined. Falls back to next port if busy. |
+| `-w, --watch` | `boolean` | `false` | Restart server on file changes. |
+| `-b, --bundled` | `boolean` | `false` | Generate bundles before start; runs in bundled mode. |
+
+### Behavior
+- Ensures `src/` and `api/` exist (otherwise suggests `slice init`).
+- Falls back to port+1 if the requested port is busy.
+- Uses `api/index.js` with `--development` or `--bundled`.
+
+## bundle
+Generates production bundles by analyzing dependencies and writing bundle files to `src/`.
+
+```bash title="Generate bundles"
+slice bundle
+```
+
+### Options
+| Flag | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `-a, --analyze` | `boolean` | `false` | Analyze only, do not generate bundles. |
+| `-v, --verbose` | `boolean` | `false` | Output analysis metrics. |
+
+### Subcommands
+| Command | Purpose |
+| --- | --- |
+| `slice bundle clean` | Remove generated bundle files and config. |
+| `slice bundle info` | Show bundle configuration summary. |
+
+## component create
+Creates a new local component. Prompts for name and category from `sliceConfig.json`.
+
+```bash title="Create component"
+slice component create
+```
+
+Rules:
+- Name must start with a letter and be alphanumeric.
+- Visual components get `.js`, `.html`, `.css`.
+- Service components get `.js` only.
+
+## component list
+Lists all local components by scanning category paths from `sliceConfig.json` and rewrites
+`src/Components/components.js`.
+
+```bash title="List components"
+slice component list
+```
+
+## component delete
+Deletes a local component after interactive selection and confirmation.
+
+```bash title="Delete component"
+slice component delete
+```
+
+## get / registry get
+Downloads components from the official registry (Visual or Service) into your project.
+
+```bash title="Get components"
+slice get Button Card Input
+```
+
+### Options
+| Flag | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `-f, --force` | `boolean` | `false` | Overwrite existing components. |
+| `-s, --service` | `boolean` | `false` | Install as Service instead of Visual. |
+
+Notes:
+- If no names are provided, the CLI opens an interactive selector.
+- Registry is fetched from the Slice docs repo.
+
+## browse / registry list
+Lists available registry components.
+
+```bash title="Browse registry"
+slice browse
+```
+
+## sync / registry sync
+Updates local Visual components to latest registry versions. Service components are detected but
+not updated automatically.
+
+```bash title="Sync components"
+slice sync
+```
+
+### Options
+| Flag | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `-f, --force` | `boolean` | `false` | Skip confirmation and force update. |
+
+## update
+Checks for CLI and framework updates and optionally installs them.
+
+```bash title="Update packages"
+slice update
+```
+
+### Options
+| Flag | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `-y, --yes` | `boolean` | `false` | Auto-confirm updates. |
+| `--cli` | `boolean` | `false` | Update CLI only. |
+| `-f, --framework` | `boolean` | `false` | Update framework only. |
+
+## doctor
+Runs project diagnostics (structure, config, dependencies, components, port availability).
+
+```bash title="Run diagnostics"
+slice doctor
+```
+
+## version
+Shows CLI version info and checks for updates.
+
+```bash title="Version"
+slice version
+```
+
+## help
+Shows CLI help output.
+
+```bash title="Help"
+slice --help
+```
+
+## Best Practices
+:::tip
+Use the global CLI to run commands from any project.
+:::
+
+:::tip
+Run `slice dev` in one terminal and use another for component commands.
+:::
+
+## Gotchas
+:::warning
+`slice sync` only updates Visual components. Use `slice get <Service> --service --force` for Service updates.
+:::
+
+:::warning
+`slice component list` rewrites `src/Components/components.js` based on detected folders.
+:::
+
+=== markdown/components/multi-route.md ===
+# MultiRoute
+
+## Overview
+MultiRoute renders multiple routes inside a container and caches component instances for
+performance. When a cached route is revisited, its `update()` method is called.
+
+## API Reference
+| Method | Signature | Notes |
+| --- | --- | --- |
+| `renderRoute()` | `()` | Renders the active route and caches the component |
+| `renderIfCurrentRoute()` | `()` | Render only if current path matches |
+| `removeComponent()` | `()` | Remove cached component for current route |
+
+## Props
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `routes` | `array` | `[]` | Route objects with `path` and `component` |
+
+## Usage Patterns
+```javascript title="Basic configuration"
+const multiRoute = await slice.build("MultiRoute", {
+  routes: [
+    { path: "/docs/button", component: "ButtonDocumentation" },
+    { path: "/docs/select", component: "SelectDocumentation" }
+  ]
+});
+```
+
+## Interactive Demo
+:::html
+<div class="multiRoute-demo" data-demo="basic"></div>
+::: 
+
+:::script
+const root = component.querySelector('[data-demo="basic"]');
+if (!root) return;
+
+const navContainer = document.createElement('div');
+navContainer.style.cssText = 'display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;';
+
+const demoRoutes = [
+  { path: '/demo/button', component: 'ButtonDocumentation', label: 'Button Docs' },
+  { path: '/demo/input', component: 'InputDocumentation', label: 'Input Docs' }
+];
+
+for (const route of demoRoutes) {
+  const button = await slice.build('Button', {
+    value: route.label,
+    onClickCallback: async () => {
+      await slice.router.navigate(route.path);
+      if (multiRoute) {
+        await multiRoute.render();
+      }
+    }
+  });
+  navContainer.appendChild(button);
+}
+
+const multiRoute = await slice.build('MultiRoute', {
+  routes: demoRoutes.map(({ path, component }) => ({ path, component }))
+});
+
+await multiRoute.renderIfCurrentRoute();
+root.appendChild(navContainer);
+root.appendChild(multiRoute);
+:::
+
+## Caching Behavior
+```javascript title="Same component across multiple routes"
+const multiRoute = await slice.build("MultiRoute", {
+  routes: [
+    { path: "/cache/doc1", component: "ButtonDocumentation" },
+    { path: "/cache/doc2", component: "ButtonDocumentation" },
+    { path: "/cache/doc3", component: "ButtonDocumentation" }
+  ]
+});
+```
+
+## Best Practices
+:::tip
+Use stable component names and consistent routes to maximize cache reuse.
+:::
+
+:::tip
+Implement `update()` in your routed components to refresh data when revisited.
+:::
+
+## Gotchas
+:::warning
+MultiRoute caches by component name, not by path. Different paths using the same component share state.
+:::
+
+=== markdown/contexts.md ===
+# ContextManager
+
+## Overview
+ContextManager provides shared state across components with watchers and optional persistence.
+It uses EventManager internally to notify watchers and supports selectors for efficient updates.
+
+Enable it in `sliceConfig.json` to use `slice.context`.
+
+## Enable ContextManager
+```json title="sliceConfig.json"
+{
+  "context": { "enabled": true }
+}
+```
+
+## Core API
+| Method | Signature | Returns | Notes |
+| --- | --- | --- | --- |
+| `create` | `(name, initialState = {}, options = {})` | `boolean` | Options include `persist`, `storageKey`. |
+| `getState` | `(name)` | `any | null` | Returns current state or `null` if missing. |
+| `setState` | `(name, updater)` | `void` | `updater` can be object or `(prev) => newState`. |
+| `watch` | `(name, component, callback, selector?)` | `string | null` | Auto-cleanup via component sliceId. |
+| `has` | `(name)` | `boolean` | Check if a context exists. |
+| `destroy` | `(name)` | `boolean` | Removes a context and persisted storage. |
+| `list` | `()` | `string[]` | Returns all context names. |
+
+## Context Options
+| Option | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `persist` | `boolean` | `false` | Saves state to `localStorage`. |
+| `storageKey` | `string` | `slice_context_<name>` | Override persistence key. |
+
+## Create and Read
+```javascript title="Create a context"
+slice.context.create('auth', {
+  isLoggedIn: false,
+  user: null
+});
+
+const authState = slice.context.getState('auth');
+console.log(authState.isLoggedIn);
+```
+
+## Watchers
+Watchers are bound to components for auto-cleanup. Pass the component as the second argument.
+
+```javascript title="Watch with selector"
+export default class AccountMenu extends HTMLElement {
+  constructor(props) {
+    super();
+    slice.attachTemplate(this);
+    slice.controller.setComponentProps(this, props);
+  }
+
+  async init() {
+    slice.context.watch(
+      'auth',
+      this,
+      (isLoggedIn) => {
+        this.classList.toggle('signed-in', isLoggedIn);
+      },
+      (state) => state.isLoggedIn
+    );
+  }
+}
+```
+
+## Selectors and Derived Data
+Selectors run on every update and should be fast and side-effect free. ContextManager performs
+a shallow comparison of the selected value to decide when to notify.
+
+```javascript title="Derived value selector"
+slice.context.watch(
+  'cart',
+  this,
+  (count) => {
+    this.$badge.textContent = count;
+  },
+  (state) => state.items.length
+);
+```
+
+## Persistence
+Persist a context to `localStorage` for session survival.
+
+```javascript title="Persistent context"
+slice.context.create(
+  'preferences',
+  { theme: 'light', locale: 'en' },
+  { persist: true, storageKey: 'app:preferences' }
+);
+```
+
+## Functional Updates
+Use functional updates when new state depends on previous state.
+
+```javascript title="Functional update"
+slice.context.setState('cart', (prev) => ({
+  ...prev,
+  items: [...prev.items, newItem],
+  total: prev.total + newItem.price
+}));
+```
+
+## Best Practices
+:::tip
+Keep contexts small and focused by domain.
+:::
+
+:::tip
+Use selectors to reduce unnecessary updates.
+:::
+
+## Gotchas
+:::warning
+`watch()` requires a component with a `sliceId`. Otherwise it returns `null`.
+:::
+
+:::warning
+Persist only small, serializable state.
+:::
+
+=== markdown/documentation-overview.md ===
+:::html
+<div class="docs-landing">
+  <section class="docs-hero">
+    <div class="hero-content">
+      <span class="hero-badge">Slice.js Documentation</span>
+      <h1>Build fast, readable, and reusable UI with Slice.js.</h1>
+      <p class="hero-lede">
+        Learn the core concepts, component patterns, routing, and tooling through focused guides
+        and API references. Everything here is built on native Web Components and plain JavaScript.
+      </p>
+      <div class="hero-cta"></div>
+      <div class="hero-stats"></div>
+    </div>
+    <div class="hero-side">
+      <div class="hero-panel">
+        <div class="hero-panel-header">
+          <span>Quick Start</span>
+          <span class="hero-panel-pill">JS</span>
+        </div>
+        <div class="hero-code"></div>
+      </div>
+      <div class="hero-links"></div>
+    </div>
+  </section>
+
+  <section class="docs-section">
+    <div class="section-head">
+      <h2>Choose your learning path</h2>
+      <p>Jump to curated paths based on what you want to build next.</p>
+    </div>
+    <div class="path-grid"></div>
+  </section>
+
+  <section class="docs-section">
+    <div class="section-head">
+      <h2>Core foundations</h2>
+      <p>Understand the building blocks that power Slice.js apps.</p>
+    </div>
+    <div class="category-grid"></div>
+  </section>
+
+  <section class="docs-section">
+    <div class="section-head">
+      <h2>Tooling and configuration</h2>
+      <p>Set up projects, manage components, and streamline workflows.</p>
+    </div>
+    <div class="tooling-grid"></div>
+  </section>
+
+  <section class="docs-section docs-next">
+    <div class="next-steps"></div>
+  </section>
+</div>
+:::
+
+:::script
+const createHero = async () => {
+  const ctaContainer = component.querySelector('.hero-cta');
+  const statsContainer = component.querySelector('.hero-stats');
+  const codeContainer = component.querySelector('.hero-code');
+  const linksContainer = component.querySelector('.hero-links');
+
+  if (ctaContainer) {
+    const primary = await slice.build('Button', {
+      value: 'Start with Installation',
+      onClickCallback: async () => {
+        await slice.router.navigate('/Documentation/Installation');
+      }
+    });
+
+    const secondary = await slice.build('Button', {
+      value: 'Explore Components',
+      onClickCallback: async () => {
+        await slice.router.navigate('/Documentation/Visual');
+      }
+    });
+
+    const cli = await slice.build('Button', {
+      value: 'CLI Commands',
+      onClickCallback: async () => {
+        await slice.router.navigate('/Documentation/Commands');
+      }
+    });
+
+    ctaContainer.appendChild(primary);
+    ctaContainer.appendChild(secondary);
+    ctaContainer.appendChild(cli);
+  }
+
+  if (statsContainer) {
+    const stats = [
+      { label: 'Component types', value: '3' },
+      { label: 'Core lifecycle methods', value: '3' },
+      { label: 'Built-in services', value: '5' },
+      { label: 'Routing modes', value: '2' }
+    ];
+
+    stats.forEach((stat) => {
+      const item = document.createElement('div');
+      item.className = 'stat-card';
+      item.innerHTML = `
+        <div class="stat-value">${stat.value}</div>
+        <div class="stat-label">${stat.label}</div>
+      `;
+      statsContainer.appendChild(item);
+    });
+  }
+
+  if (codeContainer) {
+    const code = await slice.build('CodeVisualizer', {
+      language: 'javascript',
+      value: `// Build a component and attach it
+const card = await slice.build('Card', {
+  title: 'Slice.js Documentation',
+  text: 'Start building with clean components.'
+});
+
+document.querySelector('#app').appendChild(card);`
+    });
+
+    codeContainer.appendChild(code);
+  }
+
+  if (linksContainer) {
+    const links = [
+      { title: 'What is Slice.js?', desc: 'Architecture, goals, and mental model.', path: '/Documentation/Slice' },
+      { title: 'sliceConfig.json', desc: 'Configure themes, paths, router, and services.', path: '/Documentation/Configuration/sliceConfig' },
+      { title: 'Routing & Guards', desc: 'Route config, params, and navigation guards.', path: '/Documentation/Routing' }
+    ];
+
+    links.forEach((link) => {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'hero-link';
+      item.innerHTML = `
+        <div class="hero-link-title">${link.title}</div>
+        <div class="hero-link-desc">${link.desc}</div>
+        <span class="hero-link-arrow">→</span>
+      `;
+      item.addEventListener('click', async () => {
+        await slice.router.navigate(link.path);
+      });
+      linksContainer.appendChild(item);
+    });
+  }
+};
+
+const createPathCards = () => {
+  const grid = component.querySelector('.path-grid');
+  if (!grid) return;
+
+  const paths = [
+    {
+      tag: 'Start here',
+      title: 'Getting Started',
+      description: 'Install the CLI, create a project, and learn the core workflow.',
+      path: '/Documentation/Installation',
+      accent: 'primary'
+    },
+    {
+      tag: 'Components',
+      title: 'Build & Compose',
+      description: 'Understand build(), static props, and the component lifecycle.',
+      path: '/Documentation/The-build-method',
+      accent: 'secondary'
+    },
+    {
+      tag: 'Routing',
+      title: 'Navigation',
+      description: 'Configure routes, guard transitions, and reuse cached views.',
+      path: '/Documentation/Routing',
+      accent: 'success'
+    },
+    {
+      tag: 'State',
+      title: 'Context Manager',
+      description: 'Shared state with watchers, selectors, and persistence.',
+      path: '/Documentation/ContextManager',
+      accent: 'warning'
+    }
+  ];
+
+  paths.forEach((item) => {
+    const card = document.createElement('div');
+    card.className = `doc-card`;
+    card.dataset.accent = item.accent;
+    card.innerHTML = `
+      <div class="doc-pill">${item.tag}</div>
+      <h3>${item.title}</h3>
+      <p>${item.description}</p>
+      <span class="doc-link">Open guide →</span>
+    `;
+    card.addEventListener('click', async () => {
+      await slice.router.navigate(item.path);
+    });
+    grid.appendChild(card);
+  });
+};
+
+const createCategoryCards = () => {
+  const grid = component.querySelector('.category-grid');
+  if (!grid) return;
+
+  const categories = [
+    {
+      title: 'Visual Components',
+      description: 'UI building blocks like Button, Card, Grid, Layout, and forms.',
+      path: '/Documentation/Visual',
+      icon: '🎨'
+    },
+    {
+      title: 'Structural Components',
+      description: 'Router, Controller, StylesManager, and framework services.',
+      path: '/Documentation/Structural',
+      icon: '⚙️'
+    },
+    {
+      title: 'Services',
+      description: 'Fetch, storage, translation, and reusable business logic.',
+      path: '/Documentation/Service',
+      icon: '🔧'
+    },
+    {
+      title: 'Lifecycle Methods',
+      description: 'init(), update(), beforeDestroy() and when to use them.',
+      path: '/Documentation/LifeCycle-Methods',
+      icon: '⏱️'
+    }
+  ];
+
+  categories.forEach((item) => {
+    const card = document.createElement('div');
+    card.className = 'doc-card doc-card-compact';
+    card.innerHTML = `
+      <div class="doc-icon">${item.icon}</div>
+      <h3>${item.title}</h3>
+      <p>${item.description}</p>
+      <span class="doc-link">View docs →</span>
+    `;
+    card.addEventListener('click', async () => {
+      await slice.router.navigate(item.path);
+    });
+    grid.appendChild(card);
+  });
+};
+
+const createToolingCards = () => {
+  const grid = component.querySelector('.tooling-grid');
+  if (!grid) return;
+
+  const tools = [
+    {
+      title: 'Slice CLI',
+      description: 'Initialize projects, manage components, and run dev servers.',
+      path: '/Documentation/Commands'
+    },
+    {
+      title: 'sliceConfig.json',
+      description: 'Configure themes, styles, routes, and structural services.',
+      path: '/Documentation/Configuration/sliceConfig'
+    },
+    {
+      title: 'Themes',
+      description: 'Customize themes, set defaults, and build your own palettes.',
+      path: '/Documentation/Themes'
+    },
+    {
+      title: 'Playground',
+      description: 'Experiment with components and routing in a live sandbox.',
+      path: '/Playground'
+    }
+  ];
+
+  tools.forEach((item) => {
+    const card = document.createElement('div');
+    card.className = 'doc-card doc-card-tool';
+    card.innerHTML = `
+      <h3>${item.title}</h3>
+      <p>${item.description}</p>
+      <span class="doc-link">Open →</span>
+    `;
+    card.addEventListener('click', async () => {
+      await slice.router.navigate(item.path);
+    });
+    grid.appendChild(card);
+  });
+};
+
+const createNextSteps = () => {
+  const container = component.querySelector('.next-steps');
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="next-steps-panel">
+      <div>
+        <h2>Ready to build?</h2>
+        <p>Start with installation, then create your first component and wire up routing.</p>
+      </div>
+      <div class="next-steps-actions"></div>
+    </div>
+  `;
+
+  const actions = container.querySelector('.next-steps-actions');
+  if (!actions) return;
+
+  const actionsList = [
+    { label: 'Installation', path: '/Documentation/Installation' },
+    { label: 'The build method', path: '/Documentation/The-build-method' },
+    { label: 'Routing', path: '/Documentation/Routing' }
+  ];
+
+  actionsList.forEach((item) => {
+    const link = document.createElement('button');
+    link.type = 'button';
+    link.className = 'next-step-link';
+    link.textContent = item.label;
+    link.addEventListener('click', async () => {
+      await slice.router.navigate(item.path);
+    });
+    actions.appendChild(link);
+  });
+};
+
+await createHero();
+createPathCards();
+createCategoryCards();
+createToolingCards();
+createNextSteps();
+:::
+
+=== markdown/example.md ===
+# EventManager
+
+## Overview
+EventManager provides a lightweight pub/sub system for Slice.js. It supports global subscriptions,
+component-bound subscriptions with auto-cleanup, and one-time listeners. It is designed for
+cross-cutting signals and decoupled communication between components and services.
+
+## When to Use
+- App-level signals (app:ready, user:login, notification:show)
+- Decoupled UI updates (service emits, UI listens)
+- One-time bootstrap actions
+
+## When Not to Use
+- Shared, persistent state: use ContextManager instead
+- High-frequency real-time data: use dedicated data streams
+
+## Enable
+```json
+{
+  "events": { "enabled": true }
+}
+```
+
+## Concepts
+- Event names are strings, typically namespaced (`domain:action`).
+- Subscriptions can be global or component-bound.
+- Component-bound subscriptions are auto-removed when the component is destroyed.
+
+## API Reference
+| Method | Signature | Notes |
+| --- | --- | --- |
+| `subscribe` | `(eventName, callback, options?)` | Auto-cleanup if `options.component` set |
+| `subscribeOnce` | `(eventName, callback, options?)` | Auto-unsubscribe after first emit |
+| `unsubscribe` | `(eventName, subscriptionId)` | Returns boolean |
+| `emit` | `(eventName, data?)` | Emits to all subscribers |
+| `bind` | `(component)` | Returns component-bound API |
+| `hasSubscribers` | `(eventName)` | Diagnostics only |
+| `subscriberCount` | `(eventName)` | Diagnostics only |
+| `clear` | `()` | Clears all subscriptions |
+
+## Usage Patterns
+```javascript title="Component-bound subscription in init() (recommended)"
+export default class Navbar extends HTMLElement {
+  constructor(props) {
+    super();
+    slice.attachTemplate(this);
+    slice.controller.setComponentProps(this, props);
+  }
+
+  async init() {
+    this.events = slice.events.bind(this);
+    this.events.subscribe("user:logout", () => this.resetUI());
+  }
+
+  resetUI() {
+    // ...
+  }
+}
+```
+
+```javascript title="Component-bound without bind() in init()"
+export default class Navbar extends HTMLElement {
+  async init() {
+    slice.events.subscribe(
+      "user:logout",
+      () => this.resetUI(),
+      { component: this }
+    );
+  }
+}
+```
+
+```javascript title="One-time initialization in init()"
+export default class AppShell extends HTMLElement {
+  async init() {
+    slice.events.subscribeOnce("app:ready", () => {
+      console.log("App ready");
+    });
+  }
+}
+```
+
+```javascript title="Global notification from a service"
+export default class NotificationService {
+  notify(message, type = "success") {
+    slice.events.emit("notification:show", { type, message });
+  }
+}
+```
+
+## Component Integration
+```javascript title="Service emits, UI listens"
+export default class NotificationService {
+  notify(message, type = "info") {
+    slice.events.emit("notification:show", { message, type });
+  }
+}
+
+export default class Toasts extends HTMLElement {
+  constructor(props) {
+    super();
+    slice.attachTemplate(this);
+    slice.controller.setComponentProps(this, props);
+  }
+
+  async init() {
+    this.events = slice.events.bind(this);
+    this.events.subscribe("notification:show", ({ message, type }) => {
+      this.showToast(message, type);
+    });
+  }
+}
+```
+
+## Implementation Recipe
+:::steps
+1. Choose a namespaced event name (e.g., `cart:updated`).
+2. Emit the event where the change happens.
+3. Subscribe in the UI or other consumers using `bind()`.
+4. Use `subscribeOnce` for bootstrapping or single-run tasks.
+:::
+
+## Best Practices
+:::tip
+Use namespaced event names. Avoid generic names like `update` or `change`.
+:::
+
+:::tip
+Keep payloads small and serializable when possible.
+:::
+
+:::tip
+Prefer `bind()` for components. It prevents leaks by default.
+:::
+
+## Gotchas
+:::warning
+Clearing a container does not remove subscriptions. Use component-bound subscriptions or manual
+`unsubscribe` calls.
+:::
+
+:::warning
+Avoid using EventManager as a data store. It does not retain state.
+:::
+
+## Diagnostics
+```javascript title="Check if anyone is listening"
+if (slice.events.hasSubscribers("cart:updated")) {
+  slice.events.emit("cart:updated", { items: 3 });
+}
+```
+
+## FAQ
+:::details title="Should I use EventManager for shared state?"
+No. Use ContextManager for shared state. EventManager is for ephemeral signals.
+:::
+
+:::details title="What happens if events are disabled?"
+Slice.js provides a no-op implementation so calls to `slice.events` are safe.
+:::
+
+:::details title="Do I need to unsubscribe manually?"
+Only if you are not using `bind()` or `options.component`. Component-bound subscriptions auto-clean.
+:::
+
+:::details title="Can I debug event usage?"
+Use `hasSubscribers` or `subscriberCount` for diagnostics in development.
+:::
+
+=== markdown/getting-started/before-destroy.md ===
+# beforeDestroy()
+
+## Overview
+`beforeDestroy()` runs right before a component is destroyed by the controller. Use it for
+cleanup: timers, listeners, subscriptions, and pending async work.
+
+The controller does not await this method, so keep it synchronous or fire-and-forget.
+
+## API
+| Method | Signature | Returns | Notes |
+| --- | --- | --- | --- |
+| `beforeDestroy` | `beforeDestroy()` | `void` | Called right before the component is removed. |
+
+## Ideal Use Cases
+- Clear intervals and timeouts
+- Abort pending fetch requests
+- Remove global event listeners
+- Dispose third-party instances (charts, maps, etc.)
+
+## Example
+```javascript title="Cleanup in beforeDestroy()"
+export default class LiveChart extends HTMLElement {
+  constructor(props) {
+    super();
+    slice.attachTemplate(this);
+    slice.controller.setComponentProps(this, props);
+    this.abortController = new AbortController();
+  }
+
+  async init() {
+    this._pollingId = setInterval(() => this.fetchData(), 5000);
+    window.addEventListener('resize', this.onResize);
+    await fetch('/api/chart', { signal: this.abortController.signal });
+  }
+
+  beforeDestroy() {
+    clearInterval(this._pollingId);
+    this.abortController.abort();
+    window.removeEventListener('resize', this.onResize);
+    this.chartInstance?.destroy();
+  }
+}
+```
+
+## Best Practices
+:::tip
+Keep `beforeDestroy()` idempotent so it can be called safely.
+:::
+
+:::tip
+Use `AbortController` for fetch cleanup.
+:::
+
+## Gotchas
+:::warning
+If you add global listeners in `init()`, remove them in `beforeDestroy()`.
+:::
+
+:::warning
+Do not rely on `await` inside `beforeDestroy()`.
+:::
+
+=== markdown/getting-started/build-method.md ===
+# The build method
+
+## Overview
+`slice.build(componentName, props)` creates a component instance, applies Static Props, runs
+`init()`, and registers the component with the controller. It returns a ready-to-append component
+instance.
+
+This is the standard way to create Visual, App, and Service components in Slice.js.
+
+## API
+| Parameter | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `componentName` | `string` | yes | Must exist in `components.js`. |
+| `props` | `object` | no | Public props for the component. |
+
+| Returns | Type | Notes |
+| --- | --- | --- |
+| component instance | `HTMLElement | Object | null` | Returns `null` on error. |
+
+## Lifecycle Steps
+1. Validate component name.
+2. Load template, class, and CSS (visual components only).
+3. Instantiate component and apply props.
+4. Call `init()` if present.
+5. Register component in the controller and component tree.
+
+## Basic Usage
+```javascript title="Basic build"
+const myButton = await slice.build('Button', {
+  value: 'Click me'
+});
+
+document.querySelector('#container').appendChild(myButton);
+```
+
+## Props and Defaults
+```javascript title="Props are applied immediately"
+const card = await slice.build('Card', {
+  title: 'My Card',
+  text: 'Card content',
+  icon: { name: 'star', iconStyle: 'filled' }
+});
+
+// Card now has this.title, this.text, this.icon
+```
+
+## id and sliceId
+`id` and `sliceId` are handled specially. They are assigned to the instance and then removed
+from the props object before Static Props are applied.
+
+```javascript title="Use sliceId for lookup"
+const navbar = await slice.build('Navbar', {
+  sliceId: 'main-navbar',
+  logo: { src: '/logo.png', path: '/' },
+  items: [{ text: 'Home', path: '/' }]
+});
+
+const sameNavbar = slice.controller.getComponent('main-navbar');
+```
+
+## Nested Components
+```javascript title="Build children and compose"
+const grid = await slice.build('Grid', { columns: 3, rows: 1 });
+const card1 = await slice.build('Card', { title: 'Card 1' });
+const card2 = await slice.build('Card', { title: 'Card 2' });
+const card3 = await slice.build('Card', { title: 'Card 3' });
+
+await grid.setItem(card1);
+await grid.setItem(card2);
+await grid.setItem(card3);
+
+this.appendChild(grid);
+```
+
+## Error Cases
+- Missing or non-string component name
+- Component not listed in `components.js`
+- Structural components cannot be built
+
+## Best Practices
+:::tip
+Always await `slice.build()` to ensure templates, CSS, and `init()` are finished.
+:::
+
+:::tip
+Use `sliceId` only when you need to retrieve a component later.
+:::
+
+## Gotchas
+:::warning
+Building a component can return `null` if the component is missing or fails to load.
+:::
+
+:::warning
+Structural components are created by the framework and cannot be built directly.
+:::
+
+=== markdown/getting-started/init-method.md ===
+# init()
+
+## Overview
+`init()` runs once, right after the component instance is created and its template is attached.
+Use it for one-time setup that should not repeat during updates.
+
+`slice.build()` awaits `init()` before returning the component instance.
+
+## API
+| Method | Signature | Returns | Notes |
+| --- | --- | --- | --- |
+| `init` | `async init()` | `Promise<void>` | Called once per instance. |
+
+## Ideal Use Cases
+- Cache DOM references
+- Attach event listeners for the component lifetime
+- Fetch initial data
+- Build static child components
+
+## Example
+```javascript title="One-time setup in init()"
+export default class UserProfile extends HTMLElement {
+  async init() {
+    this.$userInfo = this.querySelector('.user-info');
+    this.$avatar = this.querySelector('.avatar');
+
+    this.userData = await this.fetchUserData(this.userId);
+
+    this.editButton = await slice.build('Button', {
+      sliceId: 'edit-profile-btn',
+      value: 'Edit Profile',
+      onClickCallback: () => this.editProfile()
+    });
+
+    this.addEventListener('click', this.handleClick.bind(this));
+
+    this.updateUserUI();
+    this.appendChild(this.editButton);
+  }
+
+  updateUserUI() {
+    this.$userInfo.textContent = this.userData.name;
+    this.$avatar.src = this.userData.avatar;
+  }
+}
+```
+
+## Patterns
+```javascript title="Bind events with auto-cleanup"
+export default class Notifications extends HTMLElement {
+  async init() {
+    this.events = slice.events.bind(this);
+    this.events.subscribe('notify', (payload) => this.show(payload));
+  }
+}
+```
+
+## Best Practices
+:::tip
+Query DOM elements in `init()` (not in the constructor).
+:::
+
+:::tip
+Build static child components here. Dynamic lists belong in `update()`.
+:::
+
+## Gotchas
+:::warning
+Avoid building dynamic lists in `init()` if the list needs to refresh.
+:::
+
+=== markdown/getting-started/lifecycle-overview.md ===
+# LifeCycle Methods
+
+## Overview
+Slice.js components expose three lifecycle methods for predictable behavior:
+
+- `init()` for one-time setup
+- `update()` for refreshes when data or routes change
+- `beforeDestroy()` for cleanup and memory safety
+
+These methods are called by the framework and are the recommended places to manage state,
+subscriptions, and DOM updates.
+
+## Lifecycle Summary
+| Method | Called when | Async awaited | Typical responsibilities |
+| --- | --- | --- | --- |
+| `init()` | After construction, before first use | yes | Cache DOM, fetch initial data, build static children. |
+| `update()` | When a cached route/component is reused | yes | Re-fetch data, rebuild dynamic lists, update state. |
+| `beforeDestroy()` | Right before destruction | no | Cleanup timers, listeners, subscriptions, aborts. |
+
+## Call Order and Timing
+```javascript title="Lifecycle timing"
+class Example extends HTMLElement {
+  async init() {
+    // Runs once after template is attached and props are set
+  }
+
+  async update() {
+    // Runs when the component is reused or refreshed
+  }
+
+  beforeDestroy() {
+    // Runs right before the component is destroyed
+  }
+}
+```
+
+## Navigation and Reuse
+`update()` is called when a cached component is reused by routing (for example, `Route` and
+`MultiRoute` containers). This keeps UI responsive without rebuilding static structure.
+
+## Recommended Structure
+```javascript title="Recommended separation"
+export default class UserList extends HTMLElement {
+  async init() {
+    this.$container = this.querySelector('.users');
+    await this.loadUsers();
+    await this.buildUserCards();
+  }
+
+  async update() {
+    slice.controller.destroyByContainer(this.$container);
+    this.$container.innerHTML = '';
+    await this.loadUsers();
+    await this.buildUserCards();
+  }
+
+  beforeDestroy() {
+    clearInterval(this._pollingId);
+    this.abortController?.abort();
+  }
+}
+```
+
+## Best Practices
+:::tip
+Keep `init()` focused on one-time setup and cache DOM references there.
+:::
+
+:::tip
+Use `destroyByContainer` before rebuilding dynamic lists in `update()`.
+:::
+
+## Gotchas
+:::warning
+`beforeDestroy()` is not awaited. Keep it synchronous or fire-and-forget.
+:::
+
+:::warning
+Clearing `innerHTML` does not destroy Slice components. Use `destroyByContainer` first.
+:::
+
+## Guides
+- `init()`: /Documentation/LifeCycle-Methods/init
+- `update()`: /Documentation/LifeCycle-Methods/update
+- `beforeDestroy()`: /Documentation/LifeCycle-Methods/beforeDestroy
+
+=== markdown/getting-started/routing-guards.md ===
+# Route Guards
+
+## Overview
+Route guards let you intercept navigation before and after a route change. Use them for auth,
+feature flags, redirects, analytics, and scroll or title updates.
+
+Guards run on every navigation, including the initial page load. Call `slice.router.start()`
+after registering guards to ensure they are active before the first navigation.
+
+## Guard API
+| Method | Signature | Can block | Notes |
+| --- | --- | --- | --- |
+| `beforeEach` | `(to, from, next) => void` | yes | Call `next()` to continue or redirect. |
+| `afterEach` | `(to, from) => void` | no | Runs after navigation completes. |
+
+### `next()` behavior
+| Call | Result | Notes |
+| --- | --- | --- |
+| `next()` | continue | Normal navigation. |
+| `next(false)` | cancel | Navigation is cancelled. |
+| `next('/login')` | redirect | Redirect to path (pushState). |
+| `next({ path: '/login', replace: true })` | redirect | Redirect with history replace. |
+
+## Guard Context
+`to` and `from` include path, component, params, query, and metadata.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `path` | `string` | Requested path or resolved full path. |
+| `component` | `string` | Component for the route (parent if nested). |
+| `params` | `object` | Params parsed from `${param}` in routes. |
+| `query` | `object` | URL query parameters. |
+| `metadata` | `object` | Route metadata from config. |
+
+## beforeEach
+```javascript title="Block or redirect"
+slice.router.beforeEach(async (to, from, next) => {
+  if (to.metadata?.private && !isAuthenticated()) {
+    return next({ path: '/login' });
+  }
+  return next();
+});
+```
+
+## afterEach
+```javascript title="Post-navigation logic"
+slice.router.afterEach((to, from) => {
+  document.title = to.metadata?.title || 'My App';
+  window.scrollTo(0, 0);
+});
+```
+
+## Patterns
+```javascript title="Feature flag guard"
+slice.router.beforeEach((to, from, next) => {
+  if (to.metadata?.flag && !featureEnabled(to.metadata.flag)) {
+    return next('/404');
+  }
+  return next();
+});
+```
+
+```javascript title="Guard with replace"
+slice.router.beforeEach((to, from, next) => {
+  if (to.path === '/old-path') {
+    return next({ path: '/new-path', replace: true });
+  }
+  return next();
+});
+```
+
+## Best Practices
+:::tip
+Always call `next()` in `beforeEach`. Missing it logs a warning and navigation continues.
+:::
+
+:::tip
+Keep guard logic fast. Long async work slows down navigation.
+:::
+
+## Gotchas
+:::warning
+Guards can create redirect loops. The router detects loops and stops after 10 redirects.
+:::
+
+:::warning
+`afterEach` cannot block navigation. Use `beforeEach` if you need to cancel or redirect.
+:::
+
+=== markdown/getting-started/routing.md ===
+# Slice Routing
+
+## Overview
+Slice Router handles client-side navigation, route parameters, nested routes, and route containers.
+It auto-starts shortly after initialization, but you should call `start()` manually when you use
+guards to ensure your guard logic runs before the first navigation.
+
+Routing is driven by a `routes.js` file and a runtime router available at `slice.router`.
+
+## Router API
+| Method | Signature | Returns | Notes |
+| --- | --- | --- | --- |
+| `start` | `() => Promise<void>` | `Promise<void>` | Starts routing immediately. Recommended when using guards. |
+| `navigate` | `(path, _redirectChain?, _options?)` | `Promise<void>` | Programmatic navigation. `_options.replace` uses history replace. |
+| `beforeEach` | `(guard)` | `void` | Registers a guard `(to, from, next)`. |
+| `afterEach` | `(guard)` | `void` | Registers a guard `(to, from)` after navigation. |
+
+## Route Configuration
+```javascript title="routes.js"
+const routes = [
+  { path: '/', component: 'HomePage' },
+  { path: '/about', component: 'AboutPage' },
+  { path: '/user/${id}', component: 'UserProfile', metadata: { private: true } },
+  { path: '/docs', component: 'Docs', children: [
+    { path: '/intro', component: 'DocsIntro' }
+  ]},
+  { path: '/404', component: 'NotFound' }
+];
+
+export default routes;
+```
+
+### Route Definition Fields
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `path` | `string` | yes | Supports dynamic params using `${param}`. |
+| `component` | `string` | yes | Component name from `components.js`. |
+| `children` | `Array<Route>` | no | Nested routes inherit parent path. |
+| `metadata` | `object` | no | Arbitrary data for guards and UI. |
+
+## Route Info Object
+Guards and route events receive `to` and `from` objects created by the router.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `path` | `string` | Requested path or resolved full path. |
+| `component` | `string` | Component for the route (parent if nested). |
+| `params` | `object` | Dynamic params from `${param}` patterns. |
+| `query` | `object` | Parsed query string values. |
+| `metadata` | `object` | Route metadata from config. |
+
+## Basic Navigation
+```javascript title="Navigate programmatically"
+await slice.router.navigate('/about');
+```
+
+## Route Containers
+Slice provides two route container components:
+
+- `slice-route` for a single path
+- `slice-multi-route` for a list of routes
+
+They cache components and call `update()` when a cached component is reused.
+
+```javascript title="Route container"
+const route = await slice.build('Route', {
+  path: '/settings',
+  component: 'SettingsPage'
+});
+
+someContainer.appendChild(route);
+```
+
+```javascript title="MultiRoute container"
+const multi = await slice.build('MultiRoute', {
+  routes: [
+    { path: '/account', component: 'AccountPage' },
+    { path: '/billing', component: 'BillingPage' }
+  ]
+});
+
+someContainer.appendChild(multi);
+```
+
+## Guards
+```javascript title="beforeEach and afterEach"
+slice.router.beforeEach(async (to, from, next) => {
+  if (to.metadata?.private && !isAuthenticated()) {
+    return next({ path: '/login' });
+  }
+  return next();
+});
+
+slice.router.afterEach((to) => {
+  document.title = to.metadata?.title || 'My App';
+});
+
+await slice.router.start();
+```
+
+## Route Change Events
+The router emits `router:change` using EventManager when enabled. Otherwise it dispatches a
+`CustomEvent` on `window`.
+
+```javascript title="router:change via EventManager"
+slice.events.subscribe('router:change', ({ to, from }) => {
+  console.log('Route changed:', from.path, '->', to.path);
+});
+```
+
+## Best Practices
+:::tip
+Call `start()` after registering guards to avoid missing the first navigation.
+:::
+
+:::tip
+Use metadata flags to keep guard logic declarative and centralized.
+:::
+
+## Gotchas
+:::warning
+`navigate()` is async. Await it when you depend on the next route being ready.
+:::
+
+:::warning
+Dynamic params use `${param}` syntax, not `:param`.
+:::
+
+=== markdown/getting-started/services.md ===
+# Services
+
+## Overview
+Services centralize logic and data access. They can cache results, encapsulate API calls,
+and integrate with EventManager or ContextManager.
+
+Services are created with `slice.build()` like other components, but they do not render UI.
+
+## Built-in Services
+| Service | Purpose | Notes |
+| --- | --- | --- |
+| `FetchManager` | HTTP requests with loading, timeout, and optional caching | Uses `Loading` component automatically. |
+| `IndexedDbManager` | IndexedDB CRUD helpers | Creates store with `keyPath: 'id'`. |
+| `LocalStorageManager` | LocalStorage JSON wrapper | Returns parsed JSON or null. |
+| `Translator` | Apply translations to active components | Uses `messages.json` and `slice.translator`. |
+| `Link` | SPA navigation anchor | Calls `slice.router.navigate`. |
+
+## Using a Service
+```javascript title="Access via controller"
+const dataService = await slice.build('FetchManager', {
+  baseUrl: 'https://api.myapp.com/v1',
+  sliceId: 'data-service'
+});
+
+export default class ProductList extends HTMLElement {
+  async init() {
+    this.dataService = slice.controller.getComponent('data-service');
+    await this.loadProducts();
+  }
+}
+```
+
+## FetchManager API
+| Method | Signature | Returns | Notes |
+| --- | --- | --- | --- |
+| `request` | `(method, data, endpoint, onSuccess, onError, refetchOnError=false, requestOptions={})` | `Promise<any>` | Returns JSON response. Caches last response if enabled. |
+| `enableCache` | `()` | `void` | Enables in-memory cache. |
+| `disableCache` | `()` | `void` | Disables cache. |
+| `setDefaultHeaders` | `(headers)` | `void` | Merges default headers into requests. |
+
+## IndexedDbManager API
+| Method | Signature | Returns | Notes |
+| --- | --- | --- | --- |
+| `openDatabase` | `()` | `Promise<IDBDatabase>` | Opens or creates database. |
+| `closeDatabase` | `()` | `void` | Closes the connection. |
+| `addItem` | `(item)` | `Promise<number>` | Returns new key. |
+| `updateItem` | `(item)` | `Promise<number>` | Returns key. |
+| `getItem` | `(id)` | `Promise<any>` | Gets item by id. |
+| `deleteItem` | `(id)` | `Promise<void>` | Deletes item by id. |
+| `getAllItems` | `()` | `Promise<any[]>` | Returns all items. |
+| `clearItems` | `()` | `Promise<void>` | Clears store. |
+
+## LocalStorageManager API
+| Method | Signature | Returns | Notes |
+| --- | --- | --- | --- |
+| `getItem` | `(key)` | `any | null` | Returns parsed JSON or null. |
+| `setItem` | `(key, value)` | `boolean` | Returns success boolean. |
+| `removeItem` | `(key)` | `boolean` | Returns success boolean. |
+| `clear` | `()` | `boolean` | Clears localStorage. |
+
+## Translator API
+| Method | Signature | Returns | Notes |
+| --- | --- | --- | --- |
+| `changeLanguage` | `(newLanguage)` | `boolean | void` | Applies translations for active components. |
+| `setPropertiesForComponents` | `()` | `boolean | void` | Updates component props from messages. |
+| `setMessages` | `(messages)` | `void` | Replaces the messages object. |
+
+## Link API
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `path` | `string` | `'#'` | Route path to navigate. |
+| `classes` | `string` | `''` | CSS classes for the anchor. |
+| `text` | `string` | `''` | Anchor text. |
+
+```javascript title="Link usage"
+const link = await slice.build('Link', {
+  path: '/account',
+  classes: 'nav-link',
+  text: 'Account'
+});
+
+nav.appendChild(link);
+```
+
+## Best Practices
+:::tip
+Use `sliceId` when you need global access to a service instance.
+:::
+
+:::tip
+Pair services with EventManager for notifications or ContextManager for shared state.
+:::
+
+## Gotchas
+:::warning
+`Translator` expects message keys to match active component sliceIds.
+:::
+
+=== markdown/getting-started/static-props.md ===
+# Static Props
+
+## Overview
+Static Props define a component's public API. They provide defaults, development-only validation,
+and consistent prop behavior across Slice.js. They also power the debugger by describing which
+props are available and used.
+
+## Static Props Schema
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `type` | `string` | no | Informational only (debugger). |
+| `default` | `any` | no | Applied when prop is not provided. |
+| `required` | `boolean` | no | Logs error when missing in development. |
+
+## How Props Are Applied
+When a component is built:
+
+- Defaults are applied for missing props.
+- Unknown props produce warnings in development.
+- Missing required props produce errors in development.
+- Props are assigned to the instance (`component[prop]`) and tracked internally.
+
+```javascript title="Props are processed by the Controller"
+export default class Button extends HTMLElement {
+  static props = {
+    value: { type: 'string', default: 'Button' },
+    onClickCallback: { type: 'function', default: null }
+  };
+
+  constructor(props) {
+    super();
+    slice.attachTemplate(this);
+    slice.controller.setComponentProps(this, props);
+
+    // Props are now available
+    console.log(this.value);
+    console.log(this.onClickCallback);
+  }
+}
+```
+
+## Defaults and Required Fields
+```javascript title="Defaults and required props"
+static props = {
+  title: { type: 'string', default: 'Untitled', required: false },
+  id: { type: 'string', required: true }
+};
+```
+
+## Validation (Development Only)
+Slice warns about unknown props and errors on missing required props in development mode.
+In production, validation is skipped for performance.
+
+## Usage Patterns
+```javascript title="Building with props"
+const card = await slice.build('Card', {
+  title: 'My Card',
+  text: 'Card content',
+  icon: { name: 'star', iconStyle: 'filled' }
+});
+```
+
+```javascript title="Props with arrays and objects"
+const grid = await slice.build('Grid', {
+  columns: 3,
+  rows: 2,
+  gap: '16px',
+  style: { border: '1px solid #ccc' }
+});
+```
+
+```javascript title="Function props"
+const button = await slice.build('Button', {
+  value: 'Save',
+  onClickCallback: () => this.save()
+});
+```
+
+## Best Practices
+:::tip
+Define only public props in `static props` and use internal fields for private state.
+:::
+
+:::tip
+Use defaults to keep components predictable and reduce boilerplate.
+:::
+
+## Gotchas
+:::warning
+Static Props validation runs only in development; validate critical data yourself.
+:::
+
+=== markdown/getting-started/structural-components.md ===
+# Structural Components
+
+## Overview
+Structural components power the framework runtime. They are created by Slice.js and exposed
+under `slice.*`. You do not build them directly.
+
+## Key Components
+- `slice.controller` for component lifecycle and lookup
+- `slice.router` for navigation and route rendering
+- `slice.stylesManager` for styles and themes
+- `slice.events` for pub/sub (optional)
+- `slice.context` for shared state (optional)
+
+## Controller API
+| Method | Signature | Returns | Notes |
+| --- | --- | --- | --- |
+| `getComponent` | `(sliceId)` | `HTMLElement | undefined` | Lookup by sliceId. |
+| `destroyByContainer` | `(container)` | `number` | Destroys Slice components inside container. |
+| `destroyByPattern` | `(pattern)` | `number` | Destroys components whose sliceId matches pattern. |
+
+```javascript title="Destroy components safely"
+const container = this.querySelector('.items');
+slice.controller.destroyByContainer(container);
+container.innerHTML = '';
+```
+
+## Router API
+| Method | Signature | Notes |
+| --- | --- | --- |
+| `navigate` | `(path, _redirectChain?, _options?)` | Programmatic navigation. |
+| `beforeEach` | `(to, from, next)` | Register a guard before navigation. |
+| `afterEach` | `(to, from)` | Run logic after navigation. |
+| `start` | `()` | Start routing immediately. |
+
+## Styles and Themes
+`slice.setTheme(themeName)` applies a theme through the StylesManager.
+
+```javascript title="Switch themes"
+await slice.setTheme('Dark');
+```
+
+## EventManager (Optional)
+Provides pub/sub via `slice.events`. When disabled, the API is a no-op.
+
+| Method | Signature | Notes |
+| --- | --- | --- |
+| `subscribe` | `(eventName, callback, options?)` | Returns subscription id. |
+| `subscribeOnce` | `(eventName, callback, options?)` | Auto-unsubscribe after first emit. |
+| `unsubscribe` | `(eventName, id)` | Returns boolean. |
+| `emit` | `(eventName, data?)` | Emits to all subscribers. |
+| `bind` | `(component)` | Returns component-bound API. |
+
+## ContextManager (Optional)
+Shared state system available at `slice.context`.
+
+| Method | Signature | Notes |
+| --- | --- | --- |
+| `create` | `(name, initialState, options?)` | Options include `persist`. |
+| `getState` | `(name)` | Returns current state or null. |
+| `setState` | `(name, updater)` | Accepts object or updater function. |
+| `watch` | `(name, component, callback, selector?)` | Auto-cleanup via component. |
+| `destroy` | `(name)` | Removes a context. |
+| `list` | `()` | Returns context names. |
+
+## Best Practices
+:::tip
+Use `destroyByContainer` before recreating dynamic lists to avoid leaks.
+:::
+
+:::tip
+Register guards before calling `slice.router.start()`.
+:::
+
+=== markdown/getting-started/update-method.md ===
+# update()
+
+## Overview
+`update()` runs whenever a component needs to refresh. The router calls it when a cached
+component is reused by `Route` or `MultiRoute`. You can also call it manually after changing
+props or state.
+
+## API
+| Method | Signature | Returns | Notes |
+| --- | --- | --- | --- |
+| `update` | `async update()` | `Promise<void>` | Called on cached components when revisited. |
+
+## Ideal Use Cases
+- Re-fetch data that can change
+- Rebuild dynamic child components
+- Re-apply dynamic state to the DOM
+
+## Example
+```javascript title="Rebuild dynamic UI in update()"
+export default class ProductList extends HTMLElement {
+  async init() {
+    this.$productContainer = this.querySelector('.products-container');
+    await this.loadAndRenderProducts();
+  }
+
+  async update() {
+    slice.controller.destroyByContainer(this.$productContainer);
+    this.$productContainer.innerHTML = '';
+    await this.loadAndRenderProducts();
+  }
+
+  async loadAndRenderProducts() {
+    this.products = await this.fetchProducts();
+
+    for (const product of this.products) {
+      const productCard = await slice.build('ProductCard', {
+        sliceId: `product-${product.id}`,
+        title: product.title,
+        price: product.price,
+        image: product.image
+      });
+
+      this.$productContainer.appendChild(productCard);
+    }
+  }
+}
+```
+
+## Best Practices
+:::steps
+1. Destroy old components with `destroyByContainer`.
+2. Clear the container.
+3. Fetch fresh data.
+4. Rebuild components with stable `sliceId`s.
+:::
+
+:::tip
+Keep `update()` idempotent and safe to call multiple times.
+:::
+
+## Gotchas
+:::warning
+Clearing `innerHTML` alone does not destroy Slice components.
+:::
+
+:::warning
+Do not rebuild static UI in `update()` unless it depends on changing data.
+:::
+
+=== markdown/getting-started/visual-components.md ===
+# Visual Components
+
+## Overview
+Visual components are UI elements like Button, Card, Input, and Layout. They rely on Static
+Props, load templates and CSS automatically, and follow the same lifecycle patterns as any
+Slice component.
+
+## Building Visual Components
+```javascript title="Build a visual component"
+const myButton = await slice.build('Button', {
+  value: 'Click me!',
+  onClickCallback: () => console.log('Clicked')
+});
+
+document.querySelector('#container').appendChild(myButton);
+```
+
+## Visual Component Catalog
+| Component | Purpose |
+| --- | --- |
+| `Button` | Clickable button UI. |
+| `Card` | Structured content card. |
+| `Checkbox` | Checkbox input. |
+| `CodeVisualizer` | Code rendering blocks. |
+| `Details` | Expandable details/summary. |
+| `DropDown` | Dropdown menu. |
+| `Grid` | Grid layout container. |
+| `Icon` | Icon rendering. |
+| `Input` | Text input field. |
+| `Layout` | Page layout structure. |
+| `Loading` | Loading indicator. |
+| `MultiRoute` | Route container for multiple routes. |
+| `Navbar` | Navigation bar. |
+| `NotFound` | 404 UI component. |
+| `Route` | Route container for a single path. |
+| `Select` | Select input. |
+| `Switch` | Toggle switch. |
+| `TreeItem` | Tree view item. |
+| `TreeView` | Tree view container. |
+
+## Custom Props and Defaults
+```javascript title="Defaults applied automatically"
+const simpleButton = await slice.build('Button', {
+  // value defaults to "Button"
+  // onClickCallback defaults to null
+  // customColor defaults to null
+  // icon defaults to null
+});
+```
+
+## Authoring a Visual Component
+```javascript title="Visual component structure"
+export default class CustomVisualComponent extends HTMLElement {
+  static props = {
+    value: { type: 'string', default: 'Default Text' },
+    color: { type: 'string', default: '#000000' },
+    disabled: { type: 'boolean', default: false },
+    items: { type: 'array', default: [] },
+    config: { type: 'object', default: null },
+    onClickCallback: { type: 'function', default: null }
+  };
+
+  constructor(props) {
+    super();
+    slice.attachTemplate(this);
+    this.$button = this.querySelector('.my-button');
+    slice.controller.setComponentProps(this, props);
+  }
+
+  async init() {
+    // One-time setup
+  }
+
+  async update() {
+    // Refresh UI
+  }
+}
+```
+
+## Best Practices
+:::tip
+Use Static Props for all public inputs.
+:::
+
+:::tip
+Avoid DOM queries in the constructor unless the template is attached.
+:::
+
+## Gotchas
+:::warning
+Visual components must be registered in `components.js` to be built.
+:::
+
+=== markdown/installation.md ===
+# Installation
+
+## Requirements
+- Node.js 20+
+- npm or pnpm
+
+## Install CLI (Global)
+```bash
+npm install -g slicejs-cli
+```
+
+## Initialize a Project
+```bash
+slice init
+```
+
+This creates `src/` and `api/`, installs visual components, and adds scripts.
+
+## Start Dev Server
+```bash
+slice dev
+```
+
+## Next Steps
+- Explore CLI commands: /Documentation/Commands
+- Configure `sliceConfig.json`: /Documentation/Configuration/sliceConfig
+- Build your first component: /Documentation/The-build-method
+
+=== markdown/slice-config.md ===
+# sliceConfig.json
+
+## Overview
+`sliceConfig.json` configures Slice.js at startup. It is fetched from `/sliceConfig.json` and
+used to initialize the main `slice` instance and structural components.
+
+The configuration controls debugging, logging, themes, global styles, routing, and optional
+structural services like EventManager and ContextManager.
+
+## How Slice.js Loads Config
+Slice.js fetches the file in `Slice/ Slice.js` and creates the global `slice` instance:
+
+```javascript title="Slice.js initialization (simplified)"
+const response = await fetch('/sliceConfig.json');
+const sliceConfig = await response.json();
+window.slice = new Slice(sliceConfig);
+```
+
+Once loaded, Slice.js initializes structural components based on config:
+
+- Logger and Debugger (if enabled)
+- EventManager and ContextManager (if enabled)
+- Loading component (if enabled)
+- StylesManager + ThemeManager
+- Router (routes loaded from `paths.routesFile`)
+
+## Root Schema
+| Key | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `debugger` | `object` | no | Controls the UI debugger. |
+| `stylesManager` | `object` | no | Global style sheet loading. |
+| `themeManager` | `object` | no | Theme selection and persistence. |
+| `logger` | `object` | no | Console log filters and enablement. |
+| `paths` | `object` | yes | Component paths, themes, styles, routes file. |
+| `router` | `object` | no | Router defaults. |
+| `loading` | `object` | no | Loading component toggle. |
+| `events` | `object` | no | EventManager toggle. |
+| `context` | `object` | no | ContextManager toggle. |
+| `production` | `object` | no | Production toggles (if supported). |
+| `server` | `object` | no | Server port/host for dev server. |
+
+## debugger
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | `false` | Enables the debug UI. |
+| `click` | `string` | `right` | Mouse button to open debugger. |
+
+## stylesManager
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `requestedStyles` | `string[]` | `[]` | Styles loaded from `paths.styles`. |
+
+## themeManager
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | `false` | Enables themes. |
+| `defaultTheme` | `string` | none | Theme to load if none saved. |
+| `saveThemeLocally` | `boolean` | `false` | Persists theme name and CSS in localStorage. |
+| `useBrowserTheme` | `boolean` | `false` | Uses browser prefers-color-scheme. |
+
+## logger
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | `true` | Master log toggle. |
+| `showLogs` | `object` | none | Per-level log filters. |
+
+## paths
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `components` | `object` | yes | Category -> path/type map. |
+| `themes` | `string` | yes | Base path for theme CSS. |
+| `styles` | `string` | yes | Base path for shared styles. |
+| `routesFile` | `string` | yes | Module that exports routes array. |
+
+### paths.components
+Each key is a category name used in `components.js`.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `path` | `string` | URL path to component folder. |
+| `type` | `Visual | Service` | Controls template/CSS loading. |
+
+## router
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `defaultRoute` | `string` | `/` | Default route path. |
+
+## loading
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | `true` | Builds `Loading` component on init. |
+
+## events
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | `false` | Enables EventManager at `slice.events`. |
+
+## context
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | `false` | Enables ContextManager at `slice.context`. |
+
+## production
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | `false` | If supported, disables dev-only features. |
+
+## server
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `port` | `number` | `3001` | Dev server port fallback. |
+| `host` | `string` | `localhost` | Dev server host. |
+
+## Example
+```json title="sliceConfig.json"
+{
+  "debugger": { "enabled": true, "click": "right" },
+  "stylesManager": { "requestedStyles": ["sliceStyles", "DocumentationBase"] },
+  "themeManager": {
+    "enabled": true,
+    "defaultTheme": "Slice",
+    "saveThemeLocally": true,
+    "useBrowserTheme": false
+  },
+  "logger": {
+    "enabled": true,
+    "showLogs": {
+      "console": { "error": true, "warning": true, "info": true }
+    }
+  },
+  "paths": {
+    "components": {
+      "AppComponents": { "path": "/Components/AppComponents", "type": "Visual" },
+      "Visual": { "path": "/Components/Visual", "type": "Visual" },
+      "Service": { "path": "/Components/Service", "type": "Service" }
+    },
+    "themes": "/Themes",
+    "styles": "/Styles",
+    "routesFile": "/routes.js"
+  },
+  "router": { "defaultRoute": "/" },
+  "loading": { "enabled": true },
+  "events": { "enabled": true },
+  "context": { "enabled": true }
+}
+```
+
+## Best Practices
+:::tip
+Keep `paths` accurate or component loading will fail.
+:::
+
+:::tip
+Load shared styles through `stylesManager.requestedStyles`.
+:::
+
+## Gotchas
+:::warning
+If `themeManager.enabled` is true and `defaultTheme` is missing, theme loading will fail.
+:::
+
+:::warning
+`events` and `context` are optional. If disabled, Slice.js provides no-op stubs.
+:::
+
+=== markdown/what-is-slice.md ===
+# What is Slice.js?
+
+Slice.js is a lightweight, component-based framework built on Web Components and plain JavaScript.
+It focuses on clarity, modularity, and fast development without a build pipeline.
+
+## Core Principles
+- **Native Web Standards**: Uses browser APIs directly (Custom Elements, templates, DOM).
+- **Component-First**: UI is assembled from reusable components with clear props.
+- **Zero Build**: Run in the browser without transpilers or heavy tooling.
+- **Explicit Lifecycle**: `init`, `update`, and `beforeDestroy` keep component logic predictable.
+
+## What You Build
+- UI components with templates and CSS
+- Routed views with route containers
+- Services for data access and state
+
+## When to Choose Slice.js
+- You want a small, understandable framework
+- You prefer native APIs over heavy abstractions
+- You need quick iteration without build steps
+
+## Next Steps
+- Installation: /Documentation/Installation
+- Components: /Documentation/Visual
+- Routing: /Documentation/Routing

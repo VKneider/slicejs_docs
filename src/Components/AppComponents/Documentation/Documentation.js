@@ -1,296 +1,289 @@
-
-
 export default class Documentation extends HTMLElement {
-   constructor(props) {
-      super();
-      slice.attachTemplate(this);
-      slice.controller.setComponentProps(this, props);
-   }
+  constructor(props) {
+    super();
+    slice.attachTemplate(this);
+    slice.controller.setComponentProps(this, props);
+    this.debuggerProps = [];
+  }
 
-   async init() {
-      await this.createIntroSection();
-      await this.createFeaturesSection();
-      await this.createArchitectureSection();
-      await this.createWorkflowSection();
-      await this.createExamplesSection();
-      await this.createLearningPaths();
-   }
+  async init() {
+    await this.createHero();
+    this.createPathCards();
+    this.createCategoryCards();
+    this.createToolingCards();
+    this.createNextSteps();
+  }
 
-   async createIntroSection() {
-      // CTA Buttons
-      const ctaContainer = this.querySelector(".cta-buttons");
-      
-      const getStartedBtn = await slice.build("Button", {
-         value: "Get Started",
-         onClickCallback: async () => {
-            await slice.router.navigate("/Documentation/Installation");
-         }
+  async createHero() {
+    const ctaContainer = this.querySelector('.hero-cta');
+    const statsContainer = this.querySelector('.hero-stats');
+    const codeContainer = this.querySelector('.hero-code');
+    const linksContainer = this.querySelector('.hero-links');
+
+    if (ctaContainer) {
+      const primary = await slice.build('Button', {
+        value: 'Start with Installation',
+        onClickCallback: async () => {
+          await slice.router.navigate('/Documentation/Installation');
+        }
       });
-      
-      const viewDocsBtn = await slice.build("Button", {
-         value: "Browse Components",
-         onClickCallback: async () => {
-            await slice.router.navigate("/Documentation/Visual");
-         }
-      });
-      
-      ctaContainer.appendChild(getStartedBtn);
-      ctaContainer.appendChild(viewDocsBtn);
 
-      // Code Preview
-      const codePreview = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// Build a component
-const card = await slice.build("Card", {
-   title: "Welcome to Slice.js",
-   text: "Start building amazing apps"
+      const secondary = await slice.build('Button', {
+        value: 'Explore Components',
+        onClickCallback: async () => {
+          await slice.router.navigate('/Documentation/Visual');
+        }
+      });
+
+      const cli = await slice.build('Button', {
+        value: 'CLI Commands',
+        onClickCallback: async () => {
+          await slice.router.navigate('/Documentation/Commands');
+        }
+      });
+
+      ctaContainer.appendChild(primary);
+      ctaContainer.appendChild(secondary);
+      ctaContainer.appendChild(cli);
+    }
+
+    if (statsContainer) {
+      const stats = [
+        { label: 'Component types', value: '3' },
+        { label: 'Core lifecycle methods', value: '3' },
+        { label: 'Built-in services', value: '5' },
+        { label: 'Routing modes', value: '2' }
+      ];
+
+      stats.forEach((stat) => {
+        const item = document.createElement('div');
+        item.className = 'stat-card';
+        item.innerHTML = `
+          <div class="stat-value">${stat.value}</div>
+          <div class="stat-label">${stat.label}</div>
+        `;
+        statsContainer.appendChild(item);
+      });
+    }
+
+    if (codeContainer) {
+      const code = await slice.build('CodeVisualizer', {
+        language: 'javascript',
+        value: `// Build a component and attach it
+const card = await slice.build('Card', {
+  title: 'Slice.js Documentation',
+  text: 'Start building with clean components.'
 });
 
-
-// That's it! No complex setup needed.`
+document.querySelector('#app').appendChild(card);`
       });
-      
-      this.querySelector(".code-preview").appendChild(codePreview);
-   }
 
-   async createFeaturesSection() {
-      const features = [
-         {
-            icon: "⚡",
-            title: "No Build Step Required",
-            description: "Start coding immediately. No webpack, no babel, no complex configuration. Just HTML, CSS, and JavaScript."
-         },
-         {
-            icon: "🎯",
-            title: "Component-Based",
-            description: "Build reusable components that encapsulate their own logic, styles, and templates. Clean and maintainable code."
-         },
-         {
-            icon: "🚀",
-            title: "Built on Web Standards",
-            description: "Uses native Web Components API. No proprietary abstractions. Learn once, use everywhere."
-         },
-         {
-            icon: "📦",
-            title: "Batteries Included",
-            description: "Router, state management, component lifecycle, and a rich library of pre-built components out of the box."
-         },
-         {
-            icon: "🎨",
-            title: "Theme System",
-            description: "Built-in theming with CSS variables. Switch between light, dark, or custom themes instantly."
-         },
-         {
-            icon: "🔧",
-            title: "Developer Friendly",
-            description: "Intuitive API, helpful error messages, and comprehensive documentation. Focus on building, not debugging."
-         }
+      codeContainer.appendChild(code);
+    }
+
+    if (linksContainer) {
+      const links = [
+        { title: 'What is Slice.js?', desc: 'Architecture, goals, and mental model.', path: '/Documentation/Slice' },
+        { title: 'sliceConfig.json', desc: 'Configure themes, paths, router, and services.', path: '/Documentation/Configuration/sliceConfig' },
+        { title: 'Routing & Guards', desc: 'Route config, params, and navigation guards.', path: '/Documentation/Routing' }
       ];
 
-      const grid = this.querySelector(".features-grid");
-      
-      features.forEach(feature => {
-         const card = document.createElement("div");
-         card.className = "feature-card";
-         card.innerHTML = `
-            <span class="feature-icon">${feature.icon}</span>
-            <h3>${feature.title}</h3>
-            <p>${feature.description}</p>
-         `;
-         grid.appendChild(card);
+      links.forEach((link) => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'hero-link';
+        item.innerHTML = `
+          <div class="hero-link-title">${link.title}</div>
+          <div class="hero-link-desc">${link.desc}</div>
+          <span class="hero-link-arrow">→</span>
+        `;
+        item.addEventListener('click', async () => {
+          await slice.router.navigate(link.path);
+        });
+        linksContainer.appendChild(item);
       });
-   }
+    }
+  }
 
-   async createArchitectureSection() {
-      const components = [
-         {
-            type: "visual",
-            icon: "🎨",
-            title: "Visual Components",
-            count: "15+ Components",
-            description: "Pre-built UI components like buttons, cards, grids, forms, and more. Customize them or create your own.",
-            link: "/Documentation/Visual"
-         },
-         {
-            type: "structural",
-            icon: "⚙️",
-            title: "Structural Components",
-            count: "Core Infrastructure",
-            description: "Router, Controller, StylesManager, and Logger. The backbone that powers your application.",
-            link: "/Documentation/Structural"
-         },
-         {
-            type: "service",
-            icon: "🔧",
-            title: "Service Components",
-            count: "Business Logic",
-            description: "Handle API calls, data storage, authentication, and other application services.",
-            link: "/Documentation/Service"
-         }
-      ];
+  createPathCards() {
+    const grid = this.querySelector('.path-grid');
+    if (!grid) return;
 
-      const grid = this.querySelector(".architecture-grid");
-      
-      components.forEach(comp => {
-         const card = document.createElement("div");
-         card.className = `arch-card ${comp.type}`;
-         card.innerHTML = `
-            <span class="arch-icon">${comp.icon}</span>
-            <h3>${comp.title}</h3>
-            <div class="component-count">${comp.count}</div>
-            <p>${comp.description}</p>
-         `;
-         
-         card.addEventListener("click", async () => {
-            await slice.router.navigate(comp.link);
-         });
-         
-         grid.appendChild(card);
-      });
-   }
-
-   async createWorkflowSection() {
-      const steps = [
-         {
-            number: "1",
-            title: "Install",
-            description: "Install Slice.js CLI with npm"
-         },
-         {
-            number: "2",
-            title: "Initialize",
-            description: "Create a new project structure"
-         },
-         {
-            number: "3",
-            title: "Build",
-            description: "Create your components"
-         },
-         {
-            number: "4",
-            title: "Deploy",
-            description: "Build and ship to production"
-         }
-      ];
-
-      const container = this.querySelector(".workflow-steps");
-      
-      steps.forEach((step, index) => {
-         const stepEl = document.createElement("div");
-         stepEl.className = "workflow-step";
-         stepEl.innerHTML = `
-            <div class="step-number">${step.number}</div>
-            <h4>${step.title}</h4>
-            <p>${step.description}</p>
-         `;
-         container.appendChild(stepEl);
-         
-         if (index < steps.length - 1) {
-            const arrow = document.createElement("div");
-            arrow.className = "arrow";
-            arrow.textContent = "→";
-            container.appendChild(arrow);
-         }
-      });
-   }
-
-   async createExamplesSection() {
-      const examples = [
-         {
-            title: "Blog Platform",
-            description: "Complete blogging system with routing, posts, comments, and user authentication.",
-            code: `const blog = await slice.build("BlogLayout", {
-   posts: recentPosts,
-   sidebar: true
-});`
-         },
-         {
-            title: "Dashboard",
-            description: "Admin dashboard with charts, data tables, and real-time updates.",
-            code: `const dashboard = await slice.build("Dashboard", {
-   widgets: ["stats", "chart", "users"],
-   refreshInterval: 30000
-});`
-         },
-         {
-            title: "E-commerce",
-            description: "Product catalog, shopping cart, and checkout flow with payment integration.",
-            code: `const store = await slice.build("ProductGrid", {
-   products: inventory,
-   filters: ["price", "category"]
-});`
-         }
-      ];
-
-      const grid = this.querySelector(".examples-grid");
-      
-      for (const example of examples) {
-         const card = await slice.build("Card", {
-            title: example.title,
-            text: example.description
-         });
-         
-         const code = await slice.build("CodeVisualizer", {
-            language: "javascript",
-            value: example.code
-         });
-         
-         card.appendChild(code);
-         grid.appendChild(card);
+    const paths = [
+      {
+        tag: 'Start here',
+        title: 'Getting Started',
+        description: 'Install the CLI, create a project, and learn the core workflow.',
+        path: '/Documentation/Installation',
+        accent: 'primary'
+      },
+      {
+        tag: 'Components',
+        title: 'Build & Compose',
+        description: 'Understand build(), static props, and the component lifecycle.',
+        path: '/Documentation/The-build-method',
+        accent: 'secondary'
+      },
+      {
+        tag: 'Routing',
+        title: 'Navigation',
+        description: 'Configure routes, guard transitions, and reuse cached views.',
+        path: '/Documentation/Routing',
+        accent: 'success'
+      },
+      {
+        tag: 'State',
+        title: 'Context Manager',
+        description: 'Shared state with watchers, selectors, and persistence.',
+        path: '/Documentation/ContextManager',
+        accent: 'warning'
       }
-   }
+    ];
 
-   async createLearningPaths() {
-      const paths = [
-         {
-            icon: "🎓",
-            title: "Complete Beginner",
-            description: "New to web development or Slice.js? Start here with the fundamentals and work your way up.",
-            link: "/Documentation/Slice"
-         },
-         {
-            icon: "⚡",
-            title: "Quick Start",
-            description: "Already know web development? Jump right in with installation and build your first component.",
-            link: "/Documentation/Installation"
-         },
-         {
-            icon: "🔍",
-            title: "Component Explorer",
-            description: "Browse the component library to see what's available and how to use each component.",
-            link: "/Documentation/Visual"
-         },
-         {
-            icon: "📚",
-            title: "Deep Dive",
-            description: "Learn about routing, state management, lifecycle methods, and advanced patterns.",
-            link: "/Documentation/Routing"
-         }
-      ];
-
-      const grid = this.querySelector(".paths-grid");
-      
-      paths.forEach(path => {
-         const card = document.createElement("div");
-         card.className = "path-card";
-         card.innerHTML = `
-            <div class="path-header">
-               <span class="path-icon">${path.icon}</span>
-               <h3>${path.title}</h3>
-            </div>
-            <p>${path.description}</p>
-            <a href="${path.link}" class="path-link">Start Learning →</a>
-         `;
-         
-         card.addEventListener("click", async (e) => {
-            if (e.target.tagName !== "A") {
-               await slice.router.navigate(path.link);
-            }
-         });
-         
-         grid.appendChild(card);
+    paths.forEach((item) => {
+      const card = document.createElement('div');
+      card.className = 'doc-card';
+      card.dataset.accent = item.accent;
+      card.innerHTML = `
+        <div class="doc-pill">${item.tag}</div>
+        <h3>${item.title}</h3>
+        <p>${item.description}</p>
+        <span class="doc-link">Open guide →</span>
+      `;
+      card.addEventListener('click', async () => {
+        await slice.router.navigate(item.path);
       });
-   }
+      grid.appendChild(card);
+    });
+  }
+
+  createCategoryCards() {
+    const grid = this.querySelector('.category-grid');
+    if (!grid) return;
+
+    const categories = [
+      {
+        title: 'Visual Components',
+        description: 'UI building blocks like Button, Card, Grid, Layout, and forms.',
+        path: '/Documentation/Visual',
+        icon: '🎨'
+      },
+      {
+        title: 'Structural Components',
+        description: 'Router, Controller, StylesManager, and framework services.',
+        path: '/Documentation/Structural',
+        icon: '⚙️'
+      },
+      {
+        title: 'Services',
+        description: 'Fetch, storage, translation, and reusable business logic.',
+        path: '/Documentation/Service',
+        icon: '🔧'
+      },
+      {
+        title: 'Lifecycle Methods',
+        description: 'init(), update(), beforeDestroy() and when to use them.',
+        path: '/Documentation/LifeCycle-Methods',
+        icon: '⏱️'
+      }
+    ];
+
+    categories.forEach((item) => {
+      const card = document.createElement('div');
+      card.className = 'doc-card doc-card-compact';
+      card.innerHTML = `
+        <div class="doc-icon">${item.icon}</div>
+        <h3>${item.title}</h3>
+        <p>${item.description}</p>
+        <span class="doc-link">View docs →</span>
+      `;
+      card.addEventListener('click', async () => {
+        await slice.router.navigate(item.path);
+      });
+      grid.appendChild(card);
+    });
+  }
+
+  createToolingCards() {
+    const grid = this.querySelector('.tooling-grid');
+    if (!grid) return;
+
+    const tools = [
+      {
+        title: 'Slice CLI',
+        description: 'Initialize projects, manage components, and run dev servers.',
+        path: '/Documentation/Commands'
+      },
+      {
+        title: 'sliceConfig.json',
+        description: 'Configure themes, styles, routes, and structural services.',
+        path: '/Documentation/Configuration/sliceConfig'
+      },
+      {
+        title: 'Themes',
+        description: 'Customize themes, set defaults, and build your own palettes.',
+        path: '/Documentation/Themes'
+      },
+      {
+        title: 'Playground',
+        description: 'Experiment with components and routing in a live sandbox.',
+        path: '/Playground'
+      }
+    ];
+
+    tools.forEach((item) => {
+      const card = document.createElement('div');
+      card.className = 'doc-card doc-card-tool';
+      card.innerHTML = `
+        <h3>${item.title}</h3>
+        <p>${item.description}</p>
+        <span class="doc-link">Open →</span>
+      `;
+      card.addEventListener('click', async () => {
+        await slice.router.navigate(item.path);
+      });
+      grid.appendChild(card);
+    });
+  }
+
+  createNextSteps() {
+    const container = this.querySelector('.next-steps');
+    if (!container) return;
+
+    container.innerHTML = `
+      <div class="next-steps-panel">
+        <div>
+          <h2>Ready to build?</h2>
+          <p>Start with installation, then create your first component and wire up routing.</p>
+        </div>
+        <div class="next-steps-actions"></div>
+      </div>
+    `;
+
+    const actions = container.querySelector('.next-steps-actions');
+    if (!actions) return;
+
+    const actionsList = [
+      { label: 'Installation', path: '/Documentation/Installation' },
+      { label: 'The build method', path: '/Documentation/The-build-method' },
+      { label: 'Routing', path: '/Documentation/Routing' }
+    ];
+
+    actionsList.forEach((item) => {
+      const link = document.createElement('button');
+      link.type = 'button';
+      link.className = 'next-step-link';
+      link.textContent = item.label;
+      link.addEventListener('click', async () => {
+        await slice.router.navigate(item.path);
+      });
+      actions.appendChild(link);
+    });
+  }
+
+  async update() {}
+
+  beforeDestroy() {}
 }
 
-customElements.define("slice-documentation", Documentation);
+customElements.define('slice-documentation', Documentation);
