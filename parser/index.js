@@ -6,6 +6,7 @@ import path from 'path';
 import { parseMarkdownFile } from './lib/markdownParser.js';
 import { writeComponentFiles } from './lib/generator.js';
 import { collectDocCandidates } from './lib/report.js';
+import { writeDocsIndex } from './lib/docsIndex.js';
 
 const ROOT = path.resolve(process.cwd(), 'slicejs_docs');
 const MARKDOWN_DIR = path.join(ROOT, 'markdown');
@@ -49,6 +50,7 @@ const run = () => {
   console.log(`Found ${markdownFiles.length} markdown files`);
 
   const generated = [];
+  const indexEntries = [];
 
   for (const filePath of markdownFiles) {
     try {
@@ -58,11 +60,12 @@ const run = () => {
         continue;
       }
       const generateFlag = parsed.frontMatter.generate;
-      const shouldSkip =
-        generateFlag === false ||
-        String(generateFlag).toLowerCase() === 'false' ||
-        path.basename(filePath).toLowerCase() === 'markdown-guide.md';
-      if (shouldSkip) {
+      const isGenerateFalse = generateFlag === false || String(generateFlag).toLowerCase() === 'false';
+      const isMarkdownGuide = path.basename(filePath).toLowerCase() === 'markdown-guide.md';
+      if (!isMarkdownGuide) {
+        indexEntries.push(parsed.frontMatter);
+      }
+      if (isGenerateFalse || isMarkdownGuide) {
         console.log(`Skipped ${path.relative(ROOT, filePath)} (generate: false)`);
         continue;
       }
@@ -77,6 +80,9 @@ const run = () => {
 
   const appComponents = readAllAppComponents(OUTPUT_DIR);
   const report = collectDocCandidates(appComponents);
+
+  const docsIndexPath = path.join(ROOT, 'src', 'Components', 'AppComponents', 'DocumentationPage', 'docsIndex.js');
+  writeDocsIndex(indexEntries, docsIndexPath);
 
   const reportPath = path.join(ROOT, 'parser', 'report.json');
   fs.writeFileSync(reportPath, JSON.stringify({ generated, ...report }, null, 2), 'utf8');

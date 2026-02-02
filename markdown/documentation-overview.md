@@ -8,6 +8,7 @@ order: 1
 description: The documentation landing page for Slice.js.
 component: Documentation
 tags: [documentation, overview]
+generate: false
 ---
 
 :::html
