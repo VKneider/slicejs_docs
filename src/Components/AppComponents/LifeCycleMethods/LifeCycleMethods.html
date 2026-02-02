@@ -16,6 +16,16 @@
   <li><strong>Destruction</strong> - When you explicitly destroy components to free memory</li>
 </ul>
 
+<h2 id="lifecycle-methods">Lifecycle Methods</h2>
+<p>
+  Each lifecycle method has its own dedicated guide with patterns, examples, and pitfalls.
+</p>
+<ul>
+  <li><strong>init()</strong> - One-time setup: <a href="/Documentation/LifeCycle-Methods/init">Open init() docs</a></li>
+  <li><strong>update()</strong> - Refresh dynamic content: <a href="/Documentation/LifeCycle-Methods/update">Open update() docs</a></li>
+  <li><strong>beforeDestroy()</strong> - Cleanup and disposal: <a href="/Documentation/LifeCycle-Methods/beforeDestroy">Open beforeDestroy() docs</a></li>
+</ul>
+
 <h2 id="lifecycle-flow">LifeCycle Flow</h2>
 <div class="lifecycle-flow-visualization"></div>
 
@@ -85,14 +95,20 @@
   Slice.js Controller provides powerful methods to safely destroy components and prevent memory leaks. These methods are essential when working with dynamic content that gets recreated.
 </p>
 
-<h3 id="destruction-methods">Destruction Methods</h3>
+  <h3 id="destruction-methods">Destruction Methods</h3>
 <ul>
   <li>
     <strong>destroyComponent()</strong> - Destroys one or multiple components
     <ul>
       <li>Accepts: component instance, array of components, sliceId string, or array of sliceIds</li>
       <li>Returns: number of components destroyed</li>
-    </ul>
+  </ul>
+
+  <p>
+    When you destroy components, the Controller also runs <code>beforeDestroy()</code> and cleans up
+    EventManager subscriptions tied to the component. Use <code>beforeDestroy()</code> to cancel timers,
+    abort pending requests, or remove external listeners.
+  </p>
   </li>
   <li>
     <strong>destroyByContainer()</strong> - Destroys all Slice components inside a container

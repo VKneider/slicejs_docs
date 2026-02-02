@@ -1,0 +1,48 @@
+{
+  "generated": [
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\components\\multi-route.md",
+      "component": "MultiRouteDocumentation"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\example.md",
+      "component": "EventManagerDocumentation"
+    }
+  ],
+  "markdownCandidates": [
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\src\\Components\\AppComponents\\ContextManagerDocumentation\\ContextManagerDocumentation.js",
+      "reason": "Details-based FAQ can map to :::details blocks"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\src\\Components\\AppComponents\\RouterGuardsDocumentation\\RouterGuardsDocumentation.js",
+      "reason": "Details-based FAQ can map to :::details blocks"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\src\\Components\\AppComponents\\RoutingDocumentation\\RoutingDocumentation.js",
+      "reason": "Details-based FAQ can map to :::details blocks"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\src\\Components\\AppComponents\\ServiceDocumentation\\ServiceDocumentation.js",
+      "reason": "Details-based FAQ can map to :::details blocks"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\src\\Components\\AppComponents\\StructuralDocumentation\\StructuralDocumentation.js",
+      "reason": "Details-based FAQ can map to :::details blocks"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\src\\Components\\AppComponents\\TheBuildMethod\\TheBuildMethod.js",
+      "reason": "Details-based FAQ can map to :::details blocks"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\src\\Components\\AppComponents\\VisualDocumentation\\VisualDocumentation.js",
+      "reason": "Details-based FAQ can map to :::details blocks"
+    }
+  ],
+  "requiresCustomBlocks": [
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\src\\Components\\AppComponents\\RoutingDocumentation\\RoutingDocumentation.js",
+      "reason": "Interactive MultiRoute demo likely needs :::component or :::html block"
+    }
+  ]
+}

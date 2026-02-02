@@ -1,0 +1,61 @@
+/* init() Method Documentation Styles */
+
+slice-initmethoddocumentation {
+  color: var(--font-primary-color);
+  display: block;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+slice-initmethoddocumentation h1,
+slice-initmethoddocumentation h2,
+slice-initmethoddocumentation h3 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+slice-initmethoddocumentation h1 {
+  text-align: center;
+  border-bottom: 3px solid var(--primary-color);
+  padding-bottom: 12px;
+}
+
+slice-initmethoddocumentation h2 {
+  border-bottom: 1px solid var(--primary-color-shade);
+  padding-bottom: 8px;
+}
+
+slice-initmethoddocumentation p {
+  margin: 1em 0;
+}
+
+slice-initmethoddocumentation ul {
+  margin: 1em 0;
+  padding-left: 2em;
+}
+
+slice-initmethoddocumentation li {
+  margin-bottom: 0.5em;
+}
+
+slice-initmethoddocumentation code {
+  font-family: monospace;
+  background-color: var(--secondary-background-color);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+slice-initmethoddocumentation .init-example,
+slice-initmethoddocumentation .best-practices,
+slice-initmethoddocumentation .pitfalls {
+  margin: 1.5em 0;
+}
+
+@media (max-width: 768px) {
+  slice-initmethoddocumentation {
+    padding: 15px;
+  }
+}

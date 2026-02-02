@@ -1,0 +1,61 @@
+/* update() Method Documentation Styles */
+
+slice-updatemethoddocumentation {
+  color: var(--font-primary-color);
+  display: block;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+slice-updatemethoddocumentation h1,
+slice-updatemethoddocumentation h2,
+slice-updatemethoddocumentation h3 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+slice-updatemethoddocumentation h1 {
+  text-align: center;
+  border-bottom: 3px solid var(--primary-color);
+  padding-bottom: 12px;
+}
+
+slice-updatemethoddocumentation h2 {
+  border-bottom: 1px solid var(--primary-color-shade);
+  padding-bottom: 8px;
+}
+
+slice-updatemethoddocumentation p {
+  margin: 1em 0;
+}
+
+slice-updatemethoddocumentation ul {
+  margin: 1em 0;
+  padding-left: 2em;
+}
+
+slice-updatemethoddocumentation li {
+  margin-bottom: 0.5em;
+}
+
+slice-updatemethoddocumentation code {
+  font-family: monospace;
+  background-color: var(--secondary-background-color);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+slice-updatemethoddocumentation .update-example,
+slice-updatemethoddocumentation .best-practices,
+slice-updatemethoddocumentation .pitfalls {
+  margin: 1.5em 0;
+}
+
+@media (max-width: 768px) {
+  slice-updatemethoddocumentation {
+    padding: 15px;
+  }
+}

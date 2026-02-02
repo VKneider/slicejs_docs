@@ -23,6 +23,13 @@
 <h3>Developer usage:</h3>
 <div class="controller-example"></div>
 
+<h3 id="controller-destruction">Component Destruction and Cleanup</h3>
+<p>
+  The Controller provides recursive destruction utilities to prevent memory leaks when components are recreated.
+  Use these APIs whenever you rebuild dynamic UI or remove components programmatically.
+</p>
+<div class="controller-destroy-example"></div>
+
 <h2 id="routerComponent">Router</h2>
 <p>
   The Router handles navigation between different views in your application, supporting both history-based navigation and route parameters. Includes dynamic route management, performance improvements, and comprehensive lifecycle controls.

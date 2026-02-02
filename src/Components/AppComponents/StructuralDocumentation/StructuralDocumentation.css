@@ -34,11 +34,12 @@ slice-structuraldocumentation code {
 }
 
 slice-structuraldocumentation .controller-example,
+slice-structuraldocumentation .controller-destroy-example,
 slice-structuraldocumentation .router-example,
 slice-structuraldocumentation .styles-manager-example,
 slice-structuraldocumentation .logger-example,
 slice-structuraldocumentation .debugger-example {
-  margin: 1.5em 0;
+   margin: 1.5em 0;
 }
 
 slice-structuraldocumentation strong {

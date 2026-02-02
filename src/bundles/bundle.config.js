@@ -1,6 +1,6 @@
 /**
  * Slice.js Bundle Configuration
- * Generated: 2026-01-24T05:46:36.806Z
+ * Generated: 2026-02-02T05:08:43.900Z
  * Strategy: hybrid
  */
 
@@ -8,13 +8,13 @@
 export const SLICE_BUNDLE_CONFIG = {
   "version": "2.0.0",
   "strategy": "hybrid",
-  "generated": "2026-01-24T05:46:36.804Z",
+  "generated": "2026-02-02T05:08:43.899Z",
   "stats": {
-    "totalComponents": 62,
-    "totalRoutes": 36,
+    "totalComponents": 67,
+    "totalRoutes": 41,
     "sharedComponents": 1,
-    "sharedPercentage": "4.8",
-    "totalSize": 2232917,
+    "sharedPercentage": "4.5",
+    "totalSize": 2271135,
     "criticalSize": 1174
   },
   "bundles": {
@@ -32,7 +32,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Components"
         ],
         "file": "slice-bundle.multiroute-documentationpage.js",
-        "size": 1512174,
+        "size": 1512597,
         "components": [
           "DocumentationPage",
           "Navbar",
@@ -77,7 +77,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/ThemeCreator"
         ],
         "file": "slice-bundle.configuration.js",
-        "size": 1632921,
+        "size": 1633675,
         "components": [
           "WhatIsSlice",
           "SliceConfigDocumentation",
@@ -105,7 +105,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Service"
         ],
         "file": "slice-bundle.services.js",
-        "size": 72428,
+        "size": 72802,
         "components": [
           "CommandsDocumentation",
           "CodeVisualizer",
@@ -134,7 +134,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Select"
         ],
         "file": "slice-bundle.components.js",
-        "size": 1832700,
+        "size": 1832659,
         "components": [
           "VisualDocumentation",
           "CodeVisualizer",
@@ -175,22 +175,32 @@ export const SLICE_BUNDLE_CONFIG = {
       "advanced": {
         "path": [
           "/Structural",
+          "/Structural/EventManager",
+          "/Structural/ContextManager",
           "/The-build-method",
           "/Static-Props",
-          "/LifeCycle-Methods"
+          "/LifeCycle-Methods",
+          "/LifeCycle-Methods/init",
+          "/LifeCycle-Methods/update",
+          "/LifeCycle-Methods/beforeDestroy"
         ],
         "file": "slice-bundle.advanced.js",
-        "size": 1585786,
+        "size": 1621208,
         "components": [
           "StructuralDocumentation",
           "CodeVisualizer",
           "Details",
+          "EventManagerDocumentation",
+          "ContextManagerDocumentation",
           "TheBuildMethod",
           "StaticPropsDocumentation",
           "Card",
           "Icon",
           "Button",
-          "LifeCycleMethods"
+          "LifeCycleMethods",
+          "InitMethodDocumentation",
+          "UpdateMethodDocumentation",
+          "BeforeDestroyDocumentation"
         ],
         "dependencies": [
           "critical"
@@ -202,7 +212,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Routing/Guards"
         ],
         "file": "slice-bundle.routing.js",
-        "size": 66347,
+        "size": 67158,
         "components": [
           "RoutingDocumentation",
           "CodeVisualizer",
@@ -219,7 +229,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/DropDown"
         ],
         "file": "slice-bundle.general.js",
-        "size": 10036,
+        "size": 10096,
         "components": [
           "Installation"
         ],
@@ -258,7 +268,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/about"
         ],
         "file": "slice-bundle.misc.js",
-        "size": 1497170,
+        "size": 1497288,
         "components": [
           "NotFound",
           "TheSliceTeam",
