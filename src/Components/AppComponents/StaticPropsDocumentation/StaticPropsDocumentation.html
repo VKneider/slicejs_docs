@@ -1,63 +1,30 @@
-<h1>Static Props System</h1>
-<p>
-  Slice.js provides a powerful and efficient Static Props system that revolutionizes how components handle properties. 
-  This system ensures type safety, performance, and consistency across all your components.
-</p>
+<div class="documentation-content staticpropsdocumentation">
 
-<div class="intro-section">
-  <!-- Introduction card will be inserted here -->
+<div class="doc-title-bar">
+  <h1 id="static-props">
+    <span class="doc-title-text">Static Props</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
 </div>
-
-<div class="content-sections">
-  <div class="how-it-works">
-    <!-- How it works section will be inserted here -->
-  </div>
-
-  <div class="benefits">
-    <!-- Benefits section will be inserted here -->
-  </div>
-
-  <div class="comparison">
-    <!-- Comparison section will be inserted here -->
-  </div>
-
-  <div class="best-practices">
-    <!-- Best practices section will be inserted here -->
-  </div>
-
-  <div class="examples">
-    <!-- Examples section will be inserted here -->
-  </div>
-
-  <div class="migration">
-    <!-- Migration guide will be inserted here -->
-  </div>
-</div>
-
-<div class="summary">
-  <h2>Summary</h2>
-  <p>
-    The Static Props system in Slice.js provides a modern, efficient way to handle component properties. 
-    By using <code>slice.controller.setComponentProps(this, props)</code> in your component constructors, 
-    you gain access to a robust property system that enhances both development experience and runtime performance.
-  </p>
-  
-  <div class="key-points">
-    <h3>Key Points:</h3>
-    <ul>
-      <li><strong>Type Safety:</strong> Props are validated at build time, reducing runtime errors</li>
-      <li><strong>Performance:</strong> Direct property access without dynamic lookups</li>
-      <li><strong>Consistency:</strong> Predictable behavior across all components</li>
-      <li><strong>Developer Experience:</strong> Better IDE support and clearer APIs</li>
-      <li><strong>Migration Friendly:</strong> Easy to upgrade existing components</li>
-    </ul>
-  </div>
-  
-  <div class="next-steps">
-    <h3>Next Steps:</h3>
-    <p>
-      Start using Static Props in your components today! Begin with simple components like buttons and cards, 
-      then gradually migrate your existing components to take advantage of this powerful system.
-    </p>
-  </div>
+<h2 id="overview">Overview</h2>
+<p>Static Props define a component's public API. They provide defaults, development-only validation, and consistent prop behavior across Slice.js. They also power the debugger by describing which props are available and used.</p>
+<h2 id="static-props-schema">Static Props Schema</h2>
+<div class="table-block" data-block-id="doc-block-1"></div>
+<h2 id="how-props-are-applied">How Props Are Applied</h2>
+<p>When a component is built:</p>
+<ul><li>Defaults are applied for missing props.</li><li>Unknown props produce warnings in development.</li><li>Missing required props produce errors in development.</li><li>Props are assigned to the instance (<code>component[prop]</code>) and tracked internally.</li></ul>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="defaults-and-required-fields">Defaults and Required Fields</h2>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<h2 id="validation-development-only">Validation (Development Only)</h2>
+<p>Slice warns about unknown props and errors on missing required props in development mode. In production, validation is skipped for performance.</p>
+<h2 id="usage-patterns">Usage Patterns</h2>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<div class="code-block" data-block-id="doc-block-6"></div>
+<h2 id="best-practices">Best Practices</h2>
+<div class="callout callout-tip">Define only public props in <code>static props</code> and use internal fields for private state.</div>
+<div class="callout callout-tip">Use defaults to keep components predictable and reduce boilerplate.</div>
+<h2 id="gotchas">Gotchas</h2>
+<div class="callout callout-warning">Static Props validation runs only in development; validate critical data yourself.</div>
 </div>

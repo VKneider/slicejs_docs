@@ -1,0 +1,43 @@
+:root {
+  /* Tipografía con máximo contraste */
+  --font-primary-color: #0F1419; /* Negro verdoso muy oscuro para excelente legibilidad */
+  --font-secondary-color: #374151; /* Gris oscuro para subtítulos */
+
+  /** Primary - Verde esmeralda eléctrico **/
+  --primary-color: #10B981; /* Verde esmeralda brillante y vibrante */
+  --primary-color-rgb: 16, 185, 129;
+  --primary-background-color: #FEFFFE; /* Blanco puro con toque verde muy sutil */
+  --primary-color-contrast: #FFFFFF;
+  --primary-color-shade: #059669; /* Verde más profundo para bordes */
+
+  /** Secondary - Magenta vibrante **/
+  --secondary-color: #EC4899; /* Magenta/rosa intenso y moderno */
+  --secondary-color-rgb: 236, 72, 153;
+  --secondary-background-color: #FDF2F8; /* Rosa muy claro para fondos */
+  --secondary-color-contrast: #FFFFFF;
+
+  /** Tertiary - Amarillo limón suave **/
+  --tertiary-background-color: #FEFCE8; /* Amarillo muy claro y energético */
+
+  /** Success - Verde bosque intenso **/
+  --success-color: #047857; /* Verde más oscuro y contrastante */
+  --success-contrast: #FFFFFF;
+
+  /** Warning - Naranja mandarina **/
+  --warning-color: #EA580C; /* Naranja vibrante que combina bien */
+  --warning-contrast: #FFFFFF;
+
+  /** Danger - Rojo cereza **/
+  --danger-color: #BE185D; /* Rojo magenta que mantiene la paleta coherente */
+  --danger-contrast: #FFFFFF;
+
+  /** Medium - Gris verdoso neutro **/
+  --medium-color: #6B7280; /* Gris con ligero toque verde */
+  --medium-contrast: #FFFFFF;
+
+  /** Disabled - Gris claro pero visible **/
+  --disabled-color: #D1D5DB; /* Gris neutro */
+
+  /** Accent - Turquesa eléctrico **/
+  --accent-color: #06B6D4; /* Turquesa que complementa perfectamente el verde y magenta */
+}

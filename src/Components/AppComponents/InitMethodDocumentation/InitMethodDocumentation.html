@@ -1,23 +1,25 @@
-<div class="initmethoddocumentation">
-  <h1 id="init-method">init() Lifecycle Method</h1>
-  <p>
-    The <code>init()</code> method runs once when a component is first created and its template is attached.
-    Use it for one-time setup that should not repeat on subsequent updates.
-  </p>
+<div class="documentation-content initmethoddocumentation">
 
-  <h2 id="when-to-use">When to Use init()</h2>
-  <ul>
-    <li>Query and store DOM references</li>
-    <li>Attach event listeners that live for the component lifetime</li>
-    <li>Fetch initial data needed for first render</li>
-    <li>Create static child components</li>
-  </ul>
-
-  <div class="init-example"></div>
-
-  <h2 id="best-practices">Best Practices</h2>
-  <div class="best-practices"></div>
-
-  <h2 id="pitfalls">Common Pitfalls</h2>
-  <div class="pitfalls"></div>
+<div class="doc-title-bar">
+  <h1 id="init">
+    <span class="doc-title-text">init()</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p><code>init()</code> runs once, right after the component instance is created and its template is attached. Use it for one-time setup that should not repeat during updates.</p>
+<p><code>slice.build()</code> awaits <code>init()</code> before returning the component instance.</p>
+<h2 id="api">API</h2>
+<div class="table-block" data-block-id="doc-block-1"></div>
+<h2 id="ideal-use-cases">Ideal Use Cases</h2>
+<ul><li>Cache DOM references</li><li>Attach event listeners for the component lifetime</li><li>Fetch initial data</li><li>Build static child components</li></ul>
+<h2 id="example">Example</h2>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="patterns">Patterns</h2>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<h2 id="best-practices">Best Practices</h2>
+<div class="callout callout-tip">Query DOM elements in <code>init()</code> (not in the constructor).</div>
+<div class="callout callout-tip">Build static child components here. Dynamic lists belong in <code>update()</code>.</div>
+<h2 id="gotchas">Gotchas</h2>
+<div class="callout callout-warning">Avoid building dynamic lists in <code>init()</code> if the list needs to refresh.</div>
 </div>

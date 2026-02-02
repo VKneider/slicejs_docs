@@ -1,498 +1,849 @@
 export default class SliceConfigDocumentation extends HTMLElement {
-   constructor(props) {
-      super();
-      slice.attachTemplate(this);
-      
-      this.$configViewer = this.querySelector(".config-json-preview");
-      this.$categoryExamples = this.querySelector(".component-category-examples");
-      
-      slice.controller.setComponentProps(this, props);
-      this.debuggerProps = [];
-   }
-
-   async init() {
-      // Create JSON configuration viewer
-      const configVisualizer = await slice.build("CodeVisualizer", {
-         value: this.getCompleteConfigExample(),
-         language: "json"
-      });
-      
-      this.$configViewer.appendChild(configVisualizer);
-      
-      // Create individual section examples
-      await this.createSectionExamples();
-      
-      // Initialize expandable details
-      await this.initializeDetailsComponents();
-      
-      // Create practical examples
-      await this.createPracticalExamples();
-   }
-   
-   getCompleteConfigExample() {
-      return `{
-  "debugger": {
-    "enabled": false,
-    "click": "right"
-  },
-  "stylesManager": {
-    "requestedStyles": ["sliceStyles"]
-  },
-  "themeManager": {
-    "enabled": true,
-    "defaultTheme": "Slice",
-    "saveThemeLocally": false,
-    "useBrowserTheme": false
-  },
-  "logger": {
-    "enabled": true,
-    "showLogs": {
-      "console": {
-        "error": true,
-        "warning": true,
-        "info": false
-      }
-    }
-  },
-  "router": {
-    "defaultRoute": "/"
-  },
-  "loading": {
-    "enabled": true
-  },
-  "production": {
-    "enabled": false
-  },
-  "paths": {
-    "components": {
-      "AppComponents": {
-        "path": "/src/Components/AppComponents",
-        "type": "Visual"
-      },
-      "Visual": {
-        "path": "/src/Components/Visual",
-        "type": "Visual"
-      },
-      "Service": {
-        "path": "/src/Components/Service",
-        "type": "Service"
-      },
-      "Structural": {
-        "path": "/Slice/Components/Structural",
-        "type": "Structural"
-      }
-    },
-    "routes": "/src/routes.js",
-    "themes": "/src/Themes",
-    "styles": "/src/Styles"
+  constructor(props) {
+    super();
+    slice.attachTemplate(this);
+    slice.controller.setComponentProps(this, props);
+    this.debuggerProps = [];
   }
-}`;
-   }
-   
-   async createSectionExamples() {
-      // Debugger configuration example
-      const debuggerExample = await slice.build("CodeVisualizer", {
-         value: `// Debugger Configuration Examples
 
-// Enable debugger with right-click (default)
-{
-  "debugger": {
-    "enabled": true,
-    "click": "right"
-  }
-}
-
-// Enable debugger with left-click
-{
-  "debugger": {
-    "enabled": true,
-    "click": "left"
-  }
-}
-
-// Disable debugger completely (production recommended)
-{
-  "debugger": {
-    "enabled": false
-  }
-}`,
-         language: "json"
-      });
-      
-      // Theme Manager example
-      const themeExample = await slice.build("CodeVisualizer", {
-         value: `// Theme Manager Configuration Examples
-
-// Basic theme configuration
-{
-  "themeManager": {
-    "enabled": true,
-    "defaultTheme": "Light",
-    "saveThemeLocally": true,
-    "useBrowserTheme": false
-  }
-}
-
-// Auto browser theme detection
-{
-  "themeManager": {
-    "enabled": true,
-    "defaultTheme": "Light",
-    "saveThemeLocally": true,
-    "useBrowserTheme": true  // Uses system preference
-  }
-}
-
-// Custom theme configuration
-{
-  "themeManager": {
-    "enabled": true,
-    "defaultTheme": "MyCustomTheme",
-    "saveThemeLocally": false,
-    "useBrowserTheme": false
-  }
-}`,
-         language: "json"
-      });
-
-      // Router configuration example
-      const routerExample = await slice.build("CodeVisualizer", {
-         value: `// Router Configuration Examples
-
-// Basic router configuration
-{
-  "router": {
-    "defaultRoute": "/"
-  }
-}
-
-// Custom default route
-{
-  "router": {
-    "defaultRoute": "/dashboard"
-  }
-}
-
-// Home page as default
-{
-  "router": {
-    "defaultRoute": "/home"
-  }
-}`,
-         language: "json"
-      });
-
-      // Logger configuration example
-      const loggerExample = await slice.build("CodeVisualizer", {
-         value: `// Logger Configuration Examples
-
-// Development configuration (verbose)
-{
-  "logger": {
-    "enabled": true,
-    "showLogs": {
-      "console": {
-        "error": true,
-        "warning": true,
-        "info": true
-      }
-    }
-  }
-}
-
-// Production configuration (errors only)
-{
-  "logger": {
-    "enabled": true,
-    "showLogs": {
-      "console": {
-        "error": true,
-        "warning": false,
-        "info": false
-      }
-    }
-  }
-}
-
-// Completely disable logging
-{
-  "logger": {
-    "enabled": false
-  }
-}`,
-         language: "json"
-      });
-
-      // Loading configuration example
-      const loadingExample = await slice.build("CodeVisualizer", {
-         value: `// Loading Component Configuration Examples
-
-// Enable loading component
-{
-  "loading": {
-    "enabled": true
-  }
-}
-
-// Disable loading component
-{
-  "loading": {
-    "enabled": false
-  }
-}`,
-         language: "json"
-      });
-
-      // Paths configuration example
-      const pathsExample = await slice.build("CodeVisualizer", {
-         value: `// Paths Configuration Examples
-
-// Default paths configuration
-{
-  "paths": {
-    "components": {
-      "AppComponents": {
-        "path": "/src/Components/AppComponents",
-        "type": "Visual"
-      },
-      "Visual": {
-        "path": "/src/Components/Visual", 
-        "type": "Visual"
-      },
-      "Service": {
-        "path": "/src/Components/Service",
-        "type": "Service"
-      }
-    },
-    "routes": "/src/routes.js",
-    "themes": "/src/Themes",
-    "styles": "/src/Styles"
-  }
-}
-
-// Custom paths configuration
-{
-  "paths": {
-    "components": {
-      "Pages": {
-        "path": "/src/Pages",
-        "type": "Visual"
-      },
-      "Widgets": {
-        "path": "/src/Widgets",
-        "type": "Visual"
-      },
-      "Services": {
-        "path": "/src/Services",
-        "type": "Service"
-      }
-    },
-    "routes": "/src/config/routes.js",
-    "themes": "/assets/themes",
-    "styles": "/assets/styles"
-  }
-}`,
-         language: "json"
-      });
-
-      // Add examples to DOM
-      this.querySelector(".debugger-config-example").appendChild(debuggerExample);
-      this.querySelector(".theme-config-example").appendChild(themeExample);
-      this.querySelector(".router-config-example").appendChild(routerExample);
-      this.querySelector(".logger-config-example").appendChild(loggerExample);
-      this.querySelector(".loading-config-example").appendChild(loadingExample);
-      this.querySelector(".paths-config-example").appendChild(pathsExample);
-   }
-
-   async createPracticalExamples() {
-      // Development vs Production example
-      const envExample = await slice.build("CodeVisualizer", {
-         value: `// Development Environment Configuration
-{
-  "debugger": { "enabled": true, "click": "right" },
-  "logger": {
-    "enabled": true,
-    "showLogs": {
-      "console": { "error": true, "warning": true, "info": true }
-    }
-  },
-  "production": { "enabled": false },
-  "loading": { "enabled": true },
-  "themeManager": {
-    "enabled": true,
-    "defaultTheme": "Light",
-    "saveThemeLocally": true
-  }
-}
-
-// Production Environment Configuration  
-{
-  "debugger": { "enabled": false },
-  "logger": {
-    "enabled": true,
-    "showLogs": {
-      "console": { "error": true, "warning": false, "info": false }
-    }
-  },
-  "production": { "enabled": true },
-  "loading": { "enabled": true },
-  "themeManager": {
-    "enabled": true,
-    "defaultTheme": "Light",
-    "saveThemeLocally": true,
-    "useBrowserTheme": true
-  }
-}`,
-         language: "json"
-      });
-
-      // Multi-project setup example
-      const multiProjectExample = await slice.build("CodeVisualizer", {
-         value: `// Large Application Configuration
-{
-  "paths": {
-    "components": {
-      "AdminComponents": {
-        "path": "/src/Admin/Components",
-        "type": "Visual"
-      },
-      "UserComponents": {
-        "path": "/src/User/Components", 
-        "type": "Visual"
-      },
-      "SharedComponents": {
-        "path": "/src/Shared/Components",
-        "type": "Visual"
-      },
-      "ApiServices": {
-        "path": "/src/Services/Api",
-        "type": "Service"
-      },
-      "UtilServices": {
-        "path": "/src/Services/Utils",
-        "type": "Service"
-      }
-    },
-    "routes": "/src/config/routes.js",
-    "themes": "/src/assets/themes",
-    "styles": "/src/assets/styles"
-  },
-  "router": {
-    "defaultRoute": "/dashboard"
-  },
-  "themeManager": {
-    "enabled": true,
-    "defaultTheme": "Corporate",
-    "saveThemeLocally": true,
-    "useBrowserTheme": false
-  },
-  "loading": {
-    "enabled": true
-  }
-}`,
-         language: "json"
-      });
-
-      this.querySelector(".env-examples").appendChild(envExample);
-      this.querySelector(".multi-project-examples").appendChild(multiProjectExample);
-   }
-   
-   async initializeDetailsComponents() {
-      const sections = [
-         {
-            title: "Debugger Configuration",
-            text: `Controls the debugging tools for development. The debugger allows you to inspect and modify component properties in real-time, view Static Props configuration, and monitor component states.
-
-Key Options:
-• enabled (boolean): Activates/deactivates the debugger
-• click ("left" | "right"): Defines which mouse click activates the debugger
-
-The debugger automatically detects Static Props and shows enhanced information including prop configuration, default values, and prop states (Used/Missing/Optional). It includes anti-interference protection to prevent conflicts with Router events.
-
-Best Practice: Enable in development, disable in production.`
-         },
-         {
-            title: "Theme Manager Configuration", 
-            text: `Controls the application"s theme system, allowing dynamic theme switching and consistent styling across components.
-
-Key Options:
-• enabled (boolean): Activates/deactivates the theme system
-• defaultTheme (string): Default theme name to use on startup
-• saveThemeLocally (boolean): Saves user theme preference in localStorage
-• useBrowserTheme (boolean): Uses system preference (light/dark mode)
-
-Themes are CSS files located in the themes directory. The system uses CSS variables for consistent styling across components. Built-in themes include "Light", "Dark", and "Slice".
-
-Usage: slice.setTheme("ThemeName") for runtime theme switching.`
-         },
-         {
-            title: "Router Configuration",
-            text: `Configures the application"s routing system, which handles navigation between views using the History API.
-
-Key Options:
-• defaultRoute (string): Default route when none is specified
-
-The router automatically intercepts clicks on anchor elements for internal navigation. Links that are NOT intercepted include external links, special protocols (mailto:, tel:), download links, target="_blank", and elements with "external-link" or "no-intercept" classes.
-
-The router supports dynamic routes, nested routes, component pooling, and provides statistics for monitoring.`
-         },
-         {
-            title: "Logger Configuration",
-            text: `Configures the logging system for debugging, error tracking, and application monitoring.
-
-Key Options:
-• enabled (boolean): Activates/deactivates the logger
-• showLogs.console.error (boolean): Shows error messages in console
-• showLogs.console.warning (boolean): Shows warning messages in console  
-• showLogs.console.info (boolean): Shows informational messages in console
-
-The logger provides structured logging with component context. Use slice.logger.logError(), slice.logger.logWarning(), and slice.logger.logInfo() methods. You can filter logs by type or component and clear logs when needed.
-
-Best Practice: Enable all levels in development, only errors in production.`
-         },
-         {
-            title: "Loading Component Configuration",
-            text: `Controls the global loading component that displays during navigation and async operations.
-
-Key Options:
-• enabled (boolean): Activates/deactivates the loading component
-
-When enabled, the Router automatically uses the Loading component during navigation. The component can be customized by modifying files in the Visual/Loading directory. Use slice.loading.start() and slice.loading.stop() for manual control.`
-         },
-         {
-            title: "Production Configuration",
-            text: `Configures optimizations and features for production deployment.
-
-Key Options:
-• enabled (boolean): Activates production mode
-
-When production mode is enabled, the framework may apply performance optimizations and disable development warnings. This setting affects how the application behaves in production environment.
-
-Best Practice: Enable for production builds, disable for development.`
-         },
-         {
-            title: "Paths Configuration",
-            text: `Defines the directory structure and paths for different types of components and resources.
-
-Key Sections:
-• components: Maps component categories to their filesystem paths
-• routes: Location of the routes configuration file
-• themes: Directory containing theme CSS files
-• styles: Directory containing global style files
-
-Each component category in the "components" object defines:
-• path: Filesystem location relative to project root
-• type: Component type ("Visual", "Service", or "Structural")
-
-This configuration is used by the Slice CLI for component generation and by the framework for resource loading. Custom paths allow flexible project structures.`
+  async init() {
+    this.markdownPath = "slice-config.md";
+    this.setupCopyButton();
+      {
+         const container = this.querySelector('[data-block-id="doc-block-1"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "const response = await fetch('/sliceConfig.json');\nconst sliceConfig = await response.json();\nwindow.slice = new Slice(sliceConfig);",
+               language: "javascript"
+            });
+            if ("Slice.js initialization (simplified)") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "Slice.js initialization (simplified)";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
          }
-      ];
-      
-      for (const section of sections) {
-         const details = await slice.build("Details", section);
-         this.querySelector(".config-details-container").appendChild(details);
       }
-   }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-2"]');
+         if (container) {
+            const lines = ["| Key | Type | Required | Notes |","| --- | --- | --- | --- |","| `debugger` | `object` | no | Controls the UI debugger. |","| `stylesManager` | `object` | no | Global style sheet loading. |","| `themeManager` | `object` | no | Theme selection and persistence. |","| `logger` | `object` | no | Console log filters and enablement. |","| `paths` | `object` | yes | Component paths, themes, styles, routes file. |","| `router` | `object` | no | Router defaults. |","| `loading` | `object` | no | Loading component toggle. |","| `events` | `object` | no | EventManager toggle. |","| `context` | `object` | no | ContextManager toggle. |","| `production` | `object` | no | Production toggles (if supported). |","| `server` | `object` | no | Server port/host for dev server. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-3"]');
+         if (container) {
+            const lines = ["| Field | Type | Default | Notes |","| --- | --- | --- | --- |","| `enabled` | `boolean` | `false` | Enables the debug UI. |","| `click` | `string` | `right` | Mouse button to open debugger. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-4"]');
+         if (container) {
+            const lines = ["| Field | Type | Default | Notes |","| --- | --- | --- | --- |","| `requestedStyles` | `string[]` | `[]` | Styles loaded from `paths.styles`. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-5"]');
+         if (container) {
+            const lines = ["| Field | Type | Default | Notes |","| --- | --- | --- | --- |","| `enabled` | `boolean` | `false` | Enables themes. |","| `defaultTheme` | `string` | none | Theme to load if none saved. |","| `saveThemeLocally` | `boolean` | `false` | Persists theme name and CSS in localStorage. |","| `useBrowserTheme` | `boolean` | `false` | Uses browser prefers-color-scheme. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-6"]');
+         if (container) {
+            const lines = ["| Field | Type | Default | Notes |","| --- | --- | --- | --- |","| `enabled` | `boolean` | `true` | Master log toggle. |","| `showLogs` | `object` | none | Per-level log filters. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-7"]');
+         if (container) {
+            const lines = ["| Field | Type | Required | Notes |","| --- | --- | --- | --- |","| `components` | `object` | yes | Category -> path/type map. |","| `themes` | `string` | yes | Base path for theme CSS. |","| `styles` | `string` | yes | Base path for shared styles. |","| `routesFile` | `string` | yes | Module that exports routes array. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-8"]');
+         if (container) {
+            const lines = ["| Field | Type | Notes |","| --- | --- | --- |","| `path` | `string` | URL path to component folder. |","| `type` | `Visual | Service` | Controls template/CSS loading. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-9"]');
+         if (container) {
+            const lines = ["| Field | Type | Default | Notes |","| --- | --- | --- | --- |","| `defaultRoute` | `string` | `/` | Default route path. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-10"]');
+         if (container) {
+            const lines = ["| Field | Type | Default | Notes |","| --- | --- | --- | --- |","| `enabled` | `boolean` | `true` | Builds `Loading` component on init. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-11"]');
+         if (container) {
+            const lines = ["| Field | Type | Default | Notes |","| --- | --- | --- | --- |","| `enabled` | `boolean` | `false` | Enables EventManager at `slice.events`. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-12"]');
+         if (container) {
+            const lines = ["| Field | Type | Default | Notes |","| --- | --- | --- | --- |","| `enabled` | `boolean` | `false` | Enables ContextManager at `slice.context`. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-13"]');
+         if (container) {
+            const lines = ["| Field | Type | Default | Notes |","| --- | --- | --- | --- |","| `enabled` | `boolean` | `false` | If supported, disables dev-only features. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-14"]');
+         if (container) {
+            const lines = ["| Field | Type | Default | Notes |","| --- | --- | --- | --- |","| `port` | `number` | `3001` | Dev server port fallback. |","| `host` | `string` | `localhost` | Dev server host. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-15"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "{\n  \"debugger\": { \"enabled\": true, \"click\": \"right\" },\n  \"stylesManager\": { \"requestedStyles\": [\"sliceStyles\", \"DocumentationBase\"] },\n  \"themeManager\": {\n    \"enabled\": true,\n    \"defaultTheme\": \"Slice\",\n    \"saveThemeLocally\": true,\n    \"useBrowserTheme\": false\n  },\n  \"logger\": {\n    \"enabled\": true,\n    \"showLogs\": {\n      \"console\": { \"error\": true, \"warning\": true, \"info\": true }\n    }\n  },\n  \"paths\": {\n    \"components\": {\n      \"AppComponents\": { \"path\": \"/Components/AppComponents\", \"type\": \"Visual\" },\n      \"Visual\": { \"path\": \"/Components/Visual\", \"type\": \"Visual\" },\n      \"Service\": { \"path\": \"/Components/Service\", \"type\": \"Service\" }\n    },\n    \"themes\": \"/Themes\",\n    \"styles\": \"/Styles\",\n    \"routesFile\": \"/routes.js\"\n  },\n  \"router\": { \"defaultRoute\": \"/\" },\n  \"loading\": { \"enabled\": true },\n  \"events\": { \"enabled\": true },\n  \"context\": { \"enabled\": true }\n}",
+               language: "json"
+            });
+            if ("sliceConfig.json") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "sliceConfig.json";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+  }
+
+  async update() {
+    // Refresh dynamic content here if needed
+  }
+
+  beforeDestroy() {
+    // Cleanup timers, listeners, or pending work here
+  }
+
+  async setupCopyButton() {
+    const container = this.querySelector('[data-copy-md]');
+    if (!container) return;
+
+    const copyMenu = await slice.build('CopyMarkdownMenu', {
+      markdownPath: this.markdownPath,
+      label: '❐'
+    });
+
+    container.appendChild(copyMenu);
+  }
+
+  async copyMarkdown() {}
 }
 
-customElements.define("slice-config-documentation", SliceConfigDocumentation);
+customElements.define('slice-sliceconfigdocumentation', SliceConfigDocumentation);

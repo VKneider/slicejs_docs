@@ -1,367 +1,309 @@
 export default class StructuralDocumentation extends HTMLElement {
-   constructor(props) {
-      super();
-      slice.attachTemplate(this);
+  constructor(props) {
+    super();
+    slice.attachTemplate(this);
+    slice.controller.setComponentProps(this, props);
+    this.debuggerProps = [];
+  }
 
-      slice.controller.setComponentProps(this, props);
-      this.debuggerProps = [];
-   }
+  async init() {
+    this.markdownPath = "getting-started/structural-components.md";
+    this.setupCopyButton();
+      {
+         const container = this.querySelector('[data-block-id="doc-block-1"]');
+         if (container) {
+            const lines = ["| Method | Signature | Returns | Notes |","| --- | --- | --- | --- |","| `getComponent` | `(sliceId)` | `HTMLElement | undefined` | Lookup by sliceId. |","| `destroyByContainer` | `(container)` | `number` | Destroys Slice components inside container. |","| `destroyByPattern` | `(pattern)` | `number` | Destroys components whose sliceId matches pattern. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
 
-   async init() {
-      // Controller documentation section - ACTUALIZADO
-      const controllerExample = await slice.build("CodeVisualizer", {
-         value: `// Accessing components through the Controller
-// Get a reference to a component by its sliceId
-const navbar = slice.controller.getComponent("main-navbar");
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
 
-// Check if a component is registered
-if (slice.controller.activeComponents.has("user-profile")) {
-   // Component exists
-}
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
 
-// Get all active components
-const allComponents = slice.controller.activeComponents;
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
 
-// Static Props System
-// Components can define static props for automatic defaults and validation
-export default class Button extends HTMLElement {
-   static props = {
-      value: { 
-         type: "string", 
-         default: "Button", 
-         required: false 
-      },
-      onClickCallback: { 
-         type: "function", 
-         default: null 
-      }
-   };
-   
-   constructor(props) {
-      super();
-      slice.attachTemplate(this);
-      // Defaults applied automatically by Controller
-      slice.controller.setComponentProps(this, props);
-   }
-}
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
 
-// Build a component with Controller (defaults applied automatically)
-const myButton = await slice.build("Button", {
-   value: "Click Me"
-   // onClickCallback uses default: null
-});
-
-// Automatic validation in development
-// Controller validates props automatically when static props are defined
-// Unknown props show warnings, missing required props show errors`,
-         language: "javascript"
-      });
-      
-      this.querySelector(".controller-example").appendChild(controllerExample);
-
-      const controllerDestroyExample = await slice.build("CodeVisualizer", {
-         value: `// Component destruction to avoid memory leaks
-// 1) Destroy by container (recommended for dynamic lists)
-const container = this.querySelector(".items");
-slice.controller.destroyByContainer(container);
-container.innerHTML = "";
-
-// 2) Destroy by component or sliceId
-slice.controller.destroyComponent(myComponent);
-slice.controller.destroyComponent("product-42");
-
-// 3) Destroy by pattern
-slice.controller.destroyByPattern(/^item-/);
-
-// beforeDestroy hook runs automatically
-export default class MyComponent extends HTMLElement {
-   beforeDestroy() {
-      // Cleanup timers, subscriptions, or pending work
-      clearInterval(this._pollingId);
-   }
-}`,
-         language: "javascript"
-      });
-
-      this.querySelector(".controller-destroy-example").appendChild(controllerDestroyExample);
-
-      // Router documentation section - ACTUALIZADO
-      const routerExample = await slice.build("CodeVisualizer", {
-         value: `// Declaring routes in routes.js (unchanged)
-const routes = [
-   { path: "/", component: "LandingPage" },
-   { path: "/documentation", component: "DocumentationPage" },
-   { 
-      path: "/user/$id", // Dynamic route parameter
-      component: "UserProfile" 
-   },
-   { path: "/404", component: "NotFound" }
-];
-
-export default routes;
-
-// Basic navigation (unchanged)
-await slice.router.navigate("/documentation");
-const currentRoute = slice.router.activeRoute;
-
-// Navigation using anchor elements
-// The router automatically intercepts anchor clicks for internal navigation
-const link = document.createElement("a");
-link.href = "/documentation";
-link.textContent = "Go to Documentation";
-// Router automatically handles the click without page reload
-
-// HTML anchor elements work automatically
-// <a href="/user/123">View User Profile</a>
-// No special setup required - router intercepts internal links
-
-// Use Link component for enhanced functionality
-const enhancedLink = await slice.build("Link", {
-   href: "/user/123",
-   text: "View User Profile"
-});
-
-// Anchor elements that are NOT intercepted:
-// - External links (different domain)
-// - Special protocols (mailto:, tel:, ftp:)
-// - Hash links (#section)
-// - Links with target="_blank" or download attribute
-// - Links with class "external-link" or "no-intercept"
-// - Links with data-no-intercept attribute
-
-// Dynamic route management
-// Add routes at runtime
-slice.router.addRoute({ 
-   path: "/admin", 
-   component: "AdminPanel" 
-});
-
-// Remove routes dynamically
-slice.router.removeRoute("/deprecated-page");
-
-// Update entire route configuration
-slice.router.updateRoutes(newRoutesArray);
-
-// Get all registered routes
-const allRoutes = slice.router.getAllRoutes();
-
-// Router statistics and monitoring
-const stats = slice.router.getStats();
-console.log("Router initialized:", stats.isInitialized);
-console.log("Currently navigating:", stats.isNavigating);
-console.log("Active route:", stats.activeRoute);
-console.log("Cache size:", stats.cache.size);
-console.log("Routes count:", stats.matcher.routes.length);
-
-// Router lifecycle management
-// Destroy router and cleanup resources
-slice.router.destroy();
-
-// Reinitialize router (useful for testing)
-await slice.router.reinitialize(optionalNewRoutes);`,
-         language: "javascript"
-      });
-      
-      this.querySelector(".router-example").appendChild(routerExample);
-
-      // StylesManager documentation section (sin cambios)
-      const stylesManagerExample = await slice.build("CodeVisualizer", {
-         value: `// Configuring themes in sliceConfig.json
-{
-   "themeManager": {
-      "enabled": true,
-      "defaultTheme": "Light",
-      "saveThemeLocally": true,
-      "useBrowserTheme": false
-   }
-}
-
-// Theme file structure (e.g., Light.css)
-:root {
-   --font-primary-color: #000;
-   --primary-color: #0066ff;
-   --primary-background-color: #fff;
-   // ...more theme variables
-}
-
-// Switching themes in your components
-// Change the current theme
-await slice.setTheme("Dark");
-
-// Get the current theme
-const currentTheme = slice.theme;
-
-// Access StylesManager directly (rarely needed)
-slice.stylesManager.appendComponentStyles(".my-custom-style { color: red; }");`,
-         language: "javascript"
-      });
-      
-      this.querySelector(".styles-manager-example").appendChild(stylesManagerExample);
-
-      // Logger documentation section (sin cambios)
-      const loggerExample = await slice.build("CodeVisualizer", {
-         value: `// Configuring logger in sliceConfig.json
-{
-   "logger": {
-      "enabled": true,
-      "showLogs": {
-         "console": {
-            "error": true,
-            "warning": true,
-            "info": false
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
          }
       }
-   }
-}
-
-// Using Logger in your components
-// Log an error
-slice.logger.logError("MyComponent", "Failed to load data", error);
-
-// Log a warning
-slice.logger.logWarning("MyComponent", "Data partially loaded");
-
-// Log information
-slice.logger.logInfo("MyComponent", "Component initialized");
-
-// Get all logs
-const allLogs = slice.logger.getLogs();
-
-// Get logs by type
-const errorLogs = slice.logger.getLogsByLogType("error");
-
-// Get logs for a specific component
-const componentLogs = slice.logger.getLogsByComponent("my-component");
-
-// Clear logs
-slice.logger.clearLogs();`,
-         language: "javascript"
-      });
-      
-      this.querySelector(".logger-example").appendChild(loggerExample);
-
-      // Debugger documentation section - ACTUALIZADO
-      const debuggerExample = await slice.build("CodeVisualizer", {
-         value: `// Configuring debugger in sliceConfig.json
-{
-   "debugger": {
-      "enabled": true,
-      "click": "right" // "right" for right-click, "left" for left-click
-   }
-}
-
-// Enhanced debugger with static props integration
-export default class MyComponent extends HTMLElement {
-   // Static props automatically detected by debugger
-   static props = {
-      title: { 
-         type: "string", 
-         default: "Default Title", 
-         required: false 
-      },
-      count: { 
-         type: "number", 
-         default: 0 
-      },
-      isActive: { 
-         type: "boolean", 
-         default: false,
-         required: true 
-      }
-   };
-   
-   constructor(props) {
-      super();
-      slice.attachTemplate(this);
-      slice.controller.setComponentProps(this, props);
-      
-      // debuggerProps no longer needed for static props components
-      // Debugger automatically detects static props configuration
-   }
-}
-
-// Debugger shows enhanced information:
-// - Static props configuration (type, default, required)
-// - Prop states: Used (green), Missing (red), Optional (gray)
-// - Default values applied automatically
-// - Anti-interference protection from Router events
-// - Real-time prop editing with validation
-
-// Components without static props still work:
-export default class LegacyComponent extends HTMLElement {
-   constructor(props) {
-      super();
-      slice.attachTemplate(this);
-      slice.controller.setComponentProps(this, props);
-      
-      // For components without static props, specify debuggerProps manually
-      this.debuggerProps = ["value", "color", "isActive"];
-   }
-}`,
-         language: "javascript"
-      });
-      
-      this.querySelector(".debugger-example").appendChild(debuggerExample);
-
-      // FAQ section - ACTUALIZADA
-      const faqQuestions = [
-         {
-            title: "Can I create my own structural components?",
-            text: "No. Structural components are part of the core Slice.js framework and are not meant to be created or modified by users."
-         },
-         {
-            title: "How do I configure structural components?",
-            text: "Most structural components are configured through the sliceConfig.json file in your project root. This file allows you to enable/disable features and set various configuration options for each structural component."
-         },
-         {
-            title: "How are structural components initialized?",
-            text: "Structural components are automatically initialized during the Slice.js bootstrap process in Slice.js. The initialization sequence is controlled by the Slice.js core and ensures components are loaded in the correct order to resolve dependencies."
-         },
-         {
-            title: "Can I access structural components directly?",
-            text: "Yes, most structural components are accessible through the global slice object, such as slice.controller, slice.router, slice.logger, etc. However, direct manipulation should be done carefully and only when necessary."
-         },
-         {
-            title: "What are Static Props and how do I use them?",
-            text: "Static Props allow you to define prop configuration directly in your component class. Include type, default values, and required status. The Controller automatically applies defaults and validates props in development mode."
-         },
-         {
-            title: "How do components work without Static Props?",
-            text: "Components without Static Props work perfectly fine using manual prop handling in the constructor. You can specify debuggerProps manually for debugging. Both approaches are supported."
-         },
-         {
-            title: "How do I migrate to Static Props?",
-            text: "Simply add a static props property to your component class with the prop configuration. Remove manual default value assignment from your constructor. The Controller will handle defaults automatically."
-         },
-         {
-            title: "Can I manage routes dynamically?",
-            text: "Yes! The Router supports addRoute(), removeRoute(), updateRoutes(), and getAllRoutes() for dynamic route management. You can also get detailed statistics with getStats() and manage the router lifecycle with destroy() and reinitialize()."
-         },
-         {
-            title: "How does navigation with anchor elements work?",
-            text: "The Router automatically intercepts clicks on anchor elements (<a href=`/path`>) and handles navigation without page reloads. You can also use the Link component for enhanced functionality with additional features."
-         },
-         {
-            title: "How does the debugger work?",
-            text: "The debugger automatically detects Static Props and shows enhanced information including prop configuration, default values, and prop states (Used/Missing/Optional). It includes anti-interference protection and works seamlessly with all types of components."
-         },
-         {
-            title: "How do I extend the Router for advanced functionality?",
-            text: "For advanced routing needs, you can implement route guards or middleware by extending the existing Router through service components. Create a custom RouterService that wraps the structural Router and adds your custom logic for route authorization, data prefetching, or analytics tracking. You can also use the new dynamic route management features."
+      {
+         const container = this.querySelector('[data-block-id="doc-block-2"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "const container = this.querySelector('.items');\nslice.controller.destroyByContainer(container);\ncontainer.innerHTML = '';",
+               language: "javascript"
+            });
+            if ("Destroy components safely") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "Destroy components safely";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
          }
-      ];
-
-      const faqContainer = this.querySelector(".faq-section");
-      
-      for (const question of faqQuestions) {
-         const detailsComponent = await slice.build("Details", {
-            title: question.title,
-            text: question.text
-         });
-         
-         faqContainer.appendChild(detailsComponent);
       }
-   }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-3"]');
+         if (container) {
+            const lines = ["| Method | Signature | Notes |","| --- | --- | --- |","| `navigate` | `(path, _redirectChain?, _options?)` | Programmatic navigation. |","| `beforeEach` | `(to, from, next)` | Register a guard before navigation. |","| `afterEach` | `(to, from)` | Run logic after navigation. |","| `start` | `()` | Start routing immediately. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-4"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "await slice.setTheme('Dark');",
+               language: "javascript"
+            });
+            if ("Switch themes") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "Switch themes";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-5"]');
+         if (container) {
+            const lines = ["| Method | Signature | Notes |","| --- | --- | --- |","| `subscribe` | `(eventName, callback, options?)` | Returns subscription id. |","| `subscribeOnce` | `(eventName, callback, options?)` | Auto-unsubscribe after first emit. |","| `unsubscribe` | `(eventName, id)` | Returns boolean. |","| `emit` | `(eventName, data?)` | Emits to all subscribers. |","| `bind` | `(component)` | Returns component-bound API. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-6"]');
+         if (container) {
+            const lines = ["| Method | Signature | Notes |","| --- | --- | --- |","| `create` | `(name, initialState, options?)` | Options include `persist`. |","| `getState` | `(name)` | Returns current state or null. |","| `setState` | `(name, updater)` | Accepts object or updater function. |","| `watch` | `(name, component, callback, selector?)` | Auto-cleanup via component. |","| `destroy` | `(name)` | Removes a context. |","| `list` | `()` | Returns context names. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+  }
+
+  async update() {
+    // Refresh dynamic content here if needed
+  }
+
+  beforeDestroy() {
+    // Cleanup timers, listeners, or pending work here
+  }
+
+  async setupCopyButton() {
+    const container = this.querySelector('[data-copy-md]');
+    if (!container) return;
+
+    const copyMenu = await slice.build('CopyMarkdownMenu', {
+      markdownPath: this.markdownPath,
+      label: '❐'
+    });
+
+    container.appendChild(copyMenu);
+  }
+
+  async copyMarkdown() {}
 }
 
-customElements.define("slice-structuraldocumentation", StructuralDocumentation);
+customElements.define('slice-structuraldocumentation', StructuralDocumentation);

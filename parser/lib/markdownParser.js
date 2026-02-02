@@ -5,7 +5,7 @@ const FRONT_MATTER_REGEX = /^---\n([\s\S]*?)\n---\n/;
 const parseFrontMatter = (content) => {
   const match = content.match(FRONT_MATTER_REGEX);
   if (!match) {
-    throw new Error('Missing front matter');
+    return { data: null, body: content };
   }
 
   const raw = match[1];
@@ -31,6 +31,15 @@ const parseFrontMatter = (content) => {
   }
 
   return { data, body };
+};
+
+const slugify = (text) => {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
 };
 
 const escapeHtml = (text) => {
@@ -113,6 +122,16 @@ const parseBlocks = (body) => {
       continue;
     }
 
+    if (line.includes('|') && i + 1 < lines.length && /^\s*\|?\s*-/.test(lines[i + 1])) {
+      const tableLines = [];
+      while (i < lines.length && lines[i].includes('|')) {
+        tableLines.push(lines[i]);
+        i++;
+      }
+      blocks.push({ type: 'table', rows: tableLines });
+      continue;
+    }
+
     if (line.startsWith('#')) {
       const level = line.match(/^#+/)[0].length;
       const text = line.slice(level).trim();
@@ -170,12 +189,34 @@ const renderBlocks = (blocks) => {
   const htmlParts = [];
   const jsBlocks = [];
   let blockId = 0;
+  const usedIds = new Set();
+  let hasTitle = false;
 
   const nextId = () => `doc-block-${++blockId}`;
 
   for (const block of blocks) {
     if (block.type === 'heading') {
-      htmlParts.push(`<h${block.level}>${inlineMarkdown(block.text)}</h${block.level}>`);
+      let slug = slugify(block.text);
+      if (!slug) slug = `section-${blockId + 1}`;
+      let unique = slug;
+      let count = 1;
+      while (usedIds.has(unique)) {
+        count += 1;
+        unique = `${slug}-${count}`;
+      }
+      usedIds.add(unique);
+      if (!hasTitle && block.level === 1) {
+        htmlParts.push(`
+<div class="doc-title-bar">
+  <h1 id="${unique}">
+    <span class="doc-title-text">${inlineMarkdown(block.text)}</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>`);
+        hasTitle = true;
+      } else {
+        htmlParts.push(`<h${block.level} id="${unique}">${inlineMarkdown(block.text)}</h${block.level}>`);
+      }
       continue;
     }
 
@@ -200,6 +241,13 @@ const renderBlocks = (blocks) => {
       const id = nextId();
       htmlParts.push(`<div class="code-block" data-block-id="${id}"></div>`);
       jsBlocks.push({ type: 'code', id, ...block });
+      continue;
+    }
+
+    if (block.type === 'table') {
+      const id = nextId();
+      htmlParts.push(`<div class="table-block" data-block-id="${id}"></div>`);
+      jsBlocks.push({ type: 'table', id, rows: block.rows });
       continue;
     }
 
@@ -263,6 +311,9 @@ const parseMarkdownFile = (filePath) => {
   const { data, body } = parseFrontMatter(content);
   const blocks = parseBlocks(body);
   const { html, jsBlocks } = renderBlocks(blocks);
+  if (data) {
+    data.markdownSource = content;
+  }
   return { frontMatter: data, html, jsBlocks };
 };
 

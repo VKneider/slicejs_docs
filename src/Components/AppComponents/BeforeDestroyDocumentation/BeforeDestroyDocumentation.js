@@ -1,81 +1,113 @@
 export default class BeforeDestroyDocumentation extends HTMLElement {
-   constructor(props) {
-      super();
-      slice.attachTemplate(this);
-      slice.controller.setComponentProps(this, props);
-      this.debuggerProps = [];
-   }
+  constructor(props) {
+    super();
+    slice.attachTemplate(this);
+    slice.controller.setComponentProps(this, props);
+    this.debuggerProps = [];
+  }
 
-   async init() {
-      const beforeDestroyExample = await slice.build('CodeVisualizer', {
-         value: `export default class LiveChart extends HTMLElement {
-   constructor(props) {
-      super();
-      slice.attachTemplate(this);
-      slice.controller.setComponentProps(this, props);
-      this.abortController = new AbortController();
-   }
+  async init() {
+    this.markdownPath = "getting-started/before-destroy.md";
+    this.setupCopyButton();
+      {
+         const container = this.querySelector('[data-block-id="doc-block-1"]');
+         if (container) {
+            const lines = ["| Method | Signature | Returns | Notes |","| --- | --- | --- | --- |","| `beforeDestroy` | `beforeDestroy()` | `void` | Called right before the component is removed. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
 
-   async init() {
-      this._pollingId = setInterval(() => this.fetchData(), 5000);
-      window.addEventListener('resize', this.onResize);
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
 
-      await fetch('/api/chart', { signal: this.abortController.signal });
-   }
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
 
-   beforeDestroy() {
-      clearInterval(this._pollingId);
-      this.abortController.abort();
-      window.removeEventListener('resize', this.onResize);
-      this.chartInstance?.destroy();
-   }
-}
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
 
-customElements.define('slice-live-chart', LiveChart);`,
-         language: 'javascript'
-      });
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
 
-      const bestPractices = await slice.build('CodeVisualizer', {
-         value: `// ✅ beforeDestroy() Best Practices
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-2"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "export default class LiveChart extends HTMLElement {\n  constructor(props) {\n    super();\n    slice.attachTemplate(this);\n    slice.controller.setComponentProps(this, props);\n    this.abortController = new AbortController();\n  }\n\n  async init() {\n    this._pollingId = setInterval(() => this.fetchData(), 5000);\n    window.addEventListener('resize', this.onResize);\n    await fetch('/api/chart', { signal: this.abortController.signal });\n  }\n\n  beforeDestroy() {\n    clearInterval(this._pollingId);\n    this.abortController.abort();\n    window.removeEventListener('resize', this.onResize);\n    this.chartInstance?.destroy();\n  }\n}",
+               language: "javascript"
+            });
+            if ("Cleanup in beforeDestroy()") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "Cleanup in beforeDestroy()";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+  }
 
-// 1) Clear timers
-clearInterval(this._pollingId);
-clearTimeout(this._timeoutId);
+  async update() {
+    // Refresh dynamic content here if needed
+  }
 
-// 2) Abort pending fetch requests
-this.abortController?.abort();
+  beforeDestroy() {
+    // Cleanup timers, listeners, or pending work here
+  }
 
-// 3) Remove global listeners
-window.removeEventListener('resize', this._onResize);
+  async setupCopyButton() {
+    const container = this.querySelector('[data-copy-md]');
+    if (!container) return;
 
-// 4) Dispose external instances
-this.chartInstance?.destroy();
-this.map?.remove();`,
-         language: 'javascript'
-      });
+    const copyMenu = await slice.build('CopyMarkdownMenu', {
+      markdownPath: this.markdownPath,
+      label: '❐'
+    });
 
-      const pitfalls = await slice.build('CodeVisualizer', {
-         value: `// ❌ beforeDestroy() Pitfalls
+    container.appendChild(copyMenu);
+  }
 
-// 1) Forgetting to remove global listeners
-window.addEventListener('resize', this._onResize);
-// ... later: no removal → leak
-
-// 2) Leaving intervals running
-this._pollingId = setInterval(this.fetchData, 5000);
-// ... later: no clearInterval → leak
-
-// 3) Ignoring pending fetch requests
-fetch('/api/data');
-// ... later: no AbortController → leak
-`,
-         language: 'javascript'
-      });
-
-      this.querySelector('.before-destroy-example').appendChild(beforeDestroyExample);
-      this.querySelector('.best-practices').appendChild(bestPractices);
-      this.querySelector('.pitfalls').appendChild(pitfalls);
-   }
+  async copyMarkdown() {}
 }
 
 customElements.define('slice-beforedestroydocumentation', BeforeDestroyDocumentation);

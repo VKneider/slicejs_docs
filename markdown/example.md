@@ -50,26 +50,53 @@ cross-cutting signals and decoupled communication between components and service
 | `clear` | `()` | Clears all subscriptions |
 
 ## Usage Patterns
-```javascript title="Component-bound subscription (recommended)"
-this.events = slice.events.bind(this);
-this.events.subscribe("user:logout", () => this.resetUI());
+```javascript title="Component-bound subscription in init() (recommended)"
+export default class Navbar extends HTMLElement {
+  constructor(props) {
+    super();
+    slice.attachTemplate(this);
+    slice.controller.setComponentProps(this, props);
+  }
+
+  async init() {
+    this.events = slice.events.bind(this);
+    this.events.subscribe("user:logout", () => this.resetUI());
+  }
+
+  resetUI() {
+    // ...
+  }
+}
 ```
 
-```javascript title="Component-bound without bind()"
-slice.events.subscribe("user:logout", () => this.resetUI(), { component: this });
+```javascript title="Component-bound without bind() in init()"
+export default class Navbar extends HTMLElement {
+  async init() {
+    slice.events.subscribe(
+      "user:logout",
+      () => this.resetUI(),
+      { component: this }
+    );
+  }
+}
 ```
 
-```javascript title="One-time initialization"
-slice.events.subscribeOnce("app:ready", () => {
-  console.log("App ready");
-});
+```javascript title="One-time initialization in init()"
+export default class AppShell extends HTMLElement {
+  async init() {
+    slice.events.subscribeOnce("app:ready", () => {
+      console.log("App ready");
+    });
+  }
+}
 ```
 
-```javascript title="Global notification"
-slice.events.emit("notification:show", {
-  type: "success",
-  message: "Saved"
-});
+```javascript title="Global notification from a service"
+export default class NotificationService {
+  notify(message, type = "success") {
+    slice.events.emit("notification:show", { type, message });
+  }
+}
 ```
 
 ## Component Integration

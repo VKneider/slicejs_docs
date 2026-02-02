@@ -1,0 +1,44 @@
+:root {
+  /* Tipografía con mayor contraste */
+  --font-primary-color: #1A0B2E; /* Púrpura muy oscuro para excelente legibilidad */
+  --font-secondary-color: #6B46C1; /* Púrpura brillante para títulos y resaltes */
+
+  /** Primary - Púrpura eléctrico más vibrante **/
+  --primary-color: #9333EA; /* Púrpura más brillante y vibrante */
+  --primary-color-rgb: 147, 51, 234;
+  --primary-background-color: #FEFBFF; /* Blanco con toque lavanda para suavidad */
+  --primary-color-contrast: #FFFFFF;
+  --primary-color-shade: #7C3AED; /* Sombra más intensa */
+
+  /** Secondary - Verde neón vibrante **/
+  --secondary-color: #10B981; /* Verde esmeralda brillante, mejor contraste que el lima */
+  --secondary-color-rgb: 16, 185, 129;
+  --secondary-background-color: #F0FDF4; /* Verde muy claro para fondos */
+  --secondary-color-contrast: #FFFFFF;
+
+  /** Tertiary - Azul cian vibrante **/
+  --tertiary-background-color: #ECFEFF; /* Cian muy claro, más fresco */
+
+  /** Success - Verde más intenso **/
+  --success-color: #059669; /* Verde más oscuro y contrastante */
+  --success-contrast: #FFFFFF;
+
+  /** Warning - Naranja vibrante en lugar de amarillo **/
+  --warning-color: #F59E0B; /* Naranja dorado, más visible que el amarillo */
+  --warning-contrast: #FFFFFF;
+
+  /** Danger - Rojo magenta vibrante **/
+  --danger-color: #DC2626; /* Rojo más intenso y contrastante */
+  --danger-contrast: #FFFFFF;
+
+  /** Medium - Gris con toque púrpura más contrastante **/
+  --medium-color: #6B7280; /* Gris más oscuro para mejor legibilidad */
+  --medium-contrast: #FFFFFF;
+
+  /** Disabled - Manteniendo contraste adecuado **/
+  --disabled-color: #D1D5DB; /* Gris más neutro pero visible */
+
+  /** Accent - Cian eléctrico **/
+  --accent-color: #06B6D4; /* Cian más vibrante y contrastante */
+
+}

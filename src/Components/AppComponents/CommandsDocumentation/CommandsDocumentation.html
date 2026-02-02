@@ -1,426 +1,81 @@
-<h1 id="cli-commands">Slice.js CLI Commands</h1>
+<div class="documentation-content commandsdocumentation">
 
-<div class="intro-section">
-  <p>
-    Slice.js includes a powerful command-line interface (CLI) distributed as a binary executable 
-    (<code>slice</code>) that helps you create, manage, and run your applications. The CLI is organized 
-    into logical command groups for better workflow management.
-  </p>
-  
-  <div class="installation-info">
-    <h3>Installation</h3>
-    <div class="install-methods">
-      <div class="method-card">
-        <h4>📦 Local (Recommended)</h4>
-        <div class="install-code"></div>
-        <p>Use <code>npx slicejs-cli</code> or configure scripts in package.json</p>
-      </div>
-      <div class="method-card">
-        <h4>🌍 Global</h4>
-        <div class="install-global-code"></div>
-        <p>Use the <code>slice</code> command directly in any project</p>
-      </div>
-    </div>
-  </div>
+<div class="doc-title-bar">
+  <h1 id="slicejs-cli">
+    <span class="doc-title-text">Slice.js CLI</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
 </div>
-
-<div class="commands-section">
-  <h2 id="project-lifecycle">
-    <span class="section-icon">🚀</span>
-    Project Lifecycle Commands
-  </h2>
-  <p class="section-description">
-    Essential commands to initialize and run your Slice.js application
-  </p>
-  
-  <div class="commands-grid">
-    <div class="command-card">
-      <div class="command-header">
-        <h3 id="init-command">slice init</h3>
-        <span class="command-badge primary">Essential</span>
-      </div>
-      <div class="command-description">
-        <p>
-          Initializes a new Slice.js project with the complete folder structure, 
-          installs initial Visual components, and configures npm scripts.
-        </p>
-        <div class="init-example"></div>
-      </div>
-    </div>
-
-    <div class="command-card">
-      <div class="command-header">
-        <h3 id="dev-command">slice dev / start</h3>
-        <span class="command-badge success">Development</span>
-      </div>
-      <div class="command-description">
-        <p>
-          Starts the development server for your Slice.js application. 
-          Serves your application from the <code>/src</code> directory with live reload support.
-        </p>
-        <div class="dev-example"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="commands-section">
-  <h2 id="local-components">
-    <span class="section-icon">🔧</span>
-    Local Component Management
-  </h2>
-  <p class="section-description">
-    Create and manage custom components specific to your project
-  </p>
-  
-  <div class="commands-grid">
-    <div class="command-card">
-      <div class="command-header">
-        <h3 id="create-command">slice component create</h3>
-        <span class="command-badge info">Creation</span>
-      </div>
-      <div class="command-description">
-        <p>
-          Creates new local components with the proper structure. 
-          Generates JavaScript, HTML, and CSS files for your component interactively.
-        </p>
-        <div class="create-example"></div>
-      </div>
-    </div>
-
-    <div class="command-card">
-      <div class="command-header">
-        <h3 id="list-command">slice component list / slice list</h3>
-        <span class="command-badge">Query</span>
-      </div>
-      <div class="command-description">
-        <p>
-          Shows all available components in your local project organized by category.
-          Also available as a top-level shortcut: <code>slice list</code>
-        </p>
-        <div class="list-example"></div>
-      </div>
-    </div>
-
-    <div class="command-card">
-      <div class="command-header">
-        <h3 id="delete-command">slice component delete</h3>
-        <span class="command-badge danger">Deletion</span>
-      </div>
-      <div class="command-description">
-        <p>
-          Safely removes components from your local project, 
-          ensuring that all related files are properly deleted.
-        </p>
-        <div class="delete-example"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="commands-section">
-  <h2 id="registry-components">
-    <span class="section-icon">📚</span>
-    Component Registry Management
-  </h2>
-  <p class="section-description">
-    Access and install components from the official Slice.js repository
-  </p>
-  
-  <div class="commands-grid">
-    <div class="command-card">
-      <div class="command-header">
-        <h3 id="get-command">slice get / slice registry get</h3>
-        <span class="command-badge primary">Installation</span>
-      </div>
-      <div class="command-description">
-        <p>
-          Downloads and installs components from the official Slice.js repository. 
-          You can install multiple components at once and specify options like 
-          force overwrite or service components. Also available via <code>slice registry get</code>.
-        </p>
-        <div class="get-example"></div>
-      </div>
-    </div>
-
-    <div class="command-card">
-      <div class="command-header">
-        <h3 id="browse-command">slice browse / slice registry list</h3>
-        <span class="command-badge">Browse</span>
-      </div>
-      <div class="command-description">
-        <p>
-          Shows all available components in the official repository, 
-          helping you discover new components and understand what's available for installation.
-          Also available via <code>slice registry list</code>.
-        </p>
-        <div class="browse-example"></div>
-      </div>
-    </div>
-
-    <div class="command-card">
-      <div class="command-header">
-        <h3 id="sync-command">slice sync / slice registry sync</h3>
-        <span class="command-badge warning">Update</span>
-      </div>
-      <div class="command-description">
-        <p>
-          Updates all your local components to the latest versions from the repository, 
-          ensuring you have the most recent bug fixes and improvements.
-          Also available via <code>slice registry sync</code>.
-        </p>
-        <div class="sync-example"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="commands-section">
-  <h2 id="maintenance">
-    <span class="section-icon">⚙️</span>
-    Maintenance Commands
-  </h2>
-  <p class="section-description">
-    Keep your CLI and framework up to date and diagnose issues
-  </p>
-  
-  <div class="commands-grid">
-    <div class="command-card">
-      <div class="command-header">
-        <h3 id="version-command">slice version</h3>
-        <span class="command-badge">Info</span>
-      </div>
-      <div class="command-description">
-        <p>
-          Displays the current version of the Slice.js CLI.
-        </p>
-        <div class="version-example"></div>
-      </div>
-    </div>
-
-    <div class="command-card">
-      <div class="command-header">
-        <h3 id="update-command">slice update</h3>
-        <span class="command-badge warning">Updates</span>
-      </div>
-      <div class="command-description">
-        <p>
-          Checks for and installs available updates for both the CLI and the Slice.js framework.
-          Supports automatic updates and selective package updates.
-        </p>
-        <div class="update-example"></div>
-      </div>
-    </div>
-
-    <div class="command-card">
-      <div class="command-header">
-        <h3 id="doctor-command">slice doctor</h3>
-        <span class="command-badge info">Diagnostics</span>
-      </div>
-      <div class="command-description">
-        <p>
-          Runs comprehensive diagnostics to check project health, 
-          verifying folder structure, dependencies, and configuration.
-        </p>
-        <div class="doctor-example"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="commands-section">
-  <h2 id="help-commands">
-    <span class="section-icon">❓</span>
-    Help Commands
-  </h2>
-  <p class="section-description">
-    Get help and information about available commands
-  </p>
-  
-  <div class="commands-grid">
-    <div class="command-card">
-      <div class="command-header">
-        <h3 id="help-command">slice --help / slice help</h3>
-        <span class="command-badge">Help</span>
-      </div>
-      <div class="command-description">
-        <p>
-          Displays comprehensive help information about all available commands, 
-          options, and usage examples.
-        </p>
-        <div class="help-example"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="workflow-section">
-  <h2 id="workflow">
-    <span class="section-icon">🔄</span>
-    Complete CLI Workflow
-  </h2>
-  <p>
-    When developing with Slice.js, you typically follow a comprehensive workflow that involves 
-    multiple command categories working together. Here's how all commands work in harmony:
-  </p>
-  <div class="command-workflow"></div>
-</div>
-
-<div class="best-practices">
-  <h2 id="best-practices">
-    <span class="section-icon">✨</span>
-    CLI Best Practices
-  </h2>
-  <div class="practices-grid">
-    <div class="practice-item">
-      <span class="practice-icon">1️⃣</span>
-      <div class="practice-content">
-        <strong>Initialization</strong>
-        <p>Always run <code>slice init</code> first when creating a new project</p>
-      </div>
-    </div>
-    <div class="practice-item">
-      <span class="practice-icon">2️⃣</span>
-      <div class="practice-content">
-        <strong>Development Server</strong>
-        <p>Use <code>slice dev</code> during development and keep it running</p>
-      </div>
-    </div>
-    <div class="practice-item">
-      <span class="practice-icon">3️⃣</span>
-      <div class="practice-content">
-        <strong>Structured Components</strong>
-        <p>Use <code>slice component create</code> to ensure components follow proper structure</p>
-      </div>
-    </div>
-    <div class="practice-item">
-      <span class="practice-icon">4️⃣</span>
-      <div class="practice-content">
-        <strong>Official Components</strong>
-        <p>Use <code>slice get</code> to install components from the official repository</p>
-      </div>
-    </div>
-    <div class="practice-item">
-      <span class="practice-icon">5️⃣</span>
-      <div class="practice-content">
-        <strong>Stay Updated</strong>
-        <p>Run <code>slice sync</code> regularly to keep components updated</p>
-      </div>
-    </div>
-    <div class="practice-item">
-      <span class="practice-icon">6️⃣</span>
-      <div class="practice-content">
-        <strong>Check for Updates</strong>
-        <p>Use <code>slice update</code> periodically to check for CLI and framework updates</p>
-      </div>
-    </div>
-    <div class="practice-item">
-      <span class="practice-icon">7️⃣</span>
-      <div class="practice-content">
-        <strong>Diagnose Issues</strong>
-        <p>Run <code>slice doctor</code> when encountering problems to identify issues</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="cli-tips">
-  <h2 id="tips">
-    <span class="section-icon">💡</span>
-    Pro Tips
-  </h2>
-  
-  <div class="tip-card">
-    <h3>📋 Command Groups</h3>
-    <p>The CLI is organized into logical groups for better workflow management:</p>
-    <div class="command-groups">
-      <div class="group-item">
-        <strong>Project Lifecycle:</strong>
-        <code>init</code>, <code>dev</code>, <code>start</code>
-      </div>
-      <div class="group-item">
-        <strong>Local Components:</strong>
-        <code>component create</code>, <code>component list</code>, <code>component delete</code>
-      </div>
-      <div class="group-item">
-        <strong>Registry Operations:</strong>
-        <code>registry get</code>, <code>registry list</code>, <code>registry sync</code>
-      </div>
-      <div class="group-item">
-        <strong>Quick Shortcuts:</strong>
-        <code>get</code>, <code>browse</code>, <code>sync</code>, <code>list</code>
-      </div>
-      <div class="group-item">
-        <strong>Maintenance:</strong>
-        <code>version</code>, <code>update</code>, <code>doctor</code>
-      </div>
-    </div>
-  </div>
-  
-  <div class="tip-card">
-    <h3>🖥️ Multiple Terminals</h3>
-    <p>
-      For the best development experience, keep one terminal running 
-      <code>slice dev</code> and use another terminal for other commands.
-    </p>
-  </div>
-  
-  <div class="tip-card">
-    <h3>🏷️ Component Categories</h3>
-    <p>When creating components, choose the appropriate category:</p>
-    <ul>
-      <li>
-        <strong>Visual:</strong> For UI components that users interact with 
-        (requires HTML, CSS, JS)
-      </li>
-      <li>
-        <strong>Service:</strong> For components that provide functionality without UI (JS only)
-      </li>
-      <li>
-        <strong>AppComponents:</strong> For application-specific components (JS only)
-      </li>
-    </ul>
-  </div>
-  
-  <div class="tip-card">
-    <h3>🔄 Registry vs Local</h3>
-    <p>
-      Use <code>slice get</code> for official components and 
-      <code>slice component create</code> for custom components specific to your project.
-    </p>
-  </div>
-  
-  <div class="tip-card">
-    <h3>⚡ Command Shortcuts</h3>
-    <p>Many commands have short aliases for faster typing:</p>
-    <div class="shortcuts-list">
-      <div class="shortcut-item">
-        <code>slice comp</code> → <code>slice component</code>
-      </div>
-      <div class="shortcut-item">
-        <code>slice comp ls</code> → <code>slice component list</code>
-      </div>
-      <div class="shortcut-item">
-        <code>slice reg</code> → <code>slice registry</code>
-      </div>
-      <div class="shortcut-item">
-        <code>slice -v</code> → <code>slice version</code>
-      </div>
-      <div class="shortcut-item">
-        <code>slice upgrade</code> → <code>slice update</code>
-      </div>
-      <div class="shortcut-item">
-        <code>slice diagnose</code> → <code>slice doctor</code>
-      </div>
-    </div>
-  </div>
-  
-  <div class="tip-card">
-    <h3>🎯 Interactive Mode</h3>
-    <p>
-      Most commands support interactive mode when run without arguments. 
-      For example, running <code>slice get</code> without component names 
-      will launch an interactive component selector.
-    </p>
-  </div>
+<h2 id="overview">Overview</h2>
+<p>The Slice.js CLI (<code>slice</code>) helps you initialize projects, manage components, run the dev server, and maintain your toolchain. It is distributed as <code>slicejs-cli</code> and can be used via <code>npx</code> or a local npm script.</p>
+<h2 id="installation">Installation</h2>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="command-summary">Command Summary</h2>
+<div class="table-block" data-block-id="doc-block-3"></div>
+<h2 id="init">init</h2>
+<p>Initializes a new project with the framework structure and installs Visual components from the official registry.</p>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<p>What it does:</p>
+<ul><li>Ensures latest <code>slicejs-web-framework</code> is installed.</li><li>Creates <code>api/</code> and <code>src/</code> structure from framework base.</li><li>Installs all Visual components from the registry.</li><li>Configures <code>package.json</code> scripts (dev, start, get, browse, sync, etc.).</li></ul>
+<h2 id="dev-start">dev / start</h2>
+<p>Starts the development server. Optionally generates bundles before startup and watches files.</p>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<h3 id="options">Options</h3>
+<div class="table-block" data-block-id="doc-block-6"></div>
+<h3 id="behavior">Behavior</h3>
+<ul><li>Ensures <code>src/</code> and <code>api/</code> exist (otherwise suggests <code>slice init</code>).</li><li>Falls back to port+1 if the requested port is busy.</li><li>Uses <code>api/index.js</code> with <code>--development</code> or <code>--bundled</code>.</li></ul>
+<h2 id="bundle">bundle</h2>
+<p>Generates production bundles by analyzing dependencies and writing bundle files to <code>src/</code>.</p>
+<div class="code-block" data-block-id="doc-block-7"></div>
+<h3 id="options-2">Options</h3>
+<div class="table-block" data-block-id="doc-block-8"></div>
+<h3 id="subcommands">Subcommands</h3>
+<div class="table-block" data-block-id="doc-block-9"></div>
+<h2 id="component-create">component create</h2>
+<p>Creates a new local component. Prompts for name and category from <code>sliceConfig.json</code>.</p>
+<div class="code-block" data-block-id="doc-block-10"></div>
+<p>Rules:</p>
+<ul><li>Name must start with a letter and be alphanumeric.</li><li>Visual components get <code>.js</code>, <code>.html</code>, <code>.css</code>.</li><li>Service components get <code>.js</code> only.</li></ul>
+<h2 id="component-list">component list</h2>
+<p>Lists all local components by scanning category paths from <code>sliceConfig.json</code> and rewrites <code>src/Components/components.js</code>.</p>
+<div class="code-block" data-block-id="doc-block-11"></div>
+<h2 id="component-delete">component delete</h2>
+<p>Deletes a local component after interactive selection and confirmation.</p>
+<div class="code-block" data-block-id="doc-block-12"></div>
+<h2 id="get-registry-get">get / registry get</h2>
+<p>Downloads components from the official registry (Visual or Service) into your project.</p>
+<div class="code-block" data-block-id="doc-block-13"></div>
+<h3 id="options-3">Options</h3>
+<div class="table-block" data-block-id="doc-block-14"></div>
+<p>Notes:</p>
+<ul><li>If no names are provided, the CLI opens an interactive selector.</li><li>Registry is fetched from the Slice docs repo.</li></ul>
+<h2 id="browse-registry-list">browse / registry list</h2>
+<p>Lists available registry components.</p>
+<div class="code-block" data-block-id="doc-block-15"></div>
+<h2 id="sync-registry-sync">sync / registry sync</h2>
+<p>Updates local Visual components to latest registry versions. Service components are detected but not updated automatically.</p>
+<div class="code-block" data-block-id="doc-block-16"></div>
+<h3 id="options-4">Options</h3>
+<div class="table-block" data-block-id="doc-block-17"></div>
+<h2 id="update">update</h2>
+<p>Checks for CLI and framework updates and optionally installs them.</p>
+<div class="code-block" data-block-id="doc-block-18"></div>
+<h3 id="options-5">Options</h3>
+<div class="table-block" data-block-id="doc-block-19"></div>
+<h2 id="doctor">doctor</h2>
+<p>Runs project diagnostics (structure, config, dependencies, components, port availability).</p>
+<div class="code-block" data-block-id="doc-block-20"></div>
+<h2 id="version">version</h2>
+<p>Shows CLI version info and checks for updates.</p>
+<div class="code-block" data-block-id="doc-block-21"></div>
+<h2 id="help">help</h2>
+<p>Shows CLI help output.</p>
+<div class="code-block" data-block-id="doc-block-22"></div>
+<h2 id="best-practices">Best Practices</h2>
+<div class="callout callout-tip">Use the global CLI to run commands from any project.</div>
+<div class="callout callout-tip">Run <code>slice dev</code> in one terminal and use another for component commands.</div>
+<h2 id="gotchas">Gotchas</h2>
+<div class="callout callout-warning"><code>slice sync</code> only updates Visual components. Use <code>slice get &lt;Service&gt; --service --force</code> for Service updates.</div>
+<div class="callout callout-warning"><code>slice component list</code> rewrites <code>src/Components/components.js</code> based on detected folders.</div>
 </div>

@@ -1,0 +1,39 @@
+/* Table component styles */
+
+slice-table {
+  display: block;
+  width: 100%;
+}
+
+slice-table .table_wrapper {
+  width: 100%;
+  overflow-x: auto;
+  max-width: 100%;
+  display: block;
+  -webkit-overflow-scrolling: touch;
+}
+
+slice-table .table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+slice-table .table th,
+slice-table .table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--primary-color-shade);
+}
+
+slice-table .table th {
+  color: var(--primary-color-contrast);
+  font-weight: 600;
+  background: var(--primary-color);
+}
+
+slice-table .table td code {
+  background: var(--secondary-background-color);
+  padding: 2px 6px;
+  border-radius: 4px;
+}

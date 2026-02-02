@@ -1,0 +1,20 @@
+<div class="updatedocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="update">
+    <span class="doc-title-text">update()</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p><code>update()</code> runs whenever a component needs to refresh. This includes when cached routes are revisited via MultiRoute.</p>
+<h2 id="ideal-use-cases">Ideal Use Cases</h2>
+<ul><li>Re-fetch data that can change</li><li>Rebuild dynamic child components</li><li>Re-apply dynamic state to the DOM</li></ul>
+<h2 id="example">Example</h2>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<h2 id="best-practices">Best Practices</h2>
+<ol class="steps"><li>Destroy old components with <code>destroyByContainer</code>.</li><li>Clear the container.</li><li>Fetch fresh data.</li><li>Rebuild components with stable <code>sliceId</code>s.</li></ol>
+<div class="callout callout-tip">Always destroy before recreating to avoid memory leaks.</div>
+<h2 id="gotchas">Gotchas</h2>
+<div class="callout callout-warning">Clearing <code>innerHTML</code> alone does not destroy Slice components.</div>
+</div>

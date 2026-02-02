@@ -1,0 +1,21 @@
+<div class="lifecyclemethodsdocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="lifecycle-methods">
+    <span class="doc-title-text">LifeCycle Methods</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p>Slice.js components expose three lifecycle methods for predictable, explicit behavior:</p>
+<ul><li><code>init()</code> for one-time setup</li><li><code>update()</code> for refreshes when data or routes change</li><li><code>beforeDestroy()</code> for cleanup and memory safety</li></ul>
+<p>These methods are called by the framework, and are the recommended places to manage component state, subscriptions, and DOM updates.</p>
+<h2 id="when-each-method-runs">When Each Method Runs</h2>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<h2 id="navigation-and-reuse">Navigation and Reuse</h2>
+<p><code>update()</code> is called when a cached component is reused by routing (e.g., MultiRoute), which keeps UI responsive without rebuilding static structure.</p>
+<h2 id="recommended-structure">Recommended Structure</h2>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="guides">Guides</h2>
+<ul><li><code>init()</code>: /Documentation/LifeCycle-Methods/init</li><li><code>update()</code>: /Documentation/LifeCycle-Methods/update</li><li><code>beforeDestroy()</code>: /Documentation/LifeCycle-Methods/beforeDestroy</li></ul>
+</div>

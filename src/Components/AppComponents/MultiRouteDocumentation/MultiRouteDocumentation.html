@@ -1,85 +1,26 @@
-<h1 id="sliceMultiRoute">Slice MultiRoute</h1>
-<div class="myMultiRoute">
-  <p>
-    The MultiRoute component allows you to define multiple routes in a single container. 
-    It automatically renders the appropriate component based on the current URL pathname, 
-    with built-in component caching for optimal performance. The component uses Static Props 
-    for automatic defaults and enhanced debugging.
-  </p>
-  <div style="padding: 15px; background-color: var(--tertiary-background-color); border-radius: 8px; border-left: 4px solid var(--primary-color); margin-top: 20px;">
-    <strong style="color: var(--primary-color);">🎮 Interactive Demo:</strong>
-    <p style="margin: 10px 0 0 0; color: var(--font-secondary-color);">
-      Click the navigation buttons below each example to test the MultiRoute in action! 
-      Watch how components are created, cached, and reused. Check the browser console 
-      for detailed logs about component lifecycle.
-    </p>
-  </div>
+<div class="documentation-content multiroutedocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="multiroute">
+    <span class="doc-title-text">MultiRoute</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
 </div>
-
-<div class="basicMultiRoute">
-  <h2 id="basicUsage">Basic Usage</h2>
-  <p>
-    Create a simple MultiRoute with an array of route objects. Each route must have 
-    a <code>path</code> and a <code>component</code> name. The MultiRoute will 
-    automatically match the current URL and render the corresponding component.
-  </p>
+<h2 id="overview">Overview</h2>
+<p>MultiRoute renders multiple routes inside a container and caches component instances for performance. When a cached route is revisited, its <code>update()</code> method is called.</p>
+<h2 id="api-reference">API Reference</h2>
+<div class="table-block" data-block-id="doc-block-1"></div>
+<h2 id="props">Props</h2>
+<div class="table-block" data-block-id="doc-block-2"></div>
+<h2 id="usage-patterns">Usage Patterns</h2>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<h2 id="interactive-demo">Interactive Demo</h2>
+<div class="multiRoute-demo" data-demo="basic"></div>
+<h2 id="caching-behavior">Caching Behavior</h2>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<h2 id="best-practices">Best Practices</h2>
+<div class="callout callout-tip">Use stable component names and consistent routes to maximize cache reuse.</div>
+<div class="callout callout-tip">Implement <code>update()</code> in your routed components to refresh data when revisited.</div>
+<h2 id="gotchas">Gotchas</h2>
+<div class="callout callout-warning">MultiRoute caches by component name, not by path. Different paths using the same component share state.</div>
 </div>
-
-<div class="dashboardMultiRoute">
-  <h2 id="dashboardExample">Dashboard Example</h2>
-  <p>
-    A common use case for MultiRoute is creating dashboard sections with multiple views. 
-    Each view can have its own route while sharing the same container and layout.
-  </p>
-</div>
-
-<div class="nestedMultiRoute">
-  <h2 id="nestedRoutes">Nested Routes</h2>
-  <p>
-    MultiRoute components can handle nested route structures. This is useful for 
-    organizing complex applications with multiple levels of navigation.
-  </p>
-</div>
-
-<div class="cachingMultiRoute">
-  <h2 id="componentCaching">Component Caching Demo</h2>
-  <p>
-    MultiRoute automatically caches rendered components for better performance. 
-    When navigating back to a previously visited route, the cached component is reused 
-    instead of creating a new instance. If the component has an <code>update()</code> 
-    method, it will be called when the cached component is displayed.
-  </p>
-  <div style="padding: 15px; background-color: var(--secondary-background-color); border-radius: 8px; margin-top: 15px;">
-    <strong style="color: var(--primary-color);">🔍 What to observe:</strong>
-    <ul style="margin: 10px 0 0 20px; color: var(--font-secondary-color);">
-      <li>All three routes use the <strong>same ButtonDocumentation component</strong></li>
-      <li>The component is created only once on first navigation</li>
-      <li>Check the browser console to see <code>route-rendered</code> events</li>
-      <li>Component gets reused from cache on subsequent navigations</li>
-      <li>Open DevTools → Console to see: <code>🔄 MultiRoute rendered: ButtonDocumentation at /cache/doc1</code></li>
-    </ul>
-  </div>
-</div>
-
-<div class="dynamicMultiRoute">
-  <h2 id="dynamicRoutes">Dynamic Routes</h2>
-  <p>
-    You can add or modify routes dynamically by updating the routes array. 
-    This is useful for applications with user-based navigation or conditional routing.
-  </p>
-</div>
-
-<h2 id="staticPropsOverview">Static Props Integration</h2>
-<p>
-  The MultiRoute component leverages Static Props for improved developer experience:
-</p>
-<ul>
-  <li><strong>Automatic defaults:</strong> Routes prop defaults to an empty array</li>
-  <li><strong>Type validation:</strong> Development-time warnings for incorrect prop types</li>
-  <li><strong>Enhanced debugging:</strong> Right-click any MultiRoute to see detailed prop information</li>
-  <li><strong>Component caching:</strong> Built-in performance optimization with automatic component reuse</li>
-  <li><strong>Event emission:</strong> Emits 'route-rendered' event when content changes</li>
-</ul>
-
-<h3 id="staticPropsConfig">MultiRoute Static Props Configuration:</h3>
-<div class="static-props-example"></div>

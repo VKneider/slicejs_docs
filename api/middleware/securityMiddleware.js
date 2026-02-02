@@ -7,7 +7,7 @@ import path from 'path';
  */
 export function securityMiddleware(options = {}) {
   const {
-    allowedExtensions = ['.js', '.css', '.html', '.json', '.svg', '.png', '.jpg', '.jpeg', '.gif', '.woff', '.woff2', '.ttf'],
+    allowedExtensions = ['.js', '.css', '.html', '.json', '.svg', '.png', '.jpg', '.jpeg', '.gif', '.woff', '.woff2', '.ttf', '.md'],
     blockedPaths = [
       '/node_modules',
       '/package.json',

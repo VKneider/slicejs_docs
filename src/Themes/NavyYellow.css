@@ -1,0 +1,43 @@
+:root {
+  /* Tipografía para modo oscuro contrastante */
+  --font-primary-color: #FFFEF7; /* Blanco con toque cálido */
+  --font-secondary-color: #FEF3C7; /* Crema claro */
+
+  /** Primary - Amarillo eléctrico **/
+  --primary-color: #FCD34D; /* Amarillo brillante pero no agresivo */
+  --primary-color-rgb: 252, 211, 77;
+  --primary-background-color: #020617; /* Azul slate casi negro */
+  --primary-color-contrast: #020617; /* Texto oscuro sobre amarillo */
+  --primary-color-shade: #F59E0B; /* Amarillo más oscuro */
+
+  /** Secondary - Azul marino profundo **/
+  --secondary-color: #1E40AF; /* Azul marino intenso */
+  --secondary-color-rgb: 30, 64, 175;
+  --secondary-background-color: #0F172A; /* Fondo azul muy oscuro */
+  --secondary-color-contrast: #FFFFFF; /* Texto blanco sobre azul */
+
+  /** Tertiary - Fondo azul midnight **/
+  --tertiary-background-color: #1E293B; /* Azul midnight */
+
+  /** Success - Verde lima brillante **/
+  --success-color: #65A30D; /* Verde que complementa amarillo/azul */
+  --success-contrast: #FFFFFF;
+
+  /** Warning - Naranja brillante **/
+  --warning-color: #EA580C; /* Naranja que combina con amarillo */
+  --warning-contrast: #FFFFFF;
+
+  /** Danger - Rojo coral **/
+  --danger-color: #DC2626; /* Rojo que destaca sobre azul */
+  --danger-contrast: #FFFFFF;
+
+  /** Medium - Gris azulado **/
+  --medium-color: #64748B; /* Gris con toque azul */
+  --medium-contrast: #FFFFFF;
+
+  /** Disabled - Gris slate oscuro **/
+  --disabled-color: #475569; /* Gris slate para deshabilitados */
+
+  /** Accent - Violeta brillante **/
+  --accent-color: #7C3AED; /* Violeta que equilibra amarillo y azul */
+}
