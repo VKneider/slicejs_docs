@@ -13,4 +13,4 @@ node parser/index.js
 - Keep current folder/file structure
 - Generate component HTML/JS/CSS from markdown
 - Update `documentationRoutes.js`, `routes.js`, and `components.js`
-- Support CodeVisualizer, Details, tips/warnings, and steps blocks
+- Support CodeVisualizer, Details, tips/warnings, steps, and tables

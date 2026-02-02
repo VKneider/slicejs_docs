@@ -1,0 +1,43 @@
+:root {
+  /* Tipografía con máximo contraste */
+  --font-primary-color: #0F172A; /* Azul slate muy oscuro para excelente legibilidad */
+  --font-secondary-color: #334155; /* Azul gris para subtítulos y texto secundario */
+
+  /** Primary - Azul cobalto eléctrico **/
+  --primary-color: #1D4ED8; /* Azul cobalto brillante y profesional */
+  --primary-color-rgb: 29, 78, 216;
+  --primary-background-color: #FEFEFF; /* Blanco puro con toque azul muy sutil */
+  --primary-color-contrast: #FFFFFF;
+  --primary-color-shade: #1E40AF; /* Azul más profundo para bordes */
+
+  /** Secondary - Naranja coral vibrante **/
+  --secondary-color: #F97316; /* Naranja coral energético y moderno */
+  --secondary-color-rgb: 249, 115, 22;
+  --secondary-background-color: #FFF7ED; /* Naranja muy claro para fondos */
+  --secondary-color-contrast: #FFFFFF;
+
+  /** Tertiary - Cian cristalino **/
+  --tertiary-background-color: #F0FDFA; /* Cian muy claro y fresco */
+
+  /** Success - Verde esmeralda intenso **/
+  --success-color: #059669; /* Verde esmeralda contrastante */
+  --success-contrast: #FFFFFF;
+
+  /** Warning - Ámbar dorado **/
+  --warning-color: #D97706; /* Ámbar dorado, visible pero no agresivo */
+  --warning-contrast: #FFFFFF;
+
+  /** Danger - Rojo coral vibrante **/
+  --danger-color: #DC2626; /* Rojo intenso y claro */
+  --danger-contrast: #FFFFFF;
+
+  /** Medium - Gris azulado neutro **/
+  --medium-color: #64748B; /* Gris con toque azul para coherencia */
+  --medium-contrast: #FFFFFF;
+
+  /** Disabled - Gris claro pero visible **/
+  --disabled-color: #CBD5E1; /* Gris azulado claro */
+
+  /** Accent - Cian eléctrico **/
+  --accent-color: #0891B2; /* Cian vibrante que complementa la paleta */
+}

@@ -53,7 +53,12 @@ const run = () => {
   for (const filePath of markdownFiles) {
     try {
       const parsed = parseMarkdownFile(filePath);
-      const result = writeComponentFiles(parsed, OUTPUT_DIR);
+      if (!parsed.frontMatter) {
+        console.log(`Skipped ${path.relative(ROOT, filePath)} (no front matter)`);
+        continue;
+      }
+      const markdownPath = path.relative(MARKDOWN_DIR, filePath).replace(/\\/g, '/');
+      const result = writeComponentFiles(parsed, OUTPUT_DIR, markdownPath);
       generated.push({ filePath, component: result.componentClass });
       console.log(`Generated ${result.componentClass} from ${path.relative(ROOT, filePath)}`);
     } catch (error) {

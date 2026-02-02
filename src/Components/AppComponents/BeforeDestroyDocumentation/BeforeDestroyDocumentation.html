@@ -1,23 +1,24 @@
-<div class="beforedestroydocumentation">
-  <h1 id="before-destroy-method">beforeDestroy() Lifecycle Method</h1>
-  <p>
-    The <code>beforeDestroy()</code> method runs right before a component is destroyed by the Controller.
-    Use it to clean up timers, observers, global listeners, and pending async work.
-  </p>
+<div class="documentation-content beforedestroydocumentation">
 
-  <h2 id="when-to-use">When to Use beforeDestroy()</h2>
-  <ul>
-    <li>Cancel intervals, timeouts, and animation frames</li>
-    <li>Abort pending fetch requests</li>
-    <li>Remove global or external event listeners</li>
-    <li>Dispose third-party instances (charts, maps, etc.)</li>
-  </ul>
-
-  <div class="before-destroy-example"></div>
-
-  <h2 id="best-practices">Best Practices</h2>
-  <div class="best-practices"></div>
-
-  <h2 id="pitfalls">Common Pitfalls</h2>
-  <div class="pitfalls"></div>
+<div class="doc-title-bar">
+  <h1 id="beforedestroy">
+    <span class="doc-title-text">beforeDestroy()</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p><code>beforeDestroy()</code> runs right before a component is destroyed by the controller. Use it for cleanup: timers, listeners, subscriptions, and pending async work.</p>
+<p>The controller does not await this method, so keep it synchronous or fire-and-forget.</p>
+<h2 id="api">API</h2>
+<div class="table-block" data-block-id="doc-block-1"></div>
+<h2 id="ideal-use-cases">Ideal Use Cases</h2>
+<ul><li>Clear intervals and timeouts</li><li>Abort pending fetch requests</li><li>Remove global event listeners</li><li>Dispose third-party instances (charts, maps, etc.)</li></ul>
+<h2 id="example">Example</h2>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="best-practices">Best Practices</h2>
+<div class="callout callout-tip">Keep <code>beforeDestroy()</code> idempotent so it can be called safely.</div>
+<div class="callout callout-tip">Use <code>AbortController</code> for fetch cleanup.</div>
+<h2 id="gotchas">Gotchas</h2>
+<div class="callout callout-warning">If you add global listeners in <code>init()</code>, remove them in <code>beforeDestroy()</code>.</div>
+<div class="callout callout-warning">Do not rely on <code>await</code> inside <code>beforeDestroy()</code>.</div>
 </div>

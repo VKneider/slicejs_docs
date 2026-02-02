@@ -1,320 +1,313 @@
-
 export default class RoutingDocumentation extends HTMLElement {
-   constructor(props) {
-      super();
-      slice.attachTemplate(this);
-      slice.controller.setComponentProps(this, props);
-   }
+  constructor(props) {
+    super();
+    slice.attachTemplate(this);
+    slice.controller.setComponentProps(this, props);
+    this.debuggerProps = [];
+  }
 
-   async init() {
-      await this.createExamples();
-      await this.createFAQ();
-   }
+  async init() {
+    this.markdownPath = "getting-started/routing.md";
+    this.setupCopyButton();
+      {
+         const container = this.querySelector('[data-block-id="doc-block-1"]');
+         if (container) {
+            const lines = ["| Method | Signature | Returns | Notes |","| --- | --- | --- | --- |","| `start` | `() => Promise<void>` | `Promise<void>` | Starts routing immediately. Recommended when using guards. |","| `navigate` | `(path, _redirectChain?, _options?)` | `Promise<void>` | Programmatic navigation. `_options.replace` uses history replace. |","| `beforeEach` | `(guard)` | `void` | Registers a guard `(to, from, next)`. |","| `afterEach` | `(guard)` | `void` | Registers a guard `(to, from)` after navigation. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
 
-   async createExamples() {
-      // Basic Route Example
-      const basicRouteExample = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// Simple single route example
-const route = await slice.build("Route", {
-   path: "/home",
-   component: "HomePage"
-});
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
 
-document.body.appendChild(route);`
-      });
-      this.querySelector(".basic-route-example").appendChild(basicRouteExample);
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
 
-      // Route Configuration Example
-      const routeConfigExample = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// routes.js - Central route configuration
-const routes = [
-   { 
-      path: "/", 
-      component: "HomePage",
-      metadata: {
-         title: "Home - My App"
-      }
-   },
-   { 
-      path: "/about", 
-      component: "AboutPage",
-      metadata: {
-         title: "About Us"
-      }
-   },
-   { 
-      path: "/contact", 
-      component: "ContactPage",
-      metadata: {
-         title: "Contact Us",
-         description: "Get in touch with our team"
-      }
-   },
-   { 
-      path: "/user/\${id}", 
-      component: "UserProfile",
-      metadata: {
-         title: "User Profile",
-         private: true // Requires authentication
-      }
-   },
-   { 
-      path: "/404", 
-      component: "NotFound",
-      metadata: {
-         title: "Page Not Found"
-      }
-   }
-];
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
 
-export default routes;`
-      });
-      this.querySelector(".route-config-example").appendChild(routeConfigExample);
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
 
-      // MultiRoute Example
-      const multiRouteExample = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// MultiRoute for managing multiple related routes
-import routes from "./routes.js";
-
-const multiRoute = await slice.build("MultiRoute", {
-   routes: routes
-});
-
-`
-      });
-      this.querySelector(".multi-route-example").appendChild(multiRouteExample);
-
-      // Dynamic Routes Example
-      const dynamicRoutesExample = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// Define route with dynamic parameter
-const routes = [
-   {
-      path: "/user/\${id}",
-      component: "UserProfile"
-   },
-   {
-      path: "/product/\${category}/\${id}",
-      component: "ProductDetail"
-   }
-];
-
-// Component receives params automatically
-export default class UserProfile extends HTMLElement {
-   constructor(props) {
-      super();
-      slice.attachTemplate(this);
-      
-      // Access route parameters
-      const userId = props.params.id;
-      console.log("User ID:", userId);
-      
-      this.loadUserData(userId);
-   }
-   
-   async loadUserData(userId) {
-      const response = await fetch(\`/api/users/\${userId}\`);
-      const userData = await response.json();
-      this.renderUserData(userData);
-   }
-}
-
-// Navigate to user profile: /user/123
-await slice.router.navigate("/user/123");`
-      });
-      this.querySelector(".dynamic-routes-example").appendChild(dynamicRoutesExample);
-
-      // Programmatic Navigation Example
-      const programmaticNavExample = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// Programmatic navigation methods
-// Basic navigation
-await slice.router.navigate("/about");
-
-// HTML anchor elements work automatically
-// <a href="/contact">Contact</a>
-// <a href="/user/123">View User</a>
-
-// Links NOT intercepted by router:
-// <a href="https://example.com">External</a>
-// <a href="#section">Jump to Section</a>
-// <a href="mailto:test@example.com">Email</a>
-// <a href="/file.pdf" download>Download</a>
-// <a href="/page" target="_blank">New Tab</a>
-// <a href="/page" class="external-link">External</a>
-
-// Browser navigation methods
-slice.router.back();     // Go back in history
-slice.router.forward();  // Go forward in history`
-      });
-      this.querySelector(".programmatic-nav-example").appendChild(programmaticNavExample);
-
-      // Navigation Guards Example
-      const navigationGuardsExample = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// Navigation Guards - Control navigation flow
-import Slice from "/Slice/Slice.js";
-
-// beforeEach: Called before every navigation
-slice.router.beforeEach(async (to, from, next) => {
-   console.log("Navigating from:", from?.path);
-   console.log("Navigating to:", to.path);
-   
-   // Check if route requires authentication
-   if (to.metadata?.private) {
-      const isAuthenticated = await checkAuthentication();
-      
-      if (!isAuthenticated) {
-         // Redirect to login page - ALWAYS use return
-         return next({ path: "/login" });
-      }
-   }
-   
-   // Continue navigation - ALWAYS use return
-   return next();
-});
-
-// afterEach: Called after navigation completes
-slice.router.afterEach((to, from) => {
-   // Update page title
-   document.title = to.metadata?.title || "My App";
-   
-   // Track page view
-   console.log("Page loaded:", to.path);
-   
-   // Scroll to top
-   window.scrollTo(0, 0);
-});
-
-// Helper function
-async function checkAuthentication() {
-   const token = localStorage.getItem("authToken");
-   return !!token;
-}
-
-// IMPORTANT: Start router AFTER defining guards
-await slice.router.start();`
-      });
-      this.querySelector(".navigation-guards-example").appendChild(navigationGuardsExample);
-
-      // Starting Router Example
-      const startingRouterExample = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// Define guards first
-slice.router.beforeEach(async (to, from, next) => {
-   // Guard logic
-   // ALWAYS use return next()
-   return next();
-});
-
-slice.router.afterEach((to, from) => {
-   // Post-navigation logic
-});
-
-// Start router AFTER guards are defined
-await slice.router.start();`
-      });
-      this.querySelector(".starting-router-example").appendChild(startingRouterExample);
-
-      // Nested Routes Example
-      const nestedRoutesExample = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// Nested routes example - AdminLayout component
-export default class AdminLayout extends HTMLElement {
-   constructor(props) {
-      super();
-      slice.attachTemplate(this);
-      this.contentArea = this.querySelector(".admin-content");
-      
-      slice.controller.setComponentProps(this, props);
-   }
-   
-   async init() {
-      // Create nested MultiRoute for admin section
-      const adminRoutes = [
-         { path: "/admin/dashboard", component: "AdminDashboard" },
-         { path: "/admin/users", component: "UserManagement" },
-         { path: "/admin/settings", component: "AdminSettings" }
-      ];
-      
-      const nestedRouter = await slice.build("MultiRoute", {
-         routes: adminRoutes
-      });
-      
-      this.contentArea.appendChild(nestedRouter);
-   }
-}
-
-// Route configuration with nesting
-const routes = [
-   {
-      path: "/admin",
-      component: "AdminLayout",
-      children: [
-         { path: "/admin/dashboard", component: "AdminDashboard" },
-         { path: "/admin/users", component: "UserManagement" },
-         { path: "/admin/settings", component: "AdminSettings" }
-      ],
-      metadata: {
-         private: true,
-         requiredRole: "admin"
-      }
-   }
-];`
-      });
-      this.querySelector(".nested-routes-example").appendChild(nestedRoutesExample);
-   }
-
-   async createFAQ() {
-      const faqQuestions = [
-         {
-            title: "What's the difference between Route and MultiRoute?",
-            text: "Route is for a single route configuration, while MultiRoute manages multiple routes in a container. Use Route for simple cases and MultiRoute when you have several related routes in a section of your app."
-         },
-         {
-            title: "How do I handle 404 pages?",
-            text: "Add a route with path '/404' and component 'NotFound' to your routes configuration. The router automatically redirects to this route when no other route matches the current path."
-         },
-         {
-            title: "Can I use query parameters in routes?",
-            text: "Yes, you can access query parameters using URLSearchParams. For example: const params = new URLSearchParams(window.location.search); const id = params.get('id');"
-         },
-         {
-            title: "How do I protect routes with authentication?",
-            text: "Use the beforeEach navigation guard to check if a route requires authentication (via metadata.private) and redirect to login if the user is not authenticated. See the Router Guards documentation for detailed examples."
-         },
-         {
-            title: "Can I pass data between routes?",
-            text: "You can use URL parameters for simple data (like IDs), or store data in localStorage/sessionStorage for more complex scenarios. Route metadata can also be used to pass configuration to components."
-         },
-         {
-            title: "How do nested routes work?",
-            text: "Nested routes are defined using the children property in a route configuration. The parent component renders a MultiRoute for its children, creating a hierarchical routing structure."
-         },
-         {
-            title: "Can I add routes dynamically?",
-            text: "Yes, use slice.router.addRoute() to add routes at runtime, slice.router.removeRoute() to remove them, and slice.router.updateRoutes() to replace the entire route configuration."
-         },
-         {
-            title: "How do I scroll to top on route change?",
-            text: "Use the afterEach navigation guard to reset scroll position: slice.router.afterEach(() => { window.scrollTo(0, 0); });"
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
          }
-      ];
-
-      const faqContainer = this.querySelector(".faq-section");
-      
-      for (const question of faqQuestions) {
-         const detailsComponent = await slice.build("Details", {
-            title: question.title,
-            text: question.text
-         });
-         
-         faqContainer.appendChild(detailsComponent);
       }
-   }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-2"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "const routes = [\n  { path: '/', component: 'HomePage' },\n  { path: '/about', component: 'AboutPage' },\n  { path: '/user/${id}', component: 'UserProfile', metadata: { private: true } },\n  { path: '/docs', component: 'Docs', children: [\n    { path: '/intro', component: 'DocsIntro' }\n  ]},\n  { path: '/404', component: 'NotFound' }\n];\n\nexport default routes;",
+               language: "javascript"
+            });
+            if ("routes.js") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "routes.js";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-3"]');
+         if (container) {
+            const lines = ["| Field | Type | Required | Notes |","| --- | --- | --- | --- |","| `path` | `string` | yes | Supports dynamic params using `${param}`. |","| `component` | `string` | yes | Component name from `components.js`. |","| `children` | `Array<Route>` | no | Nested routes inherit parent path. |","| `metadata` | `object` | no | Arbitrary data for guards and UI. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-4"]');
+         if (container) {
+            const lines = ["| Field | Type | Notes |","| --- | --- | --- |","| `path` | `string` | Requested path or resolved full path. |","| `component` | `string` | Component for the route (parent if nested). |","| `params` | `object` | Dynamic params from `${param}` patterns. |","| `query` | `object` | Parsed query string values. |","| `metadata` | `object` | Route metadata from config. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-5"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "await slice.router.navigate('/about');",
+               language: "javascript"
+            });
+            if ("Navigate programmatically") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "Navigate programmatically";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-6"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "const route = await slice.build('Route', {\n  path: '/settings',\n  component: 'SettingsPage'\n});\n\nsomeContainer.appendChild(route);",
+               language: "javascript"
+            });
+            if ("Route container") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "Route container";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-7"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "const multi = await slice.build('MultiRoute', {\n  routes: [\n    { path: '/account', component: 'AccountPage' },\n    { path: '/billing', component: 'BillingPage' }\n  ]\n});\n\nsomeContainer.appendChild(multi);",
+               language: "javascript"
+            });
+            if ("MultiRoute container") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "MultiRoute container";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-8"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "slice.router.beforeEach(async (to, from, next) => {\n  if (to.metadata?.private && !isAuthenticated()) {\n    return next({ path: '/login' });\n  }\n  return next();\n});\n\nslice.router.afterEach((to) => {\n  document.title = to.metadata?.title || 'My App';\n});\n\nawait slice.router.start();",
+               language: "javascript"
+            });
+            if ("beforeEach and afterEach") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "beforeEach and afterEach";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-9"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "slice.events.subscribe('router:change', ({ to, from }) => {\n  console.log('Route changed:', from.path, '->', to.path);\n});",
+               language: "javascript"
+            });
+            if ("router:change via EventManager") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "router:change via EventManager";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+  }
+
+  async update() {
+    // Refresh dynamic content here if needed
+  }
+
+  beforeDestroy() {
+    // Cleanup timers, listeners, or pending work here
+  }
+
+  async setupCopyButton() {
+    const container = this.querySelector('[data-copy-md]');
+    if (!container) return;
+
+    const copyMenu = await slice.build('CopyMarkdownMenu', {
+      markdownPath: this.markdownPath,
+      label: '❐'
+    });
+
+    container.appendChild(copyMenu);
+  }
+
+  async copyMarkdown() {}
 }
 
-customElements.define("slice-routingdocumentation", RoutingDocumentation);
+customElements.define('slice-routingdocumentation', RoutingDocumentation);

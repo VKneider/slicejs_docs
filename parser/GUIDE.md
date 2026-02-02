@@ -13,6 +13,7 @@
 - :::component name="ComponentName" with JSON props in body
 - :::html -> raw HTML block
 - :::script -> inline JS for complex demos
+- Markdown tables -> Table component
 
 ## Component blocks
 
@@ -56,7 +57,7 @@ container.appendChild(button);
 
 - Inline HTML is not parsed.
 - Nested lists are not supported.
-- API tables are not parsed into structured data yet (rendered as plain HTML).
+- Tables are parsed when a header row and separator row are present.
 - Advanced custom JS logic requires manual components or a future :::script block.
 
 ## Notes on existing docs

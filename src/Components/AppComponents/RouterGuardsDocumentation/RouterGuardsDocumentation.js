@@ -1,387 +1,281 @@
-
 export default class RouterGuardsDocumentation extends HTMLElement {
-   constructor(props) {
-      super();
-      slice.attachTemplate(this);
-      slice.controller.setComponentProps(this, props);
-   }
+  constructor(props) {
+    super();
+    slice.attachTemplate(this);
+    slice.controller.setComponentProps(this, props);
+    this.debuggerProps = [];
+  }
 
-   async init() {
-      await this.createExamples();
-      await this.createFAQ();
-   }
+  async init() {
+    this.markdownPath = "getting-started/routing-guards.md";
+    this.setupCopyButton();
+      {
+         const container = this.querySelector('[data-block-id="doc-block-1"]');
+         if (container) {
+            const lines = ["| Method | Signature | Can block | Notes |","| --- | --- | --- | --- |","| `beforeEach` | `(to, from, next) => void` | yes | Call `next()` to continue or redirect. |","| `afterEach` | `(to, from) => void` | no | Runs after navigation completes. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
 
-   async createExamples() {
-      // Basic beforeEach example
-      const basicBeforeExample = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// Import Slice and define your routes
-import Slice from "/Slice/Slice.js";
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
 
-// Define beforeEach hook BEFORE starting the router
-slice.router.beforeEach(async (to, from, next) => {
-   console.log("Navigating to:", to.path);
-   console.log("Coming from:", from?.path || "initial load");
-   
-   // ALWAYS use return next() to prevent code execution after navigation
-   return next();
-});
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
 
-// IMPORTANT: Start the router AFTER defining guards
-await slice.router.start();`
-      });
-      this.querySelector(".basic-before-example").appendChild(basicBeforeExample);
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
 
-      // Authentication guard example
-      const authGuardExample = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// Authentication guard with metadata check
-slice.router.beforeEach(async (to, from, next) => {
-   // Check if route requires authentication
-   if (to.metadata?.private) {
-      // Perform authentication check (could be async API call)
-      const isAuthenticated = await checkUserAuthentication();
-      
-      if (!isAuthenticated) {
-         // Redirect to login page - ALWAYS use return
-         return next({ path: "/login" });
-      }
-   }
-   
-   // User is authenticated or route is public - ALWAYS use return
-   return next();
-});
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
 
-// Helper function to check authentication
-async function checkUserAuthentication() {
-   try {
-      const token = localStorage.getItem("authToken");
-      if (!token) return false;
-      
-      // Validate token with backend
-      const response = await fetch("/api/auth/validate", {
-         headers: { "Authorization": \`Bearer \${token}\` }
-      });
-      
-      return response.ok;
-   } catch (error) {
-      console.error("Authentication check failed:", error);
-      return false;
-   }
-}
-
-await slice.router.start();`
-      });
-      this.querySelector(".auth-guard-example").appendChild(authGuardExample);
-
-      // Role-based authorization example
-      const roleGuardExample = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// Role-based authorization guard
-slice.router.beforeEach(async (to, from, next) => {
-   const requiredRole = to.metadata?.requiredRole;
-   
-   if (requiredRole) {
-      const userRole = await getUserRole();
-      
-      if (userRole !== requiredRole) {
-         // User doesn"t have required role - ALWAYS use return
-         return next({ path: "/unauthorized" });
-      }
-   }
-   
-   // Role check passed - ALWAYS use return
-   return next();
-});
-
-// Get user role from storage or API
-async function getUserRole() {
-   const userData = localStorage.getItem("user");
-   if (!userData) return null;
-   
-   const user = JSON.parse(userData);
-   return user.role;
-}
-
-await slice.router.start();`
-      });
-      this.querySelector(".role-guard-example").appendChild(roleGuardExample);
-
-      // afterEach hook example
-      const afterEachExample = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// Analytics and logging with afterEach
-slice.router.afterEach((to, from) => {
-   // Log navigation for analytics
-   console.log(\`Navigation completed: \${from?.path || "initial"} -> \${to.path}\`);
-   
-   // Send analytics event
-   if (window.analytics) {
-      window.analytics.track("page_view", {
-         path: to.path,
-         component: to.component,
-         timestamp: new Date().toISOString()
-      });
-   }
-   
-   // Update page title
-   document.title = to.metadata?.title || "My App";
-   
-   // Scroll to top on route change
-   window.scrollTo(0, 0);
-});
-
-await slice.router.start();`
-      });
-      this.querySelector(".after-each-example").appendChild(afterEachExample);
-
-      // Combined guards example
-      const combinedExample = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// Complete example with multiple guards
-import Slice from "/Slice/Slice.js";
-
-// beforeEach: Multiple checks in sequence
-slice.router.beforeEach(async (to, from, next) => {
-   // Show loading indicator
-   if (slice.loading) {
-      slice.loading.start();
-   }
-   
-   // 1. Check authentication
-   if (to.metadata?.private) {
-      const isAuth = await checkAuth();
-      if (!isAuth) {
-         // ALWAYS use return when calling next()
-         return next({ path: "/login" });
-      }
-   }
-   
-   // 2. Check permissions
-   if (to.metadata?.permissions) {
-      const hasPermission = await checkPermissions(to.metadata.permissions);
-      if (!hasPermission) {
-         return next({ path: "/forbidden" });
-      }
-   }
-   
-   // 3. Validate route params
-   if (to.params?.id && !isValidId(to.params.id)) {
-      return next({ path: "/404" });
-   }
-   
-   // All checks passed - ALWAYS use return
-   return next();
-});
-
-// afterEach: Cleanup and tracking
-slice.router.afterEach((to, from) => {
-   // Hide loading indicator
-   if (slice.loading) {
-      slice.loading.stop();
-   }
-   
-   // Update meta tags
-   updateMetaTags(to.metadata);
-   
-   // Track navigation
-   trackPageView(to, from);
-});
-
-await slice.router.start();`
-      });
-      this.querySelector(".combined-example").appendChild(combinedExample);
-
-      // Navigation cancellation example
-      const cancelExample = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// Prevent navigation based on conditions
-slice.router.beforeEach(async (to, from, next) => {
-   // Check if there"s unsaved data
-   if (from && hasUnsavedChanges()) {
-      const confirmed = confirm(
-         "You have unsaved changes. Do you want to leave this page?"
-      );
-      
-      if (!confirmed) {
-         // Cancel navigation - ALWAYS use return
-         return next(false);
-      }
-   }
-   
-   // Continue navigation - ALWAYS use return
-   return next();
-});
-
-function hasUnsavedChanges() {
-   // Check if form has unsaved data
-   const form = document.querySelector("form.dirty");
-   return !!form;
-}
-
-await slice.router.start();`
-      });
-      this.querySelector(".cancel-example").appendChild(cancelExample);
-
-      // Data prefetching example
-      const prefetchExample = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// Prefetch data before navigation
-slice.router.beforeEach(async (to, from, next) => {
-   // Prefetch data for specific routes
-   if (to.metadata?.prefetch) {
-      try {
-         const data = await fetchRouteData(to);
-         
-         // Store data for component to use
-         to.state = { ...to.state, prefetchedData: data };
-         
-         // ALWAYS use return
-         return next();
-      } catch (error) {
-         console.error("Failed to prefetch data:", error);
-         // Still navigate even if prefetch fails - ALWAYS use return
-         return next();
-      }
-   } else {
-      // ALWAYS use return
-      return next();
-   }
-});
-
-async function fetchRouteData(route) {
-   const response = await fetch(\`/api/\${route.metadata.prefetch}\`);
-   return await response.json();
-}
-
-await slice.router.start();`
-      });
-      this.querySelector(".prefetch-example").appendChild(prefetchExample);
-
-      // Error handling example
-      const errorExample = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// Robust error handling in guards
-slice.router.beforeEach(async (to, from, next) => {
-   try {
-      // Perform async checks
-      await validateRoute(to);
-      // ALWAYS use return
-      return next();
-   } catch (error) {
-      console.error("Navigation error:", error);
-      
-      // Redirect to error page - ALWAYS use return
-      return next({ 
-         path: "/error",
-         state: { 
-            error: error.message,
-            originalPath: to.path 
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
          }
-      });
-   }
-});
-
-async function validateRoute(route) {
-   // Simulate validation that might fail
-   if (route.path === "/invalid") {
-      throw new Error("Invalid route accessed");
-   }
-}
-
-await slice.router.start();`
-      });
-      this.querySelector(".error-example").appendChild(errorExample);
-
-      // Metadata example
-      const metadataExample = await slice.build("CodeVisualizer", {
-         language: "javascript",
-         value: `// Route configuration with metadata for guards
-const routes = [
-   {
-      path: "/dashboard",
-      component: "Dashboard",
-      metadata: {
-         private: true,              // Requires authentication
-         requiredRole: "user",       // Requires specific role
-         title: "Dashboard",         // Page title
-         breadcrumbs: ["Home", "Dashboard"],
-         prefetch: "dashboard-data", // Data to prefetch
-         permissions: ["read", "write"]
       }
-   },
-   {
-      path: "/admin",
-      component: "AdminPanel",
-      metadata: {
-         private: true,
-         requiredRole: "admin",
-         title: "Admin Panel",
-         permissions: ["admin"]
-      }
-   },
-   {
-      path: "/login",
-      component: "Login",
-      metadata: {
-         title: "Login",
-         hideNav: true // Hide navigation bar
-      }
-   }
-];
+      {
+         const container = this.querySelector('[data-block-id="doc-block-2"]');
+         if (container) {
+            const lines = ["| Call | Result | Notes |","| --- | --- | --- |","| `next()` | continue | Normal navigation. |","| `next(false)` | cancel | Navigation is cancelled. |","| `next('/login')` | redirect | Redirect to path (pushState). |","| `next({ path: '/login', replace: true })` | redirect | Redirect with history replace. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
 
-export default routes;`
-      });
-      this.querySelector(".metadata-example").appendChild(metadataExample);
-   }
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
 
-   async createFAQ() {
-      const faqQuestions = [
-         {
-            title: "When should I use beforeEach vs afterEach?",
-            text: "Use beforeEach when you need to control whether navigation happens (authentication, authorization, validation). Use afterEach for tasks that should happen after navigation completes (analytics, title updates, scroll reset)."
-         },
-         {
-            title: "Can I have multiple beforeEach guards?",
-            text: "You can only define one beforeEach hook. However, within that single hook, you can perform multiple checks in sequence. Each check should call next() appropriately based on its validation result."
-         },
-         {
-            title: "What happens if I don't call next()?",
-            text: "If you don't call next() in a beforeEach guard, the navigation will be stuck and the route won't change. Always ensure next() is called in all code paths, including error handlers. Remember to always use 'return next()' to prevent code execution after the navigation is resolved."
-         },
-         {
-            title: "Can I access the current user in guards?",
-            text: "Yes, you can access any data available in your application, including user data from localStorage, sessionStorage, or global state management. Guards have access to the full application context."
-         },
-         {
-            title: "How do I handle async operations in guards?",
-            text: "Make your guard function async and use await for async operations. Always wrap async calls in try-catch blocks to handle errors properly and ensure next() is called even if operations fail."
-         },
-         {
-            title: "Can I modify the route object in guards?",
-            text: "You shouldn't modify the to or from objects directly as they're meant to be read-only. If you need to pass additional context, consider using metadata in your route configuration or URL parameters."
-         },
-         {
-            title: "How do I test navigation guards?",
-            text: "Create unit tests that call your guard functions with mock to, from, and next parameters. Verify that next() is called with the correct arguments based on different scenarios (authenticated vs unauthenticated, different roles, etc.)."
-         },
-         {
-            title: "Can guards access component instances?",
-            text: "No, guards run before components are created. If you need component-level logic, use the component's init() method or lifecycle methods instead."
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
          }
-      ];
-
-      const faqContainer = this.querySelector(".faq-section");
-      
-      for (const question of faqQuestions) {
-         const detailsComponent = await slice.build("Details", {
-            title: question.title,
-            text: question.text
-         });
-         
-         faqContainer.appendChild(detailsComponent);
       }
-   }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-3"]');
+         if (container) {
+            const lines = ["| Field | Type | Notes |","| --- | --- | --- |","| `path` | `string` | Requested path or resolved full path. |","| `component` | `string` | Component for the route (parent if nested). |","| `params` | `object` | Params parsed from `${param}` in routes. |","| `query` | `object` | URL query parameters. |","| `metadata` | `object` | Route metadata from config. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-4"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "slice.router.beforeEach(async (to, from, next) => {\n  if (to.metadata?.private && !isAuthenticated()) {\n    return next({ path: '/login' });\n  }\n  return next();\n});",
+               language: "javascript"
+            });
+            if ("Block or redirect") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "Block or redirect";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-5"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "slice.router.afterEach((to, from) => {\n  document.title = to.metadata?.title || 'My App';\n  window.scrollTo(0, 0);\n});",
+               language: "javascript"
+            });
+            if ("Post-navigation logic") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "Post-navigation logic";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-6"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "slice.router.beforeEach((to, from, next) => {\n  if (to.metadata?.flag && !featureEnabled(to.metadata.flag)) {\n    return next('/404');\n  }\n  return next();\n});",
+               language: "javascript"
+            });
+            if ("Feature flag guard") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "Feature flag guard";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-7"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "slice.router.beforeEach((to, from, next) => {\n  if (to.path === '/old-path') {\n    return next({ path: '/new-path', replace: true });\n  }\n  return next();\n});",
+               language: "javascript"
+            });
+            if ("Guard with replace") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "Guard with replace";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+  }
+
+  async update() {
+    // Refresh dynamic content here if needed
+  }
+
+  beforeDestroy() {
+    // Cleanup timers, listeners, or pending work here
+  }
+
+  async setupCopyButton() {
+    const container = this.querySelector('[data-copy-md]');
+    if (!container) return;
+
+    const copyMenu = await slice.build('CopyMarkdownMenu', {
+      markdownPath: this.markdownPath,
+      label: '❐'
+    });
+
+    container.appendChild(copyMenu);
+  }
+
+  async copyMarkdown() {}
 }
 
-customElements.define("slice-routerguardsdocumentation", RouterGuardsDocumentation);
+customElements.define('slice-routerguardsdocumentation', RouterGuardsDocumentation);

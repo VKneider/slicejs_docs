@@ -1,0 +1,43 @@
+:root {
+  /* Tipografía dulce */
+  --font-primary-color: #555555;
+  --font-secondary-color: #FF69B4;
+
+  /** Primary - Bubblegum Pink **/
+  --primary-color: #FF69B4; /* Hot Pink */
+  --primary-color-rgb: 255, 105, 180;
+  --primary-background-color: #FFF0F5; /* Lavender Blush */
+  --primary-color-contrast: #FFFFFF;
+  --primary-color-shade: #db4c93;
+
+  /** Secondary - Sky Blue **/
+  --secondary-color: #87CEEB; /* Sky Blue */
+  --secondary-color-rgb: 135, 206, 235;
+  --secondary-background-color: #FFFFFF;
+  --secondary-color-contrast: #555555;
+
+  /** Tertiary - Mint **/
+  --tertiary-background-color: #F0FFF0;
+
+  /** Success */
+  --success-color: #98FB98;
+  --success-contrast: #333333;
+
+  /** Warning */
+  --warning-color: #FFD700;
+  --warning-contrast: #333333;
+
+  /** Danger */
+  --danger-color: #FF6B6B;
+  --danger-contrast: #FFFFFF;
+
+  /** Medium */
+  --medium-color: #DDA0DD; /* Plum */
+  --medium-contrast: #FFFFFF;
+
+  /** Disabled */
+  --disabled-color: #E6E6E6;
+
+  /** Accent */
+  --accent-color: #FFD700; /* Gold */
+}

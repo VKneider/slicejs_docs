@@ -1,186 +1,29 @@
-<h1 id="lifecycle-methods">LifeCycle Methods in Slice.js</h1>
-<p>
-  Slice.js components have a well-defined lifecycle that allows you to hook into different phases of a component's
-  existence. Understanding these lifecycle methods is crucial for proper component management, especially when working
-  with routing and dynamic content.
-</p>
+<div class="documentation-content lifecyclemethods">
 
-<h2 id="overview">Overview</h2>
-<p>
-  Every Slice.js component goes through several phases during its lifetime:
-</p>
-<ul>
-  <li><strong>Creation</strong> - When the component instance is first created via <code>slice.build()</code></li>
-  <li><strong>Initialization</strong> - When <code>init()</code> runs for one-time setup</li>
-  <li><strong>Updates</strong> - When <code>update()</code> runs to refresh the component</li>
-  <li><strong>Destruction</strong> - When you explicitly destroy components to free memory</li>
-</ul>
-
-<h2 id="lifecycle-methods">Lifecycle Methods</h2>
-<p>
-  Each lifecycle method has its own dedicated guide with patterns, examples, and pitfalls.
-</p>
-<ul>
-  <li><strong>init()</strong> - One-time setup: <a href="/Documentation/LifeCycle-Methods/init">Open init() docs</a></li>
-  <li><strong>update()</strong> - Refresh dynamic content: <a href="/Documentation/LifeCycle-Methods/update">Open update() docs</a></li>
-  <li><strong>beforeDestroy()</strong> - Cleanup and disposal: <a href="/Documentation/LifeCycle-Methods/beforeDestroy">Open beforeDestroy() docs</a></li>
-</ul>
-
-<h2 id="lifecycle-flow">LifeCycle Flow</h2>
-<div class="lifecycle-flow-visualization"></div>
-
-<h2 id="init-method">The init() Method</h2>
-<p>
-  The <code>init()</code> method is called <strong>once</strong> after the component is created and its template is
-  attached. This is where you should perform initial setup that only needs to happen one time.
-</p>
-
-<h3 id="init-usage">When to use init()</h3>
-<ul>
-  <li><strong>Getting DOM references</strong> - Query and store element references</li>
-  <li><strong>Setting up event listeners</strong> - Add listeners that persist for the component's lifetime</li>
-  <li><strong>Fetching initial data</strong> - Load data needed for first render</li>
-  <li><strong>Creating static child components</strong> - Build components that won't change</li>
-  <li><strong>One-time setup</strong> - Any initialization that happens once</li>
-</ul>
-
-<div class="init-example"></div>
-
-<h2 id="update-method">The update() Method</h2>
-<p>
-  The <code>update()</code> method is called <strong>every time</strong> the component needs to refresh itself.
-  This happens automatically when the router re-uses cached components during navigation, or when you manually call <code>component.update()</code>.
-</p>
-
-<h3 id="update-usage">When to use update()</h3>
-<ul>
-  <li><strong>Re-fetching data</strong> - Get fresh data that may have changed</li>
-  <li><strong>Destroying old components</strong> - Clean up dynamic child components before recreating them</li>
-  <li><strong>Recreating dynamic content</strong> - Rebuild lists, cards, or other data-driven UI</li>
-  <li><strong>Updating styles</strong> - Re-apply themes or dynamic styling</li>
-</ul>
-
-<div class="update-example"></div>
-
-<h2 id="router-integration">Router Integration</h2>
-<p>
-  The lifecycle methods work seamlessly with Slice.js routing. The router intelligently manages component instances to optimize performance through caching.
-</p>
-
-<h3 id="component-caching">Component Caching Behavior</h3>
-<p>
-  When you navigate between routes, the <code>Route</code> and <code>MultiRoute</code> components cache previously created components.
-  This means:
-</p>
-<ul>
-  <li><strong>First visit to a route</strong>: <code>slice.build()</code> → <code>constructor()</code> → <code>init()</code></li>
-  <li><strong>Subsequent visits to same route</strong>: <code>update()</code> is called on the cached component</li>
-</ul>
-
-<div class="router-integration-example"></div>
-
-<h2 id="best-practices">Best Practices</h2>
-
-<h3 id="init-best-practices">init() Best Practices</h3>
-<div class="init-best-practices"></div>
-
-<h3 id="update-best-practices">update() Best Practices</h3>
-<div class="update-best-practices"></div>
-
-<h2 id="common-pitfalls">Common Pitfalls</h2>
-<div class="common-pitfalls"></div>
-
-<h2 id="component-destruction">Component Destruction</h2>
-<p>
-  Slice.js Controller provides powerful methods to safely destroy components and prevent memory leaks. These methods are essential when working with dynamic content that gets recreated.
-</p>
-
-  <h3 id="destruction-methods">Destruction Methods</h3>
-<ul>
-  <li>
-    <strong>destroyComponent()</strong> - Destroys one or multiple components
-    <ul>
-      <li>Accepts: component instance, array of components, sliceId string, or array of sliceIds</li>
-      <li>Returns: number of components destroyed</li>
-  </ul>
-
-  <p>
-    When you destroy components, the Controller also runs <code>beforeDestroy()</code> and cleans up
-    EventManager subscriptions tied to the component. Use <code>beforeDestroy()</code> to cancel timers,
-    abort pending requests, or remove external listeners.
-  </p>
-  </li>
-  <li>
-    <strong>destroyByContainer()</strong> - Destroys all Slice components inside a container
-    <ul>
-      <li>Accepts: HTMLElement container</li>
-      <li>Returns: number of components destroyed</li>
-    </ul>
-  </li>
-  <li>
-    <strong>destroyByPattern()</strong> - Destroys components whose sliceId matches a pattern
-    <ul>
-      <li>Accepts: RegExp or string pattern</li>
-      <li>Returns: number of components destroyed</li>
-    </ul>
-  </li>
-</ul>
-
-<div class="component-destruction-examples"></div>
-
-<h3 id="when-to-destroy">When Should You Destroy Components?</h3>
-<p>
-  You should destroy components whenever you're about to recreate them with fresh data. The most common scenario is in the <code>update()</code> method when working with dynamic lists, tables, or any data-driven UI that changes.
-</p>
-
-<p><strong>Key Rule:</strong> Always destroy before recreating to prevent memory leaks.</p>
-
-<div class="destruction-pattern-info" style="background: var(--code-background); padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-  <p style="margin: 0 0 0.5rem 0;"><strong>The Standard Pattern:</strong></p>
-  <ol style="margin: 0;">
-    <li>Destroy old components: <code>slice.controller.destroyByContainer(container)</code></li>
-    <li>Clear the DOM: <code>container.innerHTML = ''</code></li>
-    <li>Fetch fresh data: <code>await this.fetchData()</code></li>
-    <li>Recreate components: <code>await slice.build(...)</code></li>
-  </ol>
+<div class="doc-title-bar">
+  <h1 id="lifecycle-methods">
+    <span class="doc-title-text">LifeCycle Methods</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
 </div>
-
-<h3 id="destruction-best-practices">Best Practices for Destruction</h3>
-<div class="destruction-best-practices"></div>
-
-<h3 id="destruction-pitfalls">Common Pitfalls in Destruction</h3>
-<div class="destruction-pitfalls"></div>
-
-<h2 id="summary">Quick Reference Summary</h2>
-<div style="background: var(--code-background); padding: 1.5rem; border-radius: 8px; margin: 2rem 0;">
-  <h3 style="margin-top: 0;">Method Cheatsheet</h3>
-  
-  <div style="margin-bottom: 1.5rem;">
-    <strong>init()</strong> - Runs once on creation
-    <ul style="margin: 0.5rem 0;">
-      <li>Get DOM references</li>
-      <li>Set up event listeners</li>
-      <li>Fetch initial data</li>
-      <li>Create static child components</li>
-    </ul>
-  </div>
-  
-  <div style="margin-bottom: 1.5rem;">
-    <strong>update()</strong> - Runs on every refresh
-    <ul style="margin: 0.5rem 0;">
-      <li>Destroy old dynamic components</li>
-      <li>Clear containers</li>
-      <li>Re-fetch data</li>
-      <li>Recreate dynamic components</li>
-    </ul>
-  </div>
-  
-  <div>
-    <strong>Destruction Methods</strong>
-    <ul style="margin: 0.5rem 0;">
-      <li><code>destroyComponent(component)</code> - Single or multiple</li>
-      <li><code>destroyByContainer(element)</code> - All in container (simplest)</li>
-      <li><code>destroyByPattern(/^id-/)</code> - Match by pattern</li>
-    </ul>
-  </div>
+<h2 id="overview">Overview</h2>
+<p>Slice.js components expose three lifecycle methods for predictable behavior:</p>
+<ul><li><code>init()</code> for one-time setup</li><li><code>update()</code> for refreshes when data or routes change</li><li><code>beforeDestroy()</code> for cleanup and memory safety</li></ul>
+<p>These methods are called by the framework and are the recommended places to manage state, subscriptions, and DOM updates.</p>
+<h2 id="lifecycle-summary">Lifecycle Summary</h2>
+<div class="table-block" data-block-id="doc-block-1"></div>
+<h2 id="call-order-and-timing">Call Order and Timing</h2>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="navigation-and-reuse">Navigation and Reuse</h2>
+<p><code>update()</code> is called when a cached component is reused by routing (for example, <code>Route</code> and <code>MultiRoute</code> containers). This keeps UI responsive without rebuilding static structure.</p>
+<h2 id="recommended-structure">Recommended Structure</h2>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<h2 id="best-practices">Best Practices</h2>
+<div class="callout callout-tip">Keep <code>init()</code> focused on one-time setup and cache DOM references there.</div>
+<div class="callout callout-tip">Use <code>destroyByContainer</code> before rebuilding dynamic lists in <code>update()</code>.</div>
+<h2 id="gotchas">Gotchas</h2>
+<div class="callout callout-warning"><code>beforeDestroy()</code> is not awaited. Keep it synchronous or fire-and-forget.</div>
+<div class="callout callout-warning">Clearing <code>innerHTML</code> does not destroy Slice components. Use <code>destroyByContainer</code> first.</div>
+<h2 id="guides">Guides</h2>
+<ul><li><code>init()</code>: /Documentation/LifeCycle-Methods/init</li><li><code>update()</code>: /Documentation/LifeCycle-Methods/update</li><li><code>beforeDestroy()</code>: /Documentation/LifeCycle-Methods/beforeDestroy</li></ul>
 </div>

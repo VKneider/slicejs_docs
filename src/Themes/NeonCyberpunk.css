@@ -1,0 +1,43 @@
+:root {
+  /* Tipografía digital */
+  --font-primary-color: #FFFFFF;
+  --font-secondary-color: #00FFFF; /* Cyan text */
+
+  /** Primary - Neon Pink **/
+  --primary-color: #FF00FF; /* Magenta */
+  --primary-color-rgb: 255, 0, 255;
+  --primary-background-color: #050510; /* Casi negro con tinte azul */
+  --primary-color-contrast: #FFFFFF;
+  --primary-color-shade: #cc00cc;
+
+  /** Secondary - Neon Cyan **/
+  --secondary-color: #00FFFF; /* Cyan eléctrico */
+  --secondary-color-rgb: 0, 255, 255;
+  --secondary-background-color: #0a0a20;
+  --secondary-color-contrast: #000000;
+
+  /** Tertiary - Deep Space **/
+  --tertiary-background-color: #101030;
+
+  /** Success */
+  --success-color: #00FF00; /* Lime */
+  --success-contrast: #000000;
+
+  /** Warning */
+  --warning-color: #FFFF00; /* Yellow */
+  --warning-contrast: #000000;
+
+  /** Danger */
+  --danger-color: #FF0000; /* Red */
+  --danger-contrast: #FFFFFF;
+
+  /** Medium */
+  --medium-color: #800080; /* Purple */
+  --medium-contrast: #FFFFFF;
+
+  /** Disabled */
+  --disabled-color: #404040;
+
+  /** Accent */
+  --accent-color: #FFFF00; /* Amarillo eléctrico interactivo */
+}

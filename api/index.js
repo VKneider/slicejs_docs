@@ -44,7 +44,7 @@ app.use(securityMiddleware({
   allowedExtensions: [
     '.js', '.css', '.html', '.json', 
     '.svg', '.png', '.jpg', '.jpeg', '.gif', 
-    '.woff', '.woff2', '.ttf', '.ico'
+    '.woff', '.woff2', '.ttf', '.ico', '.md'
   ],
   blockedPaths: [
     '/node_modules',
@@ -163,6 +163,9 @@ if (bundlesDirectoryExists()) {
 
 // Servir framework Slice.js
 app.use('/Slice/', express.static(path.join(__dirname, '..', 'node_modules', 'slicejs-web-framework', 'Slice')));
+
+// Servir markdown para copiar en docs
+app.use('/markdown', express.static(path.join(__dirname, '..', 'markdown')));
 
 // Servir archivos estáticos del proyecto
 app.use(express.static(path.join(__dirname, `../${folderDeployed}`)));

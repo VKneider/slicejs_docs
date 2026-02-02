@@ -1,0 +1,43 @@
+:root {
+  /* Tipografía retro */
+  --font-primary-color: #E0E0E0;
+  --font-secondary-color: #FF71CE;
+
+  /** Primary - Vapor Pink **/
+  --primary-color: #FF71CE; /* Vapor Pink */
+  --primary-color-rgb: 255, 113, 206;
+  --primary-background-color: #2D2145; /* Dark Purple Background */
+  --primary-color-contrast: #000000;
+  --primary-color-shade: #cc5aa5;
+
+  /** Secondary - Vapor Blue **/
+  --secondary-color: #01CDFE; /* Vapor Blue */
+  --secondary-color-rgb: 1, 205, 254;
+  --secondary-background-color: #382a52;
+  --secondary-color-contrast: #000000;
+
+  /** Tertiary - Grid Background **/
+  --tertiary-background-color: #241a36;
+
+  /** Success */
+  --success-color: #05FFA1; /* Spring Green */
+  --success-contrast: #000000;
+
+  /** Warning */
+  --warning-color: #B967FF; /* Lighter Purple */
+  --warning-contrast: #FFFFFF;
+
+  /** Danger */
+  --danger-color: #FF0055;
+  --danger-contrast: #FFFFFF;
+
+  /** Medium */
+  --medium-color: #6c5b7b;
+  --medium-contrast: #FFFFFF;
+
+  /** Disabled */
+  --disabled-color: #554466;
+
+  /** Accent */
+  --accent-color: #FFF6D3; /* Pastel Yellow */
+}

@@ -1,0 +1,68 @@
+slice-copymarkdownmenu {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+
+slice-copymarkdownmenu .copy-md-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: var(--primary-background-color);
+  border: 1px solid var(--primary-color-shade);
+  border-radius: var(--border-radius-slice);
+  padding: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+@media (max-width: 768px) {
+  slice-copymarkdownmenu .copy-md-menu {
+    left: 0;
+  }
+}
+
+slice-copymarkdownmenu .copy-md-menu.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+slice-copymarkdownmenu .copy-md-menu-item {
+  background: none;
+  border: none;
+  color: var(--font-primary-color);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: var(--border-radius-slice);
+  width: 100%;
+  text-align: left;
+}
+
+slice-copymarkdownmenu .copy-md-menu-item:hover {
+  background: var(--secondary-background-color);
+}
+
+slice-copymarkdownmenu .copy-md-button-slot .slice_button_container {
+  padding: 0;
+  width: auto;
+  display: inline-flex;
+}
+
+slice-copymarkdownmenu .copy-md-button-slot .slice_button {
+  min-width: auto;
+  width: auto;
+  min-height: 34px;
+  width: 34px;
+  padding: 4px;
+}
+
+slice-copymarkdownmenu .copy-md-button-slot .slice_button_value {
+  font-size: 18px;
+  line-height: 1;
+}

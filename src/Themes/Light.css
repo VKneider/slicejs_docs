@@ -1,31 +1,40 @@
 :root {
-  --font-primary-color: #000;
-  --font-secondary-color: #474747;
-  /** primary **/
-  --primary-color: #0066ff;
-  --primary-color-rgb: rgb(0, 102, 255);
-  --primary-background-color: #fff;
-  --primary-color-contrast: #fff;
-  --primary-color-shade: #ddd;
-  /** secondary **/
-  --secondary-color: #63ccfd;
-  --secondary-color-rgb: rgb(99, 204, 253);
-  --secondary-background-color: #ddd;
-  --secondary-color-contrast: #fff;
-  /** tertiary **/
-  --tertiary-background-color: #c4c4c4;
-  /** success **/
-  --success-color: #00ff40;
-  --success-contrast: #fff;
-  /** warning **/
-  --warning-color: #ffff40;
-  --warning-contrast: #000;
-  /** danger **/
-  --danger-color: #ff0000;
-  --danger-contrast: #fff;
-  /** medium **/
-  --medium-color: #92949c;
-  --medium-contrast: #000;
-  /** disabled **/
-  --disabled-color: #7f7f7f;
+  /* Tipografía en escala de grises */
+  --font-primary-color: #1a1a1a;
+  --font-secondary-color: #666666;
+  
+  /** Primary - Gris oscuro como color principal **/
+  --primary-color: #4a4a4a;
+  --primary-color-rgb: 74, 74, 74;
+  --primary-background-color: #ffffff;
+  --primary-color-contrast: #ffffff;
+  --primary-color-shade: #e0e0e0;
+  
+  /** Secondary - Gris medio **/
+  --secondary-color: #787878;
+  --secondary-color-rgb: 120, 120, 120;
+  --secondary-background-color: #f5f5f5;
+  --secondary-color-contrast: #ffffff;
+  
+  /** Tertiary - Gris claro **/
+  --tertiary-background-color: #eeeeee;
+  
+  /** Success - Verde sutil pero visible **/
+  --success-color: #28a745;
+  --success-contrast: #ffffff;
+  
+  /** Warning - Naranja sutil **/
+  --warning-color: #ffc107;
+  --warning-contrast: #1a1a1a;
+  
+  /** Danger - Rojo sutil **/
+  --danger-color: #dc3545;
+  --danger-contrast: #ffffff;
+  
+  /** Medium - Gris medio neutro **/
+  --medium-color: #6c757d;
+  --medium-contrast: #ffffff;
+
+  /** Disabled - Gris claro **/
+  --disabled-color: #cccccc;
 }

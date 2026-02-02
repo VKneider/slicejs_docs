@@ -1,39 +1,45 @@
-<div class="eventmanagerdocumentation">
-<h1>EventManager</h1>
-<h2>Overview</h2>
+<div class="documentation-content eventmanagerdocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="eventmanager">
+    <span class="doc-title-text">EventManager</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
 <p>EventManager provides a lightweight pub/sub system for Slice.js. It supports global subscriptions, component-bound subscriptions with auto-cleanup, and one-time listeners. It is designed for cross-cutting signals and decoupled communication between components and services.</p>
-<h2>When to Use</h2>
+<h2 id="when-to-use">When to Use</h2>
 <ul><li>App-level signals (app:ready, user:login, notification:show)</li><li>Decoupled UI updates (service emits, UI listens)</li><li>One-time bootstrap actions</li></ul>
-<h2>When Not to Use</h2>
+<h2 id="when-not-to-use">When Not to Use</h2>
 <ul><li>Shared, persistent state: use ContextManager instead</li><li>High-frequency real-time data: use dedicated data streams</li></ul>
-<h2>Enable</h2>
+<h2 id="enable">Enable</h2>
 <div class="code-block" data-block-id="doc-block-1"></div>
-<h2>Concepts</h2>
+<h2 id="concepts">Concepts</h2>
 <ul><li>Event names are strings, typically namespaced (<code>domain:action</code>).</li><li>Subscriptions can be global or component-bound.</li><li>Component-bound subscriptions are auto-removed when the component is destroyed.</li></ul>
-<h2>API Reference</h2>
-<p>| Method | Signature | Notes | | --- | --- | --- | | <code>subscribe</code> | <code>(eventName, callback, options?)</code> | Auto-cleanup if <code>options.component</code> set | | <code>subscribeOnce</code> | <code>(eventName, callback, options?)</code> | Auto-unsubscribe after first emit | | <code>unsubscribe</code> | <code>(eventName, subscriptionId)</code> | Returns boolean | | <code>emit</code> | <code>(eventName, data?)</code> | Emits to all subscribers | | <code>bind</code> | <code>(component)</code> | Returns component-bound API | | <code>hasSubscribers</code> | <code>(eventName)</code> | Diagnostics only | | <code>subscriberCount</code> | <code>(eventName)</code> | Diagnostics only | | <code>clear</code> | <code>()</code> | Clears all subscriptions |</p>
-<h2>Usage Patterns</h2>
-<div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="api-reference">API Reference</h2>
+<div class="table-block" data-block-id="doc-block-2"></div>
+<h2 id="usage-patterns">Usage Patterns</h2>
 <div class="code-block" data-block-id="doc-block-3"></div>
 <div class="code-block" data-block-id="doc-block-4"></div>
 <div class="code-block" data-block-id="doc-block-5"></div>
-<h2>Component Integration</h2>
 <div class="code-block" data-block-id="doc-block-6"></div>
-<h2>Implementation Recipe</h2>
+<h2 id="component-integration">Component Integration</h2>
+<div class="code-block" data-block-id="doc-block-7"></div>
+<h2 id="implementation-recipe">Implementation Recipe</h2>
 <ol class="steps"><li>Choose a namespaced event name (e.g., <code>cart:updated</code>).</li><li>Emit the event where the change happens.</li><li>Subscribe in the UI or other consumers using <code>bind()</code>.</li><li>Use <code>subscribeOnce</code> for bootstrapping or single-run tasks.</li></ol>
-<h2>Best Practices</h2>
+<h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Use namespaced event names. Avoid generic names like <code>update</code> or <code>change</code>.</div>
 <div class="callout callout-tip">Keep payloads small and serializable when possible.</div>
 <div class="callout callout-tip">Prefer <code>bind()</code> for components. It prevents leaks by default.</div>
-<h2>Gotchas</h2>
+<h2 id="gotchas">Gotchas</h2>
 <div class="callout callout-warning">Clearing a container does not remove subscriptions. Use component-bound subscriptions or manual
 <code>unsubscribe</code> calls.</div>
 <div class="callout callout-warning">Avoid using EventManager as a data store. It does not retain state.</div>
-<h2>Diagnostics</h2>
-<div class="code-block" data-block-id="doc-block-7"></div>
-<h2>FAQ</h2>
-<div class="details-block" data-block-id="doc-block-8"></div>
+<h2 id="diagnostics">Diagnostics</h2>
+<div class="code-block" data-block-id="doc-block-8"></div>
+<h2 id="faq">FAQ</h2>
 <div class="details-block" data-block-id="doc-block-9"></div>
 <div class="details-block" data-block-id="doc-block-10"></div>
 <div class="details-block" data-block-id="doc-block-11"></div>
+<div class="details-block" data-block-id="doc-block-12"></div>
 </div>

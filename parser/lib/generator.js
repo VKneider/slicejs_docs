@@ -17,92 +17,135 @@ const safeComponentName = (frontMatter) => {
 
 const defaultCss = (tagName) => {
   return `/* Generated documentation styles */
-
-${tagName} {
-  color: var(--font-primary-color);
-  display: block;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  line-height: 1.6;
-}
-
-${tagName} h1,
-${tagName} h2,
-${tagName} h3 {
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
-}
-
-${tagName} h1 {
-  text-align: center;
-  border-bottom: 3px solid var(--primary-color);
-  padding-bottom: 12px;
-}
-
-${tagName} h2 {
-  border-bottom: 1px solid var(--primary-color-shade);
-  padding-bottom: 8px;
-}
-
-${tagName} code {
-  font-family: monospace;
-  background-color: var(--secondary-background-color);
-  padding: 0.2em 0.4em;
-  border-radius: 3px;
-  font-size: 0.9em;
-}
-
-${tagName} .code-block,
-${tagName} .details-block,
-${tagName} .component-block {
-  margin: 1.5em 0;
-}
-
-${tagName} .callout {
-  border-left: 4px solid var(--primary-color);
-  padding: 12px 16px;
-  background: var(--secondary-background-color);
-  margin: 1em 0;
-}
-
-${tagName} .callout-warning {
-  border-left-color: var(--danger-color);
-}
-
-${tagName} .steps {
-  padding-left: 1.5em;
-}
-
-@media (max-width: 768px) {
-  ${tagName} {
-    padding: 15px;
-  }
-}
+/* Keep shared styles in src/Styles/DocumentationBase.css */
 `;
 };
 
 const generateHtml = (componentClass, html) => {
-  return `<div class="${componentClass.toLowerCase()}">
+  return `<div class="documentation-content ${componentClass.toLowerCase()}">
 ${html}
 </div>
 `;
 };
 
-const generateJs = (componentClass, jsBlocks, tagName) => {
+const generateJs = (componentClass, jsBlocks, tagName, markdownPath = '') => {
   const buildCodeBlocks = jsBlocks
     .map((block) => {
       if (block.type === 'code') {
-        return `      await this.appendCodeBlock("${block.id}", ${JSON.stringify(block.value)}, "${block.language}", ${JSON.stringify(block.title)});`;
+        return `      {
+         const container = this.querySelector('[data-block-id="${block.id}"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: ${JSON.stringify(block.value)},
+               language: "${block.language}"
+            });
+            if (${JSON.stringify(block.title)}) {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = ${JSON.stringify(block.title)};
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }`;
       }
       if (block.type === 'details') {
-        return `      await this.appendDetailsBlock("${block.id}", ${JSON.stringify(block.title)}, ${JSON.stringify(block.content)});`;
+        return `      {
+         const container = this.querySelector('[data-block-id="${block.id}"]');
+         if (container) {
+            const details = await slice.build('Details', { title: ${JSON.stringify(block.title)}, text: ${JSON.stringify(block.content)} });
+            container.appendChild(details);
+         }
+      }`;
       }
       if (block.type === 'component') {
-        return `      await this.appendComponentBlock("${block.id}", "${block.component}", ${JSON.stringify(block.props)});`;
+        return `      {
+         const container = this.querySelector('[data-block-id="${block.id}"]');
+         if (container) {
+            let props = {};
+            if (${JSON.stringify(block.props)}) {
+               try {
+                  props = JSON.parse(${JSON.stringify(block.props)});
+               } catch (error) {
+                  console.warn('Invalid component props JSON:', error);
+               }
+            }
+            const component = await slice.build('${block.component}', props);
+            container.appendChild(component);
+         }
+      }`;
+      }
+      if (block.type === 'table') {
+        return `      {
+         const container = this.querySelector('[data-block-id="${block.id}"]');
+         if (container) {
+            const lines = ${JSON.stringify(block.rows)};
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }`;
       }
       if (block.type === 'script') {
-        return `      await this.runInlineScript(${JSON.stringify(block.content)});`;
+        return `      {
+         try {
+            const fn = new Function('component', 'slice', 'document', ${JSON.stringify(block.content)});
+            await fn(this, slice, document);
+         } catch (error) {
+            console.warn('Inline script failed:', error);
+         }
+      }`;
       }
       return '';
     })
@@ -118,62 +161,32 @@ const generateJs = (componentClass, jsBlocks, tagName) => {
   }
 
   async init() {
+    this.markdownPath = ${JSON.stringify(markdownPath)};
+    this.setupCopyButton();
 ${buildCodeBlocks || '    // No dynamic blocks'}
   }
 
-  async appendCodeBlock(blockId, value, language, title = null) {
-    const container = this.querySelector('[data-block-id="' + blockId + '"]');
+  async update() {
+    // Refresh dynamic content here if needed
+  }
+
+  beforeDestroy() {
+    // Cleanup timers, listeners, or pending work here
+  }
+
+  async setupCopyButton() {
+    const container = this.querySelector('[data-copy-md]');
     if (!container) return;
 
-    const code = await slice.build('CodeVisualizer', {
-      value,
-      language
+    const copyMenu = await slice.build('CopyMarkdownMenu', {
+      markdownPath: this.markdownPath,
+      label: '❐'
     });
 
-    if (title) {
-      const label = document.createElement('div');
-      label.classList.add('code-block-title');
-      label.textContent = title;
-      container.appendChild(label);
-    }
-
-    container.appendChild(code);
+    container.appendChild(copyMenu);
   }
 
-  async appendDetailsBlock(blockId, title, text) {
-    const container = this.querySelector('[data-block-id="' + blockId + '"]');
-    if (!container) return;
-
-    const details = await slice.build('Details', { title, text });
-    container.appendChild(details);
-  }
-
-  async appendComponentBlock(blockId, componentName, propsText) {
-    const container = this.querySelector('[data-block-id="' + blockId + '"]');
-    if (!container || !componentName) return;
-
-    let props = {};
-    if (propsText) {
-      try {
-        props = JSON.parse(propsText);
-      } catch (error) {
-        console.warn('Invalid component props JSON:', error);
-      }
-    }
-
-    const component = await slice.build(componentName, props);
-    container.appendChild(component);
-  }
-
-  async runInlineScript(scriptContent) {
-    if (!scriptContent) return;
-    try {
-      const fn = new Function('component', 'slice', 'document', scriptContent);
-      await fn(this, slice, document);
-    } catch (error) {
-      console.warn('Inline script failed:', error);
-    }
-  }
+  async copyMarkdown() {}
 }
 
 customElements.define('${tagName}', ${componentClass});
@@ -186,7 +199,7 @@ const ensureDir = (dirPath) => {
   }
 };
 
-const writeComponentFiles = ({ frontMatter, html, jsBlocks }, outputDir) => {
+const writeComponentFiles = ({ frontMatter, html, jsBlocks }, outputDir, markdownPath = '') => {
   const componentClass = safeComponentName(frontMatter);
   const folderName = componentClass;
   const folderPath = path.join(outputDir, folderName);
@@ -195,7 +208,7 @@ const writeComponentFiles = ({ frontMatter, html, jsBlocks }, outputDir) => {
   ensureDir(folderPath);
 
   const htmlContent = generateHtml(componentClass, html);
-  const jsContent = generateJs(componentClass, jsBlocks, tagName);
+  const jsContent = generateJs(componentClass, jsBlocks, tagName, markdownPath);
   const cssContent = defaultCss(tagName);
 
   fs.writeFileSync(path.join(folderPath, `${componentClass}.html`), htmlContent, 'utf8');

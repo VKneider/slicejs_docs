@@ -1,0 +1,43 @@
+:root {
+  /* Tipografía tóxica */
+  --font-primary-color: #CCFF00; /* Lime text on dark */
+  --font-secondary-color: #A020F0;
+
+  /** Primary - Toxic Lime **/
+  --primary-color: #CCFF00; /* Fluorescent Lime */
+  --primary-color-rgb: 204, 255, 0;
+  --primary-background-color: #1a1a1a; /* Dark gray */
+  --primary-color-contrast: #000000;
+  --primary-color-shade: #99bf00;
+
+  /** Secondary - Electric Purple **/
+  --secondary-color: #9D00FF; /* Electric Purple */
+  --secondary-color-rgb: 157, 0, 255;
+  --secondary-background-color: #2b2b2b;
+  --secondary-color-contrast: #FFFFFF;
+
+  /** Tertiary - Ooze Green **/
+  --tertiary-background-color: #222222;
+
+  /** Success */
+  --success-color: #00FF00;
+  --success-contrast: #000000;
+
+  /** Warning */
+  --warning-color: #FFFF00;
+  --warning-contrast: #000000;
+
+  /** Danger */
+  --danger-color: #FF0066;
+  --danger-contrast: #FFFFFF;
+
+  /** Medium */
+  --medium-color: #555555;
+  --medium-contrast: #CCFF00;
+
+  /** Disabled */
+  --disabled-color: #444444;
+
+  /** Accent */
+  --accent-color: #FF0099; /* Hot Magenta */
+}

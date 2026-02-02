@@ -1,6 +1,6 @@
 /**
  * Slice.js Bundle Configuration
- * Generated: 2026-02-02T05:08:43.900Z
+ * Generated: 2026-02-02T06:53:10.650Z
  * Strategy: hybrid
  */
 
@@ -8,13 +8,13 @@
 export const SLICE_BUNDLE_CONFIG = {
   "version": "2.0.0",
   "strategy": "hybrid",
-  "generated": "2026-02-02T05:08:43.899Z",
+  "generated": "2026-02-02T06:53:10.649Z",
   "stats": {
-    "totalComponents": 67,
+    "totalComponents": 70,
     "totalRoutes": 41,
     "sharedComponents": 1,
-    "sharedPercentage": "4.5",
-    "totalSize": 2271135,
+    "sharedPercentage": "4.3",
+    "totalSize": 2277371,
     "criticalSize": 1174
   },
   "bundles": {
@@ -32,7 +32,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Components"
         ],
         "file": "slice-bundle.multiroute-documentationpage.js",
-        "size": 1512597,
+        "size": 1525891,
         "components": [
           "DocumentationPage",
           "Navbar",
@@ -40,6 +40,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "DropDown",
           "Button",
           "Icon",
+          "ThemeSelector",
           "MultiRoute",
           "TreeView",
           "TreeItem",
@@ -77,16 +78,17 @@ export const SLICE_BUNDLE_CONFIG = {
           "/ThemeCreator"
         ],
         "file": "slice-bundle.configuration.js",
-        "size": 1633675,
+        "size": 1649365,
         "components": [
           "WhatIsSlice",
           "SliceConfigDocumentation",
           "CodeVisualizer",
-          "Details",
-          "ThemesDocumentation",
-          "Grid",
+          "Table",
+          "CopyMarkdownMenu",
           "Button",
           "Icon",
+          "ThemesDocumentation",
+          "Grid",
           "ThemeCreator",
           "Navbar",
           "Link",
@@ -105,11 +107,14 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Service"
         ],
         "file": "slice-bundle.services.js",
-        "size": 72802,
+        "size": 1552723,
         "components": [
           "CommandsDocumentation",
           "CodeVisualizer",
-          "Details",
+          "Table",
+          "CopyMarkdownMenu",
+          "Button",
+          "Icon",
           "ServiceDocumentation"
         ],
         "dependencies": [
@@ -134,15 +139,16 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Select"
         ],
         "file": "slice-bundle.components.js",
-        "size": 1832659,
+        "size": 1810202,
         "components": [
           "VisualDocumentation",
           "CodeVisualizer",
-          "Details",
+          "Table",
+          "CopyMarkdownMenu",
+          "Button",
+          "Icon",
           "CardDocumentation",
           "Card",
-          "Icon",
-          "Button",
           "ButtonDocumentation",
           "Grid",
           "SwitchDocumentation",
@@ -152,7 +158,6 @@ export const SLICE_BUNDLE_CONFIG = {
           "InputDocumentation",
           "Input",
           "MultiRouteDocumentation",
-          "MultiRoute",
           "LayoutDocumentation",
           "Navbar",
           "Link",
@@ -160,6 +165,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "LoadingDocumentation",
           "Loading",
           "DetailsDocumentation",
+          "Details",
           "TreeViewDocumentation",
           "TreeView",
           "TreeItem",
@@ -185,18 +191,19 @@ export const SLICE_BUNDLE_CONFIG = {
           "/LifeCycle-Methods/beforeDestroy"
         ],
         "file": "slice-bundle.advanced.js",
-        "size": 1621208,
+        "size": 1597293,
         "components": [
           "StructuralDocumentation",
+          "Table",
           "CodeVisualizer",
-          "Details",
+          "CopyMarkdownMenu",
+          "Button",
+          "Icon",
           "EventManagerDocumentation",
+          "Details",
           "ContextManagerDocumentation",
           "TheBuildMethod",
           "StaticPropsDocumentation",
-          "Card",
-          "Icon",
-          "Button",
           "LifeCycleMethods",
           "InitMethodDocumentation",
           "UpdateMethodDocumentation",
@@ -212,11 +219,14 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Routing/Guards"
         ],
         "file": "slice-bundle.routing.js",
-        "size": 67158,
+        "size": 1522577,
         "components": [
           "RoutingDocumentation",
+          "Table",
           "CodeVisualizer",
-          "Details",
+          "CopyMarkdownMenu",
+          "Button",
+          "Icon",
           "RouterGuardsDocumentation"
         ],
         "dependencies": [

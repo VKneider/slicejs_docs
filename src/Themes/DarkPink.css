@@ -1,0 +1,43 @@
+:root {
+  /* Tipografía para modo oscuro vibrante */
+  --font-primary-color: #FFFFFF; /* Blanco puro para máximo contraste */
+  --font-secondary-color: #E2E8F0; /* Gris slate muy claro */
+
+  /** Primary - Rosa hot pink eléctrico **/
+  --primary-color: #FF1493; /* Hot pink ultra vibrante */
+  --primary-color-rgb: 255, 20, 147;
+  --primary-background-color: #0A0A0A; /* Negro puro como fondo */
+  --primary-color-contrast: #FFFFFF; /* Texto blanco sobre rosa */
+  --primary-color-shade: #E91E63; /* Rosa más oscuro para bordes */
+
+  /** Secondary - Teal eléctrico **/
+  --secondary-color: #14B8A6; /* Teal brillante y fresco */
+  --secondary-color-rgb: 20, 184, 166;
+  --secondary-background-color: #111827; /* Fondo muy oscuro con toque azul */
+  --secondary-color-contrast: #FFFFFF; /* Texto blanco sobre teal */
+
+  /** Tertiary - Fondo gris muy oscuro **/
+  --tertiary-background-color: #1F2937; /* Gris muy oscuro */
+
+  /** Success - Verde lima neón **/
+  --success-color: #32D74B; /* Verde lima brillante estilo neón */
+  --success-contrast: #FFFFFF;
+
+  /** Warning - Naranja neón **/
+  --warning-color: #FF9F0A; /* Naranja vibrante estilo iOS */
+  --warning-contrast: #FFFFFF;
+
+  /** Danger - Rojo neón **/
+  --danger-color: #FF453A; /* Rojo brillante estilo neón */
+  --danger-contrast: #FFFFFF;
+
+  /** Medium - Gris claro **/
+  --medium-color: #8E8E93; /* Gris neutro claro */
+  --medium-contrast: #FFFFFF;
+
+  /** Disabled - Gris muy oscuro **/
+  --disabled-color: #48484A; /* Gris oscuro para deshabilitados */
+
+  /** Accent - Cian neón **/
+  --accent-color: #00D4FF; /* Cian ultra brillante */
+}

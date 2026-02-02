@@ -1,255 +1,52 @@
-<div class="config-documentation-container">
-  <header class="config-header">
-    <h1 id="slice-config">sliceConfig.json - Complete Configuration Guide</h1>
-    <span class="config-badge">Core Configuration</span>
-  </header>
-  
-  <section class="config-introduction">
-    <p>
-      The <code>sliceConfig.json</code> file is the central configuration hub of your Slice.js application. Located at the project root, this file controls framework behavior, component paths, development tools, theming, routing, and production optimizations. It's automatically loaded during application initialization and affects how all structural components operate.
-    </p>
-    
-    <div class="config-highlights">
-      <div class="highlight-item">
-        <strong>🎯 Purpose:</strong> Centralized configuration for all framework features
-      </div>
-      <div class="highlight-item">
-        <strong>📍 Location:</strong> Project root directory
-      </div>
-      <div class="highlight-item">
-        <strong>🔄 Loading:</strong> Automatic during framework initialization
-      </div>
-    </div>
-  </section>
+<div class="documentation-content sliceconfigdocumentation">
 
-  <section class="config-preview">
-    <h2 id="complete-structure">Complete Configuration Structure</h2>
-    <p>
-      Below is a comprehensive example showing all available configuration options with their default values and explanations:
-    </p>
-    <div class="config-json-preview"></div>
-  </section>
-
-  <section class="config-sections">
-    <h2 id="configuration-sections">Configuration Sections</h2>
-    <p>
-      Each section controls a specific aspect of the Slice.js framework. Click on any section below to explore detailed configuration options and examples.
-    </p>
-    <div class="config-details-container"></div>
-  </section>
-
-  <section class="individual-examples">
-    <h2 id="individual-examples">Section-by-Section Examples</h2>
-    <p>
-      Detailed configuration examples for each section, showing different use cases and scenarios.
-    </p>
-
-    <div class="config-section-examples">
-      <h3 id="debugger-examples">Debugger Configuration</h3>
-      <p>
-        Configure the development debugger that allows real-time component inspection, Static Props visualization, and property editing.
-      </p>
-      <div class="debugger-config-example"></div>
-
-      <h3 id="theme-examples">Theme Manager Configuration</h3>
-      <p>
-        Control theme behavior, default themes, user preferences, and browser theme detection.
-      </p>
-      <div class="theme-config-example"></div>
-
-      <h3 id="router-examples">Router Configuration</h3>
-      <p>
-        Configure routing behavior, default routes, link interception, and navigation mode.
-      </p>
-      <div class="router-config-example"></div>
-
-      <h3 id="logger-examples">Logger Configuration</h3>
-      <p>
-        Set up logging levels, console output, and debugging information display.
-      </p>
-      <div class="logger-config-example"></div>
-
-      <h3 id="loading-examples">Loading Component Configuration</h3>
-      <p>
-        Control the global loading indicator behavior during navigation and async operations.
-      </p>
-      <div class="loading-config-example"></div>
-
-      <h3 id="paths-examples">Paths Configuration</h3>
-      <p>
-        Define component directories, resource locations, and project structure mapping.
-      </p>
-      <div class="paths-config-example"></div>
-    </div>
-  </section>
-
-  <section class="practical-examples">
-    <h2 id="practical-examples">Practical Configuration Examples</h2>
-    <p>
-      Real-world configuration examples for different scenarios and project types.
-    </p>
-
-    <h3 id="environment-configs">Development vs Production</h3>
-    <p>
-      Recommended configurations for different environments, optimizing for development experience or production performance.
-    </p>
-    <div class="env-examples"></div>
-
-    <h3 id="large-project-configs">Large Project Setup</h3>
-    <p>
-      Configuration example for complex applications with multiple component categories and custom project structure.
-    </p>
-    <div class="multi-project-examples"></div>
-  </section>
-
-  <section class="component-categories">
-    <h2 id="component-categories">Component Categories</h2>
-    <p>
-      The <code>paths.components</code> section defines different types of components you can create. Each category serves a specific purpose in your application architecture.
-    </p>
-
-    <div class="category-explanation">
-      <div class="category-card app-components">
-        <h3 id="app-components">AppComponents</h3>
-        <p>
-          <strong>AppComponents</strong> are high-level, application-specific components that typically represent complete pages, sections, or major features. They orchestrate multiple Visual components and contain business logic.
-        </p>
-        <ul class="category-features">
-          <li>Complete page or section components</li>
-          <li>Business logic and data management</li>
-          <li>Composition of multiple Visual components</li>
-          <li>Route-level components</li>
-        </ul>
-        <p><strong>Examples:</strong> HomePage, UserDashboard, ProductCatalog, CheckoutPage</p>
-      </div>
-
-      <div class="category-card visual-components">
-        <h3 id="visual-components">Visual Components</h3>
-        <p>
-          <strong>Visual</strong> components are reusable UI building blocks that represent specific interface elements. They focus on presentation and user interaction without business logic.
-        </p>
-        <ul class="category-features">
-          <li>Reusable UI elements</li>
-          <li>Consistent styling and behavior</li>
-          <li>Static Props support for configuration</li>
-          <li>Event handling and user interaction</li>
-        </ul>
-        <p><strong>Examples:</strong> Button, Input, Card, Modal, Dropdown, Grid</p>
-      </div>
-
-      <div class="category-card service-components">
-        <h3 id="service-components">Service Components</h3>
-        <p>
-          <strong>Service</strong> components handle business logic, data operations, and API communication without any visual representation. They provide functionality that can be shared across Visual and AppComponents.
-        </p>
-        <ul class="category-features">
-          <li>Data fetching and processing</li>
-          <li>Business logic implementation</li>
-          <li>API communication</li>
-          <li>Shared functionality across components</li>
-        </ul>
-        <p><strong>Examples:</strong> AuthService, ApiClient, DataValidator, CacheManager</p>
-      </div>
-
-      <div class="category-card structural-components">
-        <h3 id="structural-components">Structural Components</h3>
-        <p>
-          <strong>Structural</strong> components are framework-level components that provide core functionality. These are not created by users but are part of the Slice.js framework itself.
-        </p>
-        <ul class="category-features">
-          <li>Framework core functionality</li>
-          <li>Router, Controller, Logger, Debugger</li>
-          <li>Pre-initialized by the framework</li>
-          <li>Not user-creatable</li>
-        </ul>
-        <p><strong>Examples:</strong> Router, Controller, StylesManager, Logger, Debugger</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="configuration-tips">
-    <h2 id="configuration-tips">Configuration Tips & Best Practices</h2>
-    
-    <div class="tips-grid">
-      <div class="tip-card development">
-        <h4>🛠️ Development Tips</h4>
-        <ul>
-          <li>Enable debugger and verbose logging for better development experience</li>
-          <li>Use <code>saveThemeLocally: true</code> to persist theme choices during development</li>
-          <li>Enable loading component to visualize navigation</li>
-          <li>Enable all log levels for comprehensive debugging information</li>
-        </ul>
-      </div>
-
-      <div class="tip-card production">
-        <h4>🚀 Production Tips</h4>
-        <ul>
-          <li>Disable debugger completely for production builds</li>
-          <li>Enable only error logging to reduce console noise</li>
-          <li>Use <code>useBrowserTheme: true</code> for better user experience</li>
-          <li>Enable production mode for optimized resource loading</li>
-        </ul>
-      </div>
-
-      <div class="tip-card organization">
-        <h4>📁 Project Organization</h4>
-        <ul>
-          <li>Group related components in custom categories for large projects</li>
-          <li>Use descriptive category names that reflect your application architecture</li>
-          <li>Keep paths consistent with your team's conventions</li>
-          <li>Consider separate directories for different feature modules</li>
-        </ul>
-      </div>
-
-      <div class="tip-card performance">
-        <h4>⚡ Performance Tips</h4>
-        <ul>
-          <li>Use appropriate loading configuration for your application needs</li>
-          <li>Configure router with appropriate default route for your app structure</li>
-          <li>Enable production mode for production deployments</li>
-          <li>Use browser theme detection to reduce initial paint time</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section class="troubleshooting">
-    <h2 id="troubleshooting">Troubleshooting Configuration Issues</h2>
-    
-    <div class="troubleshooting-items">
-      <div class="troubleshoot-item">
-        <h4>❌ Components not loading</h4>
-        <p>Check that component paths in <code>paths.components</code> are correct and the directories exist. Ensure component names match exactly between configuration and file system.</p>
-      </div>
-
-      <div class="troubleshoot-item">
-        <h4>❌ Themes not applying</h4>
-        <p>Verify that <code>themeManager.enabled</code> is <code>true</code> and the theme name matches a CSS file in your themes directory. Check browser console for loading errors.</p>
-      </div>
-
-      <div class="troubleshoot-item">
-        <h4>❌ Debugger not working</h4>
-        <p>Ensure <code>debugger.enabled</code> is <code>true</code> and you're using the correct click type ("left" or "right"). The debugger only works in development mode.</p>
-      </div>
-
-      <div class="troubleshoot-item">
-        <h4>❌ Routing issues</h4>
-        <p>Check that your routes file exists at the specified path and exports a valid routes array. Verify the <code>router.defaultRoute</code> corresponds to an existing route.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="migration-notes">
-    <h2 id="migration-notes">Configuration Migration</h2>
-    <p>
-      When updating your Slice.js application, you may need to update your <code>sliceConfig.json</code> file to take advantage of enhanced features:
-    </p>
-    
-    <ul>
-      <li><strong>Static Props support:</strong> No configuration changes needed - works automatically with existing setup</li>
-      <li><strong>Enhanced Router:</strong> Works with existing router configuration - no changes needed</li>
-      <li><strong>Improved Debugger:</strong> No changes needed - enhanced debugging works with existing debugger configuration</li>
-      <li><strong>Loading Component:</strong> Simple enable/disable configuration available</li>
-    </ul>
-  </section>
+<div class="doc-title-bar">
+  <h1 id="sliceconfigjson">
+    <span class="doc-title-text">sliceConfig.json</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p><code>sliceConfig.json</code> configures Slice.js at startup. It is fetched from <code>/sliceConfig.json</code> and used to initialize the main <code>slice</code> instance and structural components.</p>
+<p>The configuration controls debugging, logging, themes, global styles, routing, and optional structural services like EventManager and ContextManager.</p>
+<h2 id="how-slicejs-loads-config">How Slice.js Loads Config</h2>
+<p>Slice.js fetches the file in <code>Slice/ Slice.js</code> and creates the global <code>slice</code> instance:</p>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<p>Once loaded, Slice.js initializes structural components based on config:</p>
+<ul><li>Logger and Debugger (if enabled)</li><li>EventManager and ContextManager (if enabled)</li><li>Loading component (if enabled)</li><li>StylesManager + ThemeManager</li><li>Router (routes loaded from <code>paths.routesFile</code>)</li></ul>
+<h2 id="root-schema">Root Schema</h2>
+<div class="table-block" data-block-id="doc-block-2"></div>
+<h2 id="debugger">debugger</h2>
+<div class="table-block" data-block-id="doc-block-3"></div>
+<h2 id="stylesmanager">stylesManager</h2>
+<div class="table-block" data-block-id="doc-block-4"></div>
+<h2 id="thememanager">themeManager</h2>
+<div class="table-block" data-block-id="doc-block-5"></div>
+<h2 id="logger">logger</h2>
+<div class="table-block" data-block-id="doc-block-6"></div>
+<h2 id="paths">paths</h2>
+<div class="table-block" data-block-id="doc-block-7"></div>
+<h3 id="pathscomponents">paths.components</h3>
+<p>Each key is a category name used in <code>components.js</code>.</p>
+<div class="table-block" data-block-id="doc-block-8"></div>
+<h2 id="router">router</h2>
+<div class="table-block" data-block-id="doc-block-9"></div>
+<h2 id="loading">loading</h2>
+<div class="table-block" data-block-id="doc-block-10"></div>
+<h2 id="events">events</h2>
+<div class="table-block" data-block-id="doc-block-11"></div>
+<h2 id="context">context</h2>
+<div class="table-block" data-block-id="doc-block-12"></div>
+<h2 id="production">production</h2>
+<div class="table-block" data-block-id="doc-block-13"></div>
+<h2 id="server">server</h2>
+<div class="table-block" data-block-id="doc-block-14"></div>
+<h2 id="example">Example</h2>
+<div class="code-block" data-block-id="doc-block-15"></div>
+<h2 id="best-practices">Best Practices</h2>
+<div class="callout callout-tip">Keep <code>paths</code> accurate or component loading will fail.</div>
+<div class="callout callout-tip">Load shared styles through <code>stylesManager.requestedStyles</code>.</div>
+<h2 id="gotchas">Gotchas</h2>
+<div class="callout callout-warning">If <code>themeManager.enabled</code> is true and <code>defaultTheme</code> is missing, theme loading will fail.</div>
+<div class="callout callout-warning"><code>events</code> and <code>context</code> are optional. If disabled, Slice.js provides no-op stubs.</div>
 </div>

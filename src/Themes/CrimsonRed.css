@@ -1,0 +1,43 @@
+:root {
+  /* Tipografía elegante */
+  --font-primary-color: #2D1A1A; /* Rojo-negro oscuro */
+  --font-secondary-color: #593333; /* Rojo amarronado */
+
+  /** Primary - Carmesí Profundo **/
+  --primary-color: #990000; /* Carmesí clásico */
+  --primary-color-rgb: 153, 0, 0;
+  --primary-background-color: #FCF5F5; /* Blanco rosado muy pálido */
+  --primary-color-contrast: #FFFFFF;
+  --primary-color-shade: #660000;
+
+  /** Secondary - Gris Pizarra **/
+  --secondary-color: #4A4A4A; /* Gris medio formal */
+  --secondary-color-rgb: 74, 74, 74;
+  --secondary-background-color: #F0E6E6; /* Gris rosado claro */
+  --secondary-color-contrast: #FFFFFF;
+
+  /** Tertiary - Rojo pálido **/
+  --tertiary-background-color: #E8DADA;
+
+  /** Success */
+  --success-color: #1b5e20;
+  --success-contrast: #FFFFFF;
+
+  /** Warning */
+  --warning-color: #f57f17;
+  --warning-contrast: #FFFFFF;
+
+  /** Danger */
+  --danger-color: #b71c1c;
+  --danger-contrast: #FFFFFF;
+
+  /** Medium */
+  --medium-color: #795548;
+  --medium-contrast: #FFFFFF;
+
+  /** Disabled */
+  --disabled-color: #d7ccc8;
+
+  /** Accent */
+  --accent-color: #D32F2F; /* Rojo brillante */
+}

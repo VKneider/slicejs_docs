@@ -1,121 +1,30 @@
-<h1 id="structuralComponents">Structural Components</h1>
+<div class="documentation-content structuraldocumentation">
 
-<p>
-  Structural components form the backbone of the Slice.js framework. They provide core functionality like component management, routing, styling, logging, and debugging. Unlike Visual or Service components, Structural components are typically pre-initialized by the framework and accessed through the global <code>slice</code> object.
-</p>
-
-<h2 id="controllerComponent">Controller</h2>
-<p>
-  The Controller manages all component instances, handles component registration, and provides the <code>build()</code> method for creating new components. Features the Static Props system for automatic default values and development-time validation.
-</p>
-
-<h3>Key responsibilities:</h3>
-<ul>
-  <li>Component registration and lifecycle management</li>
-  <li>Template and class loading</li>
-  <li>Component construction and property management</li>
-  <li>Static Props system with automatic defaults</li>
-  <li>Automatic prop validation in development</li>
-  <li>Enhanced debugger integration</li>
-  <li>Component caching and referencing</li>
-</ul>
-
-<h3>Developer usage:</h3>
-<div class="controller-example"></div>
-
-<h3 id="controller-destruction">Component Destruction and Cleanup</h3>
-<p>
-  The Controller provides recursive destruction utilities to prevent memory leaks when components are recreated.
-  Use these APIs whenever you rebuild dynamic UI or remove components programmatically.
-</p>
-<div class="controller-destroy-example"></div>
-
-<h2 id="routerComponent">Router</h2>
-<p>
-  The Router handles navigation between different views in your application, supporting both history-based navigation and route parameters. Includes dynamic route management, performance improvements, and comprehensive lifecycle controls.
-</p>
-
-<h3>Key responsibilities:</h3>
-<ul>
-  <li>Route registration and matching</li>
-  <li>History management and navigation</li>
-  <li>Dynamic route parameters</li>
-  <li>Navigation with anchor elements</li>
-  <li>Dynamic route management (add, remove, update routes)</li>
-  <li>Component pooling for better performance</li>
-  <li>Router statistics and monitoring</li>
-  <li>Lifecycle management (destroy, reinitialize)</li>
-  <li>Integration with Route and MultiRoute components</li>
-</ul>
-
-<h3>Developer usage:</h3>
-<div class="router-example"></div>
-
-<h2 id="stylesManagerComponent">StylesManager</h2>
-<p>
-  The StylesManager handles global styles and themes, allowing for dynamic theme switching and consistent styling across the application.
-</p>
-
-<h3>Key responsibilities:</h3>
-<ul>
-  <li>Theme loading and application</li>
-  <li>Component style registration</li>
-  <li>Global style management</li>
-  <li>Theme persistence</li>
-</ul>
-
-<h3>Developer usage:</h3>
-<div class="styles-manager-example"></div>
-
-<h2 id="loggerComponent">Logger</h2>
-<p>
-  The Logger provides a consistent way to log information, warnings, and errors throughout your application.
-</p>
-
-<h3>Key responsibilities:</h3>
-<ul>
-  <li>Error, warning, and info logging</li>
-  <li>Log filtering and retrieval</li>
-  <li>Structured logging with component context</li>
-  <li>Configurable output channels</li>
-</ul>
-
-<h3>Developer usage:</h3>
-<div class="logger-example"></div>
-
-<h2 id="debuggerComponent">Debugger</h2>
-<p>
-  The Debugger provides development tools for inspecting and manipulating components at runtime. Features Static Props integration, smart prop state detection, and anti-interference protection.
-</p>
-
-<h3>Key responsibilities:</h3>
-<ul>
-  <li>Component property inspection</li>
-  <li>Static Props configuration display</li>
-  <li>Smart prop states (Used/Missing/Optional)</li>
-  <li>Default value visualization</li>
-  <li>Anti-interference protection</li>
-  <li>Live property editing with enhanced validation</li>
-  <li>Debugging interface with improved UX</li>
-</ul>
-
-<h3>Developer usage:</h3>
-<div class="debugger-example"></div>
-
-<h2 id="structuralComponentsConfig">Configuration</h2>
-<p>
-  Structural components are primarily configured through the <code>sliceConfig.json</code> file at the root of your project. This allows you to:
-</p>
-<ul>
-  <li>Enable or disable specific features</li>
-  <li>Set default options and behaviors</li>
-  <li>Configure paths and resource locations</li>
-  <li>Control logging, debugging, and theming behavior</li>
-</ul>
-
-<p>
-  <strong>Note:</strong> All features maintain 100% backward compatibility. Existing configurations continue to work while enhanced features are available as opt-in improvements.
-</p>
-
-<h2 id="structuralComponentsFaq">Frequently Asked Questions</h2>
-<div class="faq-section"></div>
+<div class="doc-title-bar">
+  <h1 id="structural-components">
+    <span class="doc-title-text">Structural Components</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p>Structural components power the framework runtime. They are created by Slice.js and exposed under <code>slice.*</code>. You do not build them directly.</p>
+<h2 id="key-components">Key Components</h2>
+<ul><li><code>slice.controller</code> for component lifecycle and lookup</li><li><code>slice.router</code> for navigation and route rendering</li><li><code>slice.stylesManager</code> for styles and themes</li><li><code>slice.events</code> for pub/sub (optional)</li><li><code>slice.context</code> for shared state (optional)</li></ul>
+<h2 id="controller-api">Controller API</h2>
+<div class="table-block" data-block-id="doc-block-1"></div>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="router-api">Router API</h2>
+<div class="table-block" data-block-id="doc-block-3"></div>
+<h2 id="styles-and-themes">Styles and Themes</h2>
+<p><code>slice.setTheme(themeName)</code> applies a theme through the StylesManager.</p>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<h2 id="eventmanager-optional">EventManager (Optional)</h2>
+<p>Provides pub/sub via <code>slice.events</code>. When disabled, the API is a no-op.</p>
+<div class="table-block" data-block-id="doc-block-5"></div>
+<h2 id="contextmanager-optional">ContextManager (Optional)</h2>
+<p>Shared state system available at <code>slice.context</code>.</p>
+<div class="table-block" data-block-id="doc-block-6"></div>
+<h2 id="best-practices">Best Practices</h2>
+<div class="callout callout-tip">Use <code>destroyByContainer</code> before recreating dynamic lists to avoid leaks.</div>
+<div class="callout callout-tip">Register guards before calling <code>slice.router.start()</code>.</div>
+</div>

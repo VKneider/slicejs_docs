@@ -1,104 +1,34 @@
-<div class="thebuildmethod">
-  <h1 id="build-method">The Build Method</h1>
-  <p>
-    The <code>slice.build()</code> method is the primary way to create components in Slice.js. 
-    It's an asynchronous function that instantiates, configures, and initializes components, 
-    automatically handling resource loading, templates, and styles.
-  </p>
+<div class="documentation-content thebuildmethod">
 
-  <h2 id="syntax">Syntax</h2>
-  <div class="syntax-example"></div>
-
-  <h2 id="parameters">Parameters</h2>
-  
-  <div class="parameter-box">
-    <div class="parameter-header">
-      <code class="parameter-name">componentName</code>
-      <span class="parameter-type">string</span>
-    </div>
-    <p class="parameter-description">
-      The name of the component to build, as registered in <code>components.js</code>
-    </p>
-  </div>
-
-  <div class="parameter-box">
-    <div class="parameter-header">
-      <code class="parameter-name">props</code>
-      <span class="parameter-type">Object (optional)</span>
-    </div>
-    <p class="parameter-description">
-      An object containing properties to pass to the component. These properties will be 
-      available in the component's constructor.
-    </p>
-  </div>
-
-  <h2 id="return-value">Return Value</h2>
-  <p>
-    Returns a <strong>Promise</strong> that resolves to the built component instance ready to use.
-    If construction fails, returns <code>null</code>.
-  </p>
-
-  <h2 id="basic-usage">Basic Usage</h2>
-  <p>
-    Create a simple component and add it to the DOM:
-  </p>
-  <div class="basic-example"></div>
-
-  <h2 id="with-props">With Properties</h2>
-  <p>
-    Pass properties to the component during construction:
-  </p>
-  <div class="props-example"></div>
-
-  <h2 id="nested-components">Nested Components</h2>
-  <p>
-    Build components that contain other components:
-  </p>
-  <div class="nested-example"></div>
-
-  <h2 id="sliceid">Using sliceId</h2>
-  <p>
-    The <code>sliceId</code> is a unique identifier that allows you to retrieve the component later 
-    using <code>slice.controller.getComponent()</code>. It's very useful when you need to access 
-    the component from other parts of your application.
-  </p>
-  <div class="sliceid-example"></div>
-
-  <h2 id="lifecycle">Build Lifecycle</h2>
-  <p>
-    When you call <code>slice.build()</code>, the following steps occur in order:
-  </p>
-
-  <ol class="lifecycle-list">
-    <li>Verify that the component exists in the component registry</li>
-    <li>Load the component's HTML template (if not cached)</li>
-    <li>Load the component's JavaScript class (if not cached)</li>
-    <li>Load the component's CSS styles (if not cached)</li>
-    <li>Create an instance of the component with the provided properties</li>
-    <li>Apply Static Props if defined</li>
-    <li>Call the component's <code>init()</code> method if it exists</li>
-    <li>Register the component in the Controller</li>
-    <li>Return the ready-to-use component instance</li>
-  </ol>
-
-  <h2 id="error-handling">Error Handling</h2>
-  <p>
-    Always handle possible errors when building components:
-  </p>
-  <div class="error-example"></div>
-
-  <h2 id="best-practices">Best Practices</h2>
-  <ul>
-    <li><strong>Always use await</strong>: <code>slice.build()</code> is asynchronous, always use <code>await</code></li>
-    <li><strong>Provide unique sliceId</strong>: For components you need to reference later</li>
-    <li><strong>Handle errors</strong>: Use try-catch to handle construction failures</li>
-    <li><strong>Use init() for logic</strong>: Place initialization logic in <code>init()</code>, not in the constructor</li>
-    <li><strong>Don't manipulate DOM in constructor</strong>: The component's DOM isn't ready until after the constructor</li>
-  </ul>
-
-  <h2 id="common-patterns">Common Patterns</h2>
-  <div class="patterns-example"></div>
-
-  <h2 id="faq">Frequently Asked Questions</h2>
-  <div class="faq-section"></div>
+<div class="doc-title-bar">
+  <h1 id="the-build-method">
+    <span class="doc-title-text">The build method</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p><code>slice.build(componentName, props)</code> creates a component instance, applies Static Props, runs <code>init()</code>, and registers the component with the controller. It returns a ready-to-append component instance.</p>
+<p>This is the standard way to create Visual, App, and Service components in Slice.js.</p>
+<h2 id="api">API</h2>
+<div class="table-block" data-block-id="doc-block-1"></div>
+<div class="table-block" data-block-id="doc-block-2"></div>
+<h2 id="lifecycle-steps">Lifecycle Steps</h2>
+<ol><li>Validate component name.</li><li>Load template, class, and CSS (visual components only).</li><li>Instantiate component and apply props.</li><li>Call <code>init()</code> if present.</li><li>Register component in the controller and component tree.</li></ol>
+<h2 id="basic-usage">Basic Usage</h2>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<h2 id="props-and-defaults">Props and Defaults</h2>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<h2 id="id-and-sliceid">id and sliceId</h2>
+<p><code>id</code> and <code>sliceId</code> are handled specially. They are assigned to the instance and then removed from the props object before Static Props are applied.</p>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<h2 id="nested-components">Nested Components</h2>
+<div class="code-block" data-block-id="doc-block-6"></div>
+<h2 id="error-cases">Error Cases</h2>
+<ul><li>Missing or non-string component name</li><li>Component not listed in <code>components.js</code></li><li>Structural components cannot be built</li></ul>
+<h2 id="best-practices">Best Practices</h2>
+<div class="callout callout-tip">Always await <code>slice.build()</code> to ensure templates, CSS, and <code>init()</code> are finished.</div>
+<div class="callout callout-tip">Use <code>sliceId</code> only when you need to retrieve a component later.</div>
+<h2 id="gotchas">Gotchas</h2>
+<div class="callout callout-warning">Building a component can return <code>null</code> if the component is missing or fails to load.</div>
+<div class="callout callout-warning">Structural components are created by the framework and cannot be built directly.</div>
 </div>

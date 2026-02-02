@@ -1,22 +1,23 @@
-<div class="updatemethoddocumentation">
-  <h1 id="update-method">update() Lifecycle Method</h1>
-  <p>
-    The <code>update()</code> method runs every time a component needs to refresh, including when
-    a cached route is revisited. Use it to re-fetch data and rebuild dynamic UI safely.
-  </p>
+<div class="documentation-content updatemethoddocumentation">
 
-  <h2 id="when-to-use">When to Use update()</h2>
-  <ul>
-    <li>Re-fetch data that can change</li>
-    <li>Destroy and recreate dynamic child components</li>
-    <li>Re-apply dynamic styles</li>
-  </ul>
-
-  <div class="update-example"></div>
-
-  <h2 id="best-practices">Best Practices</h2>
-  <div class="best-practices"></div>
-
-  <h2 id="pitfalls">Common Pitfalls</h2>
-  <div class="pitfalls"></div>
+<div class="doc-title-bar">
+  <h1 id="update">
+    <span class="doc-title-text">update()</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p><code>update()</code> runs whenever a component needs to refresh. The router calls it when a cached component is reused by <code>Route</code> or <code>MultiRoute</code>. You can also call it manually after changing props or state.</p>
+<h2 id="api">API</h2>
+<div class="table-block" data-block-id="doc-block-1"></div>
+<h2 id="ideal-use-cases">Ideal Use Cases</h2>
+<ul><li>Re-fetch data that can change</li><li>Rebuild dynamic child components</li><li>Re-apply dynamic state to the DOM</li></ul>
+<h2 id="example">Example</h2>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="best-practices">Best Practices</h2>
+<ol class="steps"><li>Destroy old components with <code>destroyByContainer</code>.</li><li>Clear the container.</li><li>Fetch fresh data.</li><li>Rebuild components with stable <code>sliceId</code>s.</li></ol>
+<div class="callout callout-tip">Keep <code>update()</code> idempotent and safe to call multiple times.</div>
+<h2 id="gotchas">Gotchas</h2>
+<div class="callout callout-warning">Clearing <code>innerHTML</code> alone does not destroy Slice components.</div>
+<div class="callout callout-warning">Do not rebuild static UI in <code>update()</code> unless it depends on changing data.</div>
 </div>

@@ -1,48 +1,70 @@
 {
   "generated": [
     {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\cli-commands.md",
+      "component": "CommandsDocumentation"
+    },
+    {
       "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\components\\multi-route.md",
       "component": "MultiRouteDocumentation"
     },
     {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\contexts.md",
+      "component": "ContextManagerDocumentation"
+    },
+    {
       "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\example.md",
       "component": "EventManagerDocumentation"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\getting-started\\before-destroy.md",
+      "component": "BeforeDestroyDocumentation"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\getting-started\\build-method.md",
+      "component": "TheBuildMethod"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\getting-started\\init-method.md",
+      "component": "InitMethodDocumentation"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\getting-started\\lifecycle-overview.md",
+      "component": "LifeCycleMethods"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\getting-started\\routing-guards.md",
+      "component": "RouterGuardsDocumentation"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\getting-started\\routing.md",
+      "component": "RoutingDocumentation"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\getting-started\\services.md",
+      "component": "ServiceDocumentation"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\getting-started\\static-props.md",
+      "component": "StaticPropsDocumentation"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\getting-started\\structural-components.md",
+      "component": "StructuralDocumentation"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\getting-started\\update-method.md",
+      "component": "UpdateMethodDocumentation"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\getting-started\\visual-components.md",
+      "component": "VisualDocumentation"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\slice-config.md",
+      "component": "SliceConfigDocumentation"
     }
   ],
-  "markdownCandidates": [
-    {
-      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\src\\Components\\AppComponents\\ContextManagerDocumentation\\ContextManagerDocumentation.js",
-      "reason": "Details-based FAQ can map to :::details blocks"
-    },
-    {
-      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\src\\Components\\AppComponents\\RouterGuardsDocumentation\\RouterGuardsDocumentation.js",
-      "reason": "Details-based FAQ can map to :::details blocks"
-    },
-    {
-      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\src\\Components\\AppComponents\\RoutingDocumentation\\RoutingDocumentation.js",
-      "reason": "Details-based FAQ can map to :::details blocks"
-    },
-    {
-      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\src\\Components\\AppComponents\\ServiceDocumentation\\ServiceDocumentation.js",
-      "reason": "Details-based FAQ can map to :::details blocks"
-    },
-    {
-      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\src\\Components\\AppComponents\\StructuralDocumentation\\StructuralDocumentation.js",
-      "reason": "Details-based FAQ can map to :::details blocks"
-    },
-    {
-      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\src\\Components\\AppComponents\\TheBuildMethod\\TheBuildMethod.js",
-      "reason": "Details-based FAQ can map to :::details blocks"
-    },
-    {
-      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\src\\Components\\AppComponents\\VisualDocumentation\\VisualDocumentation.js",
-      "reason": "Details-based FAQ can map to :::details blocks"
-    }
-  ],
-  "requiresCustomBlocks": [
-    {
-      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\src\\Components\\AppComponents\\RoutingDocumentation\\RoutingDocumentation.js",
-      "reason": "Interactive MultiRoute demo likely needs :::component or :::html block"
-    }
-  ]
+  "markdownCandidates": [],
+  "requiresCustomBlocks": []
 }

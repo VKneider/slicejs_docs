@@ -87,8 +87,11 @@ export default class MyNavigation extends HTMLElement {
          
          if (!isHeader) return;
 
-         const a = document.createElement('a');
-         a.textContent = element.textContent || element.innerHTML;
+          const a = document.createElement('a');
+          const titleText = element.querySelector('.doc-title-text')?.textContent
+             || element.textContent
+             || element.innerHTML;
+          a.textContent = titleText;
 
          // Aplicar clase basada en la jerarquía
          for (let i = 1; i <= 6; i++) {
