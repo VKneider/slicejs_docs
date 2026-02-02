@@ -25,17 +25,40 @@ export default class TheSliceTeam extends HTMLElement {
             { text: 'Theme Creator', path: '/ThemeCreator' },
             { text: 'About', path: '/About' }
          ],
-         buttons: [{
-            value: 'Change Theme',
-            onClickCallback: async () => {
-               let theme = slice.stylesManager.themeManager.currentTheme;
-               if (theme === 'Slice') await slice.setTheme('Light');
-               else if (theme === 'Light') await slice.setTheme('Dark');
-               else if (theme === 'Dark') await slice.setTheme('Slice');
-            },
-         }],
+         buttons: [],
       });
 
+      const themeSelector = await slice.build('ThemeSelector', {
+         themes: [
+            {
+               name: 'EmeraldLight',
+               colors: { primary: '#10B981', secondary: '#FEFFFE' },
+               description: 'Official Slice.js theme'
+            },
+            {
+               name: 'Light',
+               colors: { primary: '#F3F4F6', secondary: '#374151' },
+               description: 'Clean and bright'
+            },
+            {
+               name: 'Dark',
+               colors: { primary: '#18181B', secondary: '#F3F4F6' },
+               description: 'Easy on the eyes'
+            },
+            {
+               name: 'CobaltBlue',
+               colors: { primary: '#1D4ED8', secondary: '#F97316' },
+               description: 'Professional blue with orange accents and light background'
+            },
+            {
+               name: 'Purple',
+               colors: { primary: '#9333EA', secondary: '#10B981' },
+               description: 'Creative purple'
+            }
+         ]
+      });
+
+      navBar.querySelector('.nav_bar_buttons')?.appendChild(themeSelector);
       this.appendChild(navBar);
 
       // Team members data
