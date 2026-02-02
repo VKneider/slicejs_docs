@@ -8,7 +8,10 @@ export default class StaticPropsDocumentation extends HTMLElement {
 
   async init() {
     this.markdownPath = "getting-started/static-props.md";
-    this.setupCopyButton();
+    this.markdownContent = "---\ntitle: Static Props\nroute: /Documentation/Static-Props\nnavLabel: Static Props\nsection: Getting Started\ngroup: Components\norder: 30\ndescription: Define and validate component props in Slice.js.\ncomponent: StaticPropsDocumentation\ntags: [props, static, validation]\n---\n\n# Static Props\n\n## Overview\nStatic Props define a component's public API. They provide defaults, development-only validation,\nand consistent prop behavior across Slice.js. They also power the debugger by describing which\nprops are available and used.\n\n## Static Props Schema\n| Field | Type | Required | Notes |\n| --- | --- | --- | --- |\n| `type` | `string` | no | Informational only (debugger). |\n| `default` | `any` | no | Applied when prop is not provided. |\n| `required` | `boolean` | no | Logs error when missing in development. |\n\n## How Props Are Applied\nWhen a component is built:\n\n- Defaults are applied for missing props.\n- Unknown props produce warnings in development.\n- Missing required props produce errors in development.\n- Props are assigned to the instance (`component[prop]`) and tracked internally.\n\n```javascript title=\"Props are processed by the Controller\"\nexport default class Button extends HTMLElement {\n  static props = {\n    value: { type: 'string', default: 'Button' },\n    onClickCallback: { type: 'function', default: null }\n  };\n\n  constructor(props) {\n    super();\n    slice.attachTemplate(this);\n    slice.controller.setComponentProps(this, props);\n\n    // Props are now available\n    console.log(this.value);\n    console.log(this.onClickCallback);\n  }\n}\n```\n\n## Defaults and Required Fields\n```javascript title=\"Defaults and required props\"\nstatic props = {\n  title: { type: 'string', default: 'Untitled', required: false },\n  id: { type: 'string', required: true }\n};\n```\n\n## Validation (Development Only)\nSlice warns about unknown props and errors on missing required props in development mode.\nIn production, validation is skipped for performance.\n\n## Usage Patterns\n```javascript title=\"Building with props\"\nconst card = await slice.build('Card', {\n  title: 'My Card',\n  text: 'Card content',\n  icon: { name: 'star', iconStyle: 'filled' }\n});\n```\n\n```javascript title=\"Props with arrays and objects\"\nconst grid = await slice.build('Grid', {\n  columns: 3,\n  rows: 2,\n  gap: '16px',\n  style: { border: '1px solid #ccc' }\n});\n```\n\n```javascript title=\"Function props\"\nconst button = await slice.build('Button', {\n  value: 'Save',\n  onClickCallback: () => this.save()\n});\n```\n\n## Best Practices\n:::tip\nDefine only public props in `static props` and use internal fields for private state.\n:::\n\n:::tip\nUse defaults to keep components predictable and reduce boilerplate.\n:::\n\n## Gotchas\n:::warning\nStatic Props validation runs only in development; validate critical data yourself.\n:::\n";
+    if (true) {
+      this.setupCopyButton();
+    }
       {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
@@ -165,6 +168,7 @@ export default class StaticPropsDocumentation extends HTMLElement {
 
     const copyMenu = await slice.build('CopyMarkdownMenu', {
       markdownPath: this.markdownPath,
+      markdownContent: this.markdownContent,
       label: '❐'
     });
 

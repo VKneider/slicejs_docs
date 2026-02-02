@@ -8,7 +8,10 @@ export default class RouterGuardsDocumentation extends HTMLElement {
 
   async init() {
     this.markdownPath = "getting-started/routing-guards.md";
-    this.setupCopyButton();
+    this.markdownContent = "---\ntitle: Route Guards\nroute: /Documentation/Routing/Guards\nnavLabel: Route Guards\nsection: Getting Started\ngroup: Routing\norder: 51\ndescription: Guard patterns for secure navigation.\ncomponent: RouterGuardsDocumentation\ntags: [routing, guards]\n---\n\n# Route Guards\n\n## Overview\nRoute guards let you intercept navigation before and after a route change. Use them for auth,\nfeature flags, redirects, analytics, and scroll or title updates.\n\nGuards run on every navigation, including the initial page load. Call `slice.router.start()`\nafter registering guards to ensure they are active before the first navigation.\n\n## Guard API\n| Method | Signature | Can block | Notes |\n| --- | --- | --- | --- |\n| `beforeEach` | `(to, from, next) => void` | yes | Call `next()` to continue or redirect. |\n| `afterEach` | `(to, from) => void` | no | Runs after navigation completes. |\n\n### `next()` behavior\n| Call | Result | Notes |\n| --- | --- | --- |\n| `next()` | continue | Normal navigation. |\n| `next(false)` | cancel | Navigation is cancelled. |\n| `next('/login')` | redirect | Redirect to path (pushState). |\n| `next({ path: '/login', replace: true })` | redirect | Redirect with history replace. |\n\n## Guard Context\n`to` and `from` include path, component, params, query, and metadata.\n\n| Field | Type | Notes |\n| --- | --- | --- |\n| `path` | `string` | Requested path or resolved full path. |\n| `component` | `string` | Component for the route (parent if nested). |\n| `params` | `object` | Params parsed from `${param}` in routes. |\n| `query` | `object` | URL query parameters. |\n| `metadata` | `object` | Route metadata from config. |\n\n## beforeEach\n```javascript title=\"Block or redirect\"\nslice.router.beforeEach(async (to, from, next) => {\n  if (to.metadata?.private && !isAuthenticated()) {\n    return next({ path: '/login' });\n  }\n  return next();\n});\n```\n\n## afterEach\n```javascript title=\"Post-navigation logic\"\nslice.router.afterEach((to, from) => {\n  document.title = to.metadata?.title || 'My App';\n  window.scrollTo(0, 0);\n});\n```\n\n## Patterns\n```javascript title=\"Feature flag guard\"\nslice.router.beforeEach((to, from, next) => {\n  if (to.metadata?.flag && !featureEnabled(to.metadata.flag)) {\n    return next('/404');\n  }\n  return next();\n});\n```\n\n```javascript title=\"Guard with replace\"\nslice.router.beforeEach((to, from, next) => {\n  if (to.path === '/old-path') {\n    return next({ path: '/new-path', replace: true });\n  }\n  return next();\n});\n```\n\n## Best Practices\n:::tip\nAlways call `next()` in `beforeEach`. Missing it logs a warning and navigation continues.\n:::\n\n:::tip\nKeep guard logic fast. Long async work slows down navigation.\n:::\n\n## Gotchas\n:::warning\nGuards can create redirect loops. The router detects loops and stops after 10 redirects.\n:::\n\n:::warning\n`afterEach` cannot block navigation. Use `beforeEach` if you need to cancel or redirect.\n:::\n";
+    if (true) {
+      this.setupCopyButton();
+    }
       {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
@@ -269,6 +272,7 @@ export default class RouterGuardsDocumentation extends HTMLElement {
 
     const copyMenu = await slice.build('CopyMarkdownMenu', {
       markdownPath: this.markdownPath,
+      markdownContent: this.markdownContent,
       label: '❐'
     });
 

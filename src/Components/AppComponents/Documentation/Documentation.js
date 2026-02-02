@@ -7,283 +7,43 @@ export default class Documentation extends HTMLElement {
   }
 
   async init() {
-    await this.createHero();
-    this.createPathCards();
-    this.createCategoryCards();
-    this.createToolingCards();
-    this.createNextSteps();
-  }
-
-  async createHero() {
-    const ctaContainer = this.querySelector('.hero-cta');
-    const statsContainer = this.querySelector('.hero-stats');
-    const codeContainer = this.querySelector('.hero-code');
-    const linksContainer = this.querySelector('.hero-links');
-
-    if (ctaContainer) {
-      const primary = await slice.build('Button', {
-        value: 'Start with Installation',
-        onClickCallback: async () => {
-          await slice.router.navigate('/Documentation/Installation');
-        }
-      });
-
-      const secondary = await slice.build('Button', {
-        value: 'Explore Components',
-        onClickCallback: async () => {
-          await slice.router.navigate('/Documentation/Visual');
-        }
-      });
-
-      const cli = await slice.build('Button', {
-        value: 'CLI Commands',
-        onClickCallback: async () => {
-          await slice.router.navigate('/Documentation/Commands');
-        }
-      });
-
-      ctaContainer.appendChild(primary);
-      ctaContainer.appendChild(secondary);
-      ctaContainer.appendChild(cli);
+    this.markdownPath = "documentation-overview.md";
+    this.markdownContent = "---\ntitle: Documentation\nroute: /Documentation\nnavLabel: Documentation\nsection: Introduction\ngroup: Overview\norder: 1\ndescription: The documentation landing page for Slice.js.\ncomponent: Documentation\ntags: [documentation, overview]\n---\n\n:::html\n<div class=\"docs-landing\">\n  <section class=\"docs-hero\">\n    <div class=\"hero-content\">\n      <span class=\"hero-badge\">Slice.js Documentation</span>\n      <h1>Build fast, readable, and reusable UI with Slice.js.</h1>\n      <p class=\"hero-lede\">\n        Learn the core concepts, component patterns, routing, and tooling through focused guides\n        and API references. Everything here is built on native Web Components and plain JavaScript.\n      </p>\n      <div class=\"hero-cta\"></div>\n      <div class=\"hero-stats\"></div>\n    </div>\n    <div class=\"hero-side\">\n      <div class=\"hero-panel\">\n        <div class=\"hero-panel-header\">\n          <span>Quick Start</span>\n          <span class=\"hero-panel-pill\">JS</span>\n        </div>\n        <div class=\"hero-code\"></div>\n      </div>\n      <div class=\"hero-links\"></div>\n    </div>\n  </section>\n\n  <section class=\"docs-section\">\n    <div class=\"section-head\">\n      <h2>Choose your learning path</h2>\n      <p>Jump to curated paths based on what you want to build next.</p>\n    </div>\n    <div class=\"path-grid\"></div>\n  </section>\n\n  <section class=\"docs-section\">\n    <div class=\"section-head\">\n      <h2>Core foundations</h2>\n      <p>Understand the building blocks that power Slice.js apps.</p>\n    </div>\n    <div class=\"category-grid\"></div>\n  </section>\n\n  <section class=\"docs-section\">\n    <div class=\"section-head\">\n      <h2>Tooling and configuration</h2>\n      <p>Set up projects, manage components, and streamline workflows.</p>\n    </div>\n    <div class=\"tooling-grid\"></div>\n  </section>\n\n  <section class=\"docs-section docs-next\">\n    <div class=\"next-steps\"></div>\n  </section>\n</div>\n:::\n\n:::script\nconst createHero = async () => {\n  const ctaContainer = component.querySelector('.hero-cta');\n  const statsContainer = component.querySelector('.hero-stats');\n  const codeContainer = component.querySelector('.hero-code');\n  const linksContainer = component.querySelector('.hero-links');\n\n  if (ctaContainer) {\n    const primary = await slice.build('Button', {\n      value: 'Start with Installation',\n      onClickCallback: async () => {\n        await slice.router.navigate('/Documentation/Installation');\n      }\n    });\n\n    const secondary = await slice.build('Button', {\n      value: 'Explore Components',\n      onClickCallback: async () => {\n        await slice.router.navigate('/Documentation/Visual');\n      }\n    });\n\n    const cli = await slice.build('Button', {\n      value: 'CLI Commands',\n      onClickCallback: async () => {\n        await slice.router.navigate('/Documentation/Commands');\n      }\n    });\n\n    ctaContainer.appendChild(primary);\n    ctaContainer.appendChild(secondary);\n    ctaContainer.appendChild(cli);\n  }\n\n  if (statsContainer) {\n    const stats = [\n      { label: 'Component types', value: '3' },\n      { label: 'Core lifecycle methods', value: '3' },\n      { label: 'Built-in services', value: '5' },\n      { label: 'Routing modes', value: '2' }\n    ];\n\n    stats.forEach((stat) => {\n      const item = document.createElement('div');\n      item.className = 'stat-card';\n      item.innerHTML = `\n        <div class=\"stat-value\">${stat.value}</div>\n        <div class=\"stat-label\">${stat.label}</div>\n      `;\n      statsContainer.appendChild(item);\n    });\n  }\n\n  if (codeContainer) {\n    const code = await slice.build('CodeVisualizer', {\n      language: 'javascript',\n      value: `// Build a component and attach it\nconst card = await slice.build('Card', {\n  title: 'Slice.js Documentation',\n  text: 'Start building with clean components.'\n});\n\ndocument.querySelector('#app').appendChild(card);`\n    });\n\n    codeContainer.appendChild(code);\n  }\n\n  if (linksContainer) {\n    const links = [\n      { title: 'What is Slice.js?', desc: 'Architecture, goals, and mental model.', path: '/Documentation/Slice' },\n      { title: 'sliceConfig.json', desc: 'Configure themes, paths, router, and services.', path: '/Documentation/Configuration/sliceConfig' },\n      { title: 'Routing & Guards', desc: 'Route config, params, and navigation guards.', path: '/Documentation/Routing' }\n    ];\n\n    links.forEach((link) => {\n      const item = document.createElement('button');\n      item.type = 'button';\n      item.className = 'hero-link';\n      item.innerHTML = `\n        <div class=\"hero-link-title\">${link.title}</div>\n        <div class=\"hero-link-desc\">${link.desc}</div>\n        <span class=\"hero-link-arrow\">→</span>\n      `;\n      item.addEventListener('click', async () => {\n        await slice.router.navigate(link.path);\n      });\n      linksContainer.appendChild(item);\n    });\n  }\n};\n\nconst createPathCards = () => {\n  const grid = component.querySelector('.path-grid');\n  if (!grid) return;\n\n  const paths = [\n    {\n      tag: 'Start here',\n      title: 'Getting Started',\n      description: 'Install the CLI, create a project, and learn the core workflow.',\n      path: '/Documentation/Installation',\n      accent: 'primary'\n    },\n    {\n      tag: 'Components',\n      title: 'Build & Compose',\n      description: 'Understand build(), static props, and the component lifecycle.',\n      path: '/Documentation/The-build-method',\n      accent: 'secondary'\n    },\n    {\n      tag: 'Routing',\n      title: 'Navigation',\n      description: 'Configure routes, guard transitions, and reuse cached views.',\n      path: '/Documentation/Routing',\n      accent: 'success'\n    },\n    {\n      tag: 'State',\n      title: 'Context Manager',\n      description: 'Shared state with watchers, selectors, and persistence.',\n      path: '/Documentation/ContextManager',\n      accent: 'warning'\n    }\n  ];\n\n  paths.forEach((item) => {\n    const card = document.createElement('div');\n    card.className = `doc-card`;\n    card.dataset.accent = item.accent;\n    card.innerHTML = `\n      <div class=\"doc-pill\">${item.tag}</div>\n      <h3>${item.title}</h3>\n      <p>${item.description}</p>\n      <span class=\"doc-link\">Open guide →</span>\n    `;\n    card.addEventListener('click', async () => {\n      await slice.router.navigate(item.path);\n    });\n    grid.appendChild(card);\n  });\n};\n\nconst createCategoryCards = () => {\n  const grid = component.querySelector('.category-grid');\n  if (!grid) return;\n\n  const categories = [\n    {\n      title: 'Visual Components',\n      description: 'UI building blocks like Button, Card, Grid, Layout, and forms.',\n      path: '/Documentation/Visual',\n      icon: '🎨'\n    },\n    {\n      title: 'Structural Components',\n      description: 'Router, Controller, StylesManager, and framework services.',\n      path: '/Documentation/Structural',\n      icon: '⚙️'\n    },\n    {\n      title: 'Services',\n      description: 'Fetch, storage, translation, and reusable business logic.',\n      path: '/Documentation/Service',\n      icon: '🔧'\n    },\n    {\n      title: 'Lifecycle Methods',\n      description: 'init(), update(), beforeDestroy() and when to use them.',\n      path: '/Documentation/LifeCycle-Methods',\n      icon: '⏱️'\n    }\n  ];\n\n  categories.forEach((item) => {\n    const card = document.createElement('div');\n    card.className = 'doc-card doc-card-compact';\n    card.innerHTML = `\n      <div class=\"doc-icon\">${item.icon}</div>\n      <h3>${item.title}</h3>\n      <p>${item.description}</p>\n      <span class=\"doc-link\">View docs →</span>\n    `;\n    card.addEventListener('click', async () => {\n      await slice.router.navigate(item.path);\n    });\n    grid.appendChild(card);\n  });\n};\n\nconst createToolingCards = () => {\n  const grid = component.querySelector('.tooling-grid');\n  if (!grid) return;\n\n  const tools = [\n    {\n      title: 'Slice CLI',\n      description: 'Initialize projects, manage components, and run dev servers.',\n      path: '/Documentation/Commands'\n    },\n    {\n      title: 'sliceConfig.json',\n      description: 'Configure themes, styles, routes, and structural services.',\n      path: '/Documentation/Configuration/sliceConfig'\n    },\n    {\n      title: 'Themes',\n      description: 'Customize themes, set defaults, and build your own palettes.',\n      path: '/Documentation/Themes'\n    },\n    {\n      title: 'Playground',\n      description: 'Experiment with components and routing in a live sandbox.',\n      path: '/Playground'\n    }\n  ];\n\n  tools.forEach((item) => {\n    const card = document.createElement('div');\n    card.className = 'doc-card doc-card-tool';\n    card.innerHTML = `\n      <h3>${item.title}</h3>\n      <p>${item.description}</p>\n      <span class=\"doc-link\">Open →</span>\n    `;\n    card.addEventListener('click', async () => {\n      await slice.router.navigate(item.path);\n    });\n    grid.appendChild(card);\n  });\n};\n\nconst createNextSteps = () => {\n  const container = component.querySelector('.next-steps');\n  if (!container) return;\n\n  container.innerHTML = `\n    <div class=\"next-steps-panel\">\n      <div>\n        <h2>Ready to build?</h2>\n        <p>Start with installation, then create your first component and wire up routing.</p>\n      </div>\n      <div class=\"next-steps-actions\"></div>\n    </div>\n  `;\n\n  const actions = container.querySelector('.next-steps-actions');\n  if (!actions) return;\n\n  const actionsList = [\n    { label: 'Installation', path: '/Documentation/Installation' },\n    { label: 'The build method', path: '/Documentation/The-build-method' },\n    { label: 'Routing', path: '/Documentation/Routing' }\n  ];\n\n  actionsList.forEach((item) => {\n    const link = document.createElement('button');\n    link.type = 'button';\n    link.className = 'next-step-link';\n    link.textContent = item.label;\n    link.addEventListener('click', async () => {\n      await slice.router.navigate(item.path);\n    });\n    actions.appendChild(link);\n  });\n};\n\nawait createHero();\ncreatePathCards();\ncreateCategoryCards();\ncreateToolingCards();\ncreateNextSteps();\n:::\n";
+    if (true) {
+      this.setupCopyButton();
     }
-
-    if (statsContainer) {
-      const stats = [
-        { label: 'Component types', value: '3' },
-        { label: 'Core lifecycle methods', value: '3' },
-        { label: 'Built-in services', value: '5' },
-        { label: 'Routing modes', value: '2' }
-      ];
-
-      stats.forEach((stat) => {
-        const item = document.createElement('div');
-        item.className = 'stat-card';
-        item.innerHTML = `
-          <div class="stat-value">${stat.value}</div>
-          <div class="stat-label">${stat.label}</div>
-        `;
-        statsContainer.appendChild(item);
-      });
-    }
-
-    if (codeContainer) {
-      const code = await slice.build('CodeVisualizer', {
-        language: 'javascript',
-        value: `// Build a component and attach it
-const card = await slice.build('Card', {
-  title: 'Slice.js Documentation',
-  text: 'Start building with clean components.'
-});
-
-document.querySelector('#app').appendChild(card);`
-      });
-
-      codeContainer.appendChild(code);
-    }
-
-    if (linksContainer) {
-      const links = [
-        { title: 'What is Slice.js?', desc: 'Architecture, goals, and mental model.', path: '/Documentation/Slice' },
-        { title: 'sliceConfig.json', desc: 'Configure themes, paths, router, and services.', path: '/Documentation/Configuration/sliceConfig' },
-        { title: 'Routing & Guards', desc: 'Route config, params, and navigation guards.', path: '/Documentation/Routing' }
-      ];
-
-      links.forEach((link) => {
-        const item = document.createElement('button');
-        item.type = 'button';
-        item.className = 'hero-link';
-        item.innerHTML = `
-          <div class="hero-link-title">${link.title}</div>
-          <div class="hero-link-desc">${link.desc}</div>
-          <span class="hero-link-arrow">→</span>
-        `;
-        item.addEventListener('click', async () => {
-          await slice.router.navigate(link.path);
-        });
-        linksContainer.appendChild(item);
-      });
-    }
-  }
-
-  createPathCards() {
-    const grid = this.querySelector('.path-grid');
-    if (!grid) return;
-
-    const paths = [
       {
-        tag: 'Start here',
-        title: 'Getting Started',
-        description: 'Install the CLI, create a project, and learn the core workflow.',
-        path: '/Documentation/Installation',
-        accent: 'primary'
-      },
-      {
-        tag: 'Components',
-        title: 'Build & Compose',
-        description: 'Understand build(), static props, and the component lifecycle.',
-        path: '/Documentation/The-build-method',
-        accent: 'secondary'
-      },
-      {
-        tag: 'Routing',
-        title: 'Navigation',
-        description: 'Configure routes, guard transitions, and reuse cached views.',
-        path: '/Documentation/Routing',
-        accent: 'success'
-      },
-      {
-        tag: 'State',
-        title: 'Context Manager',
-        description: 'Shared state with watchers, selectors, and persistence.',
-        path: '/Documentation/ContextManager',
-        accent: 'warning'
+         try {
+            const fn = new Function('component', 'slice', 'document', "const createHero = async () => {\n  const ctaContainer = component.querySelector('.hero-cta');\n  const statsContainer = component.querySelector('.hero-stats');\n  const codeContainer = component.querySelector('.hero-code');\n  const linksContainer = component.querySelector('.hero-links');\n\n  if (ctaContainer) {\n    const primary = await slice.build('Button', {\n      value: 'Start with Installation',\n      onClickCallback: async () => {\n        await slice.router.navigate('/Documentation/Installation');\n      }\n    });\n\n    const secondary = await slice.build('Button', {\n      value: 'Explore Components',\n      onClickCallback: async () => {\n        await slice.router.navigate('/Documentation/Visual');\n      }\n    });\n\n    const cli = await slice.build('Button', {\n      value: 'CLI Commands',\n      onClickCallback: async () => {\n        await slice.router.navigate('/Documentation/Commands');\n      }\n    });\n\n    ctaContainer.appendChild(primary);\n    ctaContainer.appendChild(secondary);\n    ctaContainer.appendChild(cli);\n  }\n\n  if (statsContainer) {\n    const stats = [\n      { label: 'Component types', value: '3' },\n      { label: 'Core lifecycle methods', value: '3' },\n      { label: 'Built-in services', value: '5' },\n      { label: 'Routing modes', value: '2' }\n    ];\n\n    stats.forEach((stat) => {\n      const item = document.createElement('div');\n      item.className = 'stat-card';\n      item.innerHTML = `\n        <div class=\"stat-value\">${stat.value}</div>\n        <div class=\"stat-label\">${stat.label}</div>\n      `;\n      statsContainer.appendChild(item);\n    });\n  }\n\n  if (codeContainer) {\n    const code = await slice.build('CodeVisualizer', {\n      language: 'javascript',\n      value: `// Build a component and attach it\nconst card = await slice.build('Card', {\n  title: 'Slice.js Documentation',\n  text: 'Start building with clean components.'\n});\n\ndocument.querySelector('#app').appendChild(card);`\n    });\n\n    codeContainer.appendChild(code);\n  }\n\n  if (linksContainer) {\n    const links = [\n      { title: 'What is Slice.js?', desc: 'Architecture, goals, and mental model.', path: '/Documentation/Slice' },\n      { title: 'sliceConfig.json', desc: 'Configure themes, paths, router, and services.', path: '/Documentation/Configuration/sliceConfig' },\n      { title: 'Routing & Guards', desc: 'Route config, params, and navigation guards.', path: '/Documentation/Routing' }\n    ];\n\n    links.forEach((link) => {\n      const item = document.createElement('button');\n      item.type = 'button';\n      item.className = 'hero-link';\n      item.innerHTML = `\n        <div class=\"hero-link-title\">${link.title}</div>\n        <div class=\"hero-link-desc\">${link.desc}</div>\n        <span class=\"hero-link-arrow\">→</span>\n      `;\n      item.addEventListener('click', async () => {\n        await slice.router.navigate(link.path);\n      });\n      linksContainer.appendChild(item);\n    });\n  }\n};\n\nconst createPathCards = () => {\n  const grid = component.querySelector('.path-grid');\n  if (!grid) return;\n\n  const paths = [\n    {\n      tag: 'Start here',\n      title: 'Getting Started',\n      description: 'Install the CLI, create a project, and learn the core workflow.',\n      path: '/Documentation/Installation',\n      accent: 'primary'\n    },\n    {\n      tag: 'Components',\n      title: 'Build & Compose',\n      description: 'Understand build(), static props, and the component lifecycle.',\n      path: '/Documentation/The-build-method',\n      accent: 'secondary'\n    },\n    {\n      tag: 'Routing',\n      title: 'Navigation',\n      description: 'Configure routes, guard transitions, and reuse cached views.',\n      path: '/Documentation/Routing',\n      accent: 'success'\n    },\n    {\n      tag: 'State',\n      title: 'Context Manager',\n      description: 'Shared state with watchers, selectors, and persistence.',\n      path: '/Documentation/ContextManager',\n      accent: 'warning'\n    }\n  ];\n\n  paths.forEach((item) => {\n    const card = document.createElement('div');\n    card.className = `doc-card`;\n    card.dataset.accent = item.accent;\n    card.innerHTML = `\n      <div class=\"doc-pill\">${item.tag}</div>\n      <h3>${item.title}</h3>\n      <p>${item.description}</p>\n      <span class=\"doc-link\">Open guide →</span>\n    `;\n    card.addEventListener('click', async () => {\n      await slice.router.navigate(item.path);\n    });\n    grid.appendChild(card);\n  });\n};\n\nconst createCategoryCards = () => {\n  const grid = component.querySelector('.category-grid');\n  if (!grid) return;\n\n  const categories = [\n    {\n      title: 'Visual Components',\n      description: 'UI building blocks like Button, Card, Grid, Layout, and forms.',\n      path: '/Documentation/Visual',\n      icon: '🎨'\n    },\n    {\n      title: 'Structural Components',\n      description: 'Router, Controller, StylesManager, and framework services.',\n      path: '/Documentation/Structural',\n      icon: '⚙️'\n    },\n    {\n      title: 'Services',\n      description: 'Fetch, storage, translation, and reusable business logic.',\n      path: '/Documentation/Service',\n      icon: '🔧'\n    },\n    {\n      title: 'Lifecycle Methods',\n      description: 'init(), update(), beforeDestroy() and when to use them.',\n      path: '/Documentation/LifeCycle-Methods',\n      icon: '⏱️'\n    }\n  ];\n\n  categories.forEach((item) => {\n    const card = document.createElement('div');\n    card.className = 'doc-card doc-card-compact';\n    card.innerHTML = `\n      <div class=\"doc-icon\">${item.icon}</div>\n      <h3>${item.title}</h3>\n      <p>${item.description}</p>\n      <span class=\"doc-link\">View docs →</span>\n    `;\n    card.addEventListener('click', async () => {\n      await slice.router.navigate(item.path);\n    });\n    grid.appendChild(card);\n  });\n};\n\nconst createToolingCards = () => {\n  const grid = component.querySelector('.tooling-grid');\n  if (!grid) return;\n\n  const tools = [\n    {\n      title: 'Slice CLI',\n      description: 'Initialize projects, manage components, and run dev servers.',\n      path: '/Documentation/Commands'\n    },\n    {\n      title: 'sliceConfig.json',\n      description: 'Configure themes, styles, routes, and structural services.',\n      path: '/Documentation/Configuration/sliceConfig'\n    },\n    {\n      title: 'Themes',\n      description: 'Customize themes, set defaults, and build your own palettes.',\n      path: '/Documentation/Themes'\n    },\n    {\n      title: 'Playground',\n      description: 'Experiment with components and routing in a live sandbox.',\n      path: '/Playground'\n    }\n  ];\n\n  tools.forEach((item) => {\n    const card = document.createElement('div');\n    card.className = 'doc-card doc-card-tool';\n    card.innerHTML = `\n      <h3>${item.title}</h3>\n      <p>${item.description}</p>\n      <span class=\"doc-link\">Open →</span>\n    `;\n    card.addEventListener('click', async () => {\n      await slice.router.navigate(item.path);\n    });\n    grid.appendChild(card);\n  });\n};\n\nconst createNextSteps = () => {\n  const container = component.querySelector('.next-steps');\n  if (!container) return;\n\n  container.innerHTML = `\n    <div class=\"next-steps-panel\">\n      <div>\n        <h2>Ready to build?</h2>\n        <p>Start with installation, then create your first component and wire up routing.</p>\n      </div>\n      <div class=\"next-steps-actions\"></div>\n    </div>\n  `;\n\n  const actions = container.querySelector('.next-steps-actions');\n  if (!actions) return;\n\n  const actionsList = [\n    { label: 'Installation', path: '/Documentation/Installation' },\n    { label: 'The build method', path: '/Documentation/The-build-method' },\n    { label: 'Routing', path: '/Documentation/Routing' }\n  ];\n\n  actionsList.forEach((item) => {\n    const link = document.createElement('button');\n    link.type = 'button';\n    link.className = 'next-step-link';\n    link.textContent = item.label;\n    link.addEventListener('click', async () => {\n      await slice.router.navigate(item.path);\n    });\n    actions.appendChild(link);\n  });\n};\n\nawait createHero();\ncreatePathCards();\ncreateCategoryCards();\ncreateToolingCards();\ncreateNextSteps();");
+            await fn(this, slice, document);
+         } catch (error) {
+            console.warn('Inline script failed:', error);
+         }
       }
-    ];
-
-    paths.forEach((item) => {
-      const card = document.createElement('div');
-      card.className = 'doc-card';
-      card.dataset.accent = item.accent;
-      card.innerHTML = `
-        <div class="doc-pill">${item.tag}</div>
-        <h3>${item.title}</h3>
-        <p>${item.description}</p>
-        <span class="doc-link">Open guide →</span>
-      `;
-      card.addEventListener('click', async () => {
-        await slice.router.navigate(item.path);
-      });
-      grid.appendChild(card);
-    });
   }
 
-  createCategoryCards() {
-    const grid = this.querySelector('.category-grid');
-    if (!grid) return;
-
-    const categories = [
-      {
-        title: 'Visual Components',
-        description: 'UI building blocks like Button, Card, Grid, Layout, and forms.',
-        path: '/Documentation/Visual',
-        icon: '🎨'
-      },
-      {
-        title: 'Structural Components',
-        description: 'Router, Controller, StylesManager, and framework services.',
-        path: '/Documentation/Structural',
-        icon: '⚙️'
-      },
-      {
-        title: 'Services',
-        description: 'Fetch, storage, translation, and reusable business logic.',
-        path: '/Documentation/Service',
-        icon: '🔧'
-      },
-      {
-        title: 'Lifecycle Methods',
-        description: 'init(), update(), beforeDestroy() and when to use them.',
-        path: '/Documentation/LifeCycle-Methods',
-        icon: '⏱️'
-      }
-    ];
-
-    categories.forEach((item) => {
-      const card = document.createElement('div');
-      card.className = 'doc-card doc-card-compact';
-      card.innerHTML = `
-        <div class="doc-icon">${item.icon}</div>
-        <h3>${item.title}</h3>
-        <p>${item.description}</p>
-        <span class="doc-link">View docs →</span>
-      `;
-      card.addEventListener('click', async () => {
-        await slice.router.navigate(item.path);
-      });
-      grid.appendChild(card);
-    });
+  async update() {
+    // Refresh dynamic content here if needed
   }
 
-  createToolingCards() {
-    const grid = this.querySelector('.tooling-grid');
-    if (!grid) return;
-
-    const tools = [
-      {
-        title: 'Slice CLI',
-        description: 'Initialize projects, manage components, and run dev servers.',
-        path: '/Documentation/Commands'
-      },
-      {
-        title: 'sliceConfig.json',
-        description: 'Configure themes, styles, routes, and structural services.',
-        path: '/Documentation/Configuration/sliceConfig'
-      },
-      {
-        title: 'Themes',
-        description: 'Customize themes, set defaults, and build your own palettes.',
-        path: '/Documentation/Themes'
-      },
-      {
-        title: 'Playground',
-        description: 'Experiment with components and routing in a live sandbox.',
-        path: '/Playground'
-      }
-    ];
-
-    tools.forEach((item) => {
-      const card = document.createElement('div');
-      card.className = 'doc-card doc-card-tool';
-      card.innerHTML = `
-        <h3>${item.title}</h3>
-        <p>${item.description}</p>
-        <span class="doc-link">Open →</span>
-      `;
-      card.addEventListener('click', async () => {
-        await slice.router.navigate(item.path);
-      });
-      grid.appendChild(card);
-    });
+  beforeDestroy() {
+    // Cleanup timers, listeners, or pending work here
   }
 
-  createNextSteps() {
-    const container = this.querySelector('.next-steps');
+  async setupCopyButton() {
+    const container = this.querySelector('[data-copy-md]');
     if (!container) return;
 
-    container.innerHTML = `
-      <div class="next-steps-panel">
-        <div>
-          <h2>Ready to build?</h2>
-          <p>Start with installation, then create your first component and wire up routing.</p>
-        </div>
-        <div class="next-steps-actions"></div>
-      </div>
-    `;
-
-    const actions = container.querySelector('.next-steps-actions');
-    if (!actions) return;
-
-    const actionsList = [
-      { label: 'Installation', path: '/Documentation/Installation' },
-      { label: 'The build method', path: '/Documentation/The-build-method' },
-      { label: 'Routing', path: '/Documentation/Routing' }
-    ];
-
-    actionsList.forEach((item) => {
-      const link = document.createElement('button');
-      link.type = 'button';
-      link.className = 'next-step-link';
-      link.textContent = item.label;
-      link.addEventListener('click', async () => {
-        await slice.router.navigate(item.path);
-      });
-      actions.appendChild(link);
+    const copyMenu = await slice.build('CopyMarkdownMenu', {
+      markdownPath: this.markdownPath,
+      markdownContent: this.markdownContent,
+      label: '❐'
     });
+
+    container.appendChild(copyMenu);
   }
 
-  async update() {}
-
-  beforeDestroy() {}
+  async copyMarkdown() {}
 }
 
 customElements.define('slice-documentation', Documentation);

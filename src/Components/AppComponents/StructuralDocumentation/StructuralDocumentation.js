@@ -8,7 +8,10 @@ export default class StructuralDocumentation extends HTMLElement {
 
   async init() {
     this.markdownPath = "getting-started/structural-components.md";
-    this.setupCopyButton();
+    this.markdownContent = "---\ntitle: Structural\nroute: /Documentation/Structural\nnavLabel: Structural\nsection: Getting Started\ngroup: Components\norder: 33\ndescription: Structural components that power Slice.js.\ncomponent: StructuralDocumentation\ntags: [structural, controller, router, styles]\n---\n\n# Structural Components\n\n## Overview\nStructural components power the framework runtime. They are created by Slice.js and exposed\nunder `slice.*`. You do not build them directly.\n\n## Key Components\n- `slice.controller` for component lifecycle and lookup\n- `slice.router` for navigation and route rendering\n- `slice.stylesManager` for styles and themes\n- `slice.events` for pub/sub (optional)\n- `slice.context` for shared state (optional)\n\n## Controller API\n| Method | Signature | Returns | Notes |\n| --- | --- | --- | --- |\n| `getComponent` | `(sliceId)` | `HTMLElement | undefined` | Lookup by sliceId. |\n| `destroyByContainer` | `(container)` | `number` | Destroys Slice components inside container. |\n| `destroyByPattern` | `(pattern)` | `number` | Destroys components whose sliceId matches pattern. |\n\n```javascript title=\"Destroy components safely\"\nconst container = this.querySelector('.items');\nslice.controller.destroyByContainer(container);\ncontainer.innerHTML = '';\n```\n\n## Router API\n| Method | Signature | Notes |\n| --- | --- | --- |\n| `navigate` | `(path, _redirectChain?, _options?)` | Programmatic navigation. |\n| `beforeEach` | `(to, from, next)` | Register a guard before navigation. |\n| `afterEach` | `(to, from)` | Run logic after navigation. |\n| `start` | `()` | Start routing immediately. |\n\n## Styles and Themes\n`slice.setTheme(themeName)` applies a theme through the StylesManager.\n\n```javascript title=\"Switch themes\"\nawait slice.setTheme('Dark');\n```\n\n## EventManager (Optional)\nProvides pub/sub via `slice.events`. When disabled, the API is a no-op.\n\n| Method | Signature | Notes |\n| --- | --- | --- |\n| `subscribe` | `(eventName, callback, options?)` | Returns subscription id. |\n| `subscribeOnce` | `(eventName, callback, options?)` | Auto-unsubscribe after first emit. |\n| `unsubscribe` | `(eventName, id)` | Returns boolean. |\n| `emit` | `(eventName, data?)` | Emits to all subscribers. |\n| `bind` | `(component)` | Returns component-bound API. |\n\n## ContextManager (Optional)\nShared state system available at `slice.context`.\n\n| Method | Signature | Notes |\n| --- | --- | --- |\n| `create` | `(name, initialState, options?)` | Options include `persist`. |\n| `getState` | `(name)` | Returns current state or null. |\n| `setState` | `(name, updater)` | Accepts object or updater function. |\n| `watch` | `(name, component, callback, selector?)` | Auto-cleanup via component. |\n| `destroy` | `(name)` | Removes a context. |\n| `list` | `()` | Returns context names. |\n\n## Best Practices\n:::tip\nUse `destroyByContainer` before recreating dynamic lists to avoid leaks.\n:::\n\n:::tip\nRegister guards before calling `slice.router.start()`.\n:::\n";
+    if (true) {
+      this.setupCopyButton();
+    }
       {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
@@ -297,6 +300,7 @@ export default class StructuralDocumentation extends HTMLElement {
 
     const copyMenu = await slice.build('CopyMarkdownMenu', {
       markdownPath: this.markdownPath,
+      markdownContent: this.markdownContent,
       label: '❐'
     });
 

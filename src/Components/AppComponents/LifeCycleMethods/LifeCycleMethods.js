@@ -8,7 +8,10 @@ export default class LifeCycleMethods extends HTMLElement {
 
   async init() {
     this.markdownPath = "getting-started/lifecycle-overview.md";
-    this.setupCopyButton();
+    this.markdownContent = "---\ntitle: LifeCycle Methods\nroute: /Documentation/LifeCycle-Methods\nnavLabel: LifeCycle Methods\nsection: Getting Started\ngroup: Components\norder: 40\ndescription: Overview of init, update, and beforeDestroy in Slice.js.\ncomponent: LifeCycleMethods\ntags: [lifecycle, init, update, destroy]\n---\n\n# LifeCycle Methods\n\n## Overview\nSlice.js components expose three lifecycle methods for predictable behavior:\n\n- `init()` for one-time setup\n- `update()` for refreshes when data or routes change\n- `beforeDestroy()` for cleanup and memory safety\n\nThese methods are called by the framework and are the recommended places to manage state,\nsubscriptions, and DOM updates.\n\n## Lifecycle Summary\n| Method | Called when | Async awaited | Typical responsibilities |\n| --- | --- | --- | --- |\n| `init()` | After construction, before first use | yes | Cache DOM, fetch initial data, build static children. |\n| `update()` | When a cached route/component is reused | yes | Re-fetch data, rebuild dynamic lists, update state. |\n| `beforeDestroy()` | Right before destruction | no | Cleanup timers, listeners, subscriptions, aborts. |\n\n## Call Order and Timing\n```javascript title=\"Lifecycle timing\"\nclass Example extends HTMLElement {\n  async init() {\n    // Runs once after template is attached and props are set\n  }\n\n  async update() {\n    // Runs when the component is reused or refreshed\n  }\n\n  beforeDestroy() {\n    // Runs right before the component is destroyed\n  }\n}\n```\n\n## Navigation and Reuse\n`update()` is called when a cached component is reused by routing (for example, `Route` and\n`MultiRoute` containers). This keeps UI responsive without rebuilding static structure.\n\n## Recommended Structure\n```javascript title=\"Recommended separation\"\nexport default class UserList extends HTMLElement {\n  async init() {\n    this.$container = this.querySelector('.users');\n    await this.loadUsers();\n    await this.buildUserCards();\n  }\n\n  async update() {\n    slice.controller.destroyByContainer(this.$container);\n    this.$container.innerHTML = '';\n    await this.loadUsers();\n    await this.buildUserCards();\n  }\n\n  beforeDestroy() {\n    clearInterval(this._pollingId);\n    this.abortController?.abort();\n  }\n}\n```\n\n## Best Practices\n:::tip\nKeep `init()` focused on one-time setup and cache DOM references there.\n:::\n\n:::tip\nUse `destroyByContainer` before rebuilding dynamic lists in `update()`.\n:::\n\n## Gotchas\n:::warning\n`beforeDestroy()` is not awaited. Keep it synchronous or fire-and-forget.\n:::\n\n:::warning\nClearing `innerHTML` does not destroy Slice components. Use `destroyByContainer` first.\n:::\n\n## Guides\n- `init()`: /Documentation/LifeCycle-Methods/init\n- `update()`: /Documentation/LifeCycle-Methods/update\n- `beforeDestroy()`: /Documentation/LifeCycle-Methods/beforeDestroy\n";
+    if (true) {
+      this.setupCopyButton();
+    }
       {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
@@ -117,6 +120,7 @@ export default class LifeCycleMethods extends HTMLElement {
 
     const copyMenu = await slice.build('CopyMarkdownMenu', {
       markdownPath: this.markdownPath,
+      markdownContent: this.markdownContent,
       label: '❐'
     });
 

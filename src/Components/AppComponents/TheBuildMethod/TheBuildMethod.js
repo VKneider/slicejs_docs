@@ -8,7 +8,10 @@ export default class TheBuildMethod extends HTMLElement {
 
   async init() {
     this.markdownPath = "getting-started/build-method.md";
-    this.setupCopyButton();
+    this.markdownContent = "---\ntitle: The build method\nroute: /Documentation/The-build-method\nnavLabel: The build method\nsection: Getting Started\ngroup: Components\norder: 31\ndescription: Use slice.build to create components.\ncomponent: TheBuildMethod\ntags: [build, components]\n---\n\n# The build method\n\n## Overview\n`slice.build(componentName, props)` creates a component instance, applies Static Props, runs\n`init()`, and registers the component with the controller. It returns a ready-to-append component\ninstance.\n\nThis is the standard way to create Visual, App, and Service components in Slice.js.\n\n## API\n| Parameter | Type | Required | Notes |\n| --- | --- | --- | --- |\n| `componentName` | `string` | yes | Must exist in `components.js`. |\n| `props` | `object` | no | Public props for the component. |\n\n| Returns | Type | Notes |\n| --- | --- | --- |\n| component instance | `HTMLElement | Object | null` | Returns `null` on error. |\n\n## Lifecycle Steps\n1. Validate component name.\n2. Load template, class, and CSS (visual components only).\n3. Instantiate component and apply props.\n4. Call `init()` if present.\n5. Register component in the controller and component tree.\n\n## Basic Usage\n```javascript title=\"Basic build\"\nconst myButton = await slice.build('Button', {\n  value: 'Click me'\n});\n\ndocument.querySelector('#container').appendChild(myButton);\n```\n\n## Props and Defaults\n```javascript title=\"Props are applied immediately\"\nconst card = await slice.build('Card', {\n  title: 'My Card',\n  text: 'Card content',\n  icon: { name: 'star', iconStyle: 'filled' }\n});\n\n// Card now has this.title, this.text, this.icon\n```\n\n## id and sliceId\n`id` and `sliceId` are handled specially. They are assigned to the instance and then removed\nfrom the props object before Static Props are applied.\n\n```javascript title=\"Use sliceId for lookup\"\nconst navbar = await slice.build('Navbar', {\n  sliceId: 'main-navbar',\n  logo: { src: '/logo.png', path: '/' },\n  items: [{ text: 'Home', path: '/' }]\n});\n\nconst sameNavbar = slice.controller.getComponent('main-navbar');\n```\n\n## Nested Components\n```javascript title=\"Build children and compose\"\nconst grid = await slice.build('Grid', { columns: 3, rows: 1 });\nconst card1 = await slice.build('Card', { title: 'Card 1' });\nconst card2 = await slice.build('Card', { title: 'Card 2' });\nconst card3 = await slice.build('Card', { title: 'Card 3' });\n\nawait grid.setItem(card1);\nawait grid.setItem(card2);\nawait grid.setItem(card3);\n\nthis.appendChild(grid);\n```\n\n## Error Cases\n- Missing or non-string component name\n- Component not listed in `components.js`\n- Structural components cannot be built\n\n## Best Practices\n:::tip\nAlways await `slice.build()` to ensure templates, CSS, and `init()` are finished.\n:::\n\n:::tip\nUse `sliceId` only when you need to retrieve a component later.\n:::\n\n## Gotchas\n:::warning\nBuilding a component can return `null` if the component is missing or fails to load.\n:::\n\n:::warning\nStructural components are created by the framework and cannot be built directly.\n:::\n";
+    if (true) {
+      this.setupCopyButton();
+    }
       {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
@@ -209,6 +212,7 @@ export default class TheBuildMethod extends HTMLElement {
 
     const copyMenu = await slice.build('CopyMarkdownMenu', {
       markdownPath: this.markdownPath,
+      markdownContent: this.markdownContent,
       label: '❐'
     });
 

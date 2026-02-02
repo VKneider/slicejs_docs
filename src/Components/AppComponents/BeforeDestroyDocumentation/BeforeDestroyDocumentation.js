@@ -8,7 +8,10 @@ export default class BeforeDestroyDocumentation extends HTMLElement {
 
   async init() {
     this.markdownPath = "getting-started/before-destroy.md";
-    this.setupCopyButton();
+    this.markdownContent = "---\ntitle: beforeDestroy()\nroute: /Documentation/LifeCycle-Methods/beforeDestroy\nnavLabel: beforeDestroy()\nsection: Getting Started\ngroup: Components\norder: 43\ndescription: Cleanup hooks to avoid memory leaks in Slice.js.\ncomponent: BeforeDestroyDocumentation\ntags: [lifecycle, destroy, cleanup]\n---\n\n# beforeDestroy()\n\n## Overview\n`beforeDestroy()` runs right before a component is destroyed by the controller. Use it for\ncleanup: timers, listeners, subscriptions, and pending async work.\n\nThe controller does not await this method, so keep it synchronous or fire-and-forget.\n\n## API\n| Method | Signature | Returns | Notes |\n| --- | --- | --- | --- |\n| `beforeDestroy` | `beforeDestroy()` | `void` | Called right before the component is removed. |\n\n## Ideal Use Cases\n- Clear intervals and timeouts\n- Abort pending fetch requests\n- Remove global event listeners\n- Dispose third-party instances (charts, maps, etc.)\n\n## Example\n```javascript title=\"Cleanup in beforeDestroy()\"\nexport default class LiveChart extends HTMLElement {\n  constructor(props) {\n    super();\n    slice.attachTemplate(this);\n    slice.controller.setComponentProps(this, props);\n    this.abortController = new AbortController();\n  }\n\n  async init() {\n    this._pollingId = setInterval(() => this.fetchData(), 5000);\n    window.addEventListener('resize', this.onResize);\n    await fetch('/api/chart', { signal: this.abortController.signal });\n  }\n\n  beforeDestroy() {\n    clearInterval(this._pollingId);\n    this.abortController.abort();\n    window.removeEventListener('resize', this.onResize);\n    this.chartInstance?.destroy();\n  }\n}\n```\n\n## Best Practices\n:::tip\nKeep `beforeDestroy()` idempotent so it can be called safely.\n:::\n\n:::tip\nUse `AbortController` for fetch cleanup.\n:::\n\n## Gotchas\n:::warning\nIf you add global listeners in `init()`, remove them in `beforeDestroy()`.\n:::\n\n:::warning\nDo not rely on `await` inside `beforeDestroy()`.\n:::\n";
+    if (true) {
+      this.setupCopyButton();
+    }
       {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
@@ -101,6 +104,7 @@ export default class BeforeDestroyDocumentation extends HTMLElement {
 
     const copyMenu = await slice.build('CopyMarkdownMenu', {
       markdownPath: this.markdownPath,
+      markdownContent: this.markdownContent,
       label: '❐'
     });
 
