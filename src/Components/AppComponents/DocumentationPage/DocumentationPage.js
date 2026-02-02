@@ -1,4 +1,5 @@
 import { documentationRoutes, getAllRoutes, createTreeViewItems } from './documentationRoutes.js';
+import docsIndex from './docsIndex.js';
 
 export default class DocumentationPage extends HTMLElement {
    constructor(props) {
@@ -119,7 +120,17 @@ export default class DocumentationPage extends HTMLElement {
          },
       });
 
+      const searchInput = await slice.build('InputSearchDocs', {
+         docsIndex,
+         maxResults: 10,
+         onSelect: async (item) => {
+            if (!item?.route) return;
+            await slice.router.navigate(item.route);
+         }
+      });
+
       const mainMenu = await slice.build('MainMenu', {});
+      mainMenu.add(searchInput);
       mainMenu.add(treeview);
 
       const myNavigation = await slice.build('MyNavigation', {

@@ -1,6 +1,6 @@
 /**
  * Slice.js Bundle Configuration
- * Generated: 2026-02-02T13:15:10.397Z
+ * Generated: 2026-02-02T14:02:31.351Z
  * Strategy: hybrid
  */
 
@@ -8,13 +8,13 @@
 export const SLICE_BUNDLE_CONFIG = {
   "version": "2.0.0",
   "strategy": "hybrid",
-  "generated": "2026-02-02T13:15:10.396Z",
+  "generated": "2026-02-02T14:02:31.350Z",
   "stats": {
-    "totalComponents": 70,
+    "totalComponents": 74,
     "totalRoutes": 41,
     "sharedComponents": 1,
-    "sharedPercentage": "4.3",
-    "totalSize": 2339121,
+    "sharedPercentage": "4.1",
+    "totalSize": 2367604,
     "criticalSize": 1174
   },
   "bundles": {
@@ -32,7 +32,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Components"
         ],
         "file": "slice-bundle.multiroute-documentationpage.js",
-        "size": 1525891,
+        "size": 1541468,
         "components": [
           "DocumentationPage",
           "Navbar",
@@ -44,6 +44,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "MultiRoute",
           "TreeView",
           "TreeItem",
+          "InputSearchDocs",
           "MainMenu",
           "MyNavigation"
         ],

@@ -1,7 +1,7 @@
 /**
  * Slice.js Bundle
  * Type: route
- * Generated: 2026-02-02T13:15:10.151Z
+ * Generated: 2026-02-02T14:02:31.070Z
  * Strategy: hybrid
  * Components: 7
  * Total Size: 1526.7 KB
@@ -12,7 +12,7 @@ export const SLICE_BUNDLE = {
   "version": "2.0.0",
   "type": "route",
   "route": "services",
-  "generated": "2026-02-02T13:15:10.151Z",
+  "generated": "2026-02-02T14:02:31.070Z",
   "totalSize": 1563373,
   "componentCount": 7,
   "strategy": "hybrid"
