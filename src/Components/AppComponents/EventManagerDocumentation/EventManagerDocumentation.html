@@ -31,6 +31,7 @@
 <div class="callout callout-tip">Use namespaced event names. Avoid generic names like <code>update</code> or <code>change</code>.</div>
 <div class="callout callout-tip">Keep payloads small and serializable when possible.</div>
 <div class="callout callout-tip">Prefer <code>bind()</code> for components. It prevents leaks by default.</div>
+<div class="callout callout-tip">Use EventManager for signals, not for shared state. Pair with ContextManager when state must persist.</div>
 <h2 id="gotchas">Gotchas</h2>
 <div class="callout callout-warning">Clearing a container does not remove subscriptions. Use component-bound subscriptions or manual
 <code>unsubscribe</code> calls.</div>

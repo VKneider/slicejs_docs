@@ -24,11 +24,10 @@ Services are created with `slice.build()` like other components, but they do not
 | `FetchManager` | HTTP requests with loading, timeout, and optional caching | Uses `Loading` component automatically. |
 | `IndexedDbManager` | IndexedDB CRUD helpers | Creates store with `keyPath: 'id'`. |
 | `LocalStorageManager` | LocalStorage JSON wrapper | Returns parsed JSON or null. |
-| `Translator` | Apply translations to active components | Uses `messages.json` and `slice.translator`. |
 | `Link` | SPA navigation anchor | Calls `slice.router.navigate`. |
 
 ## Using a Service
-```javascript title="Access via controller"
+```javascript title="Access via slice shortcut"
 const dataService = await slice.build('FetchManager', {
   baseUrl: 'https://api.myapp.com/v1',
   sliceId: 'data-service'
@@ -36,11 +35,34 @@ const dataService = await slice.build('FetchManager', {
 
 export default class ProductList extends HTMLElement {
   async init() {
-    this.dataService = slice.controller.getComponent('data-service');
+    this.dataService = slice.getComponent('data-service');
     await this.loadProducts();
   }
 }
 ```
+
+## Service Singleton Pattern (sliceId)
+Use a stable `sliceId` to create a shared service instance and retrieve it from any component.
+
+```javascript title="Singleton service setup"
+const audioService = await slice.build('AudioService', {
+  sliceId: 'imposter-audio-service'
+});
+
+export default class GameScreen extends HTMLElement {
+  async init() {
+    this.audioService = slice.getComponent('imposter-audio-service');
+  }
+}
+```
+
+:::tip
+Use `sliceId` when you need a single instance across routes or screens.
+:::
+
+:::warning
+Do not store service instances or functions in `slice.context`. Persist only serializable state.
+:::
 
 ## FetchManager API
 | Method | Signature | Returns | Notes |
@@ -70,13 +92,6 @@ export default class ProductList extends HTMLElement {
 | `removeItem` | `(key)` | `boolean` | Returns success boolean. |
 | `clear` | `()` | `boolean` | Clears localStorage. |
 
-## Translator API
-| Method | Signature | Returns | Notes |
-| --- | --- | --- | --- |
-| `changeLanguage` | `(newLanguage)` | `boolean | void` | Applies translations for active components. |
-| `setPropertiesForComponents` | `()` | `boolean | void` | Updates component props from messages. |
-| `setMessages` | `(messages)` | `void` | Replaces the messages object. |
-
 ## Link API
 | Prop | Type | Default | Notes |
 | --- | --- | --- | --- |
@@ -104,6 +119,3 @@ Pair services with EventManager for notifications or ContextManager for shared s
 :::
 
 ## Gotchas
-:::warning
-`Translator` expects message keys to match active component sliceIds.
-:::

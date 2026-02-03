@@ -13,13 +13,16 @@
 <div class="table-block" data-block-id="doc-block-1"></div>
 <h2 id="using-a-service">Using a Service</h2>
 <div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="service-singleton-pattern-sliceid">Service Singleton Pattern (sliceId)</h2>
+<p>Use a stable <code>sliceId</code> to create a shared service instance and retrieve it from any component.</p>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<div class="callout callout-tip">Use <code>sliceId</code> when you need a single instance across routes or screens.</div>
+<div class="callout callout-warning">Do not store service instances or functions in <code>slice.context</code>. Persist only serializable state.</div>
 <h2 id="fetchmanager-api">FetchManager API</h2>
-<div class="table-block" data-block-id="doc-block-3"></div>
-<h2 id="indexeddbmanager-api">IndexedDbManager API</h2>
 <div class="table-block" data-block-id="doc-block-4"></div>
-<h2 id="localstoragemanager-api">LocalStorageManager API</h2>
+<h2 id="indexeddbmanager-api">IndexedDbManager API</h2>
 <div class="table-block" data-block-id="doc-block-5"></div>
-<h2 id="translator-api">Translator API</h2>
+<h2 id="localstoragemanager-api">LocalStorageManager API</h2>
 <div class="table-block" data-block-id="doc-block-6"></div>
 <h2 id="link-api">Link API</h2>
 <div class="table-block" data-block-id="doc-block-7"></div>
@@ -28,5 +31,4 @@
 <div class="callout callout-tip">Use <code>sliceId</code> when you need global access to a service instance.</div>
 <div class="callout callout-tip">Pair services with EventManager for notifications or ContextManager for shared state.</div>
 <h2 id="gotchas">Gotchas</h2>
-<div class="callout callout-warning"><code>Translator</code> expects message keys to match active component sliceIds.</div>
 </div>

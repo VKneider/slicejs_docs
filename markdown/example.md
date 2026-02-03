@@ -144,6 +144,10 @@ Keep payloads small and serializable when possible.
 Prefer `bind()` for components. It prevents leaks by default.
 :::
 
+:::tip
+Use EventManager for signals, not for shared state. Pair with ContextManager when state must persist.
+:::
+
 ## Gotchas
 :::warning
 Clearing a container does not remove subscriptions. Use component-bound subscriptions or manual
