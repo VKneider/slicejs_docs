@@ -29,9 +29,13 @@
 <h2 id="functional-updates">Functional Updates</h2>
 <p>Use functional updates when new state depends on previous state.</p>
 <div class="code-block" data-block-id="doc-block-8"></div>
+<h2 id="service-singleton-example">Service Singleton Example</h2>
+<div class="code-block" data-block-id="doc-block-9"></div>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Keep contexts small and focused by domain.</div>
 <div class="callout callout-tip">Use selectors to reduce unnecessary updates.</div>
+<div class="callout callout-tip">Prefer serializable state only. Avoid storing class instances or functions.</div>
+<div class="callout callout-tip">Use a service singleton to encapsulate context reads/writes when multiple components share the same domain state.</div>
 <h2 id="gotchas">Gotchas</h2>
 <div class="callout callout-warning"><code>watch()</code> requires a component with a <code>sliceId</code>. Otherwise it returns <code>null</code>.</div>
 <div class="callout callout-warning">Persist only small, serializable state.</div>

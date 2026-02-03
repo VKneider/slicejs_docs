@@ -114,6 +114,21 @@ slice.context.setState('cart', (prev) => ({
 }));
 ```
 
+## Service Singleton Example
+```javascript title="Context access via singleton service"
+const contextService = await slice.build('ImposterGameContextService', {
+  sliceId: 'imposter-context-service'
+});
+
+export default class GameScreen extends HTMLElement {
+  async init() {
+    this.contextService = slice.getComponent('imposter-context-service');
+    const config = this.contextService.getGameConfig();
+    this.contextService.updateGameConfig({ step: 'reveal' });
+  }
+}
+```
+
 ## Best Practices
 :::tip
 Keep contexts small and focused by domain.
@@ -121,6 +136,14 @@ Keep contexts small and focused by domain.
 
 :::tip
 Use selectors to reduce unnecessary updates.
+:::
+
+:::tip
+Prefer serializable state only. Avoid storing class instances or functions.
+:::
+
+:::tip
+Use a service singleton to encapsulate context reads/writes when multiple components share the same domain state.
 :::
 
 ## Gotchas
