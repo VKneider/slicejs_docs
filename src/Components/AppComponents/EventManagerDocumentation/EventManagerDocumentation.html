@@ -14,17 +14,20 @@
 <ul><li>Shared, persistent state: use ContextManager instead</li><li>High-frequency real-time data: use dedicated data streams</li></ul>
 <h2 id="enable">Enable</h2>
 <div class="code-block" data-block-id="doc-block-1"></div>
+<h2 id="events-ui-optional">Events UI (Optional)</h2>
+<p>You can enable the EventManager debug panel with a keyboard shortcut.</p>
+<div class="code-block" data-block-id="doc-block-2"></div>
 <h2 id="concepts">Concepts</h2>
 <ul><li>Event names are strings, typically namespaced (<code>domain:action</code>).</li><li>Subscriptions can be global or component-bound.</li><li>Component-bound subscriptions are auto-removed when the component is destroyed.</li></ul>
 <h2 id="api-reference">API Reference</h2>
-<div class="table-block" data-block-id="doc-block-2"></div>
+<div class="table-block" data-block-id="doc-block-3"></div>
 <h2 id="usage-patterns">Usage Patterns</h2>
-<div class="code-block" data-block-id="doc-block-3"></div>
 <div class="code-block" data-block-id="doc-block-4"></div>
 <div class="code-block" data-block-id="doc-block-5"></div>
 <div class="code-block" data-block-id="doc-block-6"></div>
-<h2 id="component-integration">Component Integration</h2>
 <div class="code-block" data-block-id="doc-block-7"></div>
+<h2 id="component-integration">Component Integration</h2>
+<div class="code-block" data-block-id="doc-block-8"></div>
 <h2 id="implementation-recipe">Implementation Recipe</h2>
 <ol class="steps"><li>Choose a namespaced event name (e.g., <code>cart:updated</code>).</li><li>Emit the event where the change happens.</li><li>Subscribe in the UI or other consumers using <code>bind()</code>.</li><li>Use <code>subscribeOnce</code> for bootstrapping or single-run tasks.</li></ol>
 <h2 id="best-practices">Best Practices</h2>
@@ -37,10 +40,10 @@
 <code>unsubscribe</code> calls.</div>
 <div class="callout callout-warning">Avoid using EventManager as a data store. It does not retain state.</div>
 <h2 id="diagnostics">Diagnostics</h2>
-<div class="code-block" data-block-id="doc-block-8"></div>
+<div class="code-block" data-block-id="doc-block-9"></div>
 <h2 id="faq">FAQ</h2>
-<div class="details-block" data-block-id="doc-block-9"></div>
 <div class="details-block" data-block-id="doc-block-10"></div>
 <div class="details-block" data-block-id="doc-block-11"></div>
 <div class="details-block" data-block-id="doc-block-12"></div>
+<div class="details-block" data-block-id="doc-block-13"></div>
 </div>

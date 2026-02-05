@@ -56,7 +56,10 @@ export default class InputSearchDocs extends HTMLElement {
 
     document.addEventListener('click', (event) => {
       if (!this.contains(event.target)) {
-        this.closePanel();
+        const query = this.$input?.value?.trim();
+        if (query) {
+          this.closePanel();
+        }
       }
     });
 

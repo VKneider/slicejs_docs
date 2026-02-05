@@ -22,6 +22,7 @@ const components = {
   "LifeCycleMethods": "AppComponents",
   "LifeCycleMethodsDocumentation": "AppComponents",
   "LoadingDocumentation": "AppComponents",
+  "LoggerDocumentation": "AppComponents",
   "MainMenu": "AppComponents",
   "MultiRouteDocumentation": "AppComponents",
   "MyLayout": "AppComponents",

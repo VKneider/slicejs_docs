@@ -110,6 +110,16 @@ const docsIndex = [
     tags: ['config', 'setup']
   },
   {
+    title: 'Logger',
+    route: '/Documentation/Structural/Logger',
+    description: 'Structured logging and filters for Slice.js.',
+    section: 'Getting Started',
+    group: 'Diagnostics',
+    order: 40,
+    navLabel: 'Logger',
+    tags: ['logger', 'diagnostics', 'debugging']
+  },
+  {
     title: 'EventManager',
     route: '/Documentation/Structural/EventManager',
     description: 'Lightweight pub/sub for component and app events.',
@@ -141,11 +151,11 @@ const docsIndex = [
   },
   {
     title: 'ContextManager',
-    route: '/Documentation/ContextManager',
+    route: '/Documentation/Structural/ContextManager',
     description: 'Shared state with watchers, selectors, and persistence.',
     section: 'Getting Started',
     group: 'State',
-    order: 35,
+    order: 30,
     navLabel: 'ContextManager',
     tags: ['context', 'state', 'persistence']
   },

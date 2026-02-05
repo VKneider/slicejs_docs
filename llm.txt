@@ -297,7 +297,7 @@ Implement `update()` in your routed components to refresh data when revisited.
 MultiRoute caches by component name, not by path. Different paths using the same component share state.
 :::
 
-=== markdown/contexts.md ===
+=== markdown/context-manager.md ===
 # ContextManager
 
 ## Overview
@@ -310,6 +310,21 @@ Enable it in `sliceConfig.json` to use `slice.context`.
 ```json title="sliceConfig.json"
 {
   "context": { "enabled": true }
+}
+```
+
+## Context UI (Optional)
+You can enable the ContextManager debug panel with a keyboard shortcut.
+
+```json title="sliceConfig.json"
+{
+  "context": {
+    "enabled": true,
+    "ui": {
+      "enabled": true,
+      "shortcut": "ctrl+7"
+    }
+  }
 }
 ```
 
@@ -774,7 +789,7 @@ createToolingCards();
 createNextSteps();
 :::
 
-=== markdown/example.md ===
+=== markdown/event-manager.md ===
 # EventManager
 
 ## Overview
@@ -795,6 +810,21 @@ cross-cutting signals and decoupled communication between components and service
 ```json
 {
   "events": { "enabled": true }
+}
+```
+
+## Events UI (Optional)
+You can enable the EventManager debug panel with a keyboard shortcut.
+
+```json title="sliceConfig.json"
+{
+  "events": {
+    "enabled": true,
+    "ui": {
+      "enabled": true,
+      "shortcut": "ctrl+6"
+    }
+  }
 }
 ```
 
@@ -1886,6 +1916,63 @@ const simpleButton = await slice.build('Button', {
 });
 ```
 
+## How `setComponentProps` Affects Visual Components
+Visual components rely on `controller.setComponentProps()` to apply props. This is the behavior
+you should design your component setters around.
+
+### What happens when props are applied
+`setComponentProps(component, props)` runs in this exact order:
+
+1) **Defaults first**
+If your component defines `static props`, any missing prop with a `default` is applied
+*as if it were passed in*. Defaults go through the setter too.
+
+2) **Dev-time validation**
+In development mode only, Slice warns about unknown props and errors on missing required props.
+(No validation runs in production.)
+
+3) **Setter-based assignment**
+For every provided prop, Slice does:
+- `component._<prop> = null`
+- `component[prop] = value`
+
+That second line triggers your setter, so any side effects (DOM updates, derived state,
+re-renders) should live in the setter.
+
+### Why the `_prop = null` step matters
+Slice clears the backing field before assigning so the setter always recalculates from the
+incoming value. If you use `this._prop` internally, expect it to be overwritten by your setter.
+
+### How to write a prop-aware visual component
+Use getters/setters and keep UI updates in the setter. Example:
+
+```javascript title="Setter called by setComponentProps"
+static props = {
+  count: { type: 'number', default: 0 },
+  label: { type: 'string', default: 'Clicks' }
+};
+
+set count(value) {
+  this._count = Number(value) || 0;
+  this.updateLabel?.();
+}
+
+set label(value) {
+  this._label = value || 'Clicks';
+  this.updateLabel?.();
+}
+
+updateLabel() {
+  if (!this.$label) return;
+  this.$label.textContent = `${this._label}: ${this._count}`;
+}
+```
+
+### Practical takeaways
+- Put side effects in setters, not in constructors.
+- Defaults are applied through setters, so setters must handle default values safely.
+- `setComponentProps` can be called again later (manual update), and your setters will run again.
+
 ## Authoring a Visual Component
 ```javascript title="Visual component structure"
 export default class CustomVisualComponent extends HTMLElement {
@@ -1957,6 +2044,58 @@ slice dev
 - Explore CLI commands: /Documentation/Commands
 - Configure `sliceConfig.json`: /Documentation/Configuration/sliceConfig
 - Build your first component: /Documentation/The-build-method
+
+=== markdown/logger.md ===
+# Logger
+
+## Overview
+Logger collects logs and routes them to configured outputs (e.g. console). It supports filtering
+by level and basic querying over the in-memory log list.
+
+## Enable
+```json title="sliceConfig.json"
+{
+  "logger": {
+    "enabled": true,
+    "showLogs": {
+      "console": { "error": true, "warning": true, "info": true }
+    }
+  }
+}
+```
+
+## API Reference
+| Method | Signature | Notes |
+| --- | --- | --- |
+| `logError` | `(componentSliceId, message, error?)` | Logs error + optional error object |
+| `logWarning` | `(componentSliceId, message)` | Logs warning |
+| `logInfo` | `(componentSliceId, message)` | Logs info |
+| `getLogs` | `()` | Returns all logs |
+| `clearLogs` | `()` | Clears stored logs |
+| `getLogsByLogType` | `(type)` | Filter by `error | warning | info` |
+| `getLogsByComponentCategory` | `(category)` | Filter by component category |
+| `getLogsByComponent` | `(sliceId)` | Filter by component sliceId |
+
+## Usage
+```javascript title="Log from a component"
+export default class Navbar extends HTMLElement {
+  async init() {
+    slice.logger.logInfo('Navbar', 'Navbar initialized');
+  }
+}
+```
+
+```javascript title="Log with error"
+try {
+  await doWork();
+} catch (error) {
+  slice.logger.logError('MyService', 'Work failed', error);
+}
+```
+
+## Notes
+- Logging is disabled when `logger.enabled` is false.
+- Log outputs depend on `logger.showLogs` configuration.
 
 === markdown/slice-config.md ===
 # sliceConfig.json
@@ -2055,11 +2194,25 @@ Each key is a category name used in `components.js`.
 | Field | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `enabled` | `boolean` | `false` | Enables EventManager at `slice.events`. |
+| `ui` | `object` | none | UI panel configuration. |
+
+### events.ui
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | `false` | Enables the Events debug panel. |
+| `shortcut` | `string` | none | Keyboard shortcut to toggle the panel (e.g. `ctrl+6`). |
 
 ## context
 | Field | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `enabled` | `boolean` | `false` | Enables ContextManager at `slice.context`. |
+| `ui` | `object` | none | UI panel configuration. |
+
+### context.ui
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | `false` | Enables the Contexts debug panel. |
+| `shortcut` | `string` | none | Keyboard shortcut to toggle the panel (e.g. `ctrl+7`). |
 
 ## production
 | Field | Type | Default | Notes |
@@ -2101,8 +2254,8 @@ Each key is a category name used in `components.js`.
   },
   "router": { "defaultRoute": "/" },
   "loading": { "enabled": true },
-  "events": { "enabled": true },
-  "context": { "enabled": true }
+  "events": { "enabled": true, "ui": { "enabled": true, "shortcut": "ctrl+6" } },
+  "context": { "enabled": true, "ui": { "enabled": true, "shortcut": "ctrl+7" } }
 }
 ```
 

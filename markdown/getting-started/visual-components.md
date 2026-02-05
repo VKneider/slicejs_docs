@@ -60,6 +60,63 @@ const simpleButton = await slice.build('Button', {
 });
 ```
 
+## How `setComponentProps` Affects Visual Components
+Visual components rely on `controller.setComponentProps()` to apply props. This is the behavior
+you should design your component setters around.
+
+### What happens when props are applied
+`setComponentProps(component, props)` runs in this exact order:
+
+1) **Defaults first**
+If your component defines `static props`, any missing prop with a `default` is applied
+*as if it were passed in*. Defaults go through the setter too.
+
+2) **Dev-time validation**
+In development mode only, Slice warns about unknown props and errors on missing required props.
+(No validation runs in production.)
+
+3) **Setter-based assignment**
+For every provided prop, Slice does:
+- `component._<prop> = null`
+- `component[prop] = value`
+
+That second line triggers your setter, so any side effects (DOM updates, derived state,
+re-renders) should live in the setter.
+
+### Why the `_prop = null` step matters
+Slice clears the backing field before assigning so the setter always recalculates from the
+incoming value. If you use `this._prop` internally, expect it to be overwritten by your setter.
+
+### How to write a prop-aware visual component
+Use getters/setters and keep UI updates in the setter. Example:
+
+```javascript title="Setter called by setComponentProps"
+static props = {
+  count: { type: 'number', default: 0 },
+  label: { type: 'string', default: 'Clicks' }
+};
+
+set count(value) {
+  this._count = Number(value) || 0;
+  this.updateLabel?.();
+}
+
+set label(value) {
+  this._label = value || 'Clicks';
+  this.updateLabel?.();
+}
+
+updateLabel() {
+  if (!this.$label) return;
+  this.$label.textContent = `${this._label}: ${this._count}`;
+}
+```
+
+### Practical takeaways
+- Put side effects in setters, not in constructors.
+- Defaults are applied through setters, so setters must handle default values safely.
+- `setComponentProps` can be called again later (manual update), and your setters will run again.
+
 ## Authoring a Visual Component
 ```javascript title="Visual component structure"
 export default class CustomVisualComponent extends HTMLElement {

@@ -14,8 +14,24 @@
 <div class="table-block" data-block-id="doc-block-2"></div>
 <h2 id="custom-props-and-defaults">Custom Props and Defaults</h2>
 <div class="code-block" data-block-id="doc-block-3"></div>
-<h2 id="authoring-a-visual-component">Authoring a Visual Component</h2>
+<h2 id="how-setcomponentprops-affects-visual-components">How <code>setComponentProps</code> Affects Visual Components</h2>
+<p>Visual components rely on <code>controller.setComponentProps()</code> to apply props. This is the behavior you should design your component setters around.</p>
+<h3 id="what-happens-when-props-are-applied">What happens when props are applied</h3>
+<p><code>setComponentProps(component, props)</code> runs in this exact order:</p>
+<p>1) <strong>Defaults first</strong> If your component defines <code>static props</code>, any missing prop with a <code>default</code> is applied *as if it were passed in*. Defaults go through the setter too.</p>
+<p>2) <strong>Dev-time validation</strong> In development mode only, Slice warns about unknown props and errors on missing required props. (No validation runs in production.)</p>
+<p>3) <strong>Setter-based assignment</strong> For every provided prop, Slice does:</p>
+<ul><li><code>component._&lt;prop&gt; = null</code></li><li><code>component[prop] = value</code></li></ul>
+<p>That second line triggers your setter, so any side effects (DOM updates, derived state, re-renders) should live in the setter.</p>
+<h3 id="why-the-prop-null-step-matters">Why the <code>_prop = null</code> step matters</h3>
+<p>Slice clears the backing field before assigning so the setter always recalculates from the incoming value. If you use <code>this._prop</code> internally, expect it to be overwritten by your setter.</p>
+<h3 id="how-to-write-a-prop-aware-visual-component">How to write a prop-aware visual component</h3>
+<p>Use getters/setters and keep UI updates in the setter. Example:</p>
 <div class="code-block" data-block-id="doc-block-4"></div>
+<h3 id="practical-takeaways">Practical takeaways</h3>
+<ul><li>Put side effects in setters, not in constructors.</li><li>Defaults are applied through setters, so setters must handle default values safely.</li><li><code>setComponentProps</code> can be called again later (manual update), and your setters will run again.</li></ul>
+<h2 id="authoring-a-visual-component">Authoring a Visual Component</h2>
+<div class="code-block" data-block-id="doc-block-5"></div>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Use Static Props for all public inputs.</div>
 <div class="callout callout-tip">Avoid DOM queries in the constructor unless the template is attached.</div>

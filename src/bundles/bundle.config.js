@@ -1,6 +1,6 @@
 /**
  * Slice.js Bundle Configuration
- * Generated: 2026-02-03T17:28:08.567Z
+ * Generated: 2026-02-05T05:43:30.564Z
  * Strategy: hybrid
  */
 
@@ -8,13 +8,13 @@
 export const SLICE_BUNDLE_CONFIG = {
   "version": "2.0.0",
   "strategy": "hybrid",
-  "generated": "2026-02-03T17:28:08.556Z",
+  "generated": "2026-02-05T05:43:30.562Z",
   "stats": {
-    "totalComponents": 73,
-    "totalRoutes": 41,
+    "totalComponents": 74,
+    "totalRoutes": 44,
     "sharedComponents": 1,
-    "sharedPercentage": "4.1",
-    "totalSize": 2364806,
+    "sharedPercentage": "5.4",
+    "totalSize": 2388808,
     "criticalSize": 1174
   },
   "bundles": {
@@ -32,7 +32,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Components"
         ],
         "file": "slice-bundle.multiroute-documentationpage.js",
-        "size": 1541468,
+        "size": 1541708,
         "components": [
           "DocumentationPage",
           "Navbar",
@@ -77,10 +77,11 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Slice",
           "/SliceConfig",
           "/Themes",
+          "/Slice-Styles",
           "/ThemeCreator"
         ],
         "file": "slice-bundle.configuration.js",
-        "size": 1666675,
+        "size": 1680917,
         "components": [
           "WhatIsSlice",
           "SliceConfigDocumentation",
@@ -91,6 +92,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "Icon",
           "ThemesDocumentation",
           "Grid",
+          "SliceStylesDocumentation",
           "ThemeCreator",
           "Navbar",
           "Link",
@@ -124,6 +126,27 @@ export const SLICE_BUNDLE_CONFIG = {
           "critical"
         ]
       },
+      "general": {
+        "path": [
+          "/CLI",
+          "/Installation",
+          "/DropDown"
+        ],
+        "file": "slice-bundle.general.js",
+        "size": 1546682,
+        "components": [
+          "CommandsDocumentation",
+          "CodeVisualizer",
+          "Table",
+          "CopyMarkdownMenu",
+          "Button",
+          "Icon",
+          "Installation"
+        ],
+        "dependencies": [
+          "critical"
+        ]
+      },
       "components": {
         "path": [
           "/Visual",
@@ -142,7 +165,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Select"
         ],
         "file": "slice-bundle.components.js",
-        "size": 1813341,
+        "size": 1818325,
         "components": [
           "VisualDocumentation",
           "CodeVisualizer",
@@ -186,6 +209,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Structural",
           "/Structural/EventManager",
           "/Structural/ContextManager",
+          "/Structural/Logger",
           "/The-build-method",
           "/Static-Props",
           "/LifeCycle-Methods",
@@ -194,7 +218,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/LifeCycle-Methods/beforeDestroy"
         ],
         "file": "slice-bundle.advanced.js",
-        "size": 1627521,
+        "size": 1638713,
         "components": [
           "StructuralDocumentation",
           "Table",
@@ -205,6 +229,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "EventManagerDocumentation",
           "Details",
           "ContextManagerDocumentation",
+          "LoggerDocumentation",
           "TheBuildMethod",
           "StaticPropsDocumentation",
           "LifeCycleMethods",
@@ -231,20 +256,6 @@ export const SLICE_BUNDLE_CONFIG = {
           "Button",
           "Icon",
           "RouterGuardsDocumentation"
-        ],
-        "dependencies": [
-          "critical"
-        ]
-      },
-      "general": {
-        "path": [
-          "/Installation",
-          "/DropDown"
-        ],
-        "file": "slice-bundle.general.js",
-        "size": 10096,
-        "components": [
-          "Installation"
         ],
         "dependencies": [
           "critical"

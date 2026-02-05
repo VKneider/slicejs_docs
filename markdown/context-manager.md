@@ -1,10 +1,10 @@
 ---
 title: ContextManager
-route: /Documentation/ContextManager
+route: /Documentation/Structural/ContextManager
 navLabel: ContextManager
 section: Getting Started
 group: State
-order: 35
+order: 30
 description: Shared state with watchers, selectors, and persistence.
 component: ContextManagerDocumentation
 tags: [context, state, persistence]
@@ -22,6 +22,21 @@ Enable it in `sliceConfig.json` to use `slice.context`.
 ```json title="sliceConfig.json"
 {
   "context": { "enabled": true }
+}
+```
+
+## Context UI (Optional)
+You can enable the ContextManager debug panel with a keyboard shortcut.
+
+```json title="sliceConfig.json"
+{
+  "context": {
+    "enabled": true,
+    "ui": {
+      "enabled": true,
+      "shortcut": "ctrl+7"
+    }
+  }
 }
 ```
 
