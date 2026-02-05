@@ -204,6 +204,8 @@ document.querySelector('#app').appendChild(card);`
     });
   }
 
+  
+
   createToolingCards() {
     const grid = this.querySelector('.tooling-grid');
     if (!grid) return;

@@ -12,37 +12,45 @@
 <h2 id="how-slicejs-loads-config">How Slice.js Loads Config</h2>
 <p>Slice.js fetches the file in <code>Slice/ Slice.js</code> and creates the global <code>slice</code> instance:</p>
 <div class="code-block" data-block-id="doc-block-1"></div>
+<h2 id="intellisense-json-schema">IntelliSense (JSON Schema)</h2>
+<p>You can enable editor IntelliSense by adding a <code>$schema</code> reference and using the official schema.</p>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<p>Place <code>sliceConfig.schema.json</code> at the project root so it is served by your dev server.</p>
 <p>Once loaded, Slice.js initializes structural components based on config:</p>
 <ul><li>Logger and Debugger (if enabled)</li><li>EventManager and ContextManager (if enabled)</li><li>Loading component (if enabled)</li><li>StylesManager + ThemeManager</li><li>Router (routes loaded from <code>paths.routesFile</code>)</li></ul>
 <h2 id="root-schema">Root Schema</h2>
-<div class="table-block" data-block-id="doc-block-2"></div>
-<h2 id="debugger">debugger</h2>
 <div class="table-block" data-block-id="doc-block-3"></div>
-<h2 id="stylesmanager">stylesManager</h2>
+<h2 id="debugger">debugger</h2>
 <div class="table-block" data-block-id="doc-block-4"></div>
-<h2 id="thememanager">themeManager</h2>
+<h2 id="stylesmanager">stylesManager</h2>
 <div class="table-block" data-block-id="doc-block-5"></div>
-<h2 id="logger">logger</h2>
+<h2 id="thememanager">themeManager</h2>
 <div class="table-block" data-block-id="doc-block-6"></div>
-<h2 id="paths">paths</h2>
+<h2 id="logger">logger</h2>
 <div class="table-block" data-block-id="doc-block-7"></div>
+<h2 id="paths">paths</h2>
+<div class="table-block" data-block-id="doc-block-8"></div>
 <h3 id="pathscomponents">paths.components</h3>
 <p>Each key is a category name used in <code>components.js</code>.</p>
-<div class="table-block" data-block-id="doc-block-8"></div>
-<h2 id="router">router</h2>
 <div class="table-block" data-block-id="doc-block-9"></div>
-<h2 id="loading">loading</h2>
+<h2 id="router">router</h2>
 <div class="table-block" data-block-id="doc-block-10"></div>
-<h2 id="events">events</h2>
+<h2 id="loading">loading</h2>
 <div class="table-block" data-block-id="doc-block-11"></div>
-<h2 id="context">context</h2>
+<h2 id="events">events</h2>
 <div class="table-block" data-block-id="doc-block-12"></div>
-<h2 id="production">production</h2>
+<h3 id="eventsui">events.ui</h3>
 <div class="table-block" data-block-id="doc-block-13"></div>
-<h2 id="server">server</h2>
+<h2 id="context">context</h2>
 <div class="table-block" data-block-id="doc-block-14"></div>
+<h3 id="contextui">context.ui</h3>
+<div class="table-block" data-block-id="doc-block-15"></div>
+<h2 id="production">production</h2>
+<div class="table-block" data-block-id="doc-block-16"></div>
+<h2 id="server">server</h2>
+<div class="table-block" data-block-id="doc-block-17"></div>
 <h2 id="example">Example</h2>
-<div class="code-block" data-block-id="doc-block-15"></div>
+<div class="code-block" data-block-id="doc-block-18"></div>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Keep <code>paths</code> accurate or component loading will fail.</div>
 <div class="callout callout-tip">Load shared styles through <code>stylesManager.requestedStyles</code>.</div>

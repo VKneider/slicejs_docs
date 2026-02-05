@@ -6,6 +6,7 @@ section: Getting Started
 group: Events
 order: 20
 description: Lightweight pub/sub for component and app events.
+component: EventManagerDocumentation
 tags: [events, pubsub, lifecycle, cleanup]
 ---
 
@@ -29,6 +30,21 @@ cross-cutting signals and decoupled communication between components and service
 ```json
 {
   "events": { "enabled": true }
+}
+```
+
+## Events UI (Optional)
+You can enable the EventManager debug panel with a keyboard shortcut.
+
+```json title="sliceConfig.json"
+{
+  "events": {
+    "enabled": true,
+    "ui": {
+      "enabled": true,
+      "shortcut": "ctrl+6"
+    }
+  }
 }
 ```
 

@@ -3,11 +3,11 @@ slice-inputsearchdocs {
 }
 
 slice-inputsearchdocs .inputsearchdocs {
-  position: sticky;
-  top: 0;
-  padding: 90px 14px 12px;
-  background: var(--primary-background-color);
-  z-index: 2;
+position: sticky;
+top: 0;
+padding: 12px 14px 12px;
+background: var(--primary-background-color);
+z-index: 2;
 }
 
 slice-inputsearchdocs .search-input {

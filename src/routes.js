@@ -14,6 +14,10 @@ const routes = [
             component: 'CommandsDocumentation',
          },
          {
+            path: '/CLI',
+            component: 'CommandsDocumentation',
+         },
+         {
             path: '/SliceConfig',
             component: 'SliceConfigDocumentation',
          },
@@ -38,10 +42,18 @@ const routes = [
             path: '/Structural/ContextManager',
             component: 'ContextManagerDocumentation',
          },
+         {
+            path: '/Structural/Logger',
+            component: 'LoggerDocumentation',
+         },
 
          {
             path: '/Themes',
             component: 'ThemesDocumentation',
+         },
+         {
+            path: '/Slice-Styles',
+            component: 'SliceStylesDocumentation',
          },
          {
             path: '/Routing',

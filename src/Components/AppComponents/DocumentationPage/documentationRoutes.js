@@ -115,6 +115,11 @@ export const documentationRoutes = {
             component: 'ThemesDocumentation'
          },
          {
+            title: 'Logger',
+            path: '/Documentation/Structural/Logger',
+            component: 'LoggerDocumentation'
+         },
+         {
             title: 'Slice Styles',
             path: '/Documentation/Slice-Styles',
             component: 'SliceStylesDocumentation'

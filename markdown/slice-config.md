@@ -28,6 +28,17 @@ const sliceConfig = await response.json();
 window.slice = new Slice(sliceConfig);
 ```
 
+## IntelliSense (JSON Schema)
+You can enable editor IntelliSense by adding a `$schema` reference and using the official schema.
+
+```json title="sliceConfig.json"
+{
+  "$schema": "/sliceConfig.schema.json"
+}
+```
+
+Place `sliceConfig.schema.json` at the project root so it is served by your dev server.
+
 Once loaded, Slice.js initializes structural components based on config:
 
 - Logger and Debugger (if enabled)
@@ -106,11 +117,25 @@ Each key is a category name used in `components.js`.
 | Field | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `enabled` | `boolean` | `false` | Enables EventManager at `slice.events`. |
+| `ui` | `object` | none | UI panel configuration. |
+
+### events.ui
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | `false` | Enables the Events debug panel. |
+| `shortcut` | `string` | none | Keyboard shortcut to toggle the panel (e.g. `ctrl+6`). |
 
 ## context
 | Field | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `enabled` | `boolean` | `false` | Enables ContextManager at `slice.context`. |
+| `ui` | `object` | none | UI panel configuration. |
+
+### context.ui
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | `false` | Enables the Contexts debug panel. |
+| `shortcut` | `string` | none | Keyboard shortcut to toggle the panel (e.g. `ctrl+7`). |
 
 ## production
 | Field | Type | Default | Notes |
@@ -152,8 +177,8 @@ Each key is a category name used in `components.js`.
   },
   "router": { "defaultRoute": "/" },
   "loading": { "enabled": true },
-  "events": { "enabled": true },
-  "context": { "enabled": true }
+  "events": { "enabled": true, "ui": { "enabled": true, "shortcut": "ctrl+6" } },
+  "context": { "enabled": true, "ui": { "enabled": true, "shortcut": "ctrl+7" } }
 }
 ```
 
