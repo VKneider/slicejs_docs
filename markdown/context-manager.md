@@ -34,7 +34,7 @@ You can enable the ContextManager debug panel with a keyboard shortcut.
     "enabled": true,
     "ui": {
       "enabled": true,
-      "shortcut": "ctrl+7"
+      "shortcut": "alt+shift+c"
     }
   }
 }

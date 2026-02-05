@@ -42,7 +42,7 @@ You can enable the EventManager debug panel with a keyboard shortcut.
     "enabled": true,
     "ui": {
       "enabled": true,
-      "shortcut": "ctrl+6"
+      "shortcut": "alt+shift+e"
     }
   }
 }

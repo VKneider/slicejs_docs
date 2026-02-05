@@ -123,7 +123,7 @@ Each key is a category name used in `components.js`.
 | Field | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `enabled` | `boolean` | `false` | Enables the Events debug panel. |
-| `shortcut` | `string` | none | Keyboard shortcut to toggle the panel (e.g. `ctrl+6`). |
+| `shortcut` | `string` | none | Keyboard shortcut to toggle the panel (e.g. `alt+shift+e`). |
 
 ## context
 | Field | Type | Default | Notes |
@@ -135,7 +135,7 @@ Each key is a category name used in `components.js`.
 | Field | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `enabled` | `boolean` | `false` | Enables the Contexts debug panel. |
-| `shortcut` | `string` | none | Keyboard shortcut to toggle the panel (e.g. `ctrl+7`). |
+| `shortcut` | `string` | none | Keyboard shortcut to toggle the panel (e.g. `alt+shift+c`). |
 
 ## production
 | Field | Type | Default | Notes |
@@ -177,8 +177,8 @@ Each key is a category name used in `components.js`.
   },
   "router": { "defaultRoute": "/" },
   "loading": { "enabled": true },
-  "events": { "enabled": true, "ui": { "enabled": true, "shortcut": "ctrl+6" } },
-  "context": { "enabled": true, "ui": { "enabled": true, "shortcut": "ctrl+7" } }
+  "events": { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+e" } },
+  "context": { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+c" } }
 }
 ```
 

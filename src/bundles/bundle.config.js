@@ -1,6 +1,6 @@
 /**
  * Slice.js Bundle Configuration
- * Generated: 2026-02-05T05:43:30.564Z
+ * Generated: 2026-02-05T05:52:34.695Z
  * Strategy: hybrid
  */
 
@@ -8,13 +8,13 @@
 export const SLICE_BUNDLE_CONFIG = {
   "version": "2.0.0",
   "strategy": "hybrid",
-  "generated": "2026-02-05T05:43:30.562Z",
+  "generated": "2026-02-05T05:52:34.694Z",
   "stats": {
     "totalComponents": 74,
     "totalRoutes": 44,
     "sharedComponents": 1,
     "sharedPercentage": "5.4",
-    "totalSize": 2388808,
+    "totalSize": 2388868,
     "criticalSize": 1174
   },
   "bundles": {
@@ -81,7 +81,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/ThemeCreator"
         ],
         "file": "slice-bundle.configuration.js",
-        "size": 1680917,
+        "size": 1680957,
         "components": [
           "WhatIsSlice",
           "SliceConfigDocumentation",
@@ -218,7 +218,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/LifeCycle-Methods/beforeDestroy"
         ],
         "file": "slice-bundle.advanced.js",
-        "size": 1638713,
+        "size": 1638733,
         "components": [
           "StructuralDocumentation",
           "Table",
