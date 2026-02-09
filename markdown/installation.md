@@ -27,7 +27,7 @@ npm install -g slicejs-cli
 slice init
 ```
 
-This creates `src/` and `api/`, installs visual components, and adds scripts.
+This creates `src/` and `api/`, installs Visual components, and adds scripts and framework dependency to `package.json`.
 
 ## Start Dev Server
 ```bash

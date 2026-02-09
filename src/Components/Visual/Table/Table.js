@@ -57,9 +57,12 @@ export default class Table extends HTMLElement {
 
     rows.forEach((row) => {
       const tr = document.createElement('tr');
-      (Array.isArray(row) ? row : []).forEach((cell) => {
+      (Array.isArray(row) ? row : []).forEach((cell, index) => {
         const td = document.createElement('td');
         td.innerHTML = cell;
+        if (headers[index]) {
+          td.dataset.label = headers[index];
+        }
         tr.appendChild(td);
       });
       this.$body.appendChild(tr);

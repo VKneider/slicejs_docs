@@ -1,10 +1,10 @@
 /**
  * Slice.js Bundle
  * Type: route
- * Generated: 2026-02-05T05:52:34.590Z
+ * Generated: 2026-02-09T23:50:54.646Z
  * Strategy: hybrid
  * Components: 16
- * Total Size: 1600.3 KB
+ * Total Size: 1601.7 KB
  */
 
 export const SLICE_BUNDLE = {
@@ -12,8 +12,8 @@ export const SLICE_BUNDLE = {
   "version": "2.0.0",
   "type": "route",
   "route": "advanced",
-  "generated": "2026-02-05T05:52:34.590Z",
-  "totalSize": 1638733,
+  "generated": "2026-02-09T23:50:54.646Z",
+  "totalSize": 1640155,
   "componentCount": 16,
   "strategy": "hybrid"
 },
@@ -38,12 +38,12 @@ export const SLICE_BUNDLE = {
     "name": "Table",
     "category": "Visual",
     "categoryType": "Visual",
-    "js": "class Table extends HTMLElement {\n  static props = {\n    headers: { type: 'array', default: [], required: false },\n    rows: { type: 'array', default: [], required: false }\n  };\n\n  constructor(props) {\n    super();\n    slice.attachTemplate(this);\n\n    this.$head = this.querySelector('.table_head');\n    this.$body = this.querySelector('.table_body');\n\n    slice.controller.setComponentProps(this, props);\n  }\n\n  init() {\n    this.renderTable();\n  }\n\n  set headers(value) {\n    this._headers = Array.isArray(value) ? value : [];\n    this.renderTable();\n  }\n\n  get headers() {\n    return this._headers;\n  }\n\n  set rows(value) {\n    this._rows = Array.isArray(value) ? value : [];\n    this.renderTable();\n  }\n\n  get rows() {\n    return this._rows;\n  }\n\n  renderTable() {\n    if (!this.$head || !this.$body) return;\n\n    this.$head.innerHTML = '';\n    this.$body.innerHTML = '';\n\n    const headers = Array.isArray(this.headers) ? this.headers : [];\n    const rows = Array.isArray(this.rows) ? this.rows : [];\n\n    if (headers.length > 0) {\n      const headRow = document.createElement('tr');\n      headers.forEach((header) => {\n        const th = document.createElement('th');\n        th.textContent = header;\n        headRow.appendChild(th);\n      });\n      this.$head.appendChild(headRow);\n    }\n\n    rows.forEach((row) => {\n      const tr = document.createElement('tr');\n      (Array.isArray(row) ? row : []).forEach((cell) => {\n        const td = document.createElement('td');\n        td.innerHTML = cell;\n        tr.appendChild(td);\n      });\n      this.$body.appendChild(tr);\n    });\n  }\n}\n\nwindow.Table = Table;\ncustomElements.define('slice-table', Table);\n\nreturn Table;",
+    "js": "class Table extends HTMLElement {\n  static props = {\n    headers: { type: 'array', default: [], required: false },\n    rows: { type: 'array', default: [], required: false }\n  };\n\n  constructor(props) {\n    super();\n    slice.attachTemplate(this);\n\n    this.$head = this.querySelector('.table_head');\n    this.$body = this.querySelector('.table_body');\n\n    slice.controller.setComponentProps(this, props);\n  }\n\n  init() {\n    this.renderTable();\n  }\n\n  set headers(value) {\n    this._headers = Array.isArray(value) ? value : [];\n    this.renderTable();\n  }\n\n  get headers() {\n    return this._headers;\n  }\n\n  set rows(value) {\n    this._rows = Array.isArray(value) ? value : [];\n    this.renderTable();\n  }\n\n  get rows() {\n    return this._rows;\n  }\n\n  renderTable() {\n    if (!this.$head || !this.$body) return;\n\n    this.$head.innerHTML = '';\n    this.$body.innerHTML = '';\n\n    const headers = Array.isArray(this.headers) ? this.headers : [];\n    const rows = Array.isArray(this.rows) ? this.rows : [];\n\n    if (headers.length > 0) {\n      const headRow = document.createElement('tr');\n      headers.forEach((header) => {\n        const th = document.createElement('th');\n        th.textContent = header;\n        headRow.appendChild(th);\n      });\n      this.$head.appendChild(headRow);\n    }\n\n    rows.forEach((row) => {\n      const tr = document.createElement('tr');\n      (Array.isArray(row) ? row : []).forEach((cell, index) => {\n        const td = document.createElement('td');\n        td.innerHTML = cell;\n        if (headers[index]) {\n          td.dataset.label = headers[index];\n        }\n        tr.appendChild(td);\n      });\n      this.$body.appendChild(tr);\n    });\n  }\n}\n\nwindow.Table = Table;\ncustomElements.define('slice-table', Table);\n\nreturn Table;",
     "externalDependencies": {},
     "componentDependencies": [],
     "html": "<div class=\"table_component\">\n  <div class=\"table_wrapper\">\n    <table class=\"table\">\n      <thead class=\"table_head\"></thead>\n      <tbody class=\"table_body\"></tbody>\n    </table>\n  </div>\n</div>\n",
-    "css": "/* Table component styles */\n\nslice-table {\n  display: block;\n  width: 100%;\n}\n\nslice-table .table_wrapper {\n  width: 100%;\n  overflow-x: auto;\n  max-width: 100%;\n  display: block;\n  -webkit-overflow-scrolling: touch;\n}\n\nslice-table .table {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.95rem;\n}\n\nslice-table .table th,\nslice-table .table td {\n  padding: 10px 12px;\n  text-align: left;\n  border-bottom: 1px solid var(--primary-color-shade);\n}\n\nslice-table .table th {\n  color: var(--primary-color-contrast);\n  font-weight: 600;\n  background: var(--primary-color);\n}\n\nslice-table .table td code {\n  background: var(--secondary-background-color);\n  padding: 2px 6px;\n  border-radius: 4px;\n}\n",
-    "size": 2554
+    "css": "/* Table component styles */\n\nslice-table {\n  display: block;\n  width: 100%;\n}\n\nslice-table .table_wrapper {\n  width: 100%;\n  overflow-x: auto;\n  max-width: 100%;\n  display: block;\n  -webkit-overflow-scrolling: touch;\n}\n\nslice-table .table {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.95rem;\n}\n\nslice-table .table th,\nslice-table .table td {\n  padding: 10px 12px;\n  text-align: left;\n  border-bottom: 1px solid var(--primary-color-shade);\n}\n\nslice-table .table th {\n  color: var(--primary-color-contrast);\n  font-weight: 600;\n  background: var(--primary-color);\n}\n\nslice-table .table td code {\n  background: var(--secondary-background-color);\n  padding: 2px 6px;\n  border-radius: 4px;\n}\n\n@media (max-width: 640px) {\n  slice-table .table_wrapper {\n    overflow: visible;\n    display: flex;\n    justify-content: center;\n  }\n\n  slice-table .table,\n  slice-table .table thead,\n  slice-table .table tbody,\n  slice-table .table tr,\n  slice-table .table th,\n  slice-table .table td {\n    display: block;\n    width: 100%;\n  }\n\n  slice-table .table {\n    width: min(92%, 560px);\n    margin: 0 auto;\n  }\n\n  slice-table .table thead {\n    display: none;\n  }\n\n  slice-table .table tr {\n    border: 1px solid var(--primary-color-shade);\n    border-radius: var(--border-radius-slice);\n    padding: 10px 12px;\n    margin-bottom: 12px;\n    background: var(--secondary-background-color);\n    display: grid;\n    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));\n    gap: 10px 16px;\n  }\n\n  slice-table .table td {\n    border: none;\n    padding: 0;\n    display: grid;\n    grid-template-columns: auto 1fr;\n    align-items: baseline;\n    column-gap: 8px;\n    row-gap: 4px;\n  }\n\n  slice-table .table td::before {\n    content: attr(data-label);\n    font-size: 0.75rem;\n    text-transform: uppercase;\n    letter-spacing: 0.08em;\n    color: var(--primary-color);\n    font-weight: 700;\n    white-space: nowrap;\n  }\n\n  slice-table .table td > * {\n    min-width: 0;\n  }\n\n  slice-table .table td code {\n    display: inline-block;\n  }\n}\n",
+    "size": 3976
   },
   "CodeVisualizer": {
     "name": "CodeVisualizer",

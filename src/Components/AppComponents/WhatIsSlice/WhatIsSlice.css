@@ -91,34 +91,38 @@ slice-whatisslice .tabs-container {
 }
 
 slice-whatisslice .tabs {
-  display: flex;
-  background-color: var(--secondary-background-color);
-  border-bottom: 1px solid var(--primary-color-shade);
+   display: flex;
+   background-color: var(--secondary-background-color);
+   border-bottom: 1px solid var(--primary-color-shade);
+   flex-wrap: wrap;
+   gap: 4px;
 }
 
 slice-whatisslice .tab {
-  padding: 15px 20px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: bold;
-  text-align: center;
-  flex: 1;
+   padding: 15px 20px;
+   cursor: pointer;
+   transition: all 0.3s ease;
+   font-weight: bold;
+   text-align: center;
+   flex: 1;
+   border-radius: 10px 10px 0 0;
+   min-width: 140px;
 }
 
 slice-whatisslice .tab:hover {
-  background-color: var(--primary-background-color);
-  color: var(--primary-color);
+   background-color: var(--primary-background-color);
+   color: var(--primary-color);
 }
 
 slice-whatisslice .tab.active {
-  background-color: var(--primary-color);
-  color: var(--primary-color-contrast);
+   background-color: var(--primary-color);
+   color: var(--primary-color-contrast);
 }
 
 slice-whatisslice .tab-contents {
-  background-color: var(--primary-background-color);
-  padding: 25px;
-  min-height: 400px;
+   background-color: var(--primary-background-color);
+   padding: 25px;
+   min-height: 400px;
 }
 
 slice-whatisslice .tab-content {
@@ -132,18 +136,18 @@ slice-whatisslice .tab-content.active {
 
 /* Core Principles Grid */
 slice-whatisslice .principles-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 25px;
-  margin: 30px 0;
+   display: grid;
+   grid-template-columns: repeat(2, 1fr);
+   gap: 25px;
+   margin: 30px 0;
 }
 
 slice-whatisslice .principle {
-  background-color: var(--secondary-background-color);
-  padding: 20px;
-  border-radius: var(--border-radius-slice);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+   background-color: var(--secondary-background-color);
+   padding: 20px;
+   border-radius: var(--border-radius-slice);
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+   transition: transform 0.3s ease;
 }
 
 slice-whatisslice .principle:hover {
@@ -166,9 +170,9 @@ slice-whatisslice .features-list {
 }
 
 slice-whatisslice .features-list li {
-  margin-bottom: 12px;
-  padding-left: 30px;
-  position: relative;
+   margin-bottom: 12px;
+   padding-left: 30px;
+   position: relative;
 }
 
 slice-whatisslice .features-list li:before {
@@ -361,35 +365,7 @@ slice-whatisslice .benefit h3 {
 }
 
 /* Comparison Table */
-slice-whatisslice .comparison-section {
-  margin: 40px 0;
-}
 
-slice-whatisslice .comparison-table {
-  overflow-x: auto;
-  margin: 20px 0;
-}
-
-slice-whatisslice table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-slice-whatisslice th, 
-slice-whatisslice td {
-  padding: 12px 15px;
-  text-align: center;
-  border: 1px solid var(--primary-color-shade);
-}
-
-slice-whatisslice th {
-  background-color: var(--primary-color);
-  color: var(--primary-color-contrast);
-}
-
-slice-whatisslice tr:nth-child(even) {
-  background-color: var(--secondary-background-color);
-}
 
 /* Get Started Section */
 slice-whatisslice .get-started-section {
