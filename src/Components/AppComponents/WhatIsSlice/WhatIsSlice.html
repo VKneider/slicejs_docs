@@ -3,8 +3,8 @@
   
   <div class="intro-section">
     <div class="intro-text">
-      <p>Slice.js is a lightweight, component-based web framework built on vanilla JavaScript that embraces modern web standards. It provides a modular approach to building web applications with reusable components while maintaining the simplicity and performance of native browser technologies.</p>
-      <p>Designed for developers who appreciate clean architecture and minimal dependencies, Slice.js offers powerful features without introducing unnecessary complexity or bloat.</p>
+      <p>Slice.js is a vanilla, lightweight framework for building functional frontend applications while learning the real concepts behind modern frameworks. You work directly with Web Components, plain JavaScript, and modern browser APIs.</p>
+      <p>It is intentionally small, practical, and transparent: you can see how routing, state, services, and UI composition actually work without a heavy abstraction layer.</p>
     </div>
     <div class="intro-image">
       <div class="slice-logo-container">
@@ -28,39 +28,40 @@
         <h2>Core Principles</h2>
         <div class="principles-grid">
           <div class="principle">
-            <h3>Component-Based</h3>
-            <p>Build your application with reusable, encapsulated components that combine HTML, CSS, and JavaScript.</p>
+            <h3>Vanilla-First</h3>
+            <p>Build with Web Components, native DOM APIs, and standard browser behavior.</p>
           </div>
           <div class="principle">
-            <h3>Native Web Standards</h3>
-            <p>Built on Web Components and other standard browser APIs without requiring transpilation or complex build steps.</p>
+            <h3>Learning-Driven</h3>
+            <p>Learn framework concepts by building real UI, not just reading theory.</p>
           </div>
           <div class="principle">
-            <h3>Modular Architecture</h3>
-            <p>Organize your code into logical modules with clear separation of concerns between visual elements, services, and structure.</p>
+            <h3>Small Surface Area</h3>
+            <p>Minimal API with clear responsibilities for components, services, and structure.</p>
           </div>
           <div class="principle">
-            <h3>Developer Experience</h3>
-            <p>Simple, intuitive API with built-in debugging tools and clear documentation to accelerate development.</p>
+            <h3>Practical Architecture</h3>
+            <p>Compose UI, state, and routing in a predictable, maintainable way.</p>
           </div>
         </div>
         
         <h2>Key Features</h2>
         <ul class="features-list">
-          <li><span class="feature-highlight">Slice.build</span>: Create and manage component instances with a simple API</li>
-          <li><span class="feature-highlight">Component Lifecycle</span>: Control component behavior with initialization and update methods</li>
-          <li><span class="feature-highlight">Theming System</span>: Switch between themes with built-in theme manager</li>
-          <li><span class="feature-highlight">Routing</span>: Simple yet powerful routing for single-page applications</li>
-          <li><span class="feature-highlight">Visual Components Library</span>: Pre-built UI components ready to use</li>
-          <li><span class="feature-highlight">Service Components</span>: Handle business logic and external integrations</li>
-          <li><span class="feature-highlight">Development Tools</span>: Built-in debugging and component inspection</li>
+          <li><span class="feature-highlight">slice.build</span>: Build visual and service components with a single API</li>
+          <li><span class="feature-highlight">Static Props</span>: Explicit public props with defaults and validation</li>
+          <li><span class="feature-highlight">Routing</span>: Route and MultiRoute containers with caching + update()</li>
+          <li><span class="feature-highlight">ContextManager</span>: Shared state with watchers, selectors, and persistence</li>
+          <li><span class="feature-highlight">EventManager</span>: Lightweight pub/sub for app signals</li>
+          <li><span class="feature-highlight">Services</span>: Fetch, storage, and reusable business logic</li>
+          <li><span class="feature-highlight">Themes</span>: CSS-variable driven themes via StylesManager</li>
+          <li><span class="feature-highlight">CLI</span>: init, dev, bundle, and component management</li>
         </ul>
       </div>
       
       <!-- Architecture Tab -->
       <div class="tab-content" data-tab="architecture">
         <h2>Slice.js Architecture</h2>
-        <p>Slice.js is built on a three-layered architecture that separates concerns and promotes maintainable code:</p>
+        <p>Slice.js uses a three-layered architecture that keeps UI, structure, and logic independent while still working together:</p>
         
         <div class="architecture-diagram">
           <div class="component-box visual" data-type="visual">
@@ -78,31 +79,31 @@
           
           <div class="component-description" data-type="visual">
             <h4>Visual Components</h4>
-            <p>Build the user interface of your application. These components render HTML, handle user interactions, and manage UI state. Examples include buttons, inputs, cards, and navigation elements.</p>
+            <p>Render UI, handle interactions, and manage view state. Examples include buttons, inputs, cards, and layouts.</p>
             <code>Button.js, Card.js, Input.js</code>
           </div>
           
           <div class="component-description" data-type="structural">
             <h4>Structural Components</h4>
-            <p>Form the backbone of the framework. These components manage the application lifecycle, routing, component registration, and other core functionality. They're mostly internal but can be customized if needed.</p>
-            <code>Router.js, Controller.js, StylesManager.js</code>
+            <p>Coordinate the app: routing, component lifecycle, themes, events, and shared state.</p>
+            <code>Router.js, Controller.js, StylesManager.js, ContextManager.js, EventManager.js</code>
           </div>
           
           <div class="component-description" data-type="service">
             <h4>Service Components</h4>
-            <p>Handle business logic, data processing, and external integrations. These components provide services to visual components and often interact with APIs, databases, or browser APIs.</p>
+            <p>Encapsulate data access and business logic. Services can cache results and integrate with context or events.</p>
             <code>FetchManager.js, IndexedDbManager.js, LocalStorageManager.js</code>
           </div>
         </div>
         
         <h3>Data Flow</h3>
-        <p>Data in Slice.js flows in a predictable manner:</p>
+        <p>Data flow is explicit and simple:</p>
         <ol class="data-flow">
           <li>User interacts with Visual Components</li>
-          <li>Visual Components call Service Components for data or business logic</li>
-          <li>Service Components process data and return results</li>
-          <li>Visual Components update the UI based on the results</li>
-          <li>Structural Components manage the lifecycle and coordination</li>
+          <li>Visual Components call Services for data or logic</li>
+          <li>Services emit events or update Context</li>
+          <li>Visual Components refresh via update() or watchers</li>
+          <li>Structural components coordinate routing and lifecycle</li>
         </ol>
       </div>
       
@@ -112,25 +113,25 @@
         
         <div class="component-section">
           <h3>Visual Components</h3>
-          <p>These components build your user interface and extend the <code>HTMLElement</code> class, leveraging the Web Components standard.</p>
+          <p>Visual components render UI and extend <code>HTMLElement</code>. Use Static Props to define a clear public API.</p>
           
           <div class="code-example">
             <pre><code class="language-javascript">export default class Button extends HTMLElement {
+  static props = {
+    value: { type: 'string', default: 'Button' },
+    onClickCallback: { type: 'function', default: null }
+  };
+
   constructor(props) {
     super();
     slice.attachTemplate(this);
     this.$value = this.querySelector('.slice_button_value');
-    
     slice.controller.setComponentProps(this, props);
   }
 
-  get value() {
-    return this._value;
-  }
-
-  set value(value) {
-    this._value = value;
-    this.$value.textContent = value;
+  async init() {
+    this.$value.textContent = this.value;
+    this.addEventListener('click', () => this.onClickCallback?.());
   }
 }</code></pre>
           </div>
@@ -138,18 +139,25 @@
         
         <div class="component-section">
           <h3>Service Components</h3>
-          <p>These components handle business logic, data processing, and external integrations.</p>
+          <p>Services encapsulate data access and logic. Build them once and reuse across routes.</p>
           
           <div class="code-example">
-            <pre><code class="language-javascript">export default class FetchManager {
-  constructor(props) {
-    const { baseUrl, timeout } = props;
-    this.baseUrl = baseUrl;
-    this.timeout = timeout || 10000;
+            <pre><code class="language-javascript">const dataService = await slice.build('FetchManager', {
+  baseUrl: 'https://api.myapp.com/v1',
+  sliceId: 'data-service'
+});
+
+export default class ProductList extends HTMLElement {
+  async init() {
+    this.dataService = slice.getComponent('data-service');
+    await this.load();
   }
 
-  async request(method, data, endpoint, onSuccess, onError) {
-    // Implementation details
+  async load() {
+    await this.dataService.request('GET', null, '/products', (data) => {
+      this.products = data;
+      this.update();
+    });
   }
 }</code></pre>
           </div>
@@ -157,65 +165,78 @@
         
         <div class="component-section">
           <h3>Component Lifecycle</h3>
-          <p>Slice.js components have a simple lifecycle that gives you control over their behavior:</p>
+          <p>Use lifecycle methods to separate one-time setup from updates:</p>
           
           <ul class="lifecycle-list">
-            <li><strong>constructor</strong>: Initialize properties and set up event listeners</li>
-            <li><strong>init</strong>: Called after the component is created, good for async operations</li>
-            <li><strong>render</strong> (optional): Update the component's DOM based on props</li>
-            <li><strong>update</strong> (optional): Refresh the component when props change</li>
+            <li><strong>constructor</strong>: Attach template, cache DOM, set props</li>
+            <li><strong>init</strong>: One-time setup and async work</li>
+            <li><strong>update</strong>: Refresh data and rebuild dynamic lists</li>
+            <li><strong>beforeDestroy</strong>: Cleanup timers, listeners, and subscriptions</li>
           </ul>
+        </div>
+
+        <div class="component-section">
+          <h3>Shared State</h3>
+          <p>Use ContextManager to share state across components with efficient updates.</p>
+
+          <div class="code-example">
+            <pre><code class="language-javascript">slice.context.create('auth', { isLoggedIn: false });
+
+export default class AccountMenu extends HTMLElement {
+  async init() {
+    slice.context.watch(
+      'auth',
+      this,
+      (isLoggedIn) => this.classList.toggle('signed-in', isLoggedIn),
+      (state) => state.isLoggedIn
+    );
+  }
+}</code></pre>
+          </div>
         </div>
       </div>
       
       <!-- Examples Tab -->
       <div class="tab-content" data-tab="examples">
-        <h2>Getting Started with Slice.js</h2>
+        <h2>Build a Small App</h2>
         
         <div class="example-section">
-          <h3>Creating a Component</h3>
-          <p>Here's how to create a simple counter component in Slice.js:</p>
+          <h3>Create a Component</h3>
+          <p>A minimal component with a counter and update logic:</p>
           
           <div class="code-files">
             <div class="code-file">
               <h4>Counter.js</h4>
               <pre><code class="language-javascript">export default class Counter extends HTMLElement {
+  static props = { count: { type: 'number', default: 0 } };
+
   constructor(props) {
     super();
     slice.attachTemplate(this);
-    
     this.$count = this.querySelector('.count');
     this.$increment = this.querySelector('.increment');
     this.$decrement = this.querySelector('.decrement');
-    
+    slice.controller.setComponentProps(this, props);
+  }
+
+  async init() {
     this.$increment.addEventListener('click', () => this.increment());
     this.$decrement.addEventListener('click', () => this.decrement());
-    
-    slice.controller.setComponentProps(this, props);
-    this.debuggerProps = ['count'];
+    this.update();
   }
-  
-  init() {
-    if (this._count === undefined) {
-      this.count = 0;
-    }
+
+  async update() {
+    this.$count.textContent = this.count;
   }
-  
-  get count() {
-    return this._count;
-  }
-  
-  set count(value) {
-    this._count = value;
-    this.$count.textContent = value;
-  }
-  
+
   increment() {
-    this.count++;
+    this.count += 1;
+    this.update();
   }
-  
+
   decrement() {
-    this.count--;
+    this.count -= 1;
+    this.update();
   }
 }</code></pre>
             </div>
@@ -258,119 +279,55 @@ slice-counter .count {
         </div>
         
         <div class="example-section">
-          <h3>Using the Component</h3>
-          <p>Once defined, you can use your component like this:</p>
+          <h3>Use the Component</h3>
+          <p>Build an instance and attach it to a container:</p>
           
           <div class="code-example">
-            <pre><code class="language-javascript">// Create an instance of the counter
-const counter = await slice.build('Counter', {
-  count: 5 // Initial value
-});
+            <pre><code class="language-javascript">const counter = await slice.build('Counter', { count: 5 });
 
-// Add it to a parent component or container
-const container = slice.getComponent('MainContainer');
+const container = this.querySelector('.my-section');
 container.appendChild(counter);
 
-// Or use it in another component's template
-const mySection = this.querySelector('.my-section');
-mySection.appendChild(counter);
-
-// Later, you can access or modify properties
 console.log(counter.count); // 5
-counter.count = 10;</code></pre>
+counter.count = 10;
+counter.update();</code></pre>
           </div>
         </div>
       </div>
       
       <!-- Benefits Tab -->
       <div class="tab-content" data-tab="benefits">
-        <h2>Why Choose Slice.js?</h2>
+        <h2>Why Slice.js?</h2>
         
         <div class="benefits-grid">
           <div class="benefit">
-            <h3>Lightweight</h3>
-            <p>Minimal footprint without the bloat of larger frameworks, leading to faster load times and better performance.</p>
+            <h3>Vanilla Learning</h3>
+            <p>Learn how real frameworks work by building with native APIs.</p>
           </div>
           
           <div class="benefit">
-            <h3>No Build Step</h3>
-            <p>Develop directly with vanilla JavaScript, HTML, and CSS without requiring transpilers, bundlers, or complex build systems.</p>
+            <h3>Lightweight by Design</h3>
+            <p>Small framework surface area keeps projects fast and readable.</p>
           </div>
           
           <div class="benefit">
-            <h3>Easy Learning Curve</h3>
-            <p>If you know basic HTML, CSS, and JavaScript, you can start building with Slice.js right away. No new template syntax to learn.</p>
+            <h3>Practical Structure</h3>
+            <p>Clear separation between UI, services, and app structure.</p>
           </div>
           
           <div class="benefit">
-            <h3>Standards-Based</h3>
-            <p>Built on Web Components and other modern browser standards, ensuring compatibility and future-proofing your applications.</p>
+            <h3>Ready-to-Use Tooling</h3>
+            <p>CLI commands, visual components, and debugging helpers.</p>
           </div>
           
           <div class="benefit">
-            <h3>Component Library</h3>
-            <p>Comes with pre-built, customizable UI components to accelerate development and maintain consistency.</p>
+            <h3>Themeable UI</h3>
+            <p>CSS-variable themes that can be switched at runtime.</p>
           </div>
           
           <div class="benefit">
-            <h3>Debugging Tools</h3>
-            <p>Built-in tools for inspecting and debugging components, making development easier and more efficient.</p>
-          </div>
-        </div>
-        
-        <div class="comparison-section">
-          <h3>Comparison with Other Frameworks</h3>
-          <p>See how Slice.js compares to other popular frameworks:</p>
-          
-          <div class="comparison-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Feature</th>
-                  <th>Slice.js</th>
-                  <th>React</th>
-                  <th>Vue</th>
-                  <th>Angular</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Build Step Required</td>
-                  <td>No</td>
-                  <td>Yes</td>
-                  <td>Yes</td>
-                  <td>Yes</td>
-                </tr>
-                <tr>
-                  <td>Bundle Size</td>
-                  <td>Small</td>
-                  <td>Medium</td>
-                  <td>Small-Medium</td>
-                  <td>Large</td>
-                </tr>
-                <tr>
-                  <td>Learning Curve</td>
-                  <td>Low</td>
-                  <td>Medium</td>
-                  <td>Low-Medium</td>
-                  <td>High</td>
-                </tr>
-                <tr>
-                  <td>Web Standards Based</td>
-                  <td>Yes</td>
-                  <td>Partial</td>
-                  <td>Partial</td>
-                  <td>Partial</td>
-                </tr>
-                <tr>
-                  <td>Component Encapsulation</td>
-                  <td>Full (Shadow DOM)</td>
-                  <td>Partial</td>
-                  <td>Optional</td>
-                  <td>Full</td>
-                </tr>
-              </tbody>
-            </table>
+            <h3>Real Applications</h3>
+            <p>Build functional frontend apps while mastering core concepts.</p>
           </div>
         </div>
       </div>

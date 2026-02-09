@@ -1,6 +1,6 @@
 /**
  * Slice.js Bundle Configuration
- * Generated: 2026-02-05T05:52:34.695Z
+ * Generated: 2026-02-09T23:50:54.747Z
  * Strategy: hybrid
  */
 
@@ -8,13 +8,13 @@
 export const SLICE_BUNDLE_CONFIG = {
   "version": "2.0.0",
   "strategy": "hybrid",
-  "generated": "2026-02-05T05:52:34.694Z",
+  "generated": "2026-02-09T23:50:54.745Z",
   "stats": {
     "totalComponents": 74,
     "totalRoutes": 44,
     "sharedComponents": 1,
     "sharedPercentage": "5.4",
-    "totalSize": 2388868,
+    "totalSize": 2387726,
     "criticalSize": 1174
   },
   "bundles": {
@@ -81,7 +81,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/ThemeCreator"
         ],
         "file": "slice-bundle.configuration.js",
-        "size": 1680957,
+        "size": 1679815,
         "components": [
           "WhatIsSlice",
           "SliceConfigDocumentation",
@@ -112,7 +112,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Service"
         ],
         "file": "slice-bundle.services.js",
-        "size": 1561688,
+        "size": 1563110,
         "components": [
           "CommandsDocumentation",
           "CodeVisualizer",
@@ -133,7 +133,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/DropDown"
         ],
         "file": "slice-bundle.general.js",
-        "size": 1546682,
+        "size": 1548104,
         "components": [
           "CommandsDocumentation",
           "CodeVisualizer",
@@ -165,7 +165,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Select"
         ],
         "file": "slice-bundle.components.js",
-        "size": 1818325,
+        "size": 1819747,
         "components": [
           "VisualDocumentation",
           "CodeVisualizer",
@@ -218,7 +218,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/LifeCycle-Methods/beforeDestroy"
         ],
         "file": "slice-bundle.advanced.js",
-        "size": 1638733,
+        "size": 1640155,
         "components": [
           "StructuralDocumentation",
           "Table",
@@ -247,7 +247,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Routing/Guards"
         ],
         "file": "slice-bundle.routing.js",
-        "size": 1525926,
+        "size": 1527348,
         "components": [
           "RoutingDocumentation",
           "Table",

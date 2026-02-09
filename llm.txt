@@ -322,7 +322,7 @@ You can enable the ContextManager debug panel with a keyboard shortcut.
     "enabled": true,
     "ui": {
       "enabled": true,
-      "shortcut": "ctrl+7"
+      "shortcut": "alt+shift+c"
     }
   }
 }
@@ -822,7 +822,7 @@ You can enable the EventManager debug panel with a keyboard shortcut.
     "enabled": true,
     "ui": {
       "enabled": true,
-      "shortcut": "ctrl+6"
+      "shortcut": "alt+shift+e"
     }
   }
 }
@@ -2033,7 +2033,7 @@ npm install -g slicejs-cli
 slice init
 ```
 
-This creates `src/` and `api/`, installs visual components, and adds scripts.
+This creates `src/` and `api/`, installs Visual components, and adds scripts and framework dependency to `package.json`.
 
 ## Start Dev Server
 ```bash
@@ -2115,6 +2115,17 @@ const response = await fetch('/sliceConfig.json');
 const sliceConfig = await response.json();
 window.slice = new Slice(sliceConfig);
 ```
+
+## IntelliSense (JSON Schema)
+You can enable editor IntelliSense by adding a `$schema` reference and using the official schema.
+
+```json title="sliceConfig.json"
+{
+  "$schema": "/sliceConfig.schema.json"
+}
+```
+
+Place `sliceConfig.schema.json` at the project root so it is served by your dev server.
 
 Once loaded, Slice.js initializes structural components based on config:
 
@@ -2200,7 +2211,7 @@ Each key is a category name used in `components.js`.
 | Field | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `enabled` | `boolean` | `false` | Enables the Events debug panel. |
-| `shortcut` | `string` | none | Keyboard shortcut to toggle the panel (e.g. `ctrl+6`). |
+| `shortcut` | `string` | none | Keyboard shortcut to toggle the panel (e.g. `alt+shift+e`). |
 
 ## context
 | Field | Type | Default | Notes |
@@ -2212,7 +2223,7 @@ Each key is a category name used in `components.js`.
 | Field | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `enabled` | `boolean` | `false` | Enables the Contexts debug panel. |
-| `shortcut` | `string` | none | Keyboard shortcut to toggle the panel (e.g. `ctrl+7`). |
+| `shortcut` | `string` | none | Keyboard shortcut to toggle the panel (e.g. `alt+shift+c`). |
 
 ## production
 | Field | Type | Default | Notes |
@@ -2254,8 +2265,8 @@ Each key is a category name used in `components.js`.
   },
   "router": { "defaultRoute": "/" },
   "loading": { "enabled": true },
-  "events": { "enabled": true, "ui": { "enabled": true, "shortcut": "ctrl+6" } },
-  "context": { "enabled": true, "ui": { "enabled": true, "shortcut": "ctrl+7" } }
+  "events": { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+e" } },
+  "context": { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+c" } }
 }
 ```
 
@@ -2275,6 +2286,97 @@ If `themeManager.enabled` is true and `defaultTheme` is missing, theme loading w
 
 :::warning
 `events` and `context` are optional. If disabled, Slice.js provides no-op stubs.
+:::
+
+=== markdown/themes.md ===
+# Themes in Slice.js
+
+Slice.js themes are CSS-variable driven. A theme is a plain CSS file that defines color, contrast, and surface tokens the UI can reuse consistently.
+
+## Why Themes
+
+- Keep visual decisions centralized in one file
+- Switch look and feel without touching components
+- Use the same UI components across multiple visual identities
+
+## Theme Structure
+
+Themes live in `src/Themes/` and export variables under `:root`.
+
+```css title="Minimal theme structure"
+:root {
+  --primary-color: #1d4ed8;
+  --primary-color-rgb: 29, 78, 216;
+  --primary-color-contrast: #ffffff;
+
+  --primary-background-color: #f8fafc;
+  --secondary-background-color: #eef2f6;
+  --tertiary-background-color: #e2e8f0;
+
+  --font-primary-color: #0f172a;
+  --font-secondary-color: #475569;
+
+  --success-color: #166534;
+  --warning-color: #b45309;
+  --danger-color: #b91c1c;
+}
+```
+
+### Required Tokens
+
+At minimum, include:
+
+- `--primary-color`, `--primary-color-rgb`, `--primary-color-contrast`
+- `--primary-background-color`, `--secondary-background-color`, `--tertiary-background-color`
+- `--font-primary-color`, `--font-secondary-color`
+
+These are used across Visual components and custom CSS.
+
+## Switching Themes
+
+Slice.js applies themes with the StylesManager:
+
+```javascript title="Switching a theme"
+await slice.setTheme('CrimsonRed');
+```
+
+The theme name matches the CSS file name in `src/Themes/`.
+
+## Using Theme Tokens in Components
+
+Use CSS variables inside component styles to stay themeable:
+
+```css title="Theme tokens in a component"
+.card {
+  background: var(--secondary-background-color);
+  color: var(--font-primary-color);
+  border: 1px solid rgba(var(--primary-color-rgb), 0.2);
+}
+```
+
+## Guidelines
+
+- Prefer a single accent (`--primary-color`) and derive borders via opacity
+- Keep contrast strong for text and interactive states
+- Use background tokens for surface hierarchy instead of custom colors
+
+## Suggested Theme Tokens
+
+Optional tokens you can add for richer UIs:
+
+- `--accent-color`
+- `--primary-color-shade`
+- `--secondary-color` and `--secondary-color-contrast`
+- `--success-contrast`, `--warning-contrast`, `--danger-contrast`
+
+## Troubleshooting
+
+:::tip
+If a component looks off, check that your background and font tokens are present and readable.
+:::
+
+:::warning
+Avoid hard-coded hex values in component CSS when a theme token exists.
 :::
 
 === markdown/what-is-slice.md ===

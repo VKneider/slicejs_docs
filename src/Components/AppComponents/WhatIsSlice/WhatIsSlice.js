@@ -38,7 +38,8 @@ export default class WhatIsSlice extends HTMLElement {
     if (installationButton) {
       installationButton.addEventListener('click', (event) => {
         event.preventDefault();
-        slice.router.navigate('/Documentation/Installation');
+        // open link in new tab https://slice-js-docs.vercel.app/Documentation/Installation (its not a route of the app)
+        window.open('https://slice-js-docs.vercel.app/Documentation/Installation', '_blank');
       });
     }
     
@@ -47,7 +48,8 @@ export default class WhatIsSlice extends HTMLElement {
     if (componentsButton) {
       componentsButton.addEventListener('click', (event) => {
         event.preventDefault();
-        slice.router.navigate('/Documentation/Components');
+        // open link in new tab https://slice-js-docs.vercel.app/Documentation/Slice (its not a route of the app)
+        window.open('https://slice-js-docs.vercel.app/Documentation/Slice', '_blank');
       });
     }
   }

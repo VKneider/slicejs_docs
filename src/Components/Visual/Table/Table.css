@@ -37,3 +37,69 @@ slice-table .table td code {
   padding: 2px 6px;
   border-radius: 4px;
 }
+
+@media (max-width: 640px) {
+  slice-table .table_wrapper {
+    overflow: visible;
+    display: flex;
+    justify-content: center;
+  }
+
+  slice-table .table,
+  slice-table .table thead,
+  slice-table .table tbody,
+  slice-table .table tr,
+  slice-table .table th,
+  slice-table .table td {
+    display: block;
+    width: 100%;
+  }
+
+  slice-table .table {
+    width: min(92%, 560px);
+    margin: 0 auto;
+  }
+
+  slice-table .table thead {
+    display: none;
+  }
+
+  slice-table .table tr {
+    border: 1px solid var(--primary-color-shade);
+    border-radius: var(--border-radius-slice);
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    background: var(--secondary-background-color);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px 16px;
+  }
+
+  slice-table .table td {
+    border: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    column-gap: 8px;
+    row-gap: 4px;
+  }
+
+  slice-table .table td::before {
+    content: attr(data-label);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--primary-color);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  slice-table .table td > * {
+    min-width: 0;
+  }
+
+  slice-table .table td code {
+    display: inline-block;
+  }
+}
