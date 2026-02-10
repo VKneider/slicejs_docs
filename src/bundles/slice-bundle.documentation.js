@@ -1,10 +1,10 @@
 /**
  * Slice.js Bundle
  * Type: route
- * Generated: 2026-02-09T23:50:54.744Z
+ * Generated: 2026-02-10T00:22:47.893Z
  * Strategy: hybrid
  * Components: 8
- * Total Size: 1461.1 KB
+ * Total Size: 1461.8 KB
  */
 
 export const SLICE_BUNDLE = {
@@ -12,8 +12,8 @@ export const SLICE_BUNDLE = {
   "version": "2.0.0",
   "type": "route",
   "route": "documentation",
-  "generated": "2026-02-09T23:50:54.744Z",
-  "totalSize": 1496169,
+  "generated": "2026-02-10T00:22:47.893Z",
+  "totalSize": 1496932,
   "componentCount": 8,
   "strategy": "hybrid"
 },
@@ -52,14 +52,14 @@ export const SLICE_BUNDLE = {
   },
   "Link": {
     "name": "Link",
-    "category": "Service",
-    "categoryType": "Service",
-    "js": "class Link extends HTMLElement {\r\n   constructor(props = {}) {\r\n      super();\r\n      this.props = props;\r\n      this.innerHTML = this.getTemplate(props);\r\n      this.init();\r\n   }\r\n\r\n   init() {\r\n      this.addEventListener('click', this.onClick);\r\n   }\r\n\r\n   async onClick(event) {\r\n      event.preventDefault();\r\n      const path = this.querySelector('a').getAttribute('href');\r\n      const routeTargets = document.querySelectorAll('slice-routetarget');\r\n      slice.router.navigate(path);\r\n   }\r\n\r\n   getTemplate(props = {}) {\r\n      const { path = '#', classes = '', text = '' } = props;\r\n      return `<a href=\"${path}\" class=\"${classes}\" data-route>${text}</a>`;\r\n   }\r\n}\r\n\r\nwindow.Link = Link;\ncustomElements.define('slice-link', Link);\r\n\nreturn Link;",
+    "category": "Visual",
+    "categoryType": "Visual",
+    "js": "class Link extends HTMLElement {\n  static props = {\n    path: { type: 'string', default: '#' },\n    classes: { type: 'string', default: '' },\n    text: { type: 'string', default: '' }\n  };\n\n  constructor(props = {}) {\n    super();\n    slice.attachTemplate(this);\n    this.$anchor = this.querySelector('.slice-link');\n\n    slice.controller.setComponentProps(this, props);\n    this.debuggerProps = ['path', 'classes', 'text'];\n  }\n\n  async init() {\n    this.updateLink();\n    this.addEventListener('click', this.onClick.bind(this));\n  }\n\n  updateLink() {\n    if (!this.$anchor) return;\n    this.$anchor.setAttribute('href', this.path || '#');\n    this.$anchor.textContent = this.text || '';\n    this.$anchor.className = `slice-link ${this.classes || ''}`.trim();\n  }\n\n  async onClick(event) {\n    event.preventDefault();\n    const path = this.path || this.$anchor?.getAttribute('href') || '#';\n    slice.router.navigate(path);\n  }\n\n  set path(value) {\n    this._path = value;\n    this.updateLink();\n  }\n\n  get path() {\n    return this._path;\n  }\n\n  set classes(value) {\n    this._classes = value;\n    this.updateLink();\n  }\n\n  get classes() {\n    return this._classes;\n  }\n\n  set text(value) {\n    this._text = value;\n    this.updateLink();\n  }\n\n  get text() {\n    return this._text;\n  }\n}\n\nwindow.Link = Link;\ncustomElements.define('slice-link', Link);\n\nreturn Link;",
     "externalDependencies": {},
     "componentDependencies": [],
-    "html": null,
-    "css": null,
-    "size": 741
+    "html": "<a href=\"#\" class=\"slice-link\" data-route></a>\n",
+    "css": "slice-link {\n  display: inline-flex;\n}\n\nslice-link .slice-link {\n  color: inherit;\n  text-decoration: none;\n}\n",
+    "size": 1504
   },
   "DropDown": {
     "name": "DropDown",
