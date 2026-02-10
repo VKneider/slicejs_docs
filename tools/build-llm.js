@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const ROOT = path.resolve(process.cwd(), 'slicejs_docs');
+const ROOT = process.cwd();
 const MARKDOWN_DIR = path.join(ROOT, 'markdown');
 const OUTPUT_PATH = path.join(ROOT, 'llm.txt');
 
@@ -41,13 +41,13 @@ const build = () => {
     .sort();
 
   const chunks = [];
-  for (const filePath of files) {
-    const relative = path.relative(ROOT, filePath).replace(/\\/g, '/');
-    const raw = fs.readFileSync(filePath, 'utf8');
-    const content = stripFrontMatter(raw).trim();
-    if (!content) continue;
-    chunks.push(`=== ${relative} ===\n${content}`);
-  }
+   for (const filePath of files) {
+     const relative = path.relative(ROOT, filePath).replace(/\\/g, '/');
+     const raw = fs.readFileSync(filePath, 'utf8');
+     const content = stripFrontMatter(raw).trim();
+     if (!content) continue;
+     chunks.push(`=== ${relative} ===\n${content}`);
+   }
 
   const output = chunks.join('\n\n');
   fs.writeFileSync(OUTPUT_PATH, output, 'utf8');
