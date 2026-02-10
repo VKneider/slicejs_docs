@@ -1,0 +1,49 @@
+<div class="documentation-content slicemcpdocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="slicejs-mcp">
+    <span class="doc-title-text">Slice.js MCP</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p>Slice.js provides an MCP (Model Context Protocol) server that allows AI assistants and development tools to access Slice.js documentation programmatically. This enables seamless integration with AI-powered coding assistants for real-time documentation queries during development.</p>
+<h2 id="installation">Installation</h2>
+<h3 id="using-npx-no-installation-required">Using npx (No Installation Required)</h3>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<h3 id="local-development">Local Development</h3>
+<p>Clone the repository, install dependencies, build, and run locally:</p>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="usage">Usage</h2>
+<p>The MCP server runs as a stdio-based service, perfect for integration with MCP-compatible clients and AI assistants.</p>
+<h3 id="basic-usage">Basic Usage</h3>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<h2 id="tool-summary">Tool Summary</h2>
+<div class="table-block" data-block-id="doc-block-4"></div>
+<h2 id="listdocs">list_docs</h2>
+<p>Returns a list of all available documentation sections and categories.</p>
+<p><strong>Parameters:</strong> None</p>
+<h2 id="searchdocs">search_docs</h2>
+<p>Searches across all documentation using keywords or phrases.</p>
+<h3 id="parameters">Parameters</h3>
+<div class="table-block" data-block-id="doc-block-5"></div>
+<h2 id="getdoccontent">get_doc_content</h2>
+<p>Fetches the full content of specific documentation page(s).</p>
+<h3 id="parameters-2">Parameters</h3>
+<div class="table-block" data-block-id="doc-block-6"></div>
+<h2 id="getllmfullcontext">get_llm_full_context</h2>
+<p>Fetches the complete documentation bundle (~2000 lines) for comprehensive LLM context.</p>
+<p><strong>Parameters:</strong> None</p>
+<p><strong>Note:</strong> This consumes considerable tokens but provides all documentation in one request.</p>
+<h2 id="architecture">Architecture</h2>
+<ul><li><strong>Source</strong>: Documentation fetched from https://github.com/VKneider/slicejs_docs</li><li><strong>Caching</strong>: Infinite session cache to minimize API requests and improve performance</li><li><strong>Initialization</strong>: Lazy loading of document structure on first tool use</li><li><strong>Rate Limiting</strong>: Optimized to stay within GitHub API limits (60 req/hour)</li></ul>
+<h2 id="integration-with-ai-assistants">Integration with AI Assistants</h2>
+<p>The MCP server can be integrated with MCP-compatible clients to provide real-time access to Slice.js documentation during development.</p>
+<h2 id="best-practices">Best Practices</h2>
+<div class="callout callout-tip">Use <code>list_docs</code> first to explore available documentation, then <code>search_docs</code> for specific queries.</div>
+<div class="callout callout-tip">For comprehensive context, use <code>get_llm_full_context</code> sparingly due to token consumption.</div>
+<div class="callout callout-tip">The server maintains a cache during the session, so repeated queries are fast.</div>
+<h2 id="gotchas">Gotchas</h2>
+<div class="callout callout-warning">The server fetches documentation from GitHub on-demand. Ensure internet connectivity for full functionality.</div>
+<div class="callout callout-warning">Large documentation requests may consume significant tokens in AI contexts.</div>
+</div>

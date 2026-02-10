@@ -1,6 +1,6 @@
 /**
  * Slice.js Bundle Configuration
- * Generated: 2026-02-10T00:22:47.896Z
+ * Generated: 2026-02-10T04:27:20.956Z
  * Strategy: hybrid
  */
 
@@ -8,13 +8,13 @@
 export const SLICE_BUNDLE_CONFIG = {
   "version": "2.0.0",
   "strategy": "hybrid",
-  "generated": "2026-02-10T00:22:47.895Z",
+  "generated": "2026-02-10T04:27:20.954Z",
   "stats": {
-    "totalComponents": 74,
+    "totalComponents": 75,
     "totalRoutes": 44,
     "sharedComponents": 1,
-    "sharedPercentage": "5.4",
-    "totalSize": 2388489,
+    "sharedPercentage": "5.3",
+    "totalSize": 2406830,
     "criticalSize": 1174
   },
   "bundles": {
@@ -32,7 +32,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Components"
         ],
         "file": "slice-bundle.multiroute-documentationpage.js",
-        "size": 1542471,
+        "size": 1543086,
         "components": [
           "DocumentationPage",
           "Navbar",
@@ -77,11 +77,11 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Slice",
           "/SliceConfig",
           "/Themes",
-          "/Slice-Styles",
+          "/Slice-MCP",
           "/ThemeCreator"
         ],
         "file": "slice-bundle.configuration.js",
-        "size": 1680578,
+        "size": 1673859,
         "components": [
           "WhatIsSlice",
           "SliceConfigDocumentation",
@@ -92,7 +92,6 @@ export const SLICE_BUNDLE_CONFIG = {
           "Icon",
           "ThemesDocumentation",
           "Grid",
-          "SliceStylesDocumentation",
           "ThemeCreator",
           "Navbar",
           "Link",
