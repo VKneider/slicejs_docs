@@ -22,6 +22,20 @@
             }
         }
     },
+    "events": {
+        "enabled": true,
+        "ui": {
+            "enabled": true,
+            "shortcut": "alt+shift+e"
+        }
+    },
+    "context": {
+        "enabled": true,
+        "ui": {
+            "enabled": true,
+            "shortcut": "alt+shift+c"
+        }
+    },
     "paths": {
         "components": {
             "AppComponents":{

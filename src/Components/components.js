@@ -63,6 +63,7 @@ const components = {
   "Navbar": "Visual",
   "NotFound": "Visual",
   "Route": "Visual",
+  "Link": "Visual",
   "Select": "Visual",
   "Switch": "Visual",
   "Table": "Visual",
@@ -71,7 +72,6 @@ const components = {
   "TreeView": "Visual",
   "FetchManager": "Service",
   "IndexedDbManager": "Service",
-  "Link": "Service",
   "LocalStorageManager": "Service"
 };
 
