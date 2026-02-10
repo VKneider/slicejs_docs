@@ -1,6 +1,6 @@
 /**
  * Slice.js Bundle Configuration
- * Generated: 2026-02-09T23:50:54.747Z
+ * Generated: 2026-02-10T00:22:47.896Z
  * Strategy: hybrid
  */
 
@@ -8,13 +8,13 @@
 export const SLICE_BUNDLE_CONFIG = {
   "version": "2.0.0",
   "strategy": "hybrid",
-  "generated": "2026-02-09T23:50:54.745Z",
+  "generated": "2026-02-10T00:22:47.895Z",
   "stats": {
     "totalComponents": 74,
     "totalRoutes": 44,
     "sharedComponents": 1,
     "sharedPercentage": "5.4",
-    "totalSize": 2387726,
+    "totalSize": 2388489,
     "criticalSize": 1174
   },
   "bundles": {
@@ -32,7 +32,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Components"
         ],
         "file": "slice-bundle.multiroute-documentationpage.js",
-        "size": 1541708,
+        "size": 1542471,
         "components": [
           "DocumentationPage",
           "Navbar",
@@ -57,7 +57,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/"
         ],
         "file": "slice-bundle.home.js",
-        "size": 1496169,
+        "size": 1496932,
         "components": [
           "LandingPage",
           "Navbar",
@@ -81,7 +81,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/ThemeCreator"
         ],
         "file": "slice-bundle.configuration.js",
-        "size": 1679815,
+        "size": 1680578,
         "components": [
           "WhatIsSlice",
           "SliceConfigDocumentation",
@@ -165,7 +165,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Select"
         ],
         "file": "slice-bundle.components.js",
-        "size": 1819747,
+        "size": 1820510,
         "components": [
           "VisualDocumentation",
           "CodeVisualizer",
@@ -266,7 +266,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Playground"
         ],
         "file": "slice-bundle.tools.js",
-        "size": 1554096,
+        "size": 1554859,
         "components": [
           "Playground",
           "Navbar",
@@ -293,7 +293,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/about"
         ],
         "file": "slice-bundle.misc.js",
-        "size": 1509496,
+        "size": 1510259,
         "components": [
           "NotFound",
           "TheSliceTeam",
@@ -314,7 +314,7 @@ export const SLICE_BUNDLE_CONFIG = {
           "/Docum/${category}/${id}"
         ],
         "file": "slice-bundle.documentation.js",
-        "size": 1496169,
+        "size": 1496932,
         "components": [
           "LandingPage",
           "Navbar",
