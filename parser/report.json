@@ -59,6 +59,10 @@
     {
       "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\slice-config.md",
       "component": "SliceConfigDocumentation"
+    },
+    {
+      "filePath": "C:\\Users\\victo\\Desktop\\repos\\slicejs_docs\\markdown\\slicejs-mcp.md",
+      "component": "SliceMCPDocumentation"
     }
   ],
   "markdownCandidates": [],

@@ -52,8 +52,8 @@ const routes = [
             component: 'ThemesDocumentation',
          },
          {
-            path: '/Slice-Styles',
-            component: 'SliceStylesDocumentation',
+            path: '/Slice-MCP',
+            component: 'SliceMCP',
          },
          {
             path: '/Routing',

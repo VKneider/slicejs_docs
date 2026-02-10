@@ -34,6 +34,7 @@ const components = {
   "SelectDocumentation": "AppComponents",
   "ServiceDocumentation": "AppComponents",
   "SliceConfigDocumentation": "AppComponents",
+  "SliceMCPDocumentation": "AppComponents",
   "SliceStylesDocumentation": "AppComponents",
   "SliceTeamCard": "AppComponents",
   "StaticPropsDocumentation": "AppComponents",

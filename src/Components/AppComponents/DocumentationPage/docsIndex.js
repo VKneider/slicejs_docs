@@ -100,6 +100,16 @@ const docsIndex = [
     tags: ['lifecycle', 'destroy', 'cleanup']
   },
   {
+    title: 'Themes',
+    route: '/Documentation/Themes',
+    description: 'Configure and switch Slice.js themes using CSS variables.',
+    section: 'Getting Started',
+    group: 'Configuration',
+    order: 7,
+    navLabel: 'Themes',
+    tags: ['themes', 'styles', 'configuration']
+  },
+  {
     title: 'sliceConfig.json',
     route: '/Documentation/Configuration/sliceConfig',
     description: 'How Slice.js loads and uses sliceConfig.json.',
@@ -168,6 +178,16 @@ const docsIndex = [
     order: 15,
     navLabel: 'CLI',
     tags: ['cli', 'tooling']
+  },
+  {
+    title: 'Slice.js MCP',
+    route: '/Documentation/Slice-MCP',
+    description: 'Model Context Protocol server for accessing Slice.js documentation via npx or local development.',
+    section: 'Getting Started',
+    group: 'Tools',
+    order: 21,
+    navLabel: 'MCP',
+    tags: ['mcp', 'documentation', 'ai', 'tools']
   },
   {
     title: 'Documentation',

@@ -1,10 +1,10 @@
 /**
  * Slice.js Bundle
  * Type: route
- * Generated: 2026-02-10T00:22:47.594Z
+ * Generated: 2026-02-10T04:27:20.634Z
  * Strategy: hybrid
- * Components: 18
- * Total Size: 1641.2 KB
+ * Components: 17
+ * Total Size: 1634.6 KB
  */
 
 export const SLICE_BUNDLE = {
@@ -12,9 +12,9 @@ export const SLICE_BUNDLE = {
   "version": "2.0.0",
   "type": "route",
   "route": "configuration",
-  "generated": "2026-02-10T00:22:47.594Z",
-  "totalSize": 1680578,
-  "componentCount": 18,
+  "generated": "2026-02-10T04:27:20.634Z",
+  "totalSize": 1673859,
+  "componentCount": 17,
   "strategy": "hybrid"
 },
 
@@ -129,19 +129,6 @@ export const SLICE_BUNDLE = {
     "html": "<div class=\"grid-container\"></div>\r\n",
     "css": ".grid-container {\r\n  display: grid;\r\n  grid-template-columns: repeat(1, 1fr);\r\n  grid-template-rows: repeat(1, 1fr);\r\n  gap: 10px;\r\n  margin: 0 auto;\r\n  background: none;\r\n  background-color: transparent;\r\n}\r\n\r\n/* Ensure slice-grid component has no background */\r\nslice-grid {\r\n  background: none !important;\r\n  background-color: transparent !important;\r\n}\r\n",
     "size": 3610
-  },
-  "SliceStylesDocumentation": {
-    "name": "SliceStylesDocumentation",
-    "category": "AppComponents",
-    "categoryType": "Visual",
-    "js": "class SliceStylesDocumentation extends HTMLElement {\r\n   constructor(props) {\r\n      super();\r\n      slice.attachTemplate(this);\r\n\r\n      slice.controller.setComponentProps(this, props);\r\n      this.debuggerProps = [];\r\n   }\r\n\r\n   async init() {\r\n      // CSS Variables Section\r\n      const cssVariablesSection = this.querySelector('.css-variables');\r\n      const cssVariablesCode = await slice.build('CodeVisualizer', {\r\n         value: `:root {\r\n  --font-family: system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\",\r\n    Roboto, Oxygen, Ubuntu, Cantarell, \"Open Sans\", \"Helvetica Neue\", sans-serif;\r\n  --border-radius-slice: 5px;\r\n  --slice-border: 1px;\r\n}`,\r\n         language: 'css'\r\n      });\r\n      \r\n      const variablesTable = document.createElement('table');\r\n      variablesTable.className = 'variables-table';\r\n      variablesTable.innerHTML = `\r\n         <tr>\r\n            <th>Variable</th>\r\n            <th>Description</th>\r\n            <th>Default Value</th>\r\n         </tr>\r\n         <tr>\r\n            <td>--font-family</td>\r\n            <td>The primary font family used throughout the application</td>\r\n            <td>system-ui and other system fonts</td>\r\n         </tr>\r\n         <tr>\r\n            <td>--border-radius-slice</td>\r\n            <td>Default border radius for components</td>\r\n            <td>5px</td>\r\n         </tr>\r\n         <tr>\r\n            <td>--slice-border</td>\r\n            <td>Default border width</td>\r\n            <td>1px</td>\r\n         </tr>\r\n      `;\r\n      \r\n      cssVariablesSection.appendChild(cssVariablesCode);\r\n      cssVariablesSection.appendChild(variablesTable);\r\n      \r\n      // Body Styles Section\r\n      const bodyStylesSection = this.querySelector('.body-styles');\r\n      const bodyStylesCode = await slice.build('CodeVisualizer', {\r\n         value: `body {\r\n  margin: 0;\r\n  background-color: var(--primary-background-color);\r\n}`,\r\n         language: 'css'\r\n      });\r\n      \r\n      bodyStylesSection.appendChild(bodyStylesCode);\r\n      \r\n      // Caret Styles Section\r\n      const caretStylesSection = this.querySelector('.caret-styles');\r\n      const caretStylesCode = await slice.build('CodeVisualizer', {\r\n         value: `.caret {\r\n  cursor: pointer;\r\n  width: 0;\r\n  height: 0;\r\n  border-left: 5px solid transparent;\r\n  border-right: 5px solid transparent;\r\n  border-top: 6px solid;\r\n  transition: transform 0.3s;\r\n}\r\n.caret_open {\r\n  transform: rotate(180deg);\r\n}`,\r\n         language: 'css'\r\n      });\r\n      \r\n      // Create caret demo\r\n      const caretDemo = document.createElement('div');\r\n      caretDemo.className = 'caret-demo';\r\n      \r\n      const normalCaret = document.createElement('div');\r\n      normalCaret.className = 'caret';\r\n      normalCaret.style.borderTopColor = 'var(--primary-color)';\r\n      \r\n      const openCaret = document.createElement('div');\r\n      openCaret.className = 'caret caret_open';\r\n      openCaret.style.borderTopColor = 'var(--primary-color)';\r\n      \r\n      const caretLabel = document.createElement('p');\r\n      caretLabel.textContent = 'Normal caret vs Open caret:';\r\n      \r\n      caretDemo.appendChild(caretLabel);\r\n      caretDemo.appendChild(normalCaret);\r\n      caretDemo.appendChild(openCaret);\r\n      \r\n      caretStylesSection.appendChild(caretStylesCode);\r\n      caretStylesSection.appendChild(caretDemo);\r\n      \r\n      // Scrollbar Styles Section\r\n      const scrollbarStylesSection = this.querySelector('.scrollbar-styles');\r\n      const scrollbarStylesCode = await slice.build('CodeVisualizer', {\r\n         value: `*::-webkit-scrollbar {\r\n  width: 5px;\r\n}\r\n*::-webkit-scrollbar:horizontal {\r\n  height: 3px;\r\n}\r\n*::-webkit-scrollbar-thumb {\r\n  background: var(--secondary-color);\r\n  border-radius: var(--border-radius-slice);\r\n}`,\r\n         language: 'css'\r\n      });\r\n      \r\n      // Create scrollbar demo\r\n      const scrollbarDemo = document.createElement('div');\r\n      scrollbarDemo.className = 'scrollbar-demo';\r\n      \r\n      for (let i = 0; i < 20; i++) {\r\n         const p = document.createElement('p');\r\n         p.textContent = `Scrollbar demo line ${i+1}`;\r\n         scrollbarDemo.appendChild(p);\r\n      }\r\n      \r\n      scrollbarStylesSection.appendChild(scrollbarStylesCode);\r\n      scrollbarStylesSection.appendChild(scrollbarDemo);\r\n   }\r\n}\r\n\r\nwindow.SliceStylesDocumentation = SliceStylesDocumentation;\ncustomElements.define('slice-slicestylesdocumentation', SliceStylesDocumentation);\nreturn SliceStylesDocumentation;",
-    "externalDependencies": {},
-    "componentDependencies": [
-      "CodeVisualizer"
-    ],
-    "html": "<h1 id=\"sliceStyles\">Slice Styles</h1>\r\n<p>\r\n  Slice.js provides global styles through the <code>sliceStyles.css</code> file, which establishes consistent base styling across your application. These styles include CSS variables, resets, and utility classes.\r\n</p>\r\n\r\n<h2 id=\"cssVariables\">CSS Variables</h2>\r\n<p>\r\n  Core CSS variables are defined in the <code>:root</code> element and are available throughout your application.\r\n</p>\r\n<div class=\"css-variables\"></div>\r\n\r\n<h2 id=\"bodyStyles\">Base Body Styles</h2>\r\n<p>\r\n  The framework applies minimal base styling to the <code>body</code> element.\r\n</p>\r\n<div class=\"body-styles\"></div>\r\n\r\n<h2 id=\"caretStyles\">Caret/Dropdown Styles</h2>\r\n<p>\r\n  The framework provides styles for dropdown carets used in various components.\r\n</p>\r\n<div class=\"caret-styles\"></div>\r\n\r\n<h2 id=\"scrollbarStyles\">Custom Scrollbar</h2>\r\n<p>\r\n  Slice.js includes global custom scrollbar styling for all elements.\r\n</p>\r\n<div class=\"scrollbar-styles\"></div>",
-    "css": "slice-slicestylesdocumentation {\r\n  color: var(--font-primary-color);\r\n}\r\n\r\nslice-slicestylesdocumentation .style-section {\r\n  margin-bottom: 30px;\r\n}\r\n\r\nslice-slicestylesdocumentation .style-preview {\r\n  background-color: var(--secondary-background-color);\r\n  padding: 15px;\r\n  border-radius: var(--border-radius-slice);\r\n  margin: 10px 0;\r\n}\r\n\r\nslice-slicestylesdocumentation .scrollbar-demo {\r\n  max-height: 100px;\r\n  overflow-y: scroll;\r\n  padding: 15px;\r\n  background-color: var(--secondary-background-color);\r\n  border-radius: var(--border-radius-slice);\r\n}\r\n\r\nslice-slicestylesdocumentation .caret-demo {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 20px;\r\n  margin: 20px 0;\r\n}\r\n\r\nslice-slicestylesdocumentation .color-variable {\r\n  display: inline-block;\r\n  width: 20px;\r\n  height: 20px;\r\n  border-radius: 50%;\r\n  margin-right: 10px;\r\n  vertical-align: middle;\r\n}\r\n\r\nslice-slicestylesdocumentation .variables-table {\r\n  width: 100%;\r\n  border-collapse: collapse;\r\n  margin: 20px 0;\r\n}\r\n\r\nslice-slicestylesdocumentation .variables-table th,\r\nslice-slicestylesdocumentation .variables-table td {\r\n  padding: 10px;\r\n  text-align: left;\r\n  border-bottom: 1px solid var(--primary-color-shade);\r\n}\r\n\r\nslice-slicestylesdocumentation .variables-table th {\r\n  background-color: var(--primary-color);\r\n  color: var(--primary-color-contrast);\r\n}",
-    "size": 6719
   },
   "ThemeCreator": {
     "name": "ThemeCreator",

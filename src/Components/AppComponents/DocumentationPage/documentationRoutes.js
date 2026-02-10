@@ -120,10 +120,10 @@ export const documentationRoutes = {
             component: 'LoggerDocumentation'
          },
          {
-            title: 'Slice Styles',
-            path: '/Documentation/Slice-Styles',
-            component: 'SliceStylesDocumentation'
-         }
+            title: 'Slice.js MCP',
+            path: '/Documentation/Slice-MCP',
+            component: 'SliceMCPDocumentation'
+         },
       ]
    },
    componentsLibrary: {
