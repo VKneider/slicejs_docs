@@ -63,7 +63,14 @@
     },
     "production": {
         "enabled": false
-    }
+    },
+    "publicFolders": [
+        "/Themes",
+        "/Styles",
+        "/assets",
+        "/images",
+        "/markdown"
+    ]
 }
 
 

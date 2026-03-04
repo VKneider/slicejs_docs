@@ -47,10 +47,15 @@
 <div class="table-block" data-block-id="doc-block-15"></div>
 <h2 id="production">production</h2>
 <div class="table-block" data-block-id="doc-block-16"></div>
-<h2 id="server">server</h2>
+<h2 id="publicfolders">publicFolders</h2>
+<p>Use <code>publicFolders</code> to declare <strong>public asset folders</strong> that should be served in production. This keeps source-only folders private while still exposing the assets your app needs.</p>
+<p>Defaults are intended to be sensible for most apps: <code>/Themes</code>, <code>/Styles</code>, <code>/assets</code>.</p>
+<p>Structural framework components are bundled automatically during <code>slice build</code> based on which features are enabled in <code>sliceConfig.json</code> (e.g. <code>logger.enabled</code>, <code>events.enabled</code>).</p>
 <div class="table-block" data-block-id="doc-block-17"></div>
+<h2 id="server">server</h2>
+<div class="table-block" data-block-id="doc-block-18"></div>
 <h2 id="example">Example</h2>
-<div class="code-block" data-block-id="doc-block-18"></div>
+<div class="code-block" data-block-id="doc-block-19"></div>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Keep <code>paths</code> accurate or component loading will fail.</div>
 <div class="callout callout-tip">Load shared styles through <code>stylesManager.requestedStyles</code>.</div>
