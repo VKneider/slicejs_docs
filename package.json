@@ -8,8 +8,9 @@
     "slice:list": "slice component list",
     "slice:delete": "slice component delete",
     "slice:init": "slice init",
+    "slice:build": "node ../slicejs-cli/client.js build",
+    "slice:start": "node ../slicejs-cli/client.js start -p 3000",
     "run": "slice dev",
-    "slice:start": "slice start",
     "development": "node api/index.js --development",
     "slice:dev": "slice dev",
     "slice:version": "slice version",
@@ -17,14 +18,14 @@
     "slice:get": "slice get",
     "slice:browse": "slice browse",
     "dev": "slice dev",
-    "start": "slice start",
     "component:create": "slice component create",
     "component:list": "slice component list",
     "component:delete": "slice component delete",
     "get": "slice get",
     "browse": "slice browse",
     "sync": "slice sync",
-    "slice:sync": "slice sync"
+    "slice:sync": "slice sync",
+    "slice:test-prod": "NODE_ENV=production node ../slicejs-cli/client.js build && NODE_ENV=production node ../slicejs-cli/client.js start -p 3000"
   },
   "keywords": [],
   "author": "",
@@ -35,6 +36,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "slicejs-web-framework": "^2.3.5"
+    "slicejs-cli": "^2.9.3",
+    "slicejs-web-framework": "^2.4.3"
   }
 }

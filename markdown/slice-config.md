@@ -61,6 +61,7 @@ Once loaded, Slice.js initializes structural components based on config:
 | `context` | `object` | no | ContextManager toggle. |
 | `production` | `object` | no | Production toggles (if supported). |
 | `server` | `object` | no | Server port/host for dev server. |
+| `publicFolders` | `string[]` | no | Allowlist of public folders served in production. |
 
 ## debugger
 | Field | Type | Default | Notes |
@@ -142,6 +143,19 @@ Each key is a category name used in `components.js`.
 | --- | --- | --- | --- |
 | `enabled` | `boolean` | `false` | If supported, disables dev-only features. |
 
+## publicFolders
+Use `publicFolders` to declare **public asset folders** that should be served in production.
+This keeps source-only folders private while still exposing the assets your app needs.
+
+Defaults are intended to be sensible for most apps: `/Themes`, `/Styles`, `/assets`.
+
+Structural framework components are bundled automatically during `slice build` based on which
+features are enabled in `sliceConfig.json` (e.g. `logger.enabled`, `events.enabled`).
+
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `publicFolders` | `string[]` | `[/Themes, /Styles, /assets]` | Public asset folders served in production. |
+
 ## server
 | Field | Type | Default | Notes |
 | --- | --- | --- | --- |
@@ -179,6 +193,8 @@ Each key is a category name used in `components.js`.
   "loading": { "enabled": true },
   "events": { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+e" } },
   "context": { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+c" } }
+  ,
+  "publicFolders": ["/Themes", "/Styles", "/assets"]
 }
 ```
 

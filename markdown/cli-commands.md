@@ -30,10 +30,11 @@ npm install slicejs-cli --save-dev
 | Command | Alias | Purpose |
 | --- | --- | --- |
 | `slice init` | - | Initialize project structure and install Visual components. |
-| `slice dev` | `slice start` | Start development server. |
-| `slice bundle` | - | Generate production bundles. |
-| `slice bundle clean` | - | Remove generated bundles. |
-| `slice bundle info` | - | Show bundle configuration summary. |
+| `slice dev` | - | Start development server. |
+| `slice build` | - | Build production output (bundles + dist). |
+| `slice build clean` | - | Remove generated bundles. |
+| `slice build info` | - | Show bundle configuration summary. |
+| `slice start` | - | Start production server. |
 | `slice component create` | `slice comp new` | Create a local component. |
 | `slice component list` | `slice comp ls` | List local components. |
 | `slice component delete` | `slice comp remove` | Delete a local component. |
@@ -60,8 +61,8 @@ What it does:
 - Installs all Visual components from the registry.
 - Configures `package.json` scripts (dev, start, get, browse, sync, etc.).
 
-## dev / start
-Starts the development server. Optionally generates bundles before startup and watches files.
+## dev
+Starts the development server and serves from `/src`.
 
 ```bash title="Start dev server"
 slice dev
@@ -72,18 +73,40 @@ slice dev
 | --- | --- | --- | --- |
 | `-p, --port` | `number` | `3000` | Uses config `server.port` if defined. Falls back to next port if busy. |
 | `-w, --watch` | `boolean` | `false` | Restart server on file changes. |
-| `-b, --bundled` | `boolean` | `false` | Generate bundles before start; runs in bundled mode. |
 
 ### Behavior
 - Ensures `src/` and `api/` exist (otherwise suggests `slice init`).
 - Falls back to port+1 if the requested port is busy.
-- Uses `api/index.js` with `--development` or `--bundled`.
+- Uses `api/index.js` with `--development`.
 
-## bundle
-Generates production bundles by analyzing dependencies and writing bundle files to `src/`.
+## start
+Starts the production server and serves from `/dist`.
 
-```bash title="Generate bundles"
-slice bundle
+```bash title="Start production server"
+slice start
+```
+
+### Options
+| Flag | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `-p, --port` | `number` | `3000` | Uses config `server.port` if defined. Falls back to next port if busy. |
+| `-w, --watch` | `boolean` | `false` | Restart server on file changes. |
+
+:::tip
+Production uses `publicFolders` from `sliceConfig.json` to expose public asset folders
+like `/Themes`, `/Styles`, and `/assets`.
+:::
+
+## build
+Builds production output by analyzing dependencies, generating bundles, and writing files to `/dist`.
+
+:::tip
+Production builds include **Structural framework components** in bundles to avoid runtime fetches.
+These entries are stored as `Framework/Structural/<ComponentName>` in bundle config.
+:::
+
+```bash title="Build production output"
+slice build
 ```
 
 ### Options
@@ -91,12 +114,17 @@ slice bundle
 | --- | --- | --- | --- |
 | `-a, --analyze` | `boolean` | `false` | Analyze only, do not generate bundles. |
 | `-v, --verbose` | `boolean` | `false` | Output analysis metrics. |
+| `--no-minify` | `boolean` | `false` | Disable minification (enabled by default). |
+| `--no-obfuscate` | `boolean` | `false` | Disable obfuscation (enabled by default). |
+| `--preview` | `boolean` | `false` | Start preview server after build. |
+| `--serve` | `boolean` | `false` | Start preview server without building. |
+| `--skip-clean` | `boolean` | `false` | Skip cleaning dist before build. |
 
 ### Subcommands
 | Command | Purpose |
 | --- | --- |
-| `slice bundle clean` | Remove generated bundle files and config. |
-| `slice bundle info` | Show bundle configuration summary. |
+| `slice build clean` | Remove generated bundle files and config. |
+| `slice build info` | Show bundle configuration summary. |
 
 ## component create
 Creates a new local component. Prompts for name and category from `sliceConfig.json`.
