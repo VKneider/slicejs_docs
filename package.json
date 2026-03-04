@@ -9,7 +9,7 @@
     "slice:delete": "slice component delete",
     "slice:init": "slice init",
     "slice:build": "node ./node_modules/slicejs-cli/client.js build",
-    "slice:start": "node ./node_modules/slicejs-cli/client.js start -p 3000",
+    "slice:start": "node ./node_modules/slicejs-cli/client.js start",
     "run": "slice dev",
     "development": "node api/index.js --development",
     "slice:dev": "slice dev",
