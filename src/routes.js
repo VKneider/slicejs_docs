@@ -21,6 +21,10 @@ const routes = [
             path: '/SliceConfig',
             component: 'SliceConfigDocumentation',
          },
+         {
+            path: '/Configuration/environment-variables',
+            component: 'EnvironmentVariablesDocumentation',
+         },
 
          {
             path: '/Visual',
