@@ -162,6 +162,57 @@ features are enabled in `sliceConfig.json` (e.g. `logger.enabled`, `events.enabl
 | `port` | `number` | `3001` | Dev server port fallback. |
 | `host` | `string` | `localhost` | Dev server host. |
 
+## Public Browser Environment (`SLICE_PUBLIC_*`)
+Slice.js can expose selected environment variables to the browser runtime.
+
+Only variables that start with `SLICE_PUBLIC_` are included in the browser payload.
+Any variable without this prefix stays server-only and is not exposed through the runtime env endpoint.
+
+:::warning
+All values exposed with `SLICE_PUBLIC_*` are public and readable by any user in the browser.
+Never place secrets, tokens, private keys, or credentials in these variables.
+:::
+
+### Naming Contract
+| Pattern | Exposed in Browser | Example |
+| --- | --- | --- |
+| `SLICE_PUBLIC_*` | yes | `SLICE_PUBLIC_API_URL=https://api.example.com` |
+| Any other key | no | `DB_PASSWORD=...` |
+
+### Runtime Endpoint Contract (`/slice-env.json`)
+Slice.js serves browser-safe runtime environment data at `/slice-env.json`.
+
+Response shape:
+
+```json title="/slice-env.json"
+{
+  "mode": "development",
+  "env": {
+    "SLICE_PUBLIC_API_URL": "https://api.example.com"
+  }
+}
+```
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `mode` | `"development" | "production"` | Current runtime mode. |
+| `env` | `object` | Key/value map of browser-exposed `SLICE_PUBLIC_*` variables. |
+
+In development and production, the contract is the same: the endpoint returns `{ mode, env }` and `env` only contains `SLICE_PUBLIC_*` keys.
+
+### Runtime API Access
+After Slice.js initializes, use these runtime helpers:
+
+| API | Returns | Example |
+| --- | --- | --- |
+| `slice.getEnv(key, fallback)` | Value for a single `SLICE_PUBLIC_*` key, or `fallback` when missing. | `slice.getEnv('SLICE_PUBLIC_API_URL', '')` |
+| `slice.getPublicEnv()` | Full public env object currently loaded in runtime. | `slice.getPublicEnv()` |
+
+```javascript title="Runtime usage"
+const apiUrl = slice.getEnv('SLICE_PUBLIC_API_URL', 'http://localhost:3000');
+const publicEnv = slice.getPublicEnv();
+```
+
 ## Example
 ```json title="sliceConfig.json"
 {
