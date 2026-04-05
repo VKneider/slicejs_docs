@@ -21,6 +21,10 @@
       "component": "TheBuildMethod"
     },
     {
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/environment-variables.md",
+      "component": "EnvironmentVariablesDocumentation"
+    },
+    {
       "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/init-method.md",
       "component": "InitMethodDocumentation"
     },

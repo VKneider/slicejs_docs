@@ -1,0 +1,34 @@
+<div class="documentation-content environmentvariablesdocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="environment-variables">
+    <span class="doc-title-text">Environment Variables</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p>Slice.js exposes browser-safe environment variables through:</p>
+<ul><li><code>GET /slice-env.json</code></li><li><code>slice.getEnv(key, fallback)</code></li><li><code>slice.getPublicEnv()</code></li></ul>
+<p>This is intended for public runtime configuration (for example API base URLs or feature flags).</p>
+<h2 id="public-vs-private-variables">Public vs Private Variables</h2>
+<p>Only variables prefixed with <code>SLICE_PUBLIC_</code> are exposed to the browser.</p>
+<div class="table-block" data-block-id="doc-block-1"></div>
+<div class="callout callout-warning">Everything sent to the browser is public. Never put secrets, private tokens, or credentials in <code>SLICE_PUBLIC_*</code> variables.</div>
+<h2 id="define-variables">Define Variables</h2>
+<p>Create or update your <code>.env</code> file:</p>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="runtime-endpoint-contract">Runtime Endpoint Contract</h2>
+<p>Slice.js serves environment data at <code>/slice-env.json</code> in both development and production.</p>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<h3 id="resolution-rules">Resolution Rules</h3>
+<ul><li><code>process.env</code> has priority over <code>.env</code> when both define the same key.</li><li>In development, values are resolved per request.</li><li>In production, values are resolved at startup and cached for the process lifetime.</li></ul>
+<h2 id="runtime-access-in-components">Runtime Access in Components</h2>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<h2 id="recommended-workflow">Recommended Workflow</h2>
+<ol class="steps"><li>Define browser-safe keys using <code>SLICE_PUBLIC_</code>.</li><li>Keep secrets in non-public env keys.</li><li>Verify endpoint output at <code>/slice-env.json</code>.</li><li>Read values from <code>slice.getEnv(...)</code> in runtime code.</li></ol>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<div class="callout callout-tip">If a key is missing in browser runtime, verify the key starts with <code>SLICE_PUBLIC_</code>.</div>
+<div class="callout callout-tip">If production values do not update, restart the server process to refresh cached env payload.</div>
+<h2 id="related-docs">Related Docs</h2>
+<ul><li><code>sliceConfig.json</code>: <code>/Documentation/Configuration/sliceConfig</code></li></ul>
+</div>
