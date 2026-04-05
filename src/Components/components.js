@@ -10,6 +10,7 @@ const components = {
   "Documentation": "AppComponents",
   "DocumentationPage": "AppComponents",
   "EventManagerDocumentation": "AppComponents",
+  "EnvironmentVariablesDocumentation": "AppComponents",
   "GridDocumentation": "AppComponents",
   "InitDocumentation": "AppComponents",
   "InitMethodDocumentation": "AppComponents",
