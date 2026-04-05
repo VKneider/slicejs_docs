@@ -120,6 +120,16 @@ const docsIndex = [
     tags: ['config', 'setup']
   },
   {
+    title: 'Environment Variables',
+    route: '/Documentation/Configuration/environment-variables',
+    description: 'Expose browser-safe env values with SLICE_PUBLIC_ and runtime helpers.',
+    section: 'Getting Started',
+    group: 'Configuration',
+    order: 21,
+    navLabel: 'Environment Variables',
+    tags: ['config', 'env', 'security']
+  },
+  {
     title: 'Logger',
     route: '/Documentation/Structural/Logger',
     description: 'Structured logging and filters for Slice.js.',

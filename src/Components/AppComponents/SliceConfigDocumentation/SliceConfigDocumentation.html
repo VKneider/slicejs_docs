@@ -54,8 +54,25 @@
 <div class="table-block" data-block-id="doc-block-17"></div>
 <h2 id="server">server</h2>
 <div class="table-block" data-block-id="doc-block-18"></div>
+<h2 id="public-browser-environment-slicepublic">Public Browser Environment (<code>SLICE_PUBLIC_*</code>)</h2>
+<p>Slice.js can expose selected environment variables to the browser runtime.</p>
+<p>Only variables that start with <code>SLICE_PUBLIC_</code> are included in the browser payload. Any variable without this prefix stays server-only and is not exposed through the runtime env endpoint.</p>
+<div class="callout callout-warning">All values exposed with <code>SLICE_PUBLIC_*</code> are public and readable by any user in the browser.
+Never place secrets, tokens, private keys, or credentials in these variables.</div>
+<h3 id="naming-contract">Naming Contract</h3>
+<div class="table-block" data-block-id="doc-block-19"></div>
+<h3 id="runtime-endpoint-contract-slice-envjson">Runtime Endpoint Contract (<code>/slice-env.json</code>)</h3>
+<p>Slice.js serves browser-safe runtime environment data at <code>/slice-env.json</code>.</p>
+<p>Response shape:</p>
+<div class="code-block" data-block-id="doc-block-20"></div>
+<div class="table-block" data-block-id="doc-block-21"></div>
+<p>In development and production, the contract is the same: the endpoint returns <code>{ mode, env }</code> and <code>env</code> only contains <code>SLICE_PUBLIC_*</code> keys.</p>
+<h3 id="runtime-api-access">Runtime API Access</h3>
+<p>After Slice.js initializes, use these runtime helpers:</p>
+<div class="table-block" data-block-id="doc-block-22"></div>
+<div class="code-block" data-block-id="doc-block-23"></div>
 <h2 id="example">Example</h2>
-<div class="code-block" data-block-id="doc-block-19"></div>
+<div class="code-block" data-block-id="doc-block-24"></div>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Keep <code>paths</code> accurate or component loading will fail.</div>
 <div class="callout callout-tip">Load shared styles through <code>stylesManager.requestedStyles</code>.</div>
