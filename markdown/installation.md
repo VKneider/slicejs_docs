@@ -17,7 +17,19 @@ generate: false
 - Node.js 20+
 - npm or pnpm
 
-## Install CLI (Global)
+## Install CLI (Local Recommended)
+```bash
+npm install --save-dev slicejs-cli
+```
+
+If the `slice` launcher command is unavailable in your shell, run CLI commands with:
+
+```bash
+npx slicejs-cli <command>
+```
+
+You can optionally install globally to expose the launcher command:
+
 ```bash
 npm install -g slicejs-cli
 ```
@@ -32,6 +44,12 @@ This creates `src/` and `api/`, installs Visual components, and adds scripts and
 ## Start Dev Server
 ```bash
 slice dev
+```
+
+Fallback when launcher is unavailable:
+
+```bash
+npx slicejs-cli dev
 ```
 
 ## Next Steps
