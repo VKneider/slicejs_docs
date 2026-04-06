@@ -22,6 +22,10 @@ generate: false
 npm install --save-dev slicejs-cli
 ```
 
+Local installation is recommended to keep your CLI version pinned per project.
+Direct `slice` commands require the launcher binary to be available in your PATH
+(commonly via a global install).
+
 If the `slice` launcher command is unavailable in your shell, run CLI commands with:
 
 ```bash
@@ -35,6 +39,15 @@ npm install -g slicejs-cli
 ```
 
 ## Initialize a Project
+
+First-run example when `slice` is not yet available:
+
+```bash
+npx slicejs-cli init
+```
+
+If `slice` is available in your PATH:
+
 ```bash
 slice init
 ```
@@ -52,7 +65,13 @@ Fallback when launcher is unavailable:
 npx slicejs-cli dev
 ```
 
+To bypass local delegation for one command:
+
+```bash
+SLICE_NO_LOCAL_DELEGATION=1 slice version
+```
+
 ## Next Steps
-- Explore CLI commands: /Documentation/Commands
+- Explore CLI commands: /Documentation/CLI
 - Configure `sliceConfig.json`: /Documentation/Configuration/sliceConfig
 - Build your first component: /Documentation/The-build-method

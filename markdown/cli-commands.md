@@ -26,7 +26,8 @@ npm install slicejs-cli --save-dev
 npm install -g slicejs-cli
 ```
 
-When the `slice` launcher command is available, it delegates to the nearest
+When the `slice` launcher command is available (commonly after a global install
+that places `slice` in your PATH), it delegates to the nearest
 project-local `node_modules/slicejs-cli` from your current directory (including
 subdirectories). This keeps command execution aligned with the version pinned
 in each project.
@@ -35,6 +36,12 @@ If the launcher command is unavailable, use:
 
 ```bash
 npx slicejs-cli <command>
+```
+
+You can bypass delegation for a specific invocation:
+
+```bash
+SLICE_NO_LOCAL_DELEGATION=1 slice version
 ```
 
 ## Command Summary
