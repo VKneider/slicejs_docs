@@ -1,91 +1,91 @@
 {
   "generated": [
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/cli-commands.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/cli-commands.md",
       "component": "CommandsDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/context-manager.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/context-manager.md",
       "component": "ContextManagerDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/event-manager.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/event-manager.md",
       "component": "EventManagerDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/getting-started/before-destroy.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/before-destroy.md",
       "component": "BeforeDestroyDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/getting-started/build-method.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/build-method.md",
       "component": "TheBuildMethod"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/getting-started/environment-variables.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/environment-variables.md",
       "component": "EnvironmentVariablesDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/getting-started/init-method.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/init-method.md",
       "component": "InitMethodDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/getting-started/lifecycle-overview.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/lifecycle-overview.md",
       "component": "LifeCycleMethods"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/getting-started/routing-guards.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/routing-guards.md",
       "component": "RouterGuardsDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/getting-started/services.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/services.md",
       "component": "ServiceDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/getting-started/static-props.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/static-props.md",
       "component": "StaticPropsDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/getting-started/structural-components.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/structural-components.md",
       "component": "StructuralDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/getting-started/update-method.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/update-method.md",
       "component": "UpdateMethodDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/getting-started/visual-components.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/visual-components.md",
       "component": "VisualDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/logger.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/logger.md",
       "component": "LoggerDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/project-architecture/app-shell-multiroute.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/project-architecture/app-shell-multiroute.md",
       "component": "AppShellMultiRouteDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/project-architecture/choosing-project-style.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/project-architecture/choosing-project-style.md",
       "component": "ProjectArchitectureDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/project-architecture/migration-single-view-to-shell.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/project-architecture/migration-single-view-to-shell.md",
       "component": "MigrationSingleViewToAppShellDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/project-architecture/routing-data.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/project-architecture/routing-data.md",
       "component": "RoutingDataDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/project-architecture/single-view-spa.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/project-architecture/single-view-spa.md",
       "component": "SingleViewSpaDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/slice-config.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/slice-config.md",
       "component": "SliceConfigDocumentation"
     },
     {
-      "filePath": "/tmp/slicejs_docs-worktree-runner/slicejs_docs/markdown/slicejs-mcp.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/slicejs-mcp.md",
       "component": "SliceMCPDocumentation"
     }
   ],

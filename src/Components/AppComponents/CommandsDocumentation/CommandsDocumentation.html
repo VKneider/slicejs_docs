@@ -11,78 +11,84 @@
 <h2 id="installation">Installation</h2>
 <div class="code-block" data-block-id="doc-block-1"></div>
 <div class="code-block" data-block-id="doc-block-2"></div>
+<p>When the <code>slice</code> launcher command is available (commonly after a global install that places <code>slice</code> in your PATH), it delegates to the nearest project-local <code>node_modules/slicejs-cli</code> from your current directory (including subdirectories). This keeps command execution aligned with the version pinned in each project.</p>
+<p>If the launcher command is unavailable, use:</p>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<p>You can bypass delegation for a specific invocation:</p>
+<div class="code-block" data-block-id="doc-block-4"></div>
 <h2 id="command-summary">Command Summary</h2>
-<div class="table-block" data-block-id="doc-block-3"></div>
+<div class="table-block" data-block-id="doc-block-5"></div>
 <h2 id="init">init</h2>
 <p>Initializes a new project with the framework structure and installs Visual components from the official registry.</p>
-<div class="code-block" data-block-id="doc-block-4"></div>
+<div class="code-block" data-block-id="doc-block-6"></div>
 <p>What it does:</p>
 <ul><li>Ensures latest <code>slicejs-web-framework</code> is installed.</li><li>Creates <code>api/</code> and <code>src/</code> structure from framework base.</li><li>Installs all Visual components from the registry.</li><li>Configures <code>package.json</code> scripts (dev, start, get, browse, sync, etc.).</li></ul>
 <h2 id="dev">dev</h2>
 <p>Starts the development server and serves from <code>/src</code>.</p>
-<div class="code-block" data-block-id="doc-block-5"></div>
+<div class="code-block" data-block-id="doc-block-7"></div>
 <h3 id="options">Options</h3>
-<div class="table-block" data-block-id="doc-block-6"></div>
+<div class="table-block" data-block-id="doc-block-8"></div>
 <h3 id="behavior">Behavior</h3>
 <ul><li>Ensures <code>src/</code> and <code>api/</code> exist (otherwise suggests <code>slice init</code>).</li><li>Falls back to port+1 if the requested port is busy.</li><li>Uses <code>api/index.js</code> with <code>--development</code>.</li></ul>
 <h2 id="start">start</h2>
 <p>Starts the production server and serves from <code>/dist</code>.</p>
-<div class="code-block" data-block-id="doc-block-7"></div>
+<div class="code-block" data-block-id="doc-block-9"></div>
 <h3 id="options-2">Options</h3>
-<div class="table-block" data-block-id="doc-block-8"></div>
+<div class="table-block" data-block-id="doc-block-10"></div>
 <div class="callout callout-tip">Production uses <code>publicFolders</code> from <code>sliceConfig.json</code> to expose public asset folders
 like <code>/Themes</code>, <code>/Styles</code>, and <code>/assets</code>.</div>
 <h2 id="build">build</h2>
 <p>Builds production output by analyzing dependencies, generating bundles, and writing files to <code>/dist</code>.</p>
 <div class="callout callout-tip">Production builds include <strong>Structural framework components</strong> in bundles to avoid runtime fetches.
 These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</code> in bundle config.</div>
-<div class="code-block" data-block-id="doc-block-9"></div>
+<div class="code-block" data-block-id="doc-block-11"></div>
 <h3 id="options-3">Options</h3>
-<div class="table-block" data-block-id="doc-block-10"></div>
+<div class="table-block" data-block-id="doc-block-12"></div>
 <h3 id="subcommands">Subcommands</h3>
-<div class="table-block" data-block-id="doc-block-11"></div>
+<div class="table-block" data-block-id="doc-block-13"></div>
 <h2 id="component-create">component create</h2>
 <p>Creates a new local component. Prompts for name and category from <code>sliceConfig.json</code>.</p>
-<div class="code-block" data-block-id="doc-block-12"></div>
+<div class="code-block" data-block-id="doc-block-14"></div>
 <p>Rules:</p>
 <ul><li>Name must start with a letter and be alphanumeric.</li><li>Visual components get <code>.js</code>, <code>.html</code>, <code>.css</code>.</li><li>Service components get <code>.js</code> only.</li></ul>
 <h2 id="component-list">component list</h2>
 <p>Lists all local components by scanning category paths from <code>sliceConfig.json</code> and rewrites <code>src/Components/components.js</code>.</p>
-<div class="code-block" data-block-id="doc-block-13"></div>
+<div class="code-block" data-block-id="doc-block-15"></div>
 <h2 id="component-delete">component delete</h2>
 <p>Deletes a local component after interactive selection and confirmation.</p>
-<div class="code-block" data-block-id="doc-block-14"></div>
+<div class="code-block" data-block-id="doc-block-16"></div>
 <h2 id="get-registry-get">get / registry get</h2>
 <p>Downloads components from the official registry (Visual or Service) into your project.</p>
-<div class="code-block" data-block-id="doc-block-15"></div>
+<div class="code-block" data-block-id="doc-block-17"></div>
 <h3 id="options-4">Options</h3>
-<div class="table-block" data-block-id="doc-block-16"></div>
+<div class="table-block" data-block-id="doc-block-18"></div>
 <p>Notes:</p>
 <ul><li>If no names are provided, the CLI opens an interactive selector.</li><li>Registry is fetched from the Slice docs repo.</li></ul>
 <h2 id="browse-registry-list">browse / registry list</h2>
 <p>Lists available registry components.</p>
-<div class="code-block" data-block-id="doc-block-17"></div>
+<div class="code-block" data-block-id="doc-block-19"></div>
 <h2 id="sync-registry-sync">sync / registry sync</h2>
 <p>Updates local Visual components to latest registry versions. Service components are detected but not updated automatically.</p>
-<div class="code-block" data-block-id="doc-block-18"></div>
+<div class="code-block" data-block-id="doc-block-20"></div>
 <h3 id="options-5">Options</h3>
-<div class="table-block" data-block-id="doc-block-19"></div>
+<div class="table-block" data-block-id="doc-block-21"></div>
 <h2 id="update">update</h2>
 <p>Checks for CLI and framework updates and optionally installs them.</p>
-<div class="code-block" data-block-id="doc-block-20"></div>
+<div class="code-block" data-block-id="doc-block-22"></div>
 <h3 id="options-6">Options</h3>
-<div class="table-block" data-block-id="doc-block-21"></div>
+<div class="table-block" data-block-id="doc-block-23"></div>
 <h2 id="doctor">doctor</h2>
 <p>Runs project diagnostics (structure, config, dependencies, components, port availability).</p>
-<div class="code-block" data-block-id="doc-block-22"></div>
+<div class="code-block" data-block-id="doc-block-24"></div>
 <h2 id="version">version</h2>
 <p>Shows CLI version info and checks for updates.</p>
-<div class="code-block" data-block-id="doc-block-23"></div>
+<div class="code-block" data-block-id="doc-block-25"></div>
 <h2 id="help">help</h2>
 <p>Shows CLI help output.</p>
-<div class="code-block" data-block-id="doc-block-24"></div>
+<div class="code-block" data-block-id="doc-block-26"></div>
 <h2 id="best-practices">Best Practices</h2>
-<div class="callout callout-tip">Use the global CLI to run commands from any project.</div>
+<div class="callout callout-tip">Install <code>slicejs-cli</code> locally per project and use the <code>slice</code> launcher so commands resolve to the nearest project-local runtime.</div>
+<div class="callout callout-tip">If <code>slice</code> is not available in your shell, use <code>npx slicejs-cli &lt;command&gt;</code> as a fallback.</div>
 <div class="callout callout-tip">Run <code>slice dev</code> in one terminal and use another for component commands.</div>
 <h2 id="gotchas">Gotchas</h2>
 <div class="callout callout-warning"><code>slice sync</code> only updates Visual components. Use <code>slice get &lt;Service&gt; --service --force</code> for Service updates.</div>
