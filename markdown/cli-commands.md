@@ -89,7 +89,7 @@ slice dev
 ### Options
 | Flag | Type | Default | Notes |
 | --- | --- | --- | --- |
-| `-p, --port` | `number` | `3000` | Uses config `server.port` if defined. Falls back to next port if busy. |
+| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |
 | `--no-hmr` | `boolean` | `false` | Disable hot module reload (HMR is enabled by default). |
 
 ### Behavior
@@ -107,7 +107,7 @@ slice start
 ### Options
 | Flag | Type | Default | Notes |
 | --- | --- | --- | --- |
-| `-p, --port` | `number` | `3000` | Uses config `server.port` if defined. Falls back to next port if busy. |
+| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |
 
 :::tip
 Production uses `publicFolders` from `sliceConfig.json` to expose public asset folders
