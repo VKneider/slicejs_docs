@@ -1,5 +1,23 @@
 # Markdown Documentation Index
 
+## Authoring Checklist
+
+When adding a new documentation page, use this quick checklist:
+
+1. Create markdown file under `markdown/` with front matter.
+2. Run parser from workspace root:
+   - `node slicejs_docs/parser/index.js`
+3. Verify generated component folder exists in `src/Components/AppComponents/`.
+4. Register page manually in:
+   - `src/Components/AppComponents/DocumentationPage/documentationRoutes.js`
+   - `src/routes.js`
+   - `src/Components/components.js`
+5. Confirm page appears in TreeView and opens without 404.
+
+:::warning
+`docsIndex.js` is generated from markdown metadata, but TreeView and router wiring are still manual.
+:::
+
 ## Generated from markdown
 
 - EventManagerDocumentation
