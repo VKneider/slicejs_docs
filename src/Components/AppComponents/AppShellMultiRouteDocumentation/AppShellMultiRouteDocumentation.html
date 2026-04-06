@@ -1,0 +1,22 @@
+<div class="documentation-content appshellmultiroutedocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="app-shell-multiroute">
+    <span class="doc-title-text">App Shell + MultiRoute</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<p>Use this style when your app has multiple sections that share the same layout frame (navbar, side menu, footer, theme selector).</p>
+<h2 id="when-to-use">When to Use</h2>
+<ul><li>Portfolio or company website with several top-level sections</li><li>Dashboard/admin panels</li><li>Product apps with stable global navigation</li></ul>
+<h2 id="structure">Structure</h2>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="data-flow-tips">Data Flow Tips</h2>
+<ul><li>Keep global UI state (theme/user/session) in <code>slice.context</code>.</li><li>Keep section-local data inside each section component.</li><li>Use route params/query only when URL should reflect the current state.</li></ul>
+<h2 id="common-mistakes">Common Mistakes</h2>
+<div class="callout callout-warning">Do not duplicate global layout per route. Keep one shell and switch only inner content.</div>
+<div class="callout callout-warning">Do not put every tiny state in query params. Use URL state only when deep-linking matters.</div>
+<h2 id="upgrade-trigger">Upgrade Trigger</h2>
+<p>If a single-view app starts adding independent URL sections, migrate to this style.</p>
+</div>

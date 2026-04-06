@@ -96,6 +96,26 @@ const routes = [
             component: 'BeforeDestroyDocumentation',
          },
          {
+            path: '/Architecture',
+            component: 'ProjectArchitectureDocumentation',
+         },
+         {
+            path: '/Architecture/App-Shell-MultiRoute',
+            component: 'AppShellMultiRouteDocumentation',
+         },
+         {
+            path: '/Architecture/Single-View-SPA',
+            component: 'SingleViewSpaDocumentation',
+         },
+         {
+            path: '/Architecture/Routing-Data',
+            component: 'RoutingDataDocumentation',
+         },
+         {
+            path: '/Architecture/Migration',
+            component: 'MigrationSingleViewToAppShellDocumentation',
+         },
+         {
             path: '/Components',
             component: 'DocumentationPage',
             children: [

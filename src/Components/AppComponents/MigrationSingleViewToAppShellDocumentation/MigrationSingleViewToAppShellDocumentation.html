@@ -1,0 +1,23 @@
+<div class="documentation-content migrationsingleviewtoappshelldocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="migration-single-view-to-app-shell">
+    <span class="doc-title-text">Migration: Single-View to App Shell</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<p>This migration keeps your app functional while introducing route-based sections.</p>
+<h2 id="step-1-add-shell-component">Step 1: Add Shell Component</h2>
+<p>Create an <code>AppShell</code> that owns persistent UI (navbar/theme/footer) and hosts section content.</p>
+<h2 id="step-2-keep-existing-flow-as-one-section">Step 2: Keep Existing Flow as One Section</h2>
+<p>Wrap your current single-view root as one section route (for example <code>/play</code>).</p>
+<h2 id="step-3-add-new-url-sections-incrementally">Step 3: Add New URL Sections Incrementally</h2>
+<p>Add new sections only when they are independently navigable and meaningful as URLs.</p>
+<h2 id="example-migration-route-config">Example Migration Route Config</h2>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<h2 id="example-multiroute-mapping">Example MultiRoute Mapping</h2>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="migration-checklist">Migration Checklist</h2>
+<ol><li>Preserve old entry path behavior while adding shell.</li><li>Move global controls into shell.</li><li>Split heavy root view into section components.</li><li>Keep shared state in context to avoid prop-drilling across sections.</li><li>Add route guards only when navigation policy requires it.</li></ol>
+<div class="callout callout-tip">Migrate in small slices. Keep one route stable, move one section at a time, and verify after each move.</div>
+</div>

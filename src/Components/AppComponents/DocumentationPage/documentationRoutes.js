@@ -131,6 +131,36 @@ export const documentationRoutes = {
          },
       ]
    },
+   projectArchitecture: {
+      title: 'Project Architecture',
+      items: [
+         {
+            title: 'Choosing a Project Style',
+            path: '/Documentation/Architecture',
+            component: 'ProjectArchitectureDocumentation'
+         },
+         {
+            title: 'App Shell + MultiRoute',
+            path: '/Documentation/Architecture/App-Shell-MultiRoute',
+            component: 'AppShellMultiRouteDocumentation'
+         },
+         {
+            title: 'Single-View SPA',
+            path: '/Documentation/Architecture/Single-View-SPA',
+            component: 'SingleViewSpaDocumentation'
+         },
+         {
+            title: 'Routing and Data Passing',
+            path: '/Documentation/Architecture/Routing-Data',
+            component: 'RoutingDataDocumentation'
+         },
+         {
+            title: 'Migration: Single-View -> App Shell',
+            path: '/Documentation/Architecture/Migration',
+            component: 'MigrationSingleViewToAppShellDocumentation'
+         }
+      ]
+   },
    componentsLibrary: {
       title: 'Components Library',
       items: [
@@ -232,6 +262,10 @@ export const createTreeViewItems = (routesConfig) => {
       {
          value: routesConfig.gettingStarted.title,
          items: buildTreeItems(routesConfig.gettingStarted.items)
+      },
+      {
+         value: routesConfig.projectArchitecture.title,
+         items: buildTreeItems(routesConfig.projectArchitecture.items)
       },
       {
          value: routesConfig.componentsLibrary.title,

@@ -1,0 +1,23 @@
+<div class="documentation-content routingdatadocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="routing-and-data-passing">
+    <span class="doc-title-text">Routing and Data Passing</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<p>This page documents current runtime behavior so architecture decisions match real Slice capabilities.</p>
+<h2 id="router-behavior-current">Router Behavior (Current)</h2>
+<div class="table-block" data-block-id="doc-block-1"></div>
+<h2 id="dynamic-params-slugs">Dynamic Params (Slugs)</h2>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<p>Use slugs when the URL should represent identity (post, product, user).</p>
+<h2 id="query-params">Query Params</h2>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<h2 id="route-to-route-data-strategies">Route-to-Route Data Strategies</h2>
+<ol><li>URL params for identity</li><li>Query params for URL-visible flags</li><li><code>slice.context</code> for shared app state</li><li><code>slice.events</code> for event-driven coordination</li></ol>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<h2 id="important-constraint">Important Constraint</h2>
+<div class="callout callout-warning">Do not assume <code>slice.router.navigate('/path', { data })</code> passes arbitrary props to destination components. Use context/events/URL state instead.</div>
+</div>
