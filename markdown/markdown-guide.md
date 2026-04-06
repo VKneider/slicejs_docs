@@ -157,6 +157,40 @@ const grid = component.querySelector('.custom-grid');
 - Generated docs embed markdown content and copy without fetch.
 - JS-only docs should omit the copy menu to avoid fetch.
 
+## New Page Checklist (Required)
+When adding a new docs page, complete all steps below.
+
+1. Create markdown file in `slicejs_docs/markdown/` (or subfolder).
+2. Add valid front matter with at least:
+   - `title`
+   - `route`
+   - `section`
+   - `group`
+   - `order`
+   - `component`
+3. Run the parser from workspace root:
+
+```bash
+node slicejs_docs/parser/index.js
+```
+
+4. Confirm generated component exists in:
+   - `slicejs_docs/src/Components/AppComponents/<ComponentName>/`
+5. Wire navigation + routing manually (parser does not do this):
+   - TreeView/navigation config:
+     - `slicejs_docs/src/Components/AppComponents/DocumentationPage/documentationRoutes.js`
+   - Router path mapping:
+     - `slicejs_docs/src/routes.js`
+   - Component registry:
+     - `slicejs_docs/src/Components/components.js`
+6. Validate route and tree item in dev server:
+   - new item appears in documentation tree
+   - opening item does not return 404
+
+:::warning
+The parser updates docs index metadata (`docsIndex.js`) and generated components, but it does not automatically register route/treeview/component mappings used by the docs app.
+:::
+
 ## Style Rules
 - English, developer-focused, concise.
 - Prefer real API names and behavior from the codebase.
