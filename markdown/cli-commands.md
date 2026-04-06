@@ -18,12 +18,23 @@ and maintain your toolchain. It is distributed as `slicejs-cli` and can be used 
 npm script.
 
 ## Installation
-```bash title="Global (recommended)"
+```bash title="Local (recommended)"
+npm install slicejs-cli --save-dev
+```
+
+```bash title="Global (optional launcher install)"
 npm install -g slicejs-cli
 ```
 
-```bash title="Local"
-npm install slicejs-cli --save-dev
+When the `slice` launcher command is available, it delegates to the nearest
+project-local `node_modules/slicejs-cli` from your current directory (including
+subdirectories). This keeps command execution aligned with the version pinned
+in each project.
+
+If the launcher command is unavailable, use:
+
+```bash
+npx slicejs-cli <command>
 ```
 
 ## Command Summary
@@ -227,7 +238,11 @@ slice --help
 
 ## Best Practices
 :::tip
-Use the global CLI to run commands from any project.
+Install `slicejs-cli` locally per project and use the `slice` launcher so commands resolve to the nearest project-local runtime.
+:::
+
+:::tip
+If `slice` is not available in your shell, use `npx slicejs-cli <command>` as a fallback.
 :::
 
 :::tip
