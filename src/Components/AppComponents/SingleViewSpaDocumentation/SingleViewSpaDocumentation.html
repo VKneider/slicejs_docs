@@ -1,0 +1,22 @@
+<div class="documentation-content singleviewspadocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="single-view-spa">
+    <span class="doc-title-text">Single-View SPA</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<p>Use this style when your app is one main experience and transitions happen inside that experience.</p>
+<h2 id="when-to-use">When to Use</h2>
+<ul><li>Games (Impostor-style)</li><li>Multi-step wizards with one dominant screen</li><li>Tools where URL sections are not the main interaction model</li></ul>
+<h2 id="minimal-route-setup">Minimal Route Setup</h2>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<h2 id="root-state-flow-example">Root State Flow Example</h2>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="data-flow-tips">Data Flow Tips</h2>
+<ul><li>Keep flow state in root component state and/or <code>slice.context</code>.</li><li>Emit events for cross-cutting concerns (audio, analytics, notifications).</li><li>Keep URL stable unless deep links are required.</li></ul>
+<h2 id="common-mistakes">Common Mistakes</h2>
+<div class="callout callout-warning">Do not create many routes just to represent internal game phases. That usually increases complexity without user value.</div>
+<h2 id="upgrade-trigger">Upgrade Trigger</h2>
+<p>When users need independent URL-addressable sections, move to App Shell + MultiRoute.</p>
+</div>

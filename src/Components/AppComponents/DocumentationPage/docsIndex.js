@@ -229,6 +229,56 @@ const docsIndex = [
     navLabel: 'Installation',
     tags: ['installation', 'cli', 'setup']
   },
+  {
+    title: 'Choosing a Project Style',
+    route: '/Documentation/Architecture',
+    description: 'Decide whether your Slice app should use App Shell + MultiRoute or a Single-View SPA.',
+    section: 'Project Architecture',
+    group: 'Styles and Patterns',
+    order: 1,
+    navLabel: 'Choosing a Project Style',
+    tags: ['architecture', 'project-structure', 'multiroute', 'spa']
+  },
+  {
+    title: 'App Shell + MultiRoute',
+    route: '/Documentation/Architecture/App-Shell-MultiRoute',
+    description: 'Build section-based apps with a persistent shell and route-driven content switching.',
+    section: 'Project Architecture',
+    group: 'Styles and Patterns',
+    order: 2,
+    navLabel: 'App Shell + MultiRoute',
+    tags: ['architecture', 'multiroute', 'routing', 'layout']
+  },
+  {
+    title: 'Single-View SPA',
+    route: '/Documentation/Architecture/Single-View-SPA',
+    description: 'Build flow-driven apps with one route and internal state transitions.',
+    section: 'Project Architecture',
+    group: 'Styles and Patterns',
+    order: 3,
+    navLabel: 'Single-View SPA',
+    tags: ['architecture', 'spa', 'state-machine', 'game']
+  },
+  {
+    title: 'Routing and Data Passing',
+    route: '/Documentation/Architecture/Routing-Data',
+    description: 'Understand current Slice routing behavior, slug support, query usage, and route-to-route data strategies.',
+    section: 'Project Architecture',
+    group: 'Styles and Patterns',
+    order: 4,
+    navLabel: 'Routing and Data Passing',
+    tags: ['routing', 'params', 'query', 'context', 'events']
+  },
+  {
+    title: 'Migration: Single-View to App Shell',
+    route: '/Documentation/Architecture/Migration',
+    description: 'Incrementally migrate a single-view Slice app to a shell + multiroute architecture.',
+    section: 'Project Architecture',
+    group: 'Styles and Patterns',
+    order: 5,
+    navLabel: 'Migration: Single-View to App Shell',
+    tags: ['migration', 'architecture', 'multiroute', 'routing']
+  },
 ];
 
 export default docsIndex;

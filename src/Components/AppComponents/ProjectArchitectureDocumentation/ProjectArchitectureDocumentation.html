@@ -1,0 +1,23 @@
+<div class="documentation-content projectarchitecturedocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="choosing-a-project-style">
+    <span class="doc-title-text">Choosing a Project Style</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<p>Slice supports different app structures. Pick the one that matches your product shape, not just your current page count.</p>
+<h2 id="quick-decision-matrix">Quick Decision Matrix</h2>
+<div class="table-block" data-block-id="doc-block-1"></div>
+<h2 id="style-a-app-shell-multiroute">Style A: App Shell + MultiRoute</h2>
+<ul><li>Shared shell component renders persistent layout elements.</li><li>A <code>MultiRoute</code> container renders section components by URL.</li><li>Best for dashboard, portfolio, documentation, and admin-style apps.</li></ul>
+<h2 id="style-b-single-view-spa">Style B: Single-View SPA</h2>
+<ul><li>App uses one route (<code>/</code>) and one root view component.</li><li>UI transitions are driven by internal state, context, or events.</li><li>Best for games, wizards, onboarding flows, and kiosk-like interactions.</li></ul>
+<h2 id="recommended-folder-shapes">Recommended Folder Shapes</h2>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<h2 id="rule-of-thumb">Rule of Thumb</h2>
+<div class="callout callout-tip">If your navigation is user-visible and URL-driven, use App Shell + MultiRoute. If your transitions are state-machine-driven inside one experience, use Single-View SPA.</div>
+<h2 id="next-guides">Next Guides</h2>
+<ul><li>App Shell + MultiRoute: <code>/Documentation/Architecture/App-Shell-MultiRoute</code></li><li>Single-View SPA: <code>/Documentation/Architecture/Single-View-SPA</code></li><li>Routing and Data Passing: <code>/Documentation/Architecture/Routing-Data</code></li></ul>
+</div>
