@@ -60,7 +60,7 @@ SLICE_NO_LOCAL_DELEGATION=1 slice version
 | `slice browse` | `slice registry list` | List official registry components. |
 | `slice sync` | `slice registry sync` | Sync local Visual components from registry. |
 | `slice list` | - | Shortcut for `slice component list`. |
-| `slice version` | `slice -v` | Show CLI version. |
+| `slice version` | `slice v` | Show CLI version. |
 | `slice update` | `slice upgrade` | Update CLI/framework. |
 | `slice doctor` | `slice diagnose` | Run project diagnostics. |
 | `slice help` | `slice --help` | Show CLI help. |
@@ -90,7 +90,7 @@ slice dev
 | Flag | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `-p, --port` | `number` | `3000` | Uses config `server.port` if defined. Falls back to next port if busy. |
-| `-w, --watch` | `boolean` | `false` | Restart server on file changes. |
+| `--no-hmr` | `boolean` | `false` | Disable hot module reload (HMR is enabled by default). |
 
 ### Behavior
 - Ensures `src/` and `api/` exist (otherwise suggests `slice init`).
@@ -108,7 +108,6 @@ slice start
 | Flag | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `-p, --port` | `number` | `3000` | Uses config `server.port` if defined. Falls back to next port if busy. |
-| `-w, --watch` | `boolean` | `false` | Restart server on file changes. |
 
 :::tip
 Production uses `publicFolders` from `sliceConfig.json` to expose public asset folders
