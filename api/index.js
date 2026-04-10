@@ -152,8 +152,11 @@ console.log(`📦 Serving bundles from /${folderDeployed}/bundles`);
 
 // Servir framework Slice.js
 if (runMode === 'production') {
+  const frameworkRootPath = path.join(__dirname, '..', 'node_modules', 'slicejs-web-framework', 'Slice');
+  const structuralPath = path.join(frameworkRootPath, 'Components', 'Structural');
+
   app.get('/Slice/Slice.js', (req, res) => {
-      const slicePath = path.join(__dirname, '..', 'node_modules', 'slicejs-web-framework', 'Slice', 'Slice.js');
+      const slicePath = path.join(frameworkRootPath, 'Slice.js');
     
     if (fs.existsSync(slicePath)) {
       res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
