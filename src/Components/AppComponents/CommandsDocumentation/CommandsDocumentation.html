@@ -30,6 +30,8 @@
 <div class="table-block" data-block-id="doc-block-8"></div>
 <h3 id="behavior">Behavior</h3>
 <ul><li>Ensures <code>src/</code> and <code>api/</code> exist (otherwise suggests <code>slice init</code>).</li><li>Falls back to port+1 if the requested port is busy.</li><li>Uses <code>api/index.js</code> with <code>--development</code>.</li></ul>
+<h3 id="import-support-scope">Import support scope</h3>
+<ul><li>Supported: relative imports and absolute imports that resolve into folders listed in <code>publicFolders</code>.</li><li>Unsupported: bare package imports such as <code>import 'pkg'</code>.</li><li><code>slice dev</code> and <code>slice build</code> keep the same rule for preserved absolute imports that target configured public folders.</li></ul>
 <h2 id="start">start</h2>
 <p>Starts the production server and serves from <code>/dist</code>.</p>
 <div class="code-block" data-block-id="doc-block-9"></div>
@@ -46,6 +48,8 @@ These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</co
 <div class="table-block" data-block-id="doc-block-12"></div>
 <h3 id="subcommands">Subcommands</h3>
 <div class="table-block" data-block-id="doc-block-13"></div>
+<h3 id="import-support-scope-2">Import support scope</h3>
+<ul><li>Supported: relative imports and absolute imports that resolve into folders listed in <code>publicFolders</code>.</li><li>Unsupported: bare package imports such as <code>import 'pkg'</code>.</li><li>Production preserves supported absolute public-folder imports with the same behavior as development.</li></ul>
 <h2 id="component-create">component create</h2>
 <p>Creates a new local component. Prompts for name and category from <code>sliceConfig.json</code>.</p>
 <div class="code-block" data-block-id="doc-block-14"></div>

@@ -97,6 +97,11 @@ slice dev
 - Falls back to port+1 if the requested port is busy.
 - Uses `api/index.js` with `--development`.
 
+### Import support scope
+- Supported: relative imports and absolute imports that resolve into folders listed in `publicFolders`.
+- Unsupported: bare package imports such as `import 'pkg'`.
+- `slice dev` and `slice build` keep the same rule for preserved absolute imports that target configured public folders.
+
 ## start
 Starts the production server and serves from `/dist`.
 
@@ -142,6 +147,11 @@ slice build
 | --- | --- |
 | `slice build clean` | Remove generated bundle files and config. |
 | `slice build info` | Show bundle configuration summary. |
+
+### Import support scope
+- Supported: relative imports and absolute imports that resolve into folders listed in `publicFolders`.
+- Unsupported: bare package imports such as `import 'pkg'`.
+- Production preserves supported absolute public-folder imports with the same behavior as development.
 
 ## component create
 Creates a new local component. Prompts for name and category from `sliceConfig.json`.

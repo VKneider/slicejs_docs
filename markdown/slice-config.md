@@ -149,6 +149,11 @@ This keeps source-only folders private while still exposing the assets your app 
 
 Defaults are intended to be sensible for most apps: `/Themes`, `/Styles`, `/assets`.
 
+Import resolution scope tied to `publicFolders`:
+- Supported: relative imports and absolute imports that point into configured `publicFolders`.
+- Unsupported: bare package imports such as `import 'pkg'`.
+- Behavior parity: when an absolute import targets a configured public folder, it is preserved consistently in both development and production.
+
 Structural framework components are bundled automatically during `slice build` based on which
 features are enabled in `sliceConfig.json` (e.g. `logger.enabled`, `events.enabled`).
 

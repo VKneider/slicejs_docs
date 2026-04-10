@@ -3,12 +3,15 @@
 
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { parseMarkdownFile } from './lib/markdownParser.js';
 import { writeComponentFiles } from './lib/generator.js';
 import { collectDocCandidates } from './lib/report.js';
 import { writeDocsIndex } from './lib/docsIndex.js';
 
-const ROOT = path.resolve(process.cwd(), 'slicejs_docs');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ROOT = path.resolve(__dirname, '..');
 const MARKDOWN_DIR = path.join(ROOT, 'markdown');
 const OUTPUT_DIR = path.join(ROOT, 'src', 'Components', 'AppComponents');
 
