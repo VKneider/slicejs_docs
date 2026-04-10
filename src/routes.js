@@ -22,6 +22,10 @@ const routes = [
             component: 'SliceConfigDocumentation',
          },
          {
+            path: '/External-Dependencies',
+            component: 'ExternalDependenciesDocumentation',
+         },
+         {
             path: '/Configuration/environment-variables',
             component: 'EnvironmentVariablesDocumentation',
          },

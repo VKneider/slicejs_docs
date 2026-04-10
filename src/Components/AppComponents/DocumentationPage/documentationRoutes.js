@@ -29,6 +29,11 @@ export const documentationRoutes = {
             component: 'SliceConfigDocumentation'
          },
          {
+            title: 'External Dependencies',
+            path: '/Documentation/External-Dependencies',
+            component: 'ExternalDependenciesDocumentation'
+         },
+         {
             title: 'Environment Variables',
             path: '/Documentation/Configuration/environment-variables',
             component: 'EnvironmentVariablesDocumentation'

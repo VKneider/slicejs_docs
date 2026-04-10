@@ -190,6 +190,16 @@ const docsIndex = [
     tags: ['cli', 'tooling']
   },
   {
+    title: 'External Dependencies',
+    route: '/Documentation/External-Dependencies',
+    description: 'Temporary official pattern for using external scripts and libraries in Slice.js.',
+    section: 'Getting Started',
+    group: 'Tooling',
+    order: 25,
+    navLabel: 'External Dependencies',
+    tags: ['dependencies', 'external', 'publicFolders', 'bundling']
+  },
+  {
     title: 'Slice.js MCP',
     route: '/Documentation/Slice-MCP',
     description: 'Model Context Protocol server for accessing Slice.js documentation via npx or local development.',
