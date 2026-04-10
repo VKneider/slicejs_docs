@@ -1,91 +1,95 @@
 {
   "generated": [
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/cli-commands.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/cli-commands.md",
       "component": "CommandsDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/context-manager.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/context-manager.md",
       "component": "ContextManagerDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/event-manager.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/event-manager.md",
       "component": "EventManagerDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/getting-started/before-destroy.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/external-dependencies.md",
+      "component": "ExternalDependenciesDocumentation"
+    },
+    {
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/before-destroy.md",
       "component": "BeforeDestroyDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/getting-started/build-method.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/build-method.md",
       "component": "TheBuildMethod"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/getting-started/environment-variables.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/environment-variables.md",
       "component": "EnvironmentVariablesDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/getting-started/init-method.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/init-method.md",
       "component": "InitMethodDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/getting-started/lifecycle-overview.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/lifecycle-overview.md",
       "component": "LifeCycleMethods"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/getting-started/routing-guards.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/routing-guards.md",
       "component": "RouterGuardsDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/getting-started/services.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/services.md",
       "component": "ServiceDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/getting-started/static-props.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/static-props.md",
       "component": "StaticPropsDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/getting-started/structural-components.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/structural-components.md",
       "component": "StructuralDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/getting-started/update-method.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/update-method.md",
       "component": "UpdateMethodDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/getting-started/visual-components.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/getting-started/visual-components.md",
       "component": "VisualDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/logger.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/logger.md",
       "component": "LoggerDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/project-architecture/app-shell-multiroute.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/project-architecture/app-shell-multiroute.md",
       "component": "AppShellMultiRouteDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/project-architecture/choosing-project-style.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/project-architecture/choosing-project-style.md",
       "component": "ProjectArchitectureDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/project-architecture/migration-single-view-to-shell.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/project-architecture/migration-single-view-to-shell.md",
       "component": "MigrationSingleViewToAppShellDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/project-architecture/routing-data.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/project-architecture/routing-data.md",
       "component": "RoutingDataDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/project-architecture/single-view-spa.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/project-architecture/single-view-spa.md",
       "component": "SingleViewSpaDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/slice-config.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/slice-config.md",
       "component": "SliceConfigDocumentation"
     },
     {
-      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/.worktrees/public-folder-absolute-imports-temp/markdown/slicejs-mcp.md",
+      "filePath": "/home/vkneider/projects/SLICE-LATEST/slicejs_docs/markdown/slicejs-mcp.md",
       "component": "SliceMCPDocumentation"
     }
   ],

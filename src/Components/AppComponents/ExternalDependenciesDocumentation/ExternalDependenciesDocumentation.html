@@ -1,0 +1,45 @@
+<div class="documentation-content externaldependenciesdocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="external-dependencies">
+    <span class="doc-title-text">External Dependencies</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p>Slice.js currently supports a temporary official pattern for external scripts and libraries using public folders.</p>
+<p>This is the recommended approach until native bare-package imports are available.</p>
+<h2 id="what-is-supported-today">What Is Supported Today</h2>
+<ul><li>Relative imports (<code>./</code>, <code>../</code>) for internal project modules.</li><li>Absolute imports that point to folders listed in <code>sliceConfig.json</code> <code>publicFolders</code>.</li></ul>
+<p>Example:</p>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<h2 id="what-is-not-supported-yet">What Is Not Supported Yet</h2>
+<ul><li>Bare package imports such as:</li></ul>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<ul><li>Automatic browser resolution from <code>node_modules</code>.</li><li>CommonJS package interop for browser runtime.</li></ul>
+<h2 id="configure-publicfolders">Configure <code>publicFolders</code></h2>
+<p>Add one or more public folders in <code>sliceConfig.json</code>.</p>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<h2 id="recommended-project-layout">Recommended Project Layout</h2>
+<p>Place third-party files in one of your configured public folders.</p>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<p>Then import them with an absolute URL path:</p>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<h2 id="dev-and-production-behavior">Dev and Production Behavior</h2>
+<ul><li><code>slice dev</code>: absolute public-folder imports are resolved and preserved.</li><li><code>slice build</code>: absolute public-folder imports are preserved with the same rule.</li><li><code>slice start</code>: built output serves public files from <code>dist</code>.</li></ul>
+<h2 id="build-warnings">Build Warnings</h2>
+<p>Slice CLI warns when:</p>
+<ul><li>You use bare imports (<code>import 'pkg'</code>).</li><li>You use absolute imports outside configured <code>publicFolders</code>.</li></ul>
+<p>These warnings help keep behavior predictable between development and production.</p>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<div class="callout callout-warning">If an external script works in dev but fails in production, verify that:
+- the import starts with <code>/</code> (absolute path),
+- the folder is included in <code>publicFolders</code>,
+- the file exists under <code>src/&lt;public-folder&gt;/...</code> before building.</div>
+<h2 id="migration-path">Migration Path</h2>
+<p>This approach is temporary by design.</p>
+<p>When native package imports are released, you will be able to migrate from:</p>
+<div class="code-block" data-block-id="doc-block-6"></div>
+<p>to:</p>
+<div class="code-block" data-block-id="doc-block-7"></div>
+</div>

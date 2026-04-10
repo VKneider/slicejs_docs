@@ -12,6 +12,7 @@ const components = {
   "DocumentationPage": "AppComponents",
   "EventManagerDocumentation": "AppComponents",
   "EnvironmentVariablesDocumentation": "AppComponents",
+  "ExternalDependenciesDocumentation": "AppComponents",
   "GridDocumentation": "AppComponents",
   "InitDocumentation": "AppComponents",
   "InitMethodDocumentation": "AppComponents",
