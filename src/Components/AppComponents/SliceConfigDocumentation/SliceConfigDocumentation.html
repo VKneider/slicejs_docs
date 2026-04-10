@@ -50,6 +50,8 @@
 <h2 id="publicfolders">publicFolders</h2>
 <p>Use <code>publicFolders</code> to declare <strong>public asset folders</strong> that should be served in production. This keeps source-only folders private while still exposing the assets your app needs.</p>
 <p>Defaults are intended to be sensible for most apps: <code>/Themes</code>, <code>/Styles</code>, <code>/assets</code>.</p>
+<p>Import resolution scope tied to <code>publicFolders</code>:</p>
+<ul><li>Supported: relative imports and absolute imports that point into configured <code>publicFolders</code>.</li><li>Unsupported: bare package imports such as <code>import 'pkg'</code>.</li><li>Behavior parity: when an absolute import targets a configured public folder, it is preserved consistently in both development and production.</li></ul>
 <p>Structural framework components are bundled automatically during <code>slice build</code> based on which features are enabled in <code>sliceConfig.json</code> (e.g. <code>logger.enabled</code>, <code>events.enabled</code>).</p>
 <div class="table-block" data-block-id="doc-block-17"></div>
 <h2 id="server">server</h2>
