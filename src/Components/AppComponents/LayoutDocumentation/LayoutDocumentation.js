@@ -67,7 +67,6 @@ const layout = await slice.build("Layout", {
                items: [
                   { text: "Home", path: "/" },
                   { text: "Docs", path: "/docs" },
-                  { text: "About", path: "/about" }
                ]
             });
             
@@ -214,7 +213,6 @@ layout.onLayOut(sidebar);  // ← Fixed element #2
             const navbar = await slice.build("Navbar", {
                items: [
                   { text: "Home", path: "/" },
-                  { text: "About", path: "/about" }
                ]
             });
             

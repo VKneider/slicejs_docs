@@ -25,7 +25,7 @@ const runMode = process.env.NODE_ENV === 'production' ? 'production' : 'developm
 const folderDeployed = runMode === 'production' ? 'dist' : 'src';
 const publicEnvProvider = createPublicEnvProvider({
   mode: runMode,
-  envFilePath: path.join(__dirname, '..', '.env')
+  envFilePath: path.join(__dirname, '..', '.env'),
 });
 
 // Obtener puerto desde process.env.PORT con fallback a sliceConfig.json
@@ -48,7 +48,7 @@ app.use(securityMiddleware({
   allowedExtensions: [
     '.js', '.css', '.html', '.json', 
     '.svg', '.png', '.jpg', '.jpeg', '.gif', 
-    '.woff', '.woff2', '.ttf', '.ico'
+    '.woff', '.woff2', '.ttf', '.ico', '.md'
   ],
   blockedPaths: [
     '/node_modules',
@@ -91,10 +91,7 @@ app.use((req, res, next) => {
   }
 });
 
-// ==============================================
-// RUNTIME MODE ENDPOINT
-// ==============================================
-
+// Runtime mode endpoint used by Slice init()
 app.get('/slice-env.json', (req, res) => {
   const payload = publicEnvProvider.getPayload();
   res.setHeader('Cache-Control', 'no-store');
@@ -107,26 +104,21 @@ app.get('/slice-env.json', (req, res) => {
 // ARCHIVOS ESTÁTICOS (DESPUÉS DE SEGURIDAD)
 // ==============================================
 
-if (runMode === 'production') {
-  app.get('/Slice/Slice.js', (req, res) => {
-    const slicePath = path.join(__dirname, '..', 'node_modules', 'slicejs-web-framework', 'Slice', 'Slice.js');
-    if (fs.existsSync(slicePath)) {
-      res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-      return res.send(fs.readFileSync(slicePath, 'utf8'));
-    }
-    return res.status(404).send('Slice.js not found');
-  });
-
-  app.use('/Slice', (req, res) => res.status(404).send('Not found'));
-  app.use('/Components', (req, res) => res.status(404).send('Not found'));
-}
+// Capturar todas las peticiones a bundles para debugging
+app.use('/bundles/', (req, res, next) => {
+  console.log(`🔍 Bundle request: ${req.method} ${req.originalUrl}`);
+  next();
+});
 
 // Middleware personalizado para archivos de bundles con MIME types correctos
 // ⚠️ DEBE IR ANTES del middleware general para tener prioridad
 app.use('/bundles/', (req, res, next) => {
   // Solo procesar archivos .js
   if (req.path.endsWith('.js')) {
-    const filePath = path.join(__dirname, `../${folderDeployed}`, 'bundles', req.path);
+    const bundlePath = req.path.replace(/^\//, '');
+    const distBundlePath = path.join(__dirname, '../dist', 'bundles', bundlePath);
+    const fallbackBundlePath = path.join(__dirname, `../${folderDeployed}`, 'bundles', bundlePath);
+    const filePath = fs.existsSync(distBundlePath) ? distBundlePath : fallbackBundlePath;
     console.log(`📂 Processing bundle: ${req.path} -> ${filePath}`);
 
     // Verificar que el archivo existe
@@ -158,23 +150,57 @@ app.use('/bundles/', (req, res, next) => {
 app.use('/bundles/', express.static(path.join(__dirname, `../${folderDeployed}`, 'bundles')));
 console.log(`📦 Serving bundles from /${folderDeployed}/bundles`);
 
-// Servir framework Slice.js (solo development)
+// Servir framework Slice.js
+if (runMode === 'production') {
+  const frameworkRootPath = path.join(__dirname, '..', 'node_modules', 'slicejs-web-framework', 'Slice');
+  const structuralPath = path.join(frameworkRootPath, 'Components', 'Structural');
+
+  app.get('/Slice/Slice.js', (req, res) => {
+      const slicePath = path.join(frameworkRootPath, 'Slice.js');
+    
+    if (fs.existsSync(slicePath)) {
+      res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+      return res.send(fs.readFileSync(slicePath, 'utf8'));
+    }
+    return res.status(404).send('Slice.js not found');
+  });
+
+  app.use('/Slice', (req, res) => res.status(404).send('Not found'));
+  app.use('/Components', (req, res) => res.status(404).send('Not found'));
+}
+
 if (runMode === 'development') {
   app.use('/Slice/', express.static(path.join(__dirname, '..', 'node_modules', 'slicejs-web-framework', 'Slice')));
 }
 
-// Servir archivos estáticos del proyecto con allowlist
-const publicFolders = Array.isArray(sliceConfig.publicFolders) ? sliceConfig.publicFolders : [];
-const normalizedPublicFolders = publicFolders
-  .filter((entry) => typeof entry === 'string')
-  .map((entry) => entry.trim())
-  .filter((entry) => entry.length > 0)
-  .map((entry) => (entry.startsWith('/') ? entry : `/${entry}`));
+// Servir markdown para copiar en docs
+app.use('/markdown', express.static(path.join(__dirname, '..', 'markdown')));
+
+// Servir archivos estáticos del proyecto
+const publicFolders = Array.isArray(sliceConfig?.publicFolders)
+  ? sliceConfig.publicFolders
+  : [];
 
 if (runMode === 'development') {
   app.use(express.static(path.join(__dirname, `../${folderDeployed}`)));
 } else {
   app.use('/App', express.static(path.join(__dirname, `../${folderDeployed}`, 'App')));
+
+  // Public folders in production (Styles, Themes, assets, images, markdown, etc.)
+  publicFolders.forEach((folder) => {
+    const normalized = folder.startsWith('/') ? folder : `/${folder}`;
+    const folderPath = path.join(__dirname, `../${folderDeployed}`, normalized);
+    app.use(normalized, express.static(folderPath));
+  });
+
+  app.get('/sliceConfig.json', (req, res) => {
+    const configPath = path.join(__dirname, `../${folderDeployed}`, 'sliceConfig.json');
+    if (fs.existsSync(configPath)) {
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      return res.send(fs.readFileSync(configPath, 'utf8'));
+    }
+    return res.status(404).send('sliceConfig.json not found');
+  });
   app.get('/manifest.json', (req, res) => {
     const manifestPath = path.join(__dirname, `../${folderDeployed}`, 'manifest.json');
     if (fs.existsSync(manifestPath)) {
@@ -199,17 +225,6 @@ if (runMode === 'development') {
     }
     return res.status(404).send('routes.js not found');
   });
-  app.get('/sliceConfig.json', (req, res) => {
-    const configPath = path.join(__dirname, `../${folderDeployed}`, 'sliceConfig.json');
-    if (fs.existsSync(configPath)) {
-      res.setHeader('Content-Type', 'application/json; charset=utf-8');
-      return res.send(fs.readFileSync(configPath, 'utf8'));
-    }
-    return res.status(404).send('sliceConfig.json not found');
-  });
-  for (const folder of normalizedPublicFolders) {
-    app.use(folder, express.static(path.join(__dirname, `../${folderDeployed}`, folder)));
-  }
   app.use('/bundles/', express.static(path.join(__dirname, `../${folderDeployed}`, 'bundles')));
   app.use('/dist/', express.static(path.join(__dirname, '..', 'dist')));
 }
@@ -242,6 +257,9 @@ app.get('/api/status', (req, res) => {
 
 // SPA fallback - servir index.html para rutas no encontradas
 app.get('*', (req, res) => {
+  if (path.extname(req.path)) {
+    return res.status(404).send('Not found');
+  }
   const indexPath = path.join(__dirname, `../${folderDeployed}`, "App", 'index.html');
   res.sendFile(indexPath, (err) => {
     if (err) {

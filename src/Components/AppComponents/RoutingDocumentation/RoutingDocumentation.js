@@ -73,7 +73,7 @@ export default class RoutingDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-2"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "const routes = [\n  { path: '/', component: 'HomePage' },\n  { path: '/about', component: 'AboutPage' },\n  { path: '/user/${id}', component: 'UserProfile', metadata: { private: true } },\n  { path: '/docs', component: 'Docs', children: [\n    { path: '/intro', component: 'DocsIntro' }\n  ]},\n  { path: '/404', component: 'NotFound' }\n];\n\nexport default routes;",
+               value: "const routes = [\n  { path: '/', component: 'HomePage' },\n  { path: '/user/${id}', component: 'UserProfile', metadata: { private: true } },\n  { path: '/docs', component: 'Docs', children: [\n    { path: '/intro', component: 'DocsIntro' }\n  ]},\n  { path: '/404', component: 'NotFound' }\n];\n\nexport default routes;",
                language: "javascript"
             });
             if ("routes.js") {
@@ -205,22 +205,7 @@ export default class RoutingDocumentation extends HTMLElement {
             container.appendChild(table);
          }
       }
-      {
-         const container = this.querySelector('[data-block-id="doc-block-5"]');
-         if (container) {
-            const code = await slice.build('CodeVisualizer', {
-               value: "await slice.router.navigate('/about');",
-               language: "javascript"
-            });
-            if ("Navigate programmatically") {
-               const label = document.createElement('div');
-               label.classList.add('code-block-title');
-               label.textContent = "Navigate programmatically";
-               container.appendChild(label);
-            }
-            container.appendChild(code);
-         }
-      }
+
       {
          const container = this.querySelector('[data-block-id="doc-block-6"]');
          if (container) {
