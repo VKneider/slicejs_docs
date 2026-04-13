@@ -225,7 +225,6 @@ const treeview1 = await slice.build("TreeView", {
 const treeview2 = await slice.build("TreeView", {
    items: [
       { value: "Documentation", path: "/docs" },
-      { value: "About", path: "/about" }
    ],
    onClickCallback: async (item) => {
       if (item.path) {

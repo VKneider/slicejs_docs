@@ -13,14 +13,12 @@ export default class NavBarDocumentation extends HTMLElement {
          {
             items: [
                { text: "Home", path: "/" },
-               { text: "About", path: "/about" },
                { text: "Contact", path: "/contact" }
             ]
          },
          `{
    items: [
       { text: "Home", path: "/" },
-      { text: "About", path: "/about" },
       { text: "Contact", path: "/contact" }
    ]
    // Static Props defaults:
@@ -115,7 +113,6 @@ export default class NavBarDocumentation extends HTMLElement {
             },
             items: [
                { text: "Home", path: "/" },
-               { text: "About", path: "/about" }
             ]
          },
          `{
@@ -126,7 +123,6 @@ export default class NavBarDocumentation extends HTMLElement {
    },
    items: [
       { text: "Home", path: "/" },
-      { text: "About", path: "/about" }
    ]
    // Static Props Configuration:
    // position: { type: "string", default: "static" }
@@ -145,7 +141,6 @@ export default class NavBarDocumentation extends HTMLElement {
             },
             items: [
                { text: "Home", path: "/" },
-               { text: "About", path: "/about" }
             ]
          },
          `{
@@ -156,7 +151,6 @@ export default class NavBarDocumentation extends HTMLElement {
    },
    items: [
       { text: "Home", path: "/" },
-      { text: "About", path: "/about" }
    ]
    // Static Props Configuration:
    // direction: { type: "string", default: "normal" }

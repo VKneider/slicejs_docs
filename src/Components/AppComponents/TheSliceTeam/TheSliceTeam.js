@@ -23,7 +23,6 @@ export default class TheSliceTeam extends HTMLElement {
             { text: 'Documentation', path: '/Documentation' },
             { text: 'Playground', path: '/Playground' },
             { text: 'Theme Creator', path: '/ThemeCreator' },
-            { text: 'About', path: '/About' }
          ],
          buttons: [],
       });

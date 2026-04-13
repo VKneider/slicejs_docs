@@ -207,10 +207,7 @@ const routes = [
       path: '/Docum/${category}/${id}',
       component: 'LandingPage',
    },
-   {
-      path: '/About',
-      component: 'TheSliceTeam',
-   },
+
    {
       path: '/about',
       component: 'TheSliceTeam',
