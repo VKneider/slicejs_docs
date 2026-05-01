@@ -108,9 +108,12 @@ export default class TreeItem extends HTMLElement {
          // Guardar el estado en localStorage
          localStorage.setItem(this.getContainerKey(), isOpen ? 'open' : 'closed');
       };
+            
+      caret.addEventListener('click', (e) => {
+   e.stopPropagation();  // evita que el click burbujee a $item
+   toggleContainer();
+});
       
-      caret.addEventListener('click', toggleContainer);
-
       if (!this.path) {
          this.$item.addEventListener('click', toggleContainer);
       }
