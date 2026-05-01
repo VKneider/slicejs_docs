@@ -20,7 +20,7 @@ export default class MainMenu extends HTMLElement {
 
    init() {
       this.addEventListener('mouseleave', () => {
-         if (this.querySelector('.slice_menu_open')) {
+         if (this.classList.contains('slice_menu_open')){
             this.handleCloseMenu();
          }
       });
