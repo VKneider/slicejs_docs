@@ -1,41 +1,48 @@
 /* Static Props Documentation Component Styles */
 slice-staticpropsdocumentation {
     display: block;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 40px 20px;
     font-family: var(--font-family);
-    line-height: 1.6;
+    line-height: 1.8;
     color: var(--font-primary-color);
 }
 
 slice-staticpropsdocumentation h1 {
     color: var(--font-primary-color);
-    font-size: 2.5em;
-    margin-bottom: 20px;
+    font-size: 3em;
+    font-weight: 700;
+    margin-bottom: 30px;
     text-align: center;
-    border-bottom: 3px solid var(--primary-color);
-    padding-bottom: 15px;
+    border-bottom: 4px solid var(--primary-color);
+    padding-bottom: 20px;
+    letter-spacing: -0.5px;
 }
 
 slice-staticpropsdocumentation h2 {
-    color: var(--font-secondary-color);
-    font-size: 1.8em;
-    margin: 30px 0 20px 0;
-    padding: 10px 0;
-    border-left: 4px solid var(--primary-color);
-    padding-left: 15px;
+    color: var(--font-primary-color);
+    font-size: 2em;
+    font-weight: 600;
+    margin: 50px 0 25px 0;
+    padding: 15px 20px;
+    border-left: 5px solid var(--primary-color);
+    background: var(--secondary-background-color);
+    border-radius: 0 var(--border-radius-slice) var(--border-radius-slice) 0;
 }
 
 slice-staticpropsdocumentation h3 {
     color: var(--font-primary-color);
-    font-size: 1.4em;
-    margin: 25px 0 15px 0;
+    font-size: 1.5em;
+    font-weight: 600;
+    margin: 30px 0 20px 0;
 }
 
 slice-staticpropsdocumentation p {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     font-size: 1.1em;
+    line-height: 1.8;
+    color: var(--font-secondary-color);
 }
 
 slice-staticpropsdocumentation code {
@@ -49,103 +56,173 @@ slice-staticpropsdocumentation code {
 
 /* Introduction Section */
 slice-staticpropsdocumentation .intro-section {
-    margin: 30px 0;
+    margin: 40px 0 60px 0;
     text-align: center;
+}
+
+slice-staticpropsdocumentation .intro-section slice-card {
+    max-width: 900px;
+    margin: 0 auto;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+slice-staticpropsdocumentation .intro-section slice-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
 }
 
 /* Content Sections */
 slice-staticpropsdocumentation .content-sections {
-    margin: 40px 0;
+    margin: 60px 0;
 }
 
 slice-staticpropsdocumentation .content-sections > div {
-    margin: 30px 0;
-    padding: 20px 0;
+    margin: 40px 0;
+    padding: 30px;
+    background: var(--tertiary-background-color);
+    border-radius: var(--border-radius-slice);
+    border: 1px solid var(--primary-color-shade);
+    transition: box-shadow 0.3s ease;
+}
+
+slice-staticpropsdocumentation .content-sections > div:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 /* Summary Section */
 slice-staticpropsdocumentation .summary {
-    margin: 40px 0;
-    padding: 30px 0;
+    margin: 60px 0 40px 0;
+    padding: 40px;
+    background: linear-gradient(135deg, var(--tertiary-background-color) 0%, var(--secondary-background-color) 100%);
+    border-radius: var(--border-radius-slice);
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 slice-staticpropsdocumentation .summary h2 {
     color: var(--font-primary-color);
-    border-left: 4px solid var(--primary-color);
+    border-left: 5px solid var(--primary-color);
     margin-top: 0;
+    background: transparent;
 }
 
 slice-staticpropsdocumentation .summary h3 {
-    color: var(--font-secondary-color);
-    margin-top: 25px;
+    color: var(--primary-color);
+    margin-top: 30px;
+    font-weight: 600;
 }
 
 /* Key Points */
 slice-staticpropsdocumentation .key-points {
-    margin: 25px 0;
-    padding: 20px 0;
-    border-left: 3px solid var(--primary-color);
-    padding-left: 20px;
+    margin: 30px 0;
+    padding: 30px;
+    background: var(--primary-background-color);
+    border-left: 5px solid var(--success-color);
+    border-radius: var(--border-radius-slice);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 slice-staticpropsdocumentation .key-points ul {
-    margin: 15px 0;
-    padding-left: 20px;
+    margin: 20px 0;
+    padding-left: 30px;
 }
 
 slice-staticpropsdocumentation .key-points li {
-    margin-bottom: 10px;
-    line-height: 1.5;
+    margin-bottom: 15px;
+    line-height: 1.8;
+    font-size: 1.05em;
 }
 
 slice-staticpropsdocumentation .key-points strong {
-    color: var(--primary-color);
+    color: var(--success-color);
+    font-weight: 600;
 }
 
 /* Next Steps */
 slice-staticpropsdocumentation .next-steps {
-    margin: 25px 0;
-    padding: 20px 0;
-    border-left: 3px solid var(--success-color);
-    padding-left: 20px;
+    margin: 30px 0;
+    padding: 30px;
+    background: var(--primary-background-color);
+    border-left: 5px solid var(--primary-color);
+    border-radius: var(--border-radius-slice);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+slice-staticpropsdocumentation .next-steps p {
+    font-size: 1.05em;
+    margin-bottom: 0;
 }
 
 /* Card Component Styling */
-slice-staticpropsdocumentation .card {
-    margin: 20px 0;
+slice-staticpropsdocumentation slice-card {
+    margin: 30px 0;
 }
 
 /* Details Component Styling */
-slice-staticpropsdocumentation .details {
-    margin: 20px 0;
+slice-staticpropsdocumentation slice-details {
+    margin: 25px 0;
+}
+
+slice-staticpropsdocumentation slice-details summary {
+    font-size: 1.2em;
+    font-weight: 600;
+    padding: 15px;
+    background: var(--secondary-background-color);
+    border-radius: var(--border-radius-slice);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+slice-staticpropsdocumentation slice-details summary:hover {
+    background: var(--tertiary-background-color);
+    transform: translateX(5px);
+}
+
+slice-staticpropsdocumentation slice-details[open] summary {
+    border-radius: var(--border-radius-slice) var(--border-radius-slice) 0 0;
+    margin-bottom: 20px;
 }
 
 /* Code Visualizer Styling */
+slice-staticpropsdocumentation slice-codevisualizer {
+    margin: 20px 0;
+}
+
 slice-staticpropsdocumentation .codevisualizer_container {
-    margin: 15px 0;
+    margin: 20px 0;
+    border-radius: var(--border-radius-slice);
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
     slice-staticpropsdocumentation {
-        padding: 15px;
+        padding: 20px 15px;
     }
     
     slice-staticpropsdocumentation h1 {
-        font-size: 2em;
+        font-size: 2.2em;
     }
     
     slice-staticpropsdocumentation h2 {
-        font-size: 1.5em;
+        font-size: 1.6em;
+        padding: 12px 15px;
     }
     
     slice-staticpropsdocumentation .content-sections > div {
-        padding: 15px 0;
-        margin: 20px 0;
+        padding: 20px 15px;
+        margin: 25px 0;
     }
     
     slice-staticpropsdocumentation .summary {
-        padding: 20px 0;
+        padding: 25px 20px;
+    }
+    
+    slice-staticpropsdocumentation .key-points,
+    slice-staticpropsdocumentation .next-steps {
+        padding: 20px 15px;
     }
 }
 
@@ -161,7 +238,7 @@ slice-staticpropsdocumentation .codevisualizer_container {
     slice-staticpropsdocumentation .content-sections > div {
         break-inside: avoid;
         margin: 15px 0;
-        padding: 15px;
+        padding: 20px;
         border: 1px solid var(--primary-color-shade);
         background: var(--primary-background-color);
     }
@@ -169,5 +246,11 @@ slice-staticpropsdocumentation .codevisualizer_container {
     slice-staticpropsdocumentation .summary {
         background: var(--primary-background-color);
         border: 2px solid var(--primary-color);
+    }
+    
+    slice-staticpropsdocumentation .intro-section slice-card:hover,
+    slice-staticpropsdocumentation .content-sections > div:hover {
+        transform: none;
+        box-shadow: none;
     }
 }
