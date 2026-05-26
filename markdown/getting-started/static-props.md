@@ -23,6 +23,9 @@ props are available and used.
 | `type` | `string` | no | Informational only (debugger). |
 | `default` | `any` | no | Applied when prop is not provided. |
 | `required` | `boolean` | no | Logs error when missing in development. |
+| `allowedValues` | `array` | no | Strict dev-time whitelist for accepted values. |
+| `schema` | `object` | no | Nested object contract when `type: 'object'`. |
+| `items` | `object` | no | Nested item contract when `type: 'array'`. |
 
 ## How Props Are Applied
 When a component is built:
@@ -62,6 +65,69 @@ static props = {
 ## Validation (Development Only)
 Slice warns about unknown props and errors on missing required props in development mode.
 In production, validation is skipped for performance.
+
+When `allowedValues` is defined, Slice validates values using strict equality (`===`) in development.
+
+```javascript title="allowedValues example"
+static props = {
+  variant: {
+    type: 'string',
+    default: 'primary',
+    allowedValues: ['primary', 'secondary', 'danger']
+  }
+};
+```
+
+## Nested Props Contract
+For nested shapes, use this contract:
+
+- `schema` for object props (`type: 'object'`)
+- `items` for array props (`type: 'array'`)
+
+```javascript title="Nested object and array contract"
+static props = {
+  options: {
+    type: 'object',
+    schema: {
+      theme: {
+        type: 'object',
+        schema: {
+          mode: { type: 'string', allowedValues: ['light', 'dark'] }
+        }
+      }
+    }
+  },
+  steps: {
+    type: 'array',
+    items: {
+      type: 'object',
+      schema: {
+        id: { type: 'string', required: true }
+      }
+    }
+  }
+};
+```
+
+## Type Generation (`slice types generate`)
+You can generate declaration files from `static props` so editor IntelliSense and checks follow
+the same contract.
+
+```bash title="Generate declarations"
+slice types generate
+```
+
+Then validate in JS projects with:
+
+```bash title="Validate generated types"
+npx -p typescript tsc --noEmit -p jsconfig.json
+```
+
+The generated types include:
+
+- union types from homogeneous `allowedValues` (`'a' | 'b'`, `1 | 2`)
+- nested object/array types from `schema/items`
+- component prop map support for `slice.build(...)`
 
 ## Usage Patterns
 ```javascript title="Building with props"

@@ -119,86 +119,12 @@ const routes = [
             path: '/Architecture/Migration',
             component: 'MigrationSingleViewToAppShellDocumentation',
          },
-         {
-            path: '/Components',
-            component: 'DocumentationPage',
-            children: [
-               {
-                  path: '/Visual',
-                  component: 'VisualDocumentation',
-                  children: [
-                     {
-                        path: '/Card',
-                        component: 'CardDocumentation',
-                     },
-                     {
-                        path: '/Button',
-                        component: 'ButtonDocumentation',
-                     },
-                     {
-                        path: '/Switch',
-                        component: 'SwitchDocumentation',
-                     },
-                     {
-                        path: '/Checkbox',
-                        component: 'CheckboxDocumentation',
-                     },
-                     {
-                        path: '/Input',
-                        component: 'InputDocumentation',
-                     },
-                     {
-                        path: '/MultiRoute',
-                        component: 'MultiRouteDocumentation',
-                     },
-                     {
-                        path: '/DropDown',
-                        component: 'DropDownDocumentation',
-                     },
-                     {
-                        path: '/Layout',
-                        component: 'LayoutDocumentation',
-                     },
-                     {
-                        path: '/Loading',
-                        component: 'LoadingDocumentation',
-                     },
-                     {
-                        path: '/Details',
-                        component: 'DetailsDocumentation',
-                     },
-                     {
-                        path: '/TreeView',
-                        component: 'TreeViewDocumentation',
-                     },
-                     {
-                        path: '/Grid',
-                        component: 'GridDocumentation',
-                     },
-                     {
-                        path: '/NavBar',
-                        component: 'NavBarDocumentation',
-                     },
-                     {
-                        path: '/Select',
-                        component: 'SelectDocumentation',
-                     }
-                  ]
-               },
-               /*{
-                  path: '/Service',
-                  component: 'ServiceDocumentation',
-                  children:[
-                     {
-                        path: '/FetchManager',
-                        component: 'FetchManagerDocumentation',
-                     }
-                  ]
-               }*/
-            ]
-         }
-      ]
-   },
+          {
+             path: '/Components',
+             component: 'VisualDocumentation'
+          }
+       ]
+    },
    // Otras rutas
    { path: '/Playground', component: 'Playground' },
    { path: '/ThemeCreator', component: 'ThemeCreator' },

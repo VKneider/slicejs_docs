@@ -7,7 +7,7 @@
   </h1>
 </div>
 <h2 id="overview">Overview</h2>
-<p>Static Props define a component's public API. They provide defaults, development-only validation, and consistent prop behavior across Slice.js. They also power the debugger by describing which props are available and used.</p>
+<p>Static Props define a component's public API. They provide defaults, development-only validation, and consistent prop behavior across Slice.js. They also power the debugger by describing which props are available and used.</p>
 <h2 id="static-props-schema">Static Props Schema</h2>
 <div class="table-block" data-block-id="doc-block-1"></div>
 <h2 id="how-props-are-applied">How Props Are Applied</h2>
@@ -18,10 +18,24 @@
 <div class="code-block" data-block-id="doc-block-3"></div>
 <h2 id="validation-development-only">Validation (Development Only)</h2>
 <p>Slice warns about unknown props and errors on missing required props in development mode. In production, validation is skipped for performance.</p>
-<h2 id="usage-patterns">Usage Patterns</h2>
+<p>When <code>allowedValues</code> is defined, Slice validates values using strict equality (<code>===</code>) in development.</p>
 <div class="code-block" data-block-id="doc-block-4"></div>
+<h2 id="nested-props-contract">Nested Props Contract</h2>
+<p>For nested shapes, use this contract:</p>
+<ul><li><code>schema</code> for object props (<code>type: 'object'</code>)</li><li><code>items</code> for array props (<code>type: 'array'</code>)</li></ul>
 <div class="code-block" data-block-id="doc-block-5"></div>
+<h2 id="type-generation-slice-types-generate">Type Generation (<code>slice types generate</code>)</h2>
+<p>You can generate declaration files from <code>static props</code> so editor IntelliSense and checks follow the same contract.</p>
 <div class="code-block" data-block-id="doc-block-6"></div>
+<p>Then validate in JS projects with:</p>
+<div class="code-block" data-block-id="doc-block-7"></div>
+<p>The generated types include:</p>
+<div class="table-block" data-block-id="doc-block-8"></div>
+<ul><li>nested object/array types from <code>schema/items</code></li><li>component prop map support for <code>slice.build(...)</code></li></ul>
+<h2 id="usage-patterns">Usage Patterns</h2>
+<div class="code-block" data-block-id="doc-block-9"></div>
+<div class="code-block" data-block-id="doc-block-10"></div>
+<div class="code-block" data-block-id="doc-block-11"></div>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Define only public props in <code>static props</code> and use internal fields for private state.</div>
 <div class="callout callout-tip">Use defaults to keep components predictable and reduce boilerplate.</div>

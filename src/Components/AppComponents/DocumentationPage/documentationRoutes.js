@@ -170,27 +170,9 @@ export const documentationRoutes = {
       title: 'Components Library',
       items: [
          {
-            title: 'Visual',
-            path: '/Documentation/Visual',
-            items: [
-               { title: 'Button', path: '/Documentation/Components/Visual/Button', component: 'ButtonDocumentation' },
-               { title: 'Card', path: '/Documentation/Components/Visual/Card', component: 'CardDocumentation' },
-               { title: 'Checkbox', path: '/Documentation/Components/Visual/Checkbox', component: 'CheckboxDocumentation' },
-               { title: 'Input', path: '/Documentation/Components/Visual/Input', component: 'InputDocumentation' },
-               { title: 'Switch', path: '/Documentation/Components/Visual/Switch', component: 'SwitchDocumentation' },
-               {
-                  title: 'MultiRoute',
-                  path: '/Documentation/Components/Visual/MultiRoute',
-                  component: 'MultiRouteDocumentation'
-               },
-               { title: 'Layout', path: '/Documentation/Components/Visual/Layout', component: 'LayoutDocumentation' },
-               { title: 'Loading', path: '/Documentation/Components/Visual/Loading', component: 'LoadingDocumentation' },
-               { title: 'Details', path: '/Documentation/Components/Visual/Details', component: 'DetailsDocumentation' },
-               { title: 'TreeView', path: '/Documentation/Components/Visual/TreeView', component: 'TreeViewDocumentation' },
-               { title: 'Grid', path: '/Documentation/Components/Visual/Grid', component: 'GridDocumentation' },
-               { title: 'NavBar', path: '/Documentation/Components/Visual/NavBar', component: 'NavBarDocumentation' },
-               { title: 'Select', path: '/Documentation/Components/Visual/Select', component: 'SelectDocumentation' }
-            ]
+            title: 'Components Documentation Site',
+            path: '/Documentation/Components',
+            component: 'VisualDocumentation'
          }
       ]
    },

@@ -35,57 +35,57 @@ export default class DocumentationPage extends HTMLElement {
             {
                name: 'EmeraldLight',
                colors: { primary: '#10B981', secondary: '#FEFFFE' },
-               description: 'Official Slice.js theme'
+               description: 'Default Slice.js theme'
             },
             {
                name: 'Light',
                colors: { primary: '#F3F4F6', secondary: '#374151' },
-               description: 'Clean and bright'
+               description: 'Light background, dark text'
             },
             {
                name: 'Dark',
                colors: { primary: '#18181B', secondary: '#F3F4F6' },
-               description: 'Easy on the eyes'
+               description: 'Dark background, light text'
             },
             {
                name: 'CobaltBlue',
                colors: { primary: '#1D4ED8', secondary: '#F97316' },
-               description: 'Professional blue with orange accents and light background'
+               description: 'Blue primary, orange accent'
             },
             {
                name: 'Purple',
                colors: { primary: '#9333EA', secondary: '#10B981' },
-               description: 'Creative purple'
+               description: 'Purple primary, green accent'
             },
             {
                name: 'NavyYellow',
                colors: { primary: '#020617', secondary: '#FCD34D' },
-               description: 'Navy blue with yellow accents'
+               description: 'Navy primary, yellow accent'
             },
             {
                name: 'CrimsonRed',
                colors: { primary: '#990000', secondary: '#4A4A4A' },
-               description: 'Elegant deep crimson'
+               description: 'Crimson primary, neutral accent'
             },
             {
                name: 'NeonCyberpunk',
                colors: { primary: '#FF00FF', secondary: '#00FFFF' },
-               description: 'High contrast neon madness'
+               description: 'Magenta primary, cyan accent'
             },
             {
                name: 'CandyPop',
                colors: { primary: '#FF69B4', secondary: '#87CEEB' },
-               description: 'Sweet and bubbly pastels'
+               description: 'Pink primary, blue accent'
             },
             {
                name: 'ToxicSlime',
                colors: { primary: '#CCFF00', secondary: '#9D00FF' },
-               description: 'Warning: Radioactive colors'
+               description: 'Lime primary, purple accent'
             },
             {
                name: 'RetroVapor',
                colors: { primary: '#FF71CE', secondary: '#01CDFE' },
-               description: 'Aesthetic 80s vibes'
+               description: 'Pink primary, cyan accent'
             }
          ]
       });

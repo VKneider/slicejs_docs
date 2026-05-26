@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-const FRONT_MATTER_REGEX = /^---\n([\s\S]*?)\n---\n/;
+const FRONT_MATTER_REGEX = /^---\r?\n([\s\S]*?)\r?\n---\r?\n/;
 
 const parseFrontMatter = (content) => {
   const match = content.match(FRONT_MATTER_REGEX);

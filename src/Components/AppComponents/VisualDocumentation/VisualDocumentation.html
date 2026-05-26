@@ -1,40 +1,70 @@
-<div class="documentation-content visualdocumentation">
+<div class="documentation-content doc-visual-home">
+  <h1>Visual Components</h1>
+  <p class="doc-visual-subtitle">Documentation index for Slice.js visual components.</p>
 
-<div class="doc-title-bar">
-  <h1 id="visual-components">
-    <span class="doc-title-text">Visual Components</span>
-    <span class="copy-md-slot" data-copy-md></span>
-  </h1>
-</div>
-<h2 id="overview">Overview</h2>
-<p>Visual components are UI elements like Button, Card, Input, and Layout. They rely on Static Props, load templates and CSS automatically, and follow the same lifecycle patterns as any Slice component.</p>
-<h2 id="building-visual-components">Building Visual Components</h2>
-<div class="code-block" data-block-id="doc-block-1"></div>
-<h2 id="visual-component-catalog">Visual Component Catalog</h2>
-<div class="table-block" data-block-id="doc-block-2"></div>
-<h2 id="custom-props-and-defaults">Custom Props and Defaults</h2>
-<div class="code-block" data-block-id="doc-block-3"></div>
-<h2 id="how-setcomponentprops-affects-visual-components">How <code>setComponentProps</code> Affects Visual Components</h2>
-<p>Visual components rely on <code>controller.setComponentProps()</code> to apply props. This is the behavior you should design your component setters around.</p>
-<h3 id="what-happens-when-props-are-applied">What happens when props are applied</h3>
-<p><code>setComponentProps(component, props)</code> runs in this exact order:</p>
-<p>1) <strong>Defaults first</strong> If your component defines <code>static props</code>, any missing prop with a <code>default</code> is applied *as if it were passed in*. Defaults go through the setter too.</p>
-<p>2) <strong>Dev-time validation</strong> In development mode only, Slice warns about unknown props and errors on missing required props. (No validation runs in production.)</p>
-<p>3) <strong>Setter-based assignment</strong> For every provided prop, Slice does:</p>
-<ul><li><code>component._&lt;prop&gt; = null</code></li><li><code>component[prop] = value</code></li></ul>
-<p>That second line triggers your setter, so any side effects (DOM updates, derived state, re-renders) should live in the setter.</p>
-<h3 id="why-the-prop-null-step-matters">Why the <code>_prop = null</code> step matters</h3>
-<p>Slice clears the backing field before assigning so the setter always recalculates from the incoming value. If you use <code>this._prop</code> internally, expect it to be overwritten by your setter.</p>
-<h3 id="how-to-write-a-prop-aware-visual-component">How to write a prop-aware visual component</h3>
-<p>Use getters/setters and keep UI updates in the setter. Example:</p>
-<div class="code-block" data-block-id="doc-block-4"></div>
-<h3 id="practical-takeaways">Practical takeaways</h3>
-<ul><li>Put side effects in setters, not in constructors.</li><li>Defaults are applied through setters, so setters must handle default values safely.</li><li><code>setComponentProps</code> can be called again later (manual update), and your setters will run again.</li></ul>
-<h2 id="authoring-a-visual-component">Authoring a Visual Component</h2>
-<div class="code-block" data-block-id="doc-block-5"></div>
-<h2 id="best-practices">Best Practices</h2>
-<div class="callout callout-tip">Use Static Props for all public inputs.</div>
-<div class="callout callout-tip">Avoid DOM queries in the constructor unless the template is attached.</div>
-<h2 id="gotchas">Gotchas</h2>
-<div class="callout callout-warning">Visual components must be registered in <code>components.js</code> to be built.</div>
+  <section class="doc-visual-grid">
+    <div class="doc-visual-section">
+      <h2>Input Components</h2>
+      <ul>
+        <li><a href="/docs/input/button" data-nav>Button</a></li>
+        <li><a href="/docs/input/input" data-nav>Input</a></li>
+        <li><a href="/docs/input/select" data-nav>Select</a></li>
+        <li><a href="/docs/input/checkbox" data-nav>Checkbox</a></li>
+        <li><a href="/docs/input/switch" data-nav>Switch</a></li>
+      </ul>
+    </div>
+    <div class="doc-visual-section">
+      <h2>Layout</h2>
+      <ul>
+        <li><a href="/docs/layout/layout" data-nav>Layout</a></li>
+        <li><a href="/docs/layout/card" data-nav>Card</a></li>
+        <li><a href="/docs/layout/details" data-nav>Details</a></li>
+        <li><a href="/docs/layout/grid" data-nav>Grid</a></li>
+        <li><a href="/docs/layout/element-carrousel" data-nav>Carrousel</a></li>
+      </ul>
+    </div>
+    <div class="doc-visual-section">
+      <h2>Navigation</h2>
+      <ul>
+        <li><a href="/docs/navigation/navbar" data-nav>Navbar</a></li>
+        <li><a href="/docs/navigation/tabs" data-nav>Tabs</a></li>
+        <li><a href="/docs/navigation/dropdown" data-nav>DropDown</a></li>
+        <li><a href="/docs/navigation/not-found" data-nav>NotFound</a></li>
+        <li><a href="/docs/navigation/treeview" data-nav>TreeView</a></li>
+      </ul>
+    </div>
+    <div class="doc-visual-section">
+      <h2>Display</h2>
+      <ul>
+        <li><a href="/docs/display/code-visualizer" data-nav>CodeVisualizer</a></li>
+        <li><a href="/docs/display/icon" data-nav>Icon</a></li>
+        <li><a href="/docs/display/tooltip" data-nav>ToolTip</a></li>
+      </ul>
+    </div>
+    <div class="doc-visual-section">
+      <h2>Data</h2>
+      <ul>
+        <li><a href="/docs/data/table" data-nav>Table</a></li>
+      </ul>
+    </div>
+    <div class="doc-visual-section">
+      <h2>Routing</h2>
+      <ul>
+        <li><a href="/docs/routing/route" data-nav>Route</a></li>
+        <li><a href="/docs/routing/multi-route" data-nav>MultiRoute</a></li>
+      </ul>
+    </div>
+    <div class="doc-visual-section">
+      <h2>Feedback</h2>
+      <ul>
+        <li><a href="/docs/feedback/loading" data-nav>Loading</a></li>
+      </ul>
+    </div>
+    <div class="doc-visual-section">
+      <h2>Internal</h2>
+      <ul>
+        <li><a href="/docs/internal/markdown-parser-rules" data-nav>Parser Rules</a></li>
+      </ul>
+    </div>
+  </section>
 </div>

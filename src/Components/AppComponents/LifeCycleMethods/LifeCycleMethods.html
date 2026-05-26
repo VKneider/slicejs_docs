@@ -9,13 +9,13 @@
 <h2 id="overview">Overview</h2>
 <p>Slice.js components expose three lifecycle methods for predictable behavior:</p>
 <ul><li><code>init()</code> for one-time setup</li><li><code>update()</code> for refreshes when data or routes change</li><li><code>beforeDestroy()</code> for cleanup and memory safety</li></ul>
-<p>These methods are called by the framework and are the recommended places to manage state, subscriptions, and DOM updates.</p>
+<p>These methods are called by the framework and are the recommended places to manage state, subscriptions, and DOM updates.</p>
 <h2 id="lifecycle-summary">Lifecycle Summary</h2>
 <div class="table-block" data-block-id="doc-block-1"></div>
 <h2 id="call-order-and-timing">Call Order and Timing</h2>
 <div class="code-block" data-block-id="doc-block-2"></div>
 <h2 id="navigation-and-reuse">Navigation and Reuse</h2>
-<p><code>update()</code> is called when a cached component is reused by routing (for example, <code>Route</code> and <code>MultiRoute</code> containers). This keeps UI responsive without rebuilding static structure.</p>
+<p><code>update()</code> is called when a cached component is reused by routing (for example, <code>Route</code> and <code>MultiRoute</code> containers). This keeps UI responsive without rebuilding static structure.</p>
 <h2 id="recommended-structure">Recommended Structure</h2>
 <div class="code-block" data-block-id="doc-block-3"></div>
 <h2 id="best-practices">Best Practices</h2>
