@@ -1,13 +1,13 @@
 const docsIndex = [
   {
-    title: 'MultiRoute',
-    route: '/Documentation/Components/Visual/MultiRoute',
-    description: 'Route container with caching and dynamic navigation.',
+    title: 'Components Docs Portal',
+    route: '/Documentation/Components',
+    description: 'Official entrypoint to visual components documentation.',
     section: 'Components Library',
-    group: 'Visual',
+    group: 'Portal',
     order: 60,
-    navLabel: 'MultiRoute',
-    tags: ['routing', 'multiroute', 'caching']
+    navLabel: 'Components Docs Portal',
+    tags: ['components', 'docs', 'portal']
   },
   {
     title: 'Static Props',
@@ -32,12 +32,12 @@ const docsIndex = [
   {
     title: 'Visual',
     route: '/Documentation/Visual',
-    description: 'Visual components and usage patterns in Slice.js.',
+    description: 'Official visual component documentation entrypoint for Slice.js.',
     section: 'Getting Started',
     group: 'Components',
     order: 32,
     navLabel: 'Visual',
-    tags: ['visual', 'components']
+    tags: ['visual', 'components', 'docs']
   },
   {
     title: 'Structural',

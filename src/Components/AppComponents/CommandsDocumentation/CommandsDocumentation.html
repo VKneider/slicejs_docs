@@ -7,11 +7,11 @@
   </h1>
 </div>
 <h2 id="overview">Overview</h2>
-<p>The Slice.js CLI (<code>slice</code>) helps you initialize projects, manage components, run the dev server, and maintain your toolchain. It is distributed as <code>slicejs-cli</code> and can be used via <code>npx</code> or a local npm script.</p>
+<p>The Slice.js CLI (<code>slice</code>) helps you initialize projects, manage components, run the dev server, and maintain your toolchain. It is distributed as <code>slicejs-cli</code> and can be used via <code>npx</code> or a local npm script.</p>
 <h2 id="installation">Installation</h2>
 <div class="code-block" data-block-id="doc-block-1"></div>
 <div class="code-block" data-block-id="doc-block-2"></div>
-<p>When the <code>slice</code> launcher command is available (commonly after a global install that places <code>slice</code> in your PATH), it delegates to the nearest project-local <code>node_modules/slicejs-cli</code> from your current directory (including subdirectories). This keeps command execution aligned with the version pinned in each project.</p>
+<p>When the <code>slice</code> launcher command is available (commonly after a global install that places <code>slice</code> in your PATH), it delegates to the nearest project-local <code>node_modules/slicejs-cli</code> from your current directory (including subdirectories). This keeps command execution aligned with the version pinned in each project.</p>
 <p>If the launcher command is unavailable, use:</p>
 <div class="code-block" data-block-id="doc-block-3"></div>
 <p>You can bypass delegation for a specific invocation:</p>
@@ -19,7 +19,7 @@
 <h2 id="command-summary">Command Summary</h2>
 <div class="table-block" data-block-id="doc-block-5"></div>
 <h2 id="init">init</h2>
-<p>Initializes a new project with the framework structure and installs Visual components from the official registry.</p>
+<p>Initializes a new project with the framework structure and installs Visual components from the official registry.</p>
 <div class="code-block" data-block-id="doc-block-6"></div>
 <p>What it does:</p>
 <ul><li>Ensures latest <code>slicejs-web-framework</code> is installed.</li><li>Creates <code>api/</code> and <code>src/</code> structure from framework base.</li><li>Installs all Visual components from the registry.</li><li>Configures <code>package.json</code> scripts (dev, start, get, browse, sync, etc.).</li></ul>
@@ -56,7 +56,7 @@ These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</co
 <p>Rules:</p>
 <ul><li>Name must start with a letter and be alphanumeric.</li><li>Visual components get <code>.js</code>, <code>.html</code>, <code>.css</code>.</li><li>Service components get <code>.js</code> only.</li></ul>
 <h2 id="component-list">component list</h2>
-<p>Lists all local components by scanning category paths from <code>sliceConfig.json</code> and rewrites <code>src/Components/components.js</code>.</p>
+<p>Lists all local components by scanning category paths from <code>sliceConfig.json</code> and rewrites <code>src/Components/components.js</code>.</p>
 <div class="code-block" data-block-id="doc-block-15"></div>
 <h2 id="component-delete">component delete</h2>
 <p>Deletes a local component after interactive selection and confirmation.</p>
@@ -72,7 +72,7 @@ These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</co
 <p>Lists available registry components.</p>
 <div class="code-block" data-block-id="doc-block-19"></div>
 <h2 id="sync-registry-sync">sync / registry sync</h2>
-<p>Updates local Visual components to latest registry versions. Service components are detected but not updated automatically.</p>
+<p>Updates local Visual components to latest registry versions. Service components are detected but not updated automatically.</p>
 <div class="code-block" data-block-id="doc-block-20"></div>
 <h3 id="options-5">Options</h3>
 <div class="table-block" data-block-id="doc-block-21"></div>

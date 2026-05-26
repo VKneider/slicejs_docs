@@ -1,70 +1,42 @@
-slice-visualdocumentation {
-  color: var(--font-primary-color);
+.doc-visual-home h1 {
+  margin-bottom: 0.25em;
 }
 
-slice-visualdocumentation h1,
-slice-visualdocumentation h2,
-slice-visualdocumentation h3 {
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
+.doc-visual-subtitle {
+  color: var(--font-secondary-color);
+  margin-top: 0;
+  margin-bottom: 2em;
 }
 
-slice-visualdocumentation p {
-  line-height: 1.6;
-  margin: 1em 0;
+.doc-visual-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5em;
 }
 
-slice-visualdocumentation ul,
-slice-visualdocumentation ol {
-  margin: 1em 0;
-  padding-left: 2em;
+.doc-visual-section h2 {
+  font-size: 1rem;
+  margin: 0 0 0.75em;
+  border: 0;
+  padding: 0;
 }
 
-slice-visualdocumentation li {
-  margin-bottom: 0.5em;
+.doc-visual-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-slice-visualdocumentation code {
-  font-family: monospace;
-  background-color: var(--secondary-background-color);
-  padding: 0.2em 0.4em;
-  border-radius: 3px;
-  font-size: 0.9em;
+.doc-visual-section li {
+  margin-bottom: 0.4em;
 }
 
-slice-visualdocumentation .visual-build-example,
-slice-visualdocumentation .visual-lifecycle-example,
-slice-visualdocumentation .nested-components-example,
-slice-visualdocumentation .nested-components-usage {
-  margin: 1.5em 0;
-}
-
-slice-visualdocumentation strong {
+.doc-visual-section a {
   color: var(--primary-color);
+  text-decoration: none;
+  font-size: 0.9rem;
 }
 
-slice-visualdocumentation .faq-section {
-  margin: 2em 0;
-}
-
-slice-visualdocumentation .faq-section slice-details {
-  margin-bottom: 1em;
-}
-
-slice-visualdocumentation table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1.5em 0;
-}
-
-slice-visualdocumentation th,
-slice-visualdocumentation td {
-  padding: 0.75em;
-  text-align: left;
-  border-bottom: 1px solid var(--primary-color-shade);
-}
-
-slice-visualdocumentation th {
-  background-color: var(--primary-color);
-  color: var(--primary-color-contrast);
+.doc-visual-section a:hover {
+  text-decoration: underline;
 }

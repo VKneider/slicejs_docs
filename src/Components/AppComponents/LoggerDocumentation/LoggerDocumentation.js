@@ -8,7 +8,7 @@ export default class LoggerDocumentation extends HTMLElement {
 
   async init() {
     this.markdownPath = "logger.md";
-    this.markdownContent = "---\ntitle: Logger\nroute: /Documentation/Structural/Logger\nnavLabel: Logger\nsection: Getting Started\ngroup: Diagnostics\norder: 40\ndescription: Structured logging and filters for Slice.js.\ncomponent: LoggerDocumentation\ntags: [logger, diagnostics, debugging]\n---\n\n# Logger\n\n## Overview\nLogger collects logs and routes them to configured outputs (e.g. console). It supports filtering\nby level and basic querying over the in-memory log list.\n\n## Enable\n```json title=\"sliceConfig.json\"\n{\n  \"logger\": {\n    \"enabled\": true,\n    \"showLogs\": {\n      \"console\": { \"error\": true, \"warning\": true, \"info\": true }\n    }\n  }\n}\n```\n\n## API Reference\n| Method | Signature | Notes |\n| --- | --- | --- |\n| `logError` | `(componentSliceId, message, error?)` | Logs error + optional error object |\n| `logWarning` | `(componentSliceId, message)` | Logs warning |\n| `logInfo` | `(componentSliceId, message)` | Logs info |\n| `getLogs` | `()` | Returns all logs |\n| `clearLogs` | `()` | Clears stored logs |\n| `getLogsByLogType` | `(type)` | Filter by `error | warning | info` |\n| `getLogsByComponentCategory` | `(category)` | Filter by component category |\n| `getLogsByComponent` | `(sliceId)` | Filter by component sliceId |\n\n## Usage\n```javascript title=\"Log from a component\"\nexport default class Navbar extends HTMLElement {\n  async init() {\n    slice.logger.logInfo('Navbar', 'Navbar initialized');\n  }\n}\n```\n\n```javascript title=\"Log with error\"\ntry {\n  await doWork();\n} catch (error) {\n  slice.logger.logError('MyService', 'Work failed', error);\n}\n```\n\n## Notes\n- Logging is disabled when `logger.enabled` is false.\n- Log outputs depend on `logger.showLogs` configuration.\n";
+    this.markdownContent = "---\r\ntitle: Logger\r\nroute: /Documentation/Structural/Logger\r\nnavLabel: Logger\r\nsection: Getting Started\r\ngroup: Diagnostics\r\norder: 40\r\ndescription: Structured logging and filters for Slice.js.\r\ncomponent: LoggerDocumentation\r\ntags: [logger, diagnostics, debugging]\r\n---\r\n\r\n# Logger\r\n\r\n## Overview\r\nLogger collects logs and routes them to configured outputs (e.g. console). It supports filtering\r\nby level and basic querying over the in-memory log list.\r\n\r\n## Enable\r\n```json title=\"sliceConfig.json\"\r\n{\r\n  \"logger\": {\r\n    \"enabled\": true,\r\n    \"showLogs\": {\r\n      \"console\": { \"error\": true, \"warning\": true, \"info\": true }\r\n    }\r\n  }\r\n}\r\n```\r\n\r\n## API Reference\r\n| Method | Signature | Notes |\r\n| --- | --- | --- |\r\n| `logError` | `(componentSliceId, message, error?)` | Logs error + optional error object |\r\n| `logWarning` | `(componentSliceId, message)` | Logs warning |\r\n| `logInfo` | `(componentSliceId, message)` | Logs info |\r\n| `getLogs` | `()` | Returns all logs |\r\n| `clearLogs` | `()` | Clears stored logs |\r\n| `getLogsByLogType` | `(type)` | Filter by `error | warning | info` |\r\n| `getLogsByComponentCategory` | `(category)` | Filter by component category |\r\n| `getLogsByComponent` | `(sliceId)` | Filter by component sliceId |\r\n\r\n## Usage\r\n```javascript title=\"Log from a component\"\r\nexport default class Navbar extends HTMLElement {\r\n  async init() {\r\n    slice.logger.logInfo('Navbar', 'Navbar initialized');\r\n  }\r\n}\r\n```\r\n\r\n```javascript title=\"Log with error\"\r\ntry {\r\n  await doWork();\r\n} catch (error) {\r\n  slice.logger.logError('MyService', 'Work failed', error);\r\n}\r\n```\r\n\r\n## Notes\r\n- Logging is disabled when `logger.enabled` is false.\r\n- Log outputs depend on `logger.showLogs` configuration.\r\n";
     if (true) {
       this.setupCopyButton();
     }
@@ -16,7 +16,7 @@ export default class LoggerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "{\n  \"logger\": {\n    \"enabled\": true,\n    \"showLogs\": {\n      \"console\": { \"error\": true, \"warning\": true, \"info\": true }\n    }\n  }\n}",
+               value: "{\r\n  \"logger\": {\r\n    \"enabled\": true,\r\n    \"showLogs\": {\r\n      \"console\": { \"error\": true, \"warning\": true, \"info\": true }\r\n    }\r\n  }\r\n}\r",
                language: "json"
             });
             if ("sliceConfig.json") {
@@ -31,7 +31,7 @@ export default class LoggerDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-2"]');
          if (container) {
-            const lines = ["| Method | Signature | Notes |","| --- | --- | --- |","| `logError` | `(componentSliceId, message, error?)` | Logs error + optional error object |","| `logWarning` | `(componentSliceId, message)` | Logs warning |","| `logInfo` | `(componentSliceId, message)` | Logs info |","| `getLogs` | `()` | Returns all logs |","| `clearLogs` | `()` | Clears stored logs |","| `getLogsByLogType` | `(type)` | Filter by `error | warning | info` |","| `getLogsByComponentCategory` | `(category)` | Filter by component category |","| `getLogsByComponent` | `(sliceId)` | Filter by component sliceId |"];
+            const lines = ["| Method | Signature | Notes |\r","| --- | --- | --- |\r","| `logError` | `(componentSliceId, message, error?)` | Logs error + optional error object |\r","| `logWarning` | `(componentSliceId, message)` | Logs warning |\r","| `logInfo` | `(componentSliceId, message)` | Logs info |\r","| `getLogs` | `()` | Returns all logs |\r","| `clearLogs` | `()` | Clears stored logs |\r","| `getLogsByLogType` | `(type)` | Filter by `error | warning | info` |\r","| `getLogsByComponentCategory` | `(category)` | Filter by component category |\r","| `getLogsByComponent` | `(sliceId)` | Filter by component sliceId |\r"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -92,7 +92,7 @@ export default class LoggerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-3"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "export default class Navbar extends HTMLElement {\n  async init() {\n    slice.logger.logInfo('Navbar', 'Navbar initialized');\n  }\n}",
+               value: "export default class Navbar extends HTMLElement {\r\n  async init() {\r\n    slice.logger.logInfo('Navbar', 'Navbar initialized');\r\n  }\r\n}\r",
                language: "javascript"
             });
             if ("Log from a component") {
@@ -108,7 +108,7 @@ export default class LoggerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-4"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "try {\n  await doWork();\n} catch (error) {\n  slice.logger.logError('MyService', 'Work failed', error);\n}",
+               value: "try {\r\n  await doWork();\r\n} catch (error) {\r\n  slice.logger.logError('MyService', 'Work failed', error);\r\n}\r",
                language: "javascript"
             });
             if ("Log with error") {
