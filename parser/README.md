@@ -1,55 +1,54 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/VKneider/slicejs_docs/master/src/images/Slice.js-logo.svg" alt="Slice.js logo" width="120" />
   <h3>Slice.js Markdown Parser</h3>
-  <p>Convierte archivos markdown en componentes Slice.js para el sitio de documentación</p>
+  <p>Converts markdown files into Slice.js components for the documentation site</p>
 </div>
 
-## Sobre este módulo
+## About this module
 
-Este parser convierte los archivos markdown de `markdown/` en componentes Slice.js dentro de `src/Components/AppComponents/`. También genera el índice de documentos (`docsIndex.js`) y un reporte de componentes generados.
+This parser converts markdown files from `markdown/` into Slice.js components inside `src/Components/AppComponents/`. It also generates the document index (`docsIndex.js`) and a report of generated components.
 
-## Uso
+## Usage
 
 ```bash
 node parser/index.js
 ```
 
-Esto procesa todos los archivos `.md` en `markdown/` (incluyendo subdirectorios) y:
-- Genera archivos HTML, JS y CSS por cada documento en `src/Components/AppComponents/`
-- Actualiza `src/Components/AppComponents/DocumentationPage/docsIndex.js`
-- Escribe un reporte en `parser/report.json`
+This processes all `.md` files in `markdown/` (including subdirectories) and:
+- Generates HTML, JS, and CSS files per document in `src/Components/AppComponents/`
+- Updates `src/Components/AppComponents/DocumentationPage/docsIndex.js`
+- Writes a report to `parser/report.json`
 
-## Formato de archivos markdown
+## Markdown file format
 
-Cada archivo markdown debe incluir frontmatter YAML:
+Each markdown file must include YAML frontmatter:
 
 ```yaml
 ---
-title: Título
-route: /Documentation/Ruta
-component: NombreComponente
+title: Title
+route: /Documentation/Route
+component: ComponentName
 generate: true
 ---
 ```
 
-Los archivos con `generate: false` son skipeados por el parser.
+Files with `generate: false` are skipped by the parser.
 
-## Bloques especiales
+## Special blocks
 
-El parser soporta bloques personalizados dentro del markdown:
+The parser supports custom markdown blocks:
 
-| Bloque | Sintaxis | Descripción |
-|--------|----------|-------------|
-| Código | ```` ```lenguaje ```` | Renderizado con CodeVisualizer |
-| Detalles | `:::details title="Título"` | Acordeón expandible |
-| Tips | `:::tip` | Caja de información |
-| Advertencias | `:::warning` | Caja de advertencia |
-| Pasos | `:::steps` | Lista numerada con estilo |
-| Componente | `:::component name="MiComp"` | Embed de componente Slice.js |
-| HTML | `:::html` | HTML directo |
-| Script | `:::script` | JavaScript ejecutable |
-| Tablas | tablas markdown | Renderizado con componente Table |
-| Título | `:::title` | Título de página |
+| Block | Syntax | Description |
+|-------|--------|-------------|
+| Code | ```` ```language ```` | Rendered with CodeVisualizer |
+| Details | `:::details title="Title"` | Expandable accordion |
+| Tips | `:::tip` | Info box |
+| Warnings | `:::warning` | Warning box |
+| Steps | `:::steps` | Styled numbered list |
+| Component | `:::component name="MyComp"` | Embed a Slice.js component |
+| HTML | `:::html` | Direct HTML |
+| Script | `:::script` | Executable JavaScript |
+| Tables | markdown tables | Rendered with Table component |
 
 ## Tests
 
@@ -57,16 +56,16 @@ El parser soporta bloques personalizados dentro del markdown:
 node --test parser/tests/
 ```
 
-## Estructura
+## Structure
 
 ```
 parser/
 ├── index.js              # Entry point
 ├── lib/
-│   ├── markdownParser.js # Parseo de markdown → bloques
-│   ├── generator.js      # Generación de archivos componente
-│   ├── docsIndex.js      # Generación del índice de documentos
-│   └── report.js         # Reporte de componentes candidatos
-├── tests/                # Tests del parser
-└── report.json           # Último reporte generado
+│   ├── markdownParser.js # Markdown → block parsing
+│   ├── generator.js      # Component file generation
+│   ├── docsIndex.js      # Document index generation
+│   └── report.js         # Candidate component report
+├── tests/                # Parser tests
+└── report.json           # Last generated report
 ```
