@@ -1,4 +1,8 @@
 {
+    "server": {
+        "port": 3000,
+        "host": "localhost"
+    },
     "debugger": {
         "enabled":true,
         "click": "right"
