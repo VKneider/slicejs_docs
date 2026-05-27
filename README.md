@@ -13,130 +13,130 @@
   </p>
 </div>
 
-## Sobre este repositorio
+## About this repository
 
-Este repositorio contiene el sitio de documentación oficial de Slice.js. Está construido con el propio framework Slice.js e incluye guías, referencias de API, ejemplos interactivos y documentación de componentes visuales.
+This repository contains the official Slice.js documentation site. It is built with Slice.js itself and includes guides, API references, interactive examples, and visual component documentation.
 
-### Características
-- **Ejemplos interactivos**: Ejemplos de código en vivo embebidos en la documentación
-- **Cobertura completa**: Desde conceptos básicos hasta características avanzadas
-- **Librería de componentes**: Referencia de componentes visuales con demos en vivo
-- **Búsqueda**: Búsqueda de texto completo en toda la documentación
-- **Diseño responsive**: Interfaz adaptable a dispositivos móviles
+### Features
+- **Interactive examples**: Live code examples embedded in the documentation
+- **Comprehensive coverage**: From basic concepts to advanced features
+- **Component library**: Visual component references with live demos
+- **Full-text search**: Search across all documentation
+- **Responsive design**: Mobile-friendly documentation interface
 
-## Requisitos
+## Prerequisites
 
 - Node.js >= 20
-- npm o pnpm
+- npm or pnpm
 
-## Desarrollo local
+## Local development
 
-1. **Clonar el repositorio**
+1. **Clone the repository**
    ```bash
    git clone https://github.com/VKneider/slicejs_docs.git
    cd slicejs_docs
    ```
 
-2. **Instalar dependencias**
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-3. **Iniciar servidor de desarrollo**
+3. **Start development server**
    ```bash
    npm run dev
    ```
 
-4. **Abrir navegador**
-   Navegar a `http://localhost:3000`
+4. **Open browser**
+   Navigate to `http://localhost:3000`
 
-## Comandos disponibles
+## Available commands
 
-| Comando | Descripción |
+| Command | Description |
 |---------|-------------|
-| `npm run dev` | Iniciar servidor de desarrollo |
-| `node parser/index.js` | Regenerar componentes desde markdown |
-| `npm run slice:build` | Compilar para producción |
+| `npm run dev` | Start development server |
+| `node parser/index.js` | Regenerate components from markdown |
+| `npm run slice:build` | Build for production |
 
-## Escribir documentación
+## Writing documentation
 
-La documentación se escribe en archivos markdown dentro de la carpeta `markdown/`.
+Documentation is written in markdown files inside the `markdown/` folder.
 
-### Formato de frontmatter
+### Frontmatter format
 
 ```yaml
 ---
-title: Título de la página
-route: /Documentation/Ruta
-navLabel: Etiqueta
-section: Sección
-group: Grupo
+title: Page Title
+route: /Documentation/Route
+navLabel: Label
+section: Section
+group: Group
 order: 1
-description: Descripción breve
-component: NombreComponente
+description: Brief description
+component: ComponentName
 tags: [tag1, tag2]
 generate: true
 ---
 ```
 
-### Regenerar componentes
+### Regenerating components
 
-Después de crear o modificar archivos markdown, regenera los componentes:
+After creating or modifying markdown files, regenerate the components:
 
 ```bash
 node parser/index.js
 ```
 
-Esto genera los archivos HTML, JS y CSS en `src/Components/AppComponents/` y actualiza el índice de documentos.
+This generates HTML, JS, and CSS files in `src/Components/AppComponents/` and updates the document index.
 
-### Guía de markdown
+### Markdown guide
 
-Ver `markdown/markdown-guide.md` para la guía completa de sintaxis soportada, bloques especiales (`:::tip`, `:::warning`, `:::details`, `:::component`, `:::script`) y mejores prácticas.
+See `markdown/markdown-guide.md` for the complete guide to supported syntax, special blocks (`:::tip`, `:::warning`, `:::details`, `:::component`, `:::script`), and best practices.
 
-## Servidor MCP
+## MCP Server
 
-Slice.js provee un servidor MCP para acceso programático a la documentación:
+Slice.js provides an MCP server for programmatic documentation access:
 
 ```bash
 npx slicejs-mcp
 ```
 
-**Herramientas disponibles:**
-- `list_docs`: Listar todas las secciones de documentación
-- `search_docs`: Buscar documentación por palabras clave
-- `get_doc_content`: Obtener páginas específicas
-- `get_llm_full_context`: Obtener bundle completo de documentación
+**Available tools:**
+- `list_docs`: List all documentation sections
+- `search_docs`: Search documentation by keywords
+- `get_doc_content`: Fetch specific documentation pages
+- `get_llm_full_context`: Get complete documentation bundle
 
-## Estructura del proyecto
+## Project structure
 
 ```
 slicejs_docs/
-├── markdown/           # Fuentes en markdown de la documentación
-├── parser/             # Parseador markdown → componentes Slice.js
-│   ├── index.js        # Entry point del parser
+├── markdown/           # Markdown documentation sources
+├── parser/             # Markdown → Slice.js components parser
+│   ├── index.js        # Parser entry point
 │   └── lib/            # markdownParser, generator, docsIndex, report
-├── src/                # Código fuente del sitio
-│   ├── App/            # Configuración de la aplicación
-│   ├── Components/     # Componentes visuales y de documentación
-│   └── bundles/        # Configuración de bundles
+├── src/                # Site source code
+│   ├── App/            # Application configuration
+│   ├── Components/     # Visual and documentation components
+│   └── bundles/        # Bundle configuration
 └── api/                # API server
 ```
 
-## Contribuir
+## Contributing
 
-Agradecemos contribuciones a la documentación de Slice.js. Ya sea corregir errores, agregar ejemplos o documentar nuevas características.
+We welcome contributions to the Slice.js documentation. Whether fixing typos, adding examples, or documenting new features.
 
-### Guías
-- Sigue el [Markdown Guide](markdown/markdown-guide.md)
-- Prueba los cambios localmente antes de enviar
-- Usa lenguaje claro y conciso
-- Incluye ejemplos de código cuando sea posible
+### Guidelines
+- Follow the [Markdown Guide](markdown/markdown-guide.md)
+- Test changes locally before submitting
+- Use clear and concise language
+- Include code examples when possible
 
-## Licencia
+## License
 
-Distribuido bajo licencia MIT. Ver `LICENSE` para más información.
+Distributed under the MIT License. See `LICENSE` for more information.
 
-## Contacto
+## Contact
 
 Slice.js - [@VKneider](https://github.com/VKneider)
 
