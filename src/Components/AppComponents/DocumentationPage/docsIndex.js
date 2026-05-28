@@ -2,12 +2,12 @@ const docsIndex = [
   {
     title: 'Components Docs Portal',
     route: '/Documentation/Components',
-    description: 'Official entrypoint to visual components documentation.',
+    description: 'Redirects to the official visual components documentation at components.slicejs.com.',
     section: 'Components Library',
     group: 'Portal',
     order: 60,
     navLabel: 'Components Docs Portal',
-    tags: ['components', 'docs', 'portal']
+    tags: ['components', 'docs', 'portal', 'redirect']
   },
   {
     title: 'Static Props',
@@ -32,12 +32,12 @@ const docsIndex = [
   {
     title: 'Visual',
     route: '/Documentation/Visual',
-    description: 'Official visual component documentation entrypoint for Slice.js.',
+    description: 'Landing page redirecting to the official visual components documentation at components.slicejs.com.',
     section: 'Getting Started',
     group: 'Components',
     order: 32,
     navLabel: 'Visual',
-    tags: ['visual', 'components', 'docs']
+    tags: ['visual', 'components', 'docs', 'redirect']
   },
   {
     title: 'Structural',

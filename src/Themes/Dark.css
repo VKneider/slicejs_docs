@@ -1,42 +1,42 @@
 :root {
-  --font-primary-color: #fff;
+  --font-primary-color: #f1e7ff;
+  --font-secondary-color: #c4b5fd;
 
-  /** primary **/
-  --primary-color: #0066ff;
-  --primary-color-rgb: rgb(0, 102, 255);
-  /* Se reemplaza el negro puro por un gris muy oscuro, más cálido y agradable */
-  --primary-background-color: #282828; /* antes: #000 */
-  --primary-color-contrast: #000;
-  /* Ajustamos la sombra para que armonice con el fondo aclarado */
-  --primary-color-shade: #383838; /* antes: #222 */
+  /** Primary - Slice purple on dark surfaces **/
+  --primary-color: #a855f7;
+  --primary-color-rgb: 168, 85, 247;
+  --primary-background-color: #1a1028;
+  --primary-color-contrast: #ffffff;
+  --primary-color-shade: #2e2040;
 
-  /** secondary **/
-  --secondary-color: #63ccfd;
-  --secondary-color-rgb: rgb(99, 204, 253);
-  /* Se aclara el fondo secundario para suavizar el efecto general */
-  --secondary-background-color: #333333; /* antes: #222 */
-  --secondary-color-contrast: #fff;
+  /** Secondary - Emerald companion **/
+  --secondary-color: #34d399;
+  --secondary-color-rgb: 52, 211, 153;
+  --secondary-background-color: #1f1432;
+  --secondary-color-contrast: #052e23;
 
-  /** tertiary **/
-  /* Se levanta ligeramente el fondo terciario para mantener la coherencia visual */
-  --tertiary-background-color: #555555; /* antes: #444 */
+  /** Tertiary **/
+  --tertiary-background-color: #26183a;
 
-  /** success **/
-  --success-color: #00ff40;
-  --success-contrast: #000;
+  /** States **/
+  --success-color: #10b981;
+  --success-contrast: #03281f;
 
-  /** warning **/
-  --warning-color: #ffff40;
-  --warning-contrast: #000;
+  --warning-color: #f59e0b;
+  --warning-contrast: #2b1800;
 
-  /** danger **/
-  --danger-color: #ff0000;
-  --danger-contrast: #000;
+  --danger-color: #ef4444;
+  --danger-contrast: #2d0a0a;
 
-  /** medium **/
-  --medium-color: #92949c;
-  --medium-contrast: #fff;
+  /** Neutral **/
+  --medium-color: #9ca3af;
+  --medium-contrast: #111827;
 
-  /* Disabled color */
-  --disabled-color: #7f7f7f;
+  --disabled-color: #4b5563;
+
+  /** Accent **/
+  --accent-color: #22d3ee;
+
+  /** Shadow tokens for dark mode elevation **/
+  --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
 }

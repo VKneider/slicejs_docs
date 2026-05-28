@@ -8,6 +8,7 @@ order: 32
 description: Official visual component documentation entrypoint for Slice.js.
 component: VisualDocumentation
 tags: [visual, components, docs]
+generate: false
 ---
 
 # Visual Components Documentation

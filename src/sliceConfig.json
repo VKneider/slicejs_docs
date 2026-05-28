@@ -12,7 +12,7 @@
     },
     "themeManager": {
         "enabled":true,
-        "defaultTheme": "Slice",
+        "defaultTheme": "LIGHT",
         "saveThemeLocally": true,
         "useBrowserTheme": false
     },
