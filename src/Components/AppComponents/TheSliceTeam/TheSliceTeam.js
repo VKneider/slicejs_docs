@@ -27,35 +27,7 @@ export default class TheSliceTeam extends HTMLElement {
          buttons: [],
       });
 
-      const themeSelector = await slice.build('ThemeSelector', {
-         themes: [
-            {
-               name: 'EmeraldLight',
-               colors: { primary: '#10B981', secondary: '#FEFFFE' },
-               description: 'Official Slice.js theme'
-            },
-            {
-               name: 'Light',
-               colors: { primary: '#F3F4F6', secondary: '#374151' },
-               description: 'Clean and bright'
-            },
-            {
-               name: 'Dark',
-               colors: { primary: '#18181B', secondary: '#F3F4F6' },
-               description: 'Easy on the eyes'
-            },
-            {
-               name: 'CobaltBlue',
-               colors: { primary: '#1D4ED8', secondary: '#F97316' },
-               description: 'Professional blue with orange accents and light background'
-            },
-            {
-               name: 'Purple',
-               colors: { primary: '#9333EA', secondary: '#10B981' },
-               description: 'Creative purple'
-            }
-         ]
-      });
+const themeSelector = await slice.build('ThemeSelector');
 
       navBar.querySelector('.nav_bar_buttons')?.appendChild(themeSelector);
       this.appendChild(navBar);

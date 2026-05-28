@@ -2,40 +2,43 @@
 
 :root {
   --doc-content-max-width: 1200px;
-  --doc-section-gap: 1.5em;
+  --doc-section-gap: 2em;
   --doc-border-color: var(--primary-color-shade);
   --doc-code-bg: var(--secondary-background-color);
+  --doc-radius: 8px;
 }
 
 .documentation-content {
   color: var(--font-primary-color);
   max-width: var(--doc-content-max-width);
   margin: 0 auto;
-  padding: 20px;
-  line-height: 1.6;
+  padding: 24px;
+  line-height: 1.7;
 }
 
 .documentation-content h1,
 .documentation-content h2,
 .documentation-content h3,
 .documentation-content h4 {
-  margin-top: var(--doc-section-gap);
+  margin-top: 1.5em;
   margin-bottom: 0.5em;
 }
 
 .documentation-content h1 {
   text-align: center;
   border-bottom: 3px solid var(--primary-color);
-  padding-bottom: 12px;
+  padding-bottom: 14px;
+  font-weight: 700;
 }
 
 .documentation-content h2 {
   border-bottom: 1px solid var(--doc-border-color);
-  padding-bottom: 8px;
+  padding-bottom: 10px;
+  font-weight: 600;
 }
 
 .documentation-content p {
-  margin: 1em 0;
+  margin: 1.2em 0;
 }
 
 .documentation-content ul,
@@ -49,35 +52,170 @@
 }
 
 .documentation-content code {
-  font-family: monospace;
+  font-family: "Cascadia Code", "Fira Code", "JetBrains Mono", monospace;
   background-color: var(--doc-code-bg);
-  padding: 0.2em 0.4em;
-  border-radius: 3px;
-  font-size: 0.9em;
+  padding: 0.2em 0.5em;
+  border-radius: 4px;
+  font-size: 0.88em;
 }
 
 .documentation-content .doc-block {
-  margin: 1.5em 0;
-}
-
-.documentation-content .doc-callout {
-  background: var(--doc-code-bg);
-  border-left: 4px solid var(--primary-color);
-  padding: 12px 16px;
-  border-radius: 6px;
   margin: 1.25em 0;
 }
 
-.documentation-content .doc-callout.tip {
+.documentation-content .doc-callout,
+.documentation-content .callout {
+  background: var(--doc-code-bg);
+  border-left: 4px solid var(--primary-color);
+  padding: 14px 18px;
+  border-radius: 6px;
+  margin: 1.25em 0;
+  line-height: 1.6;
+}
+
+.documentation-content .doc-callout.tip,
+.documentation-content .callout.callout-tip {
   border-left-color: var(--success-color);
 }
 
-.documentation-content .doc-callout.warning {
+.documentation-content .doc-callout.warning,
+.documentation-content .callout.callout-warning {
   border-left-color: var(--danger-color);
 }
 
+/* --- Tables --- */
+.documentation-content .table-block {
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.documentation-content slice-table {
+  display: block;
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.92em;
+}
+
+.documentation-content table,
+.documentation-content .slice-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92em;
+}
+
+.documentation-content slice-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.documentation-content slice-table th,
+.documentation-content table th {
+  background-color: var(--secondary-background-color);
+  color: var(--font-primary-color);
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--primary-color-shade);
+  font-size: 0.93em;
+}
+
+.documentation-content slice-table td,
+.documentation-content table td {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--primary-color-shade);
+  vertical-align: top;
+}
+
+.documentation-content slice-table tr:last-child td,
+.documentation-content table tr:last-child td {
+  border-bottom: none;
+}
+
+.documentation-content slice-table tr:hover td,
+.documentation-content table tr:hover td {
+  background-color: color-mix(in srgb, var(--primary-background-color) 97%, var(--secondary-color));
+}
+
+.documentation-content slice-table code,
+.documentation-content table code {
+  word-break: break-word;
+}
+
+/* --- Code blocks --- */
+.code-block-title {
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--font-secondary-color);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* --- Prop scenarios --- */
+.doc-script-scenarios {
+  margin-top: 1.5em;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.doc-script-subtitle {
+  margin-top: 4px;
+  margin-bottom: 14px;
+  color: var(--font-secondary-color);
+  font-size: 0.9em;
+}
+
+.doc-script-scenarios > :first-child {
+  margin-top: 0;
+}
+
+.doc-script-error {
+  margin-top: 6px;
+  margin-bottom: 0;
+  color: var(--danger-color);
+  font-size: 0.85rem;
+}
+
+/* --- Details blocks --- */
+.documentation-content .details-block {
+  margin: 1.25em 0;
+}
+
+/* --- Props summary table (collapsible) --- */
+.props-summary {
+  margin: 1.5em 0;
+}
+
+.props-summary summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.1em;
+  color: var(--primary-color);
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--secondary-background-color);
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.props-summary summary:hover {
+  background: color-mix(in srgb, var(--secondary-background-color) 85%, var(--primary-color));
+}
+
+.props-summary .table-block {
+  margin-top: 12px;
+}
+
+/* --- Inline component blocks --- */
+.component-block {
+  margin: 1.25em 0;
+}
+
+/* --- Responsive --- */
 @media (max-width: 768px) {
   .documentation-content {
-    padding: 15px;
+    padding: 16px;
   }
 }

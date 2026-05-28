@@ -1,21 +1,21 @@
 export default class Card extends HTMLElement {
 
    static props = {
-      title: { 
-         type: 'string', 
-         default: null 
+      title: {
+         type: 'string',
+         default: null
       },
-      text: { 
-         type: 'string', 
-         default: null 
+      text: {
+         type: 'string',
+         default: null
       },
-      icon: { 
-         type: 'object', 
-         default: { name: 'sliceJs', iconStyle: 'filled' } 
+      icon: {
+         type: 'object',
+         default: { name: 'sliceJs', iconStyle: 'filled' }
       },
-      customColor: { 
-         type: 'object', 
-         default: null 
+      customColor: {
+         type: 'object',
+         default: null
       },
       image: {
          type: 'string',
@@ -27,7 +27,8 @@ export default class Card extends HTMLElement {
       },
       variant: {
          type: 'string',
-         default: 'default' // default, elevated, outlined, minimal
+         default: 'default',
+         allowedValues: ['default', 'elevated', 'outlined', 'minimal']
       },
       interactive: {
          type: 'boolean',
@@ -37,7 +38,7 @@ export default class Card extends HTMLElement {
          type: 'function',
          default: null
       },
-      isOpen: { 
+      isOpen: {
          type: 'boolean',
          default: false
       },
@@ -51,24 +52,25 @@ export default class Card extends HTMLElement {
       },
       progress: {
          type: 'number',
-         default: null // 0-100
+         default: null
       },
       loading: {
          type: 'boolean',
          default: false
       },
       disabled: {
-         type: 'boolean', 
-         default: false 
+         type: 'boolean',
+         default: false
       }
    };
 
    constructor(props) {
       super();
       slice.attachTemplate(this);
-      
-      // DOM caching - TODOS los elementos necesarios para setters
-      this.$card = this.querySelector('.slice-card');
+
+      this.classList.add('slice-card');
+
+      this.$card = this;
       this.$title = this.querySelector('.card-title');
       this.$text = this.querySelector('.card-text');
       this.$textTooltip = this.querySelector('.card-text-tooltip');
@@ -78,35 +80,31 @@ export default class Card extends HTMLElement {
       this.$badge = this.querySelector('.card-badge');
       this.$toggle = this.querySelector('.card-toggle');
       this.$progress = this.querySelector('.card-progress');
-      // Cache remaining DOM elements (only ones not needed for setters)
       this.$mediaContent = this.querySelector('.card-media-content');
       this.$actions = this.querySelector('.card-actions');
-      slice.controller.setComponentProps(this, props);
 
+      slice.controller.setComponentProps(this, props);
    }
 
    async init() {
-      
-      
-      
-      // Setup everything
       this.setupVariant();
       this.setupContent();
-      await this.setupMedia();
+
+      if (this._icon || this._image) {
+         await this.setupMedia();
+      }
+
       await this.setupActions();
       this.setupToggle();
       this.setupEventListeners();
       this.applyCustomStyling();
       this.updateState();
-      
+
       this._initialized = true;
    }
 
    setupVariant() {
-      // Remove all variant classes
       this.$card.classList.remove('card-default', 'card-elevated', 'card-outlined', 'card-minimal');
-      
-      // Add current variant class
       if (this.variant) {
          this.$card.classList.add(`card-${this.variant}`);
       } else {
@@ -115,7 +113,6 @@ export default class Card extends HTMLElement {
    }
 
    setupContent() {
-      // Set title
       if (this.$title) {
          if (this.title) {
             this.$title.textContent = this.title;
@@ -125,7 +122,6 @@ export default class Card extends HTMLElement {
          }
       }
 
-      // Set text (simplified for scroll design)
       if (this.$text) {
          if (this.text) {
             this.$text.textContent = this.text;
@@ -135,7 +131,6 @@ export default class Card extends HTMLElement {
          }
       }
 
-      // Set details
       if (this.$details && this.$detailsContent) {
          if (this.details) {
             this.$detailsContent.textContent = this.details;
@@ -145,7 +140,6 @@ export default class Card extends HTMLElement {
          }
       }
 
-      // Set badge
       if (this.$badge) {
          if (this.badge) {
             this.$badge.textContent = this.badge;
@@ -154,7 +148,6 @@ export default class Card extends HTMLElement {
          }
       }
 
-      // Set progress
       if (this.$progress) {
          if (this.progress !== null && this.progress >= 0 && this.progress <= 100) {
             this.$progress.style.setProperty('--progress', this.progress);
@@ -167,53 +160,65 @@ export default class Card extends HTMLElement {
    }
 
    setupTextTooltip() {
-      // Simplified - no longer needed with scroll design
       return;
    }
 
    async setupMedia() {
-      // Clear previous content
-      this.$mediaContent.innerHTML = '';
+      if (this.$mediaContent) {
+         this.$mediaContent.innerHTML = '';
+      }
 
       if (this.image) {
-         // If image URL is provided
          const img = document.createElement('img');
          img.src = this.image;
          img.alt = this.title || 'Card image';
          img.classList.add('card-image');
          img.onerror = () => {
-            // Fallback to icon if image fails to load
             this.setupIconInMedia();
          };
          this.$mediaContent.appendChild(img);
       } else if (this.icon) {
-         // Use icon
-         this.setupIconInMedia();
+         await this.setupIconInMedia();
       } else {
-         // Hide media section if no content
-         this.$media.style.display = 'none';
+         if (this.$media) {
+            this.$media.style.display = 'none';
+         }
          return;
       }
 
-      this.$media.style.display = 'flex';
+      if (this.$media) {
+         this.$media.style.display = 'flex';
+      }
    }
 
    async setupIconInMedia() {
       try {
+         if (!this.$mediaContent) {
+            return;
+         }
+
+         this.$mediaContent.innerHTML = '';
+
+         if (!this.icon || !this.icon.name) {
+            return;
+         }
+
          const iconElement = await slice.build('Icon', {
-            name: this.icon?.name || 'sliceJs',
-            iconStyle: this.icon?.iconStyle || 'filled',
+            name: this.icon.name,
+            iconStyle: this.icon.iconStyle || 'filled',
             size: '32px',
-            color: 'var(--primary-color-contrast)'
+            color: 'var(--primary-color)'
          });
-         this.$mediaContent.appendChild(iconElement);
+
+         if (iconElement) {
+            this.$mediaContent.appendChild(iconElement);
+         }
       } catch (error) {
          console.warn('Card: Failed to create icon', error);
       }
    }
 
    async setupActions() {
-      // Clear previous actions
       this.$actions.innerHTML = '';
 
       if (!this.actions || this.actions.length === 0) {
@@ -223,15 +228,16 @@ export default class Card extends HTMLElement {
 
       this.$actions.style.display = 'flex';
 
-      // Create action buttons
       for (const action of this.actions) {
          try {
-            const button = await slice.build('Button', {
-               text: action.text || 'Action',
-               variant: action.variant || 'outlined',
-               size: 'small',
-               onClick: action.onClick || (() => {})
-            });
+            const opts = {
+               value: action.text || 'Action',
+               onClickCallback: action.onClick || (() => {})
+            };
+            if (action.color) {
+               opts.customColor = action.color;
+            }
+            const button = await slice.build('Button', opts);
             this.$actions.appendChild(button);
          } catch (error) {
             console.warn('Card: Failed to create action button', error);
@@ -240,7 +246,6 @@ export default class Card extends HTMLElement {
    }
 
    setupToggle() {
-      // Show/hide toggle button based on details availability
       if (this.details) {
          this.$toggle.style.display = 'flex';
       } else {
@@ -249,7 +254,6 @@ export default class Card extends HTMLElement {
    }
 
    setupEventListeners() {
-      // Remove existing listeners to avoid duplicates
       if (this._toggleListener) {
          this.$toggle.removeEventListener('click', this._toggleListener);
       }
@@ -260,14 +264,12 @@ export default class Card extends HTMLElement {
          this.$card.removeEventListener('keydown', this._keydownListener);
       }
 
-      // Toggle functionality
       this._toggleListener = (e) => {
          e.stopPropagation();
          this.toggleOpen();
       };
       this.$toggle.addEventListener('click', this._toggleListener);
 
-      // Card click handler
       if (this.interactive && this.onClick) {
          this._cardClickListener = (e) => {
             if (!this.disabled && !e.target.closest('.card-toggle') && !e.target.closest('.card-actions')) {
@@ -277,7 +279,6 @@ export default class Card extends HTMLElement {
          this.$card.addEventListener('click', this._cardClickListener);
       }
 
-      // Keyboard navigation
       this._keydownListener = (e) => {
          if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -290,7 +291,6 @@ export default class Card extends HTMLElement {
       };
       this.$card.addEventListener('keydown', this._keydownListener);
 
-      // Make card focusable if interactive
       if (this.interactive) {
          this.$card.setAttribute('tabindex', '0');
          this.$card.setAttribute('role', 'button');
@@ -313,7 +313,6 @@ export default class Card extends HTMLElement {
    }
 
    updateState() {
-      // Update loading state
       if (this.loading) {
          this.$card.classList.add('loading');
          this.$card.setAttribute('aria-busy', 'true');
@@ -322,7 +321,6 @@ export default class Card extends HTMLElement {
          this.$card.removeAttribute('aria-busy');
       }
 
-      // Update disabled state
       if (this.disabled) {
          this.$card.classList.add('disabled');
          this.$card.setAttribute('aria-disabled', 'true');
@@ -335,14 +333,12 @@ export default class Card extends HTMLElement {
          this.$card.style.opacity = '';
       }
 
-      // Update interactive state
       if (this.interactive) {
          this.$card.classList.add('interactive');
       } else {
          this.$card.classList.remove('interactive');
       }
 
-      // Update open state
       this.updateOpenState();
    }
 
@@ -363,7 +359,6 @@ export default class Card extends HTMLElement {
       }
    }
 
-   // Getters and Setters following Slice pattern
    get title() { return this._title; }
    set title(value) {
       this._title = value;
@@ -381,7 +376,7 @@ export default class Card extends HTMLElement {
    }
 
    get details() { return this._details; }
-   set details(value) { 
+   set details(value) {
       this._details = value;
       if (this.$details) {
          this.setupContent();
@@ -390,7 +385,7 @@ export default class Card extends HTMLElement {
    }
 
    get badge() { return this._badge; }
-   set badge(value) { 
+   set badge(value) {
       this._badge = value;
       if (this.$badge) {
          this.setupContent();
@@ -398,7 +393,7 @@ export default class Card extends HTMLElement {
    }
 
    get variant() { return this._variant || 'default'; }
-   set variant(value) { 
+   set variant(value) {
       this._variant = value;
       if (this.$card && this._initialized) {
          this.setupVariant();
@@ -409,12 +404,12 @@ export default class Card extends HTMLElement {
    set isOpen(value) {
       this._isOpen = Boolean(value);
       if (this.$card) {
-      this.updateOpenState();
+         this.updateOpenState();
       }
    }
 
    get loading() { return this._loading || false; }
-   set loading(value) { 
+   set loading(value) {
       this._loading = Boolean(value);
       if (this.$card) {
          this.updateState();
@@ -422,7 +417,7 @@ export default class Card extends HTMLElement {
    }
 
    get disabled() { return this._disabled || false; }
-   set disabled(value) { 
+   set disabled(value) {
       this._disabled = Boolean(value);
       if (this.$card) {
          this.updateState();
@@ -430,7 +425,7 @@ export default class Card extends HTMLElement {
    }
 
    get progress() { return this._progress; }
-   set progress(value) { 
+   set progress(value) {
       this._progress = value;
       if (this.$progress) {
          this.setupContent();
@@ -438,7 +433,7 @@ export default class Card extends HTMLElement {
    }
 
    get interactive() { return this._interactive !== false; }
-   set interactive(value) { 
+   set interactive(value) {
       this._interactive = Boolean(value);
       if (this.$card) {
          this.updateState();
@@ -456,7 +451,7 @@ export default class Card extends HTMLElement {
    get icon() { return this._icon; }
    set icon(value) {
       this._icon = value;
-      if (this.$media) {
+      if (this._initialized && this.$media && !this._image && this.$mediaContent) {
          this.setupMedia();
       }
    }
@@ -464,7 +459,7 @@ export default class Card extends HTMLElement {
    get image() { return this._image; }
    set image(value) {
       this._image = value;
-      if (this.$media) {
+      if (this._initialized && this.$media && !this._icon && this.$mediaContent) {
          this.setupMedia();
       }
    }
@@ -485,7 +480,6 @@ export default class Card extends HTMLElement {
       }
    }
 
-   // Public API methods
    open() {
       this.isOpen = true;
    }
@@ -521,6 +515,26 @@ export default class Card extends HTMLElement {
 
    disable() {
       this.disabled = true;
+   }
+
+   async refreshMedia() {
+      if (this._initialized && this.$media) {
+         await this.setupMedia();
+      }
+   }
+
+   async setIcon(iconData) {
+      this._icon = iconData;
+      if (this._initialized && this.$media && !this._image) {
+         await this.setupMedia();
+      }
+   }
+
+   async setImage(imageUrl) {
+      this._image = imageUrl;
+      if (this._initialized && this.$media && !this._icon) {
+         await this.setupMedia();
+      }
    }
 }
 

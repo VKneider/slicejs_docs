@@ -8,11 +8,26 @@
        url('/Components/Visual/Icon/slc.svg?t=1714090352079#slc') format('svg'); /* iOS 4.1- */
 }
 
+slice-icon {
+  display: inline-block;
+  line-height: 1;
+  font-style: normal;
+  vertical-align: middle;
+}
+
 [class^="slc-"], [class*=" slc-"] {
   font-family: 'slc' !important;
-  font-style:normal;
+  font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  overflow: hidden;
+}
+
+[class^="slc-"]::before, [class*=" slc-"]::before {
+  display: block;
+  text-align: center;
+  line-height: 1;
 }
 
 

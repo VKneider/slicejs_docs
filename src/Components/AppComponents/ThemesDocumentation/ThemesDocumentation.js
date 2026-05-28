@@ -14,7 +14,7 @@ export default class ThemesDocumentation extends HTMLElement {
          value: `{
   "themeManager": {
     "enabled": true,
-    "defaultTheme": "Slice",
+    "defaultTheme": "LIGHT",
     "saveThemeLocally": true,
     "useBrowserTheme": false
   }
@@ -25,19 +25,19 @@ export default class ThemesDocumentation extends HTMLElement {
       const themeApplyExample = await slice.build("CodeVisualizer", {
          language: "javascript",
          value: `// Change to a specific theme
-await slice.setTheme("Dark");
+await slice.setTheme("DARK");
 
 // Get current theme
-const currentTheme = slice.theme; // Returns theme name, e.g. "Dark"
+const currentTheme = slice.theme; // Returns theme name, e.g. "DARK"
 
 // In a button or switch to toggle themes
 const themeToggleButton = await slice.build("Button", {
    value: "Change Theme",
    onClickCallback: async () => {
-      if (slice.theme === "Light") {
-         await slice.setTheme("Dark");
+      if (slice.theme === "LIGHT") {
+         await slice.setTheme("DARK");
       } else {
-         await slice.setTheme("Light");
+         await slice.setTheme("LIGHT");
       }
    }
 });`
@@ -80,23 +80,23 @@ const themeToggleButton = await slice.build("Button", {
          language: "css",
          value: `/* src/Themes/MyCustomTheme.css */
 :root {
-  /* Custom corporate theme */
-  --primary-color: #8e44ad;            /* Corporate purple */
-  --primary-color-rgb: rgb(142, 68, 173);
-  --primary-background-color: #f9f9f9; /* Light background */
-  --primary-color-contrast: #ffffff;   /* White text on purple */
-  --primary-color-shade: #7d3c98;      /* Darker purple for shadows */
-  
-  --secondary-color: #2ecc71;          /* Secondary green */
-  --secondary-background-color: #eee;
+  /* Slice branded light variation */
+  --primary-color: #9333ea;
+  --primary-color-rgb: rgb(147, 51, 234);
+  --primary-background-color: #fefbff;
+  --primary-color-contrast: #ffffff;
+  --primary-color-shade: #7c3aed;
+
+  --secondary-color: #10b981;
+  --secondary-background-color: #f0fdf4;
   --secondary-color-contrast: #ffffff;
-  
-  --success-color: #27ae60;
-  --warning-color: #f39c12;
-  --danger-color: #e74c3c;
-  
-  --font-primary-color: #333333;
-  --font-secondary-color: #666666;
+
+  --success-color: #059669;
+  --warning-color: #f59e0b;
+  --danger-color: #dc2626;
+
+  --font-primary-color: #1a0b2e;
+  --font-secondary-color: #6b46c1;
 }`
       });
       this.querySelector(".custom-theme-example").appendChild(customThemeExample);
@@ -132,18 +132,17 @@ const themeToggleButton = await slice.build("Button", {
          return sample;
       };
 
-      const lightSample = await createThemeSample("Light Theme", "#0066ff", "#ffffff", "#000000");
-      const darkSample = await createThemeSample("Dark Theme", "#0066ff", "#282828", "#ffffff"); 
-      const sliceSample = await createThemeSample("Slice Theme", "#A31D1D", "#FEF9E1", "#6D2323");
+const lightSample = await createThemeSample("LIGHT", "#9333EA", "#FEFBFF", "#1A0B2E");
+const darkSample = await createThemeSample("DARK", "#A855F7", "#140F1F", "#F4ECFF");
+      const legacySample = await createThemeSample("Legacy (migration)", "#64748B", "#F8FAFC", "#334155");
       
-      await themeGrid.setItem(lightSample);
-      await themeGrid.setItem(darkSample);
-      await themeGrid.setItem(sliceSample);
+await themeGrid.setItem(lightSample);
+await themeGrid.setItem(darkSample);
+      await themeGrid.setItem(legacySample);
 
       this.querySelector(".theme-samples").appendChild(themeGrid);
    }
 }
 
 customElements.define("slice-themesdocumentation", ThemesDocumentation);
-
 
