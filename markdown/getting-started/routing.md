@@ -20,11 +20,15 @@ guards to ensure your guard logic runs before the first navigation.
 
 Routing is driven by a `routes.js` file and a runtime router available at `slice.router`.
 
+Path matching is **case-insensitive**: `/About` resolves to a route declared as `/about`. This
+applies to both static and `${param}` routes, and to `MultiRoute` containers. Captured parameter
+values keep their original case (for example `${id}` in `/User/AB12` is `AB12`).
+
 ## Router API
 | Method | Signature | Returns | Notes |
 | --- | --- | --- | --- |
 | `start` | `() => Promise<void>` | `Promise<void>` | Starts routing immediately. Recommended when using guards. |
-| `navigate` | `(path, _redirectChain?, _options?)` | `Promise<void>` | Programmatic navigation. `_options.replace` uses history replace. |
+| `navigate` | `(path, options?)` | `Promise<void>` | Programmatic navigation. Pass `{ replace: true }` to replace history instead of pushing. |
 | `beforeEach` | `(guard)` | `void` | Registers a guard `(to, from, next)`. |
 | `afterEach` | `(guard)` | `void` | Registers a guard `(to, from)` after navigation. |
 
@@ -65,6 +69,9 @@ Guards and route events receive `to` and `from` objects created by the router.
 ## Basic Navigation
 ```javascript title="Navigate programmatically"
 await slice.router.navigate('/about');
+
+// Replace the current history entry instead of pushing a new one:
+await slice.router.navigate('/login', { replace: true });
 ```
 
 ## Route Containers
@@ -74,6 +81,14 @@ Slice provides two route container components:
 - `slice-multi-route` for a list of routes
 
 They cache components and call `update()` when a cached component is reused.
+
+:::warning
+`routes.js` is the **single source of truth** for the Router. Containers do **not** register their
+paths with the Router — they only choose which component to show for the current URL. So every path
+a `Route`/`MultiRoute` can show must also exist in `routes.js` (in the App Shell pattern it maps to
+the shell). Otherwise a direct load, refresh, or deep-link to that URL resolves before the container
+mounts and falls through to `/404`.
+:::
 
 ```javascript title="Route container"
 const route = await slice.build('Route', {

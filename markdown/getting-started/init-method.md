@@ -13,10 +13,14 @@ tags: [lifecycle, init]
 # init()
 
 ## Overview
-`init()` runs once, right after the component instance is created and its template is attached.
-Use it for one-time setup that should not repeat during updates.
+`init()` runs once, right after the component is constructed. By this point the constructor has
+already attached the template with `slice.attachTemplate(this)` and applied props, so the DOM is
+ready. Use `init()` for one-time setup that should not repeat during updates.
 
-`slice.build()` awaits `init()` before returning the component instance.
+`slice.build()` awaits `init()` before returning the component instance, so `init()` is the place
+for **async** work the constructor cannot do — fetching data and building children with
+`await slice.build(...)`. See Component Anatomy for the constructor and the two ways to cache DOM
+references.
 
 ## API
 | Method | Signature | Returns | Notes |
@@ -69,7 +73,10 @@ export default class Notifications extends HTMLElement {
 
 ## Best Practices
 :::tip
-Query DOM elements in `init()` (not in the constructor).
+The template is attached in the constructor by `slice.attachTemplate(this)`, so `querySelector`
+works there too. You can cache DOM references in the constructor (after `attachTemplate`, as the
+official components do) or in `init()`. Reserve `init()` for async work — fetching and building
+children — which the synchronous constructor cannot perform.
 :::
 
 :::tip

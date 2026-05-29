@@ -39,7 +39,7 @@ container.innerHTML = '';
 ## Router API
 | Method | Signature | Notes |
 | --- | --- | --- |
-| `navigate` | `(path, _redirectChain?, _options?)` | Programmatic navigation. |
+| `navigate` | `(path, options?)` | Programmatic navigation. `{ replace: true }` replaces history. |
 | `beforeEach` | `(to, from, next)` | Register a guard before navigation. |
 | `afterEach` | `(to, from)` | Run logic after navigation. |
 | `start` | `()` | Start routing immediately. |
