@@ -2,9 +2,9 @@ name: Docs Parse + Render CD
 
 on:
   pull_request:
-    branches: [main]
+    branches: [master]
   push:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 permissions:
@@ -44,8 +44,8 @@ jobs:
             exit 1
           fi
 
-      - name: Commit generated docs (main)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      - name: Commit generated docs (master)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
           if ! git diff --quiet; then
             git config user.name "github-actions[bot]"
@@ -58,7 +58,7 @@ jobs:
           fi
 
       - name: Trigger Render deploy
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.RENDER_DEPLOY_HOOK_URL != ''
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && secrets.RENDER_DEPLOY_HOOK_URL != ''
         run: |
           curl --fail --silent --show-error --request POST "$RENDER_DEPLOY_HOOK_URL"
         env:
