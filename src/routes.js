@@ -122,6 +122,26 @@ const routes = [
           {
              path: '/Components',
              component: 'VisualDocumentation'
+          },
+          {
+             path: '/Project-Anatomy',
+             component: 'ProjectAnatomy',
+          },
+          {
+             path: '/First-Page',
+             component: 'FirstPage',
+          },
+          {
+             path: '/Development-Workflow',
+             component: 'DevelopmentWorkflow',
+          },
+          {
+             path: '/Component-Anatomy',
+             component: 'ComponentAnatomy',
+          },
+          {
+             path: '/DevTools',
+             component: 'DevToolsDocumentation',
           }
        ]
     },
