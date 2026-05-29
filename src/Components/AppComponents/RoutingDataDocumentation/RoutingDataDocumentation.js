@@ -8,14 +8,14 @@ export default class RoutingDataDocumentation extends HTMLElement {
 
   async init() {
     this.markdownPath = "project-architecture/routing-data.md";
-    this.markdownContent = "---\r\ntitle: Routing and Data Passing\r\nroute: /Documentation/Architecture/Routing-Data\r\nnavLabel: Routing and Data Passing\r\nsection: Project Architecture\r\ngroup: Styles and Patterns\r\norder: 4\r\ndescription: Understand current Slice routing behavior, slug support, query usage, and route-to-route data strategies.\r\ncomponent: RoutingDataDocumentation\r\ntags: [routing, params, query, context, events]\r\n---\r\n\r\n# Routing and Data Passing\r\n\r\nThis page documents current runtime behavior so architecture decisions match real Slice capabilities.\r\n\r\n## Router Behavior (Current)\r\n| Capability | Supported | Notes |\r\n| --- | --- | --- |\r\n| `pathname` route matching | Yes | Uses History API and `window.location.pathname` |\r\n| Dynamic params (`${param}`) | Yes | One segment per param |\r\n| Query parsing (`?a=1`) | Yes | Exposed in route info (`to.query`, `from.query`) |\r\n| Hash-based route matching (`#state`) | No | Hash is not used for route matching |\r\n| Arbitrary props in `navigate()` | No | No native payload channel in `navigate(path, options)` |\r\n\r\n## Dynamic Params (Slugs)\r\n```javascript title=\"routes.js\"\r\nconst routes = [\r\n  { path: '/post/${slug}', component: 'PostPage' },\r\n  { path: '/404', component: 'NotFound' }\r\n];\r\n```\r\n\r\nUse slugs when the URL should represent identity (post, product, user).\r\n\r\n## Query Params\r\n```javascript title=\"Read query in guard\"\r\nslice.router.beforeEach((to, from, next) => {\r\n  if (to.query.preview === 'true') {\r\n    // preview mode behavior\r\n  }\r\n  next();\r\n});\r\n```\r\n\r\n## Route-to-Route Data Strategies\r\n1. URL params for identity\r\n2. Query params for URL-visible flags\r\n3. `slice.context` for shared app state\r\n4. `slice.events` for event-driven coordination\r\n\r\n```javascript title=\"Shared state with ContextManager\"\r\nslice.context.create('session', { userId: null, role: 'guest' });\r\n\r\nslice.context.setState('session', { userId: 'u-42', role: 'member' });\r\n```\r\n\r\n```javascript title=\"Event-driven handoff\"\r\nslice.events.emit('checkout:started', { cartId: 'c-1001' });\r\n```\r\n\r\n## Important Constraint\r\n:::warning\r\nDo not assume `slice.router.navigate('/path', { data })` passes arbitrary props to destination components. Use context/events/URL state instead.\r\n:::\r\n";
+    this.markdownContent = "---\ntitle: Routing and Data Passing\nroute: /Documentation/Architecture/Routing-Data\nnavLabel: Routing and Data Passing\nsection: Project Architecture\ngroup: Styles and Patterns\norder: 4\ndescription: Understand current Slice routing behavior, slug support, query usage, and route-to-route data strategies.\ncomponent: RoutingDataDocumentation\ntags: [routing, params, query, context, events]\n---\n\n# Routing and Data Passing\n\nThis page documents current runtime behavior so architecture decisions match real Slice capabilities.\n\n## Router Behavior (Current)\n| Capability | Supported | Notes |\n| --- | --- | --- |\n| `pathname` route matching | Yes | Uses History API and `window.location.pathname` |\n| Dynamic params (`${param}`) | Yes | One segment per param |\n| Query parsing (`?a=1`) | Yes | Exposed in route info (`to.query`, `from.query`) |\n| Hash-based route matching (`#state`) | No | Hash is not used for route matching |\n| Arbitrary props in `navigate()` | No | No native payload channel in `navigate(path, options)` |\n\n## Dynamic Params (Slugs)\n```javascript title=\"routes.js\"\nconst routes = [\n  { path: '/post/${slug}', component: 'PostPage' },\n  { path: '/404', component: 'NotFound' }\n];\n```\n\nUse slugs when the URL should represent identity (post, product, user).\n\n## Query Params\n```javascript title=\"Read query in guard\"\nslice.router.beforeEach((to, from, next) => {\n  if (to.query.preview === 'true') {\n    // preview mode behavior\n  }\n  next();\n});\n```\n\n## Route-to-Route Data Strategies\n1. URL params for identity\n2. Query params for URL-visible flags\n3. `slice.context` for shared app state\n4. `slice.events` for event-driven coordination\n\n```javascript title=\"Shared state with ContextManager\"\nslice.context.create('session', { userId: null, role: 'guest' });\n\nslice.context.setState('session', { userId: 'u-42', role: 'member' });\n```\n\n```javascript title=\"Event-driven handoff\"\nslice.events.emit('checkout:started', { cartId: 'c-1001' });\n```\n\n## Important Constraint\n:::warning\nDo not assume `slice.router.navigate('/path', { data })` passes arbitrary props to destination components. Use context/events/URL state instead.\n:::\n";
     if (true) {
       this.setupCopyButton();
     }
       {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
-            const lines = ["| Capability | Supported | Notes |\r","| --- | --- | --- |\r","| `pathname` route matching | Yes | Uses History API and `window.location.pathname` |\r","| Dynamic params (`${param}`) | Yes | One segment per param |\r","| Query parsing (`?a=1`) | Yes | Exposed in route info (`to.query`, `from.query`) |\r","| Hash-based route matching (`#state`) | No | Hash is not used for route matching |\r","| Arbitrary props in `navigate()` | No | No native payload channel in `navigate(path, options)` |\r"];
+            const lines = ["| Capability | Supported | Notes |","| --- | --- | --- |","| `pathname` route matching | Yes | Uses History API and `window.location.pathname` |","| Dynamic params (`${param}`) | Yes | One segment per param |","| Query parsing (`?a=1`) | Yes | Exposed in route info (`to.query`, `from.query`) |","| Hash-based route matching (`#state`) | No | Hash is not used for route matching |","| Arbitrary props in `navigate()` | No | No native payload channel in `navigate(path, options)` |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -76,7 +76,7 @@ export default class RoutingDataDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-2"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "const routes = [\r\n  { path: '/post/${slug}', component: 'PostPage' },\r\n  { path: '/404', component: 'NotFound' }\r\n];\r",
+               value: "const routes = [\n  { path: '/post/${slug}', component: 'PostPage' },\n  { path: '/404', component: 'NotFound' }\n];",
                language: "javascript"
             });
             if ("routes.js") {
@@ -92,7 +92,7 @@ export default class RoutingDataDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-3"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice.router.beforeEach((to, from, next) => {\r\n  if (to.query.preview === 'true') {\r\n    // preview mode behavior\r\n  }\r\n  next();\r\n});\r",
+               value: "slice.router.beforeEach((to, from, next) => {\n  if (to.query.preview === 'true') {\n    // preview mode behavior\n  }\n  next();\n});",
                language: "javascript"
             });
             if ("Read query in guard") {
@@ -108,7 +108,7 @@ export default class RoutingDataDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-4"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice.context.create('session', { userId: null, role: 'guest' });\r\n\r\nslice.context.setState('session', { userId: 'u-42', role: 'member' });\r",
+               value: "slice.context.create('session', { userId: null, role: 'guest' });\n\nslice.context.setState('session', { userId: 'u-42', role: 'member' });",
                language: "javascript"
             });
             if ("Shared state with ContextManager") {
@@ -124,7 +124,7 @@ export default class RoutingDataDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-5"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice.events.emit('checkout:started', { cartId: 'c-1001' });\r",
+               value: "slice.events.emit('checkout:started', { cartId: 'c-1001' });",
                language: "javascript"
             });
             if ("Event-driven handoff") {

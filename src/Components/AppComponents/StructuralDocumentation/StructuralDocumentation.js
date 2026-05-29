@@ -1,4 +1,4 @@
-﻿export default class StructuralDocumentation extends HTMLElement {
+export default class StructuralDocumentation extends HTMLElement {
   constructor(props) {
     super();
     slice.attachTemplate(this);
@@ -8,14 +8,14 @@
 
   async init() {
     this.markdownPath = "getting-started/structural-components.md";
-    this.markdownContent = "---\r\ntitle: Structural\r\nroute: /Documentation/Structural\r\nnavLabel: Structural\r\nsection: Getting Started\r\ngroup: Components\r\norder: 33\r\ndescription: Structural components that power Slice.js.\r\ncomponent: StructuralDocumentation\r\ntags: [structural, controller, router, styles]\r\n---\r\n\r\n# Structural Components\r\n\r\n## Overview\r\nStructural components power the framework runtime. They are created by Slice.js and exposed\r\nunder `slice.*`. You do not build them directly.\r\n\r\n## Key Components\r\n- `slice.controller` for component lifecycle and lookup\r\n- `slice.router` for navigation and route rendering\r\n- `slice.stylesManager` for styles and themes\r\n- `slice.events` for pub/sub (optional)\r\n- `slice.context` for shared state (optional)\r\n\r\n## Controller API\r\n| Method | Signature | Returns | Notes |\r\n| --- | --- | --- | --- |\r\n| `getComponent` | `(sliceId)` | `HTMLElement | undefined` | Lookup by sliceId. |\r\n| `destroyByContainer` | `(container)` | `number` | Destroys Slice components inside container. |\r\n| `destroyByPattern` | `(pattern)` | `number` | Destroys components whose sliceId matches pattern. |\r\n\r\n```javascript title=\"Destroy components safely\"\r\nconst container = this.querySelector('.items');\r\nslice.controller.destroyByContainer(container);\r\ncontainer.innerHTML = '';\r\n```\r\n\r\n## Router API\r\n| Method | Signature | Notes |\r\n| --- | --- | --- |\r\n| `navigate` | `(path, _redirectChain?, _options?)` | Programmatic navigation. |\r\n| `beforeEach` | `(to, from, next)` | Register a guard before navigation. |\r\n| `afterEach` | `(to, from)` | Run logic after navigation. |\r\n| `start` | `()` | Start routing immediately. |\r\n\r\n## Styles and Themes\r\n`slice.setTheme(themeName)` applies a theme through the StylesManager.\r\n\r\n```javascript title=\"Switch themes\"\r\nawait slice.setTheme('DARK');\r\n```\r\n\r\n## EventManager (Optional)\r\nProvides pub/sub via `slice.events`. When disabled, the API is a no-op.\r\n\r\n| Method | Signature | Notes |\r\n| --- | --- | --- |\r\n| `subscribe` | `(eventName, callback, options?)` | Returns subscription id. |\r\n| `subscribeOnce` | `(eventName, callback, options?)` | Auto-unsubscribe after first emit. |\r\n| `unsubscribe` | `(eventName, id)` | Returns boolean. |\r\n| `emit` | `(eventName, data?)` | Emits to all subscribers. |\r\n| `bind` | `(component)` | Returns component-bound API. |\r\n\r\n## ContextManager (Optional)\r\nShared state system available at `slice.context`.\r\n\r\n| Method | Signature | Notes |\r\n| --- | --- | --- |\r\n| `create` | `(name, initialState, options?)` | Options include `persist`. |\r\n| `getState` | `(name)` | Returns current state or null. |\r\n| `setState` | `(name, updater)` | Accepts object or updater function. |\r\n| `watch` | `(name, component, callback, selector?)` | Auto-cleanup via component. |\r\n| `destroy` | `(name)` | Removes a context. |\r\n| `list` | `()` | Returns context names. |\r\n\r\n## Best Practices\r\n:::tip\r\nUse `destroyByContainer` before recreating dynamic lists to avoid leaks.\r\n:::\r\n\r\n:::tip\r\nRegister guards before calling `slice.router.start()`.\r\n:::\r\n";
+    this.markdownContent = "---\ntitle: Structural\nroute: /Documentation/Structural\nnavLabel: Structural\nsection: Getting Started\ngroup: Components\norder: 33\ndescription: Structural components that power Slice.js.\ncomponent: StructuralDocumentation\ntags: [structural, controller, router, styles]\n---\n\n# Structural Components\n\n## Overview\nStructural components power the framework runtime. They are created by Slice.js and exposed\nunder `slice.*`. You do not build them directly.\n\n## Key Components\n- `slice.controller` for component lifecycle and lookup\n- `slice.router` for navigation and route rendering\n- `slice.stylesManager` for styles and themes\n- `slice.events` for pub/sub (optional)\n- `slice.context` for shared state (optional)\n\n## Controller API\n| Method | Signature | Returns | Notes |\n| --- | --- | --- | --- |\n| `getComponent` | `(sliceId)` | `HTMLElement | undefined` | Lookup by sliceId. |\n| `destroyByContainer` | `(container)` | `number` | Destroys Slice components inside container. |\n| `destroyByPattern` | `(pattern)` | `number` | Destroys components whose sliceId matches pattern. |\n\n```javascript title=\"Destroy components safely\"\nconst container = this.querySelector('.items');\nslice.controller.destroyByContainer(container);\ncontainer.innerHTML = '';\n```\n\n## Router API\n| Method | Signature | Notes |\n| --- | --- | --- |\n| `navigate` | `(path, options?)` | Programmatic navigation. `{ replace: true }` replaces history. |\n| `beforeEach` | `(to, from, next)` | Register a guard before navigation. |\n| `afterEach` | `(to, from)` | Run logic after navigation. |\n| `start` | `()` | Start routing immediately. |\n\n## Styles and Themes\n`slice.setTheme(themeName)` applies a theme through the StylesManager.\n\n```javascript title=\"Switch themes\"\nawait slice.setTheme('Dark');\n```\n\n## EventManager (Optional)\nProvides pub/sub via `slice.events`. When disabled, the API is a no-op.\n\n| Method | Signature | Notes |\n| --- | --- | --- |\n| `subscribe` | `(eventName, callback, options?)` | Returns subscription id. |\n| `subscribeOnce` | `(eventName, callback, options?)` | Auto-unsubscribe after first emit. |\n| `unsubscribe` | `(eventName, id)` | Returns boolean. |\n| `emit` | `(eventName, data?)` | Emits to all subscribers. |\n| `bind` | `(component)` | Returns component-bound API. |\n\n## ContextManager (Optional)\nShared state system available at `slice.context`.\n\n| Method | Signature | Notes |\n| --- | --- | --- |\n| `create` | `(name, initialState, options?)` | Options include `persist`. |\n| `getState` | `(name)` | Returns current state or null. |\n| `setState` | `(name, updater)` | Accepts object or updater function. |\n| `watch` | `(name, component, callback, selector?)` | Auto-cleanup via component. |\n| `destroy` | `(name)` | Removes a context. |\n| `list` | `()` | Returns context names. |\n\n## Best Practices\n:::tip\nUse `destroyByContainer` before recreating dynamic lists to avoid leaks.\n:::\n\n:::tip\nRegister guards before calling `slice.router.start()`.\n:::\n";
     if (true) {
       this.setupCopyButton();
     }
       {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
-            const lines = ["| Method | Signature | Returns | Notes |\r","| --- | --- | --- | --- |\r","| `getComponent` | `(sliceId)` | `HTMLElement | undefined` | Lookup by sliceId. |\r","| `destroyByContainer` | `(container)` | `number` | Destroys Slice components inside container. |\r","| `destroyByPattern` | `(pattern)` | `number` | Destroys components whose sliceId matches pattern. |\r"];
+            const lines = ["| Method | Signature | Returns | Notes |","| --- | --- | --- | --- |","| `getComponent` | `(sliceId)` | `HTMLElement | undefined` | Lookup by sliceId. |","| `destroyByContainer` | `(container)` | `number` | Destroys Slice components inside container. |","| `destroyByPattern` | `(pattern)` | `number` | Destroys components whose sliceId matches pattern. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -76,7 +76,7 @@
          const container = this.querySelector('[data-block-id="doc-block-2"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "const container = this.querySelector('.items');\r\nslice.controller.destroyByContainer(container);\r\ncontainer.innerHTML = '';\r",
+               value: "const container = this.querySelector('.items');\nslice.controller.destroyByContainer(container);\ncontainer.innerHTML = '';",
                language: "javascript"
             });
             if ("Destroy components safely") {
@@ -91,7 +91,7 @@
       {
          const container = this.querySelector('[data-block-id="doc-block-3"]');
          if (container) {
-            const lines = ["| Method | Signature | Notes |\r","| --- | --- | --- |\r","| `navigate` | `(path, _redirectChain?, _options?)` | Programmatic navigation. |\r","| `beforeEach` | `(to, from, next)` | Register a guard before navigation. |\r","| `afterEach` | `(to, from)` | Run logic after navigation. |\r","| `start` | `()` | Start routing immediately. |\r"];
+            const lines = ["| Method | Signature | Notes |","| --- | --- | --- |","| `navigate` | `(path, options?)` | Programmatic navigation. `{ replace: true }` replaces history. |","| `beforeEach` | `(to, from, next)` | Register a guard before navigation. |","| `afterEach` | `(to, from)` | Run logic after navigation. |","| `start` | `()` | Start routing immediately. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -152,7 +152,7 @@
          const container = this.querySelector('[data-block-id="doc-block-4"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "await slice.setTheme('DARK');\r",
+               value: "await slice.setTheme('Dark');",
                language: "javascript"
             });
             if ("Switch themes") {
@@ -167,7 +167,7 @@
       {
          const container = this.querySelector('[data-block-id="doc-block-5"]');
          if (container) {
-            const lines = ["| Method | Signature | Notes |\r","| --- | --- | --- |\r","| `subscribe` | `(eventName, callback, options?)` | Returns subscription id. |\r","| `subscribeOnce` | `(eventName, callback, options?)` | Auto-unsubscribe after first emit. |\r","| `unsubscribe` | `(eventName, id)` | Returns boolean. |\r","| `emit` | `(eventName, data?)` | Emits to all subscribers. |\r","| `bind` | `(component)` | Returns component-bound API. |\r"];
+            const lines = ["| Method | Signature | Notes |","| --- | --- | --- |","| `subscribe` | `(eventName, callback, options?)` | Returns subscription id. |","| `subscribeOnce` | `(eventName, callback, options?)` | Auto-unsubscribe after first emit. |","| `unsubscribe` | `(eventName, id)` | Returns boolean. |","| `emit` | `(eventName, data?)` | Emits to all subscribers. |","| `bind` | `(component)` | Returns component-bound API. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -227,7 +227,7 @@
       {
          const container = this.querySelector('[data-block-id="doc-block-6"]');
          if (container) {
-            const lines = ["| Method | Signature | Notes |\r","| --- | --- | --- |\r","| `create` | `(name, initialState, options?)` | Options include `persist`. |\r","| `getState` | `(name)` | Returns current state or null. |\r","| `setState` | `(name, updater)` | Accepts object or updater function. |\r","| `watch` | `(name, component, callback, selector?)` | Auto-cleanup via component. |\r","| `destroy` | `(name)` | Removes a context. |\r","| `list` | `()` | Returns context names. |\r"];
+            const lines = ["| Method | Signature | Notes |","| --- | --- | --- |","| `create` | `(name, initialState, options?)` | Options include `persist`. |","| `getState` | `(name)` | Returns current state or null. |","| `setState` | `(name, updater)` | Accepts object or updater function. |","| `watch` | `(name, component, callback, selector?)` | Auto-cleanup via component. |","| `destroy` | `(name)` | Removes a context. |","| `list` | `()` | Returns context names. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -301,7 +301,7 @@
     const copyMenu = await slice.build('CopyMarkdownMenu', {
       markdownPath: this.markdownPath,
       markdownContent: this.markdownContent,
-      label: 'â'
+      label: '❐'
     });
 
     container.appendChild(copyMenu);
@@ -311,4 +311,3 @@
 }
 
 customElements.define('slice-structuraldocumentation', StructuralDocumentation);
-

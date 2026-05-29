@@ -8,7 +8,7 @@ export default class ContextManagerDocumentation extends HTMLElement {
 
   async init() {
     this.markdownPath = "context-manager.md";
-    this.markdownContent = "---\r\ntitle: ContextManager\r\nroute: /Documentation/Structural/ContextManager\r\nnavLabel: ContextManager\r\nsection: Getting Started\r\ngroup: State\r\norder: 30\r\ndescription: Shared state with watchers, selectors, and persistence.\r\ncomponent: ContextManagerDocumentation\r\ntags: [context, state, persistence]\r\n---\r\n\r\n# ContextManager\r\n\r\n## Overview\r\nContextManager provides shared state across components with watchers and optional persistence.\r\nIt uses EventManager internally to notify watchers and supports selectors for efficient updates.\r\n\r\nEnable it in `sliceConfig.json` to use `slice.context`.\r\n\r\n## Enable ContextManager\r\n```json title=\"sliceConfig.json\"\r\n{\r\n  \"context\": { \"enabled\": true }\r\n}\r\n```\r\n\r\n## Context UI (Optional)\r\nYou can enable the ContextManager debug panel with a keyboard shortcut.\r\n\r\n```json title=\"sliceConfig.json\"\r\n{\r\n  \"context\": {\r\n    \"enabled\": true,\r\n    \"ui\": {\r\n      \"enabled\": true,\r\n      \"shortcut\": \"alt+shift+c\"\r\n    }\r\n  }\r\n}\r\n```\r\n\r\n## Core API\r\n| Method | Signature | Returns | Notes |\r\n| --- | --- | --- | --- |\r\n| `create` | `(name, initialState = {}, options = {})` | `boolean` | Options include `persist`, `storageKey`. |\r\n| `getState` | `(name)` | `any | null` | Returns current state or `null` if missing. |\r\n| `setState` | `(name, updater)` | `void` | `updater` can be object or `(prev) => newState`. |\r\n| `watch` | `(name, component, callback, selector?)` | `string | null` | Auto-cleanup via component sliceId. |\r\n| `has` | `(name)` | `boolean` | Check if a context exists. |\r\n| `destroy` | `(name)` | `boolean` | Removes a context and persisted storage. |\r\n| `list` | `()` | `string[]` | Returns all context names. |\r\n\r\n## Context Options\r\n| Option | Type | Default | Notes |\r\n| --- | --- | --- | --- |\r\n| `persist` | `boolean` | `false` | Saves state to `localStorage`. |\r\n| `storageKey` | `string` | `slice_context_<name>` | Override persistence key. |\r\n\r\n## Create and Read\r\n```javascript title=\"Create a context\"\r\nslice.context.create('auth', {\r\n  isLoggedIn: false,\r\n  user: null\r\n});\r\n\r\nconst authState = slice.context.getState('auth');\r\nconsole.log(authState.isLoggedIn);\r\n```\r\n\r\n## Watchers\r\nWatchers are bound to components for auto-cleanup. Pass the component as the second argument.\r\n\r\n```javascript title=\"Watch with selector\"\r\nexport default class AccountMenu extends HTMLElement {\r\n  constructor(props) {\r\n    super();\r\n    slice.attachTemplate(this);\r\n    slice.controller.setComponentProps(this, props);\r\n  }\r\n\r\n  async init() {\r\n    slice.context.watch(\r\n      'auth',\r\n      this,\r\n      (isLoggedIn) => {\r\n        this.classList.toggle('signed-in', isLoggedIn);\r\n      },\r\n      (state) => state.isLoggedIn\r\n    );\r\n  }\r\n}\r\n```\r\n\r\n## Selectors and Derived Data\r\nSelectors run on every update and should be fast and side-effect free. ContextManager performs\r\na shallow comparison of the selected value to decide when to notify.\r\n\r\n```javascript title=\"Derived value selector\"\r\nslice.context.watch(\r\n  'cart',\r\n  this,\r\n  (count) => {\r\n    this.$badge.textContent = count;\r\n  },\r\n  (state) => state.items.length\r\n);\r\n```\r\n\r\n## Persistence\r\nPersist a context to `localStorage` for session survival.\r\n\r\n```javascript title=\"Persistent context\"\r\nslice.context.create(\r\n  'preferences',\r\n  { theme: 'light', locale: 'en' },\r\n  { persist: true, storageKey: 'app:preferences' }\r\n);\r\n```\r\n\r\n## Functional Updates\r\nUse functional updates when new state depends on previous state.\r\n\r\n```javascript title=\"Functional update\"\r\nslice.context.setState('cart', (prev) => ({\r\n  ...prev,\r\n  items: [...prev.items, newItem],\r\n  total: prev.total + newItem.price\r\n}));\r\n```\r\n\r\n## Service Singleton Example\r\n```javascript title=\"Context access via singleton service\"\r\nconst contextService = await slice.build('ImposterGameContextService', {\r\n  sliceId: 'imposter-context-service'\r\n});\r\n\r\nexport default class GameScreen extends HTMLElement {\r\n  async init() {\r\n    this.contextService = slice.getComponent('imposter-context-service');\r\n    const config = this.contextService.getGameConfig();\r\n    this.contextService.updateGameConfig({ step: 'reveal' });\r\n  }\r\n}\r\n```\r\n\r\n## Best Practices\r\n:::tip\r\nKeep contexts small and focused by domain.\r\n:::\r\n\r\n:::tip\r\nUse selectors to reduce unnecessary updates.\r\n:::\r\n\r\n:::tip\r\nPrefer serializable state only. Avoid storing class instances or functions.\r\n:::\r\n\r\n:::tip\r\nUse a service singleton to encapsulate context reads/writes when multiple components share the same domain state.\r\n:::\r\n\r\n## Gotchas\r\n:::warning\r\n`watch()` requires a component with a `sliceId`. Otherwise it returns `null`.\r\n:::\r\n\r\n:::warning\r\nPersist only small, serializable state.\r\n:::\r\n";
+    this.markdownContent = "---\ntitle: ContextManager\nroute: /Documentation/Structural/ContextManager\nnavLabel: ContextManager\nsection: Getting Started\ngroup: State\norder: 30\ndescription: Shared state with watchers, selectors, and persistence.\ncomponent: ContextManagerDocumentation\ntags: [context, state, persistence]\n---\n\n# ContextManager\n\n## Overview\nContextManager provides shared state across components with watchers and optional persistence.\nIt uses EventManager internally to notify watchers and supports selectors for efficient updates.\n\nEnable it in `sliceConfig.json` to use `slice.context`.\n\n## Enable ContextManager\n```json title=\"sliceConfig.json\"\n{\n  \"context\": { \"enabled\": true }\n}\n```\n\n## Context UI (Optional)\nYou can enable the ContextManager debug panel with a keyboard shortcut.\n\n```json title=\"sliceConfig.json\"\n{\n  \"context\": {\n    \"enabled\": true,\n    \"ui\": {\n      \"enabled\": true,\n      \"shortcut\": \"alt+shift+c\"\n    }\n  }\n}\n```\n\n## Core API\n| Method | Signature | Returns | Notes |\n| --- | --- | --- | --- |\n| `create` | `(name, initialState = {}, options = {})` | `boolean` | Options include `persist`, `storageKey`. |\n| `getState` | `(name)` | `any | null` | Returns current state or `null` if missing. |\n| `setState` | `(name, updater)` | `void` | `updater` can be object or `(prev) => newState`. |\n| `watch` | `(name, component, callback, selector?)` | `string | null` | Auto-cleanup via component sliceId. |\n| `has` | `(name)` | `boolean` | Check if a context exists. |\n| `destroy` | `(name)` | `boolean` | Removes a context and persisted storage. |\n| `list` | `()` | `string[]` | Returns all context names. |\n\n## Context Options\n| Option | Type | Default | Notes |\n| --- | --- | --- | --- |\n| `persist` | `boolean` | `false` | Saves state to `localStorage`. |\n| `storageKey` | `string` | `slice_context_<name>` | Override persistence key. |\n\n## Create and Read\n```javascript title=\"Create a context\"\nslice.context.create('auth', {\n  isLoggedIn: false,\n  user: null\n});\n\nconst authState = slice.context.getState('auth');\nconsole.log(authState.isLoggedIn);\n```\n\n## Watchers\nWatchers are bound to components for auto-cleanup. Pass the component as the second argument.\n\n```javascript title=\"Watch with selector\"\nexport default class AccountMenu extends HTMLElement {\n  constructor(props) {\n    super();\n    slice.attachTemplate(this);\n    slice.controller.setComponentProps(this, props);\n  }\n\n  async init() {\n    slice.context.watch(\n      'auth',\n      this,\n      (isLoggedIn) => {\n        this.classList.toggle('signed-in', isLoggedIn);\n      },\n      (state) => state.isLoggedIn\n    );\n  }\n}\n```\n\n## Selectors and Derived Data\nSelectors run on every update and should be fast and side-effect free. ContextManager performs\na shallow comparison of the selected value to decide when to notify.\n\n```javascript title=\"Derived value selector\"\nslice.context.watch(\n  'cart',\n  this,\n  (count) => {\n    this.$badge.textContent = count;\n  },\n  (state) => state.items.length\n);\n```\n\n## Persistence\nPersist a context to `localStorage` for session survival.\n\n```javascript title=\"Persistent context\"\nslice.context.create(\n  'preferences',\n  { theme: 'light', locale: 'en' },\n  { persist: true, storageKey: 'app:preferences' }\n);\n```\n\n## Functional Updates\nUse functional updates when new state depends on previous state.\n\n```javascript title=\"Functional update\"\nslice.context.setState('cart', (prev) => ({\n  ...prev,\n  items: [...prev.items, newItem],\n  total: prev.total + newItem.price\n}));\n```\n\n## Service Singleton Example\n```javascript title=\"Context access via singleton service\"\nconst contextService = await slice.build('ImposterGameContextService', {\n  sliceId: 'imposter-context-service'\n});\n\nexport default class GameScreen extends HTMLElement {\n  async init() {\n    this.contextService = slice.getComponent('imposter-context-service');\n    const config = this.contextService.getGameConfig();\n    this.contextService.updateGameConfig({ step: 'reveal' });\n  }\n}\n```\n\n## Best Practices\n:::tip\nKeep contexts small and focused by domain.\n:::\n\n:::tip\nUse selectors to reduce unnecessary updates.\n:::\n\n:::tip\nPrefer serializable state only. Avoid storing class instances or functions.\n:::\n\n:::tip\nUse a service singleton to encapsulate context reads/writes when multiple components share the same domain state.\n:::\n\n## Gotchas\n:::warning\n`watch()` requires a component with a `sliceId`. Otherwise it returns `null`.\n:::\n\n:::warning\nPersist only small, serializable state.\n:::\n";
     if (true) {
       this.setupCopyButton();
     }
@@ -16,7 +16,7 @@ export default class ContextManagerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "{\r\n  \"context\": { \"enabled\": true }\r\n}\r",
+               value: "{\n  \"context\": { \"enabled\": true }\n}",
                language: "json"
             });
             if ("sliceConfig.json") {
@@ -32,7 +32,7 @@ export default class ContextManagerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-2"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "{\r\n  \"context\": {\r\n    \"enabled\": true,\r\n    \"ui\": {\r\n      \"enabled\": true,\r\n      \"shortcut\": \"alt+shift+c\"\r\n    }\r\n  }\r\n}\r",
+               value: "{\n  \"context\": {\n    \"enabled\": true,\n    \"ui\": {\n      \"enabled\": true,\n      \"shortcut\": \"alt+shift+c\"\n    }\n  }\n}",
                language: "json"
             });
             if ("sliceConfig.json") {
@@ -47,7 +47,7 @@ export default class ContextManagerDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-3"]');
          if (container) {
-            const lines = ["| Method | Signature | Returns | Notes |\r","| --- | --- | --- | --- |\r","| `create` | `(name, initialState = {}, options = {})` | `boolean` | Options include `persist`, `storageKey`. |\r","| `getState` | `(name)` | `any | null` | Returns current state or `null` if missing. |\r","| `setState` | `(name, updater)` | `void` | `updater` can be object or `(prev) => newState`. |\r","| `watch` | `(name, component, callback, selector?)` | `string | null` | Auto-cleanup via component sliceId. |\r","| `has` | `(name)` | `boolean` | Check if a context exists. |\r","| `destroy` | `(name)` | `boolean` | Removes a context and persisted storage. |\r","| `list` | `()` | `string[]` | Returns all context names. |\r"];
+            const lines = ["| Method | Signature | Returns | Notes |","| --- | --- | --- | --- |","| `create` | `(name, initialState = {}, options = {})` | `boolean` | Options include `persist`, `storageKey`. |","| `getState` | `(name)` | `any | null` | Returns current state or `null` if missing. |","| `setState` | `(name, updater)` | `void` | `updater` can be object or `(prev) => newState`. |","| `watch` | `(name, component, callback, selector?)` | `string | null` | Auto-cleanup via component sliceId. |","| `has` | `(name)` | `boolean` | Check if a context exists. |","| `destroy` | `(name)` | `boolean` | Removes a context and persisted storage. |","| `list` | `()` | `string[]` | Returns all context names. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -107,7 +107,7 @@ export default class ContextManagerDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-4"]');
          if (container) {
-            const lines = ["| Option | Type | Default | Notes |\r","| --- | --- | --- | --- |\r","| `persist` | `boolean` | `false` | Saves state to `localStorage`. |\r","| `storageKey` | `string` | `slice_context_<name>` | Override persistence key. |\r"];
+            const lines = ["| Option | Type | Default | Notes |","| --- | --- | --- | --- |","| `persist` | `boolean` | `false` | Saves state to `localStorage`. |","| `storageKey` | `string` | `slice_context_<name>` | Override persistence key. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -168,7 +168,7 @@ export default class ContextManagerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-5"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice.context.create('auth', {\r\n  isLoggedIn: false,\r\n  user: null\r\n});\r\n\r\nconst authState = slice.context.getState('auth');\r\nconsole.log(authState.isLoggedIn);\r",
+               value: "slice.context.create('auth', {\n  isLoggedIn: false,\n  user: null\n});\n\nconst authState = slice.context.getState('auth');\nconsole.log(authState.isLoggedIn);",
                language: "javascript"
             });
             if ("Create a context") {
@@ -184,7 +184,7 @@ export default class ContextManagerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-6"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "export default class AccountMenu extends HTMLElement {\r\n  constructor(props) {\r\n    super();\r\n    slice.attachTemplate(this);\r\n    slice.controller.setComponentProps(this, props);\r\n  }\r\n\r\n  async init() {\r\n    slice.context.watch(\r\n      'auth',\r\n      this,\r\n      (isLoggedIn) => {\r\n        this.classList.toggle('signed-in', isLoggedIn);\r\n      },\r\n      (state) => state.isLoggedIn\r\n    );\r\n  }\r\n}\r",
+               value: "export default class AccountMenu extends HTMLElement {\n  constructor(props) {\n    super();\n    slice.attachTemplate(this);\n    slice.controller.setComponentProps(this, props);\n  }\n\n  async init() {\n    slice.context.watch(\n      'auth',\n      this,\n      (isLoggedIn) => {\n        this.classList.toggle('signed-in', isLoggedIn);\n      },\n      (state) => state.isLoggedIn\n    );\n  }\n}",
                language: "javascript"
             });
             if ("Watch with selector") {
@@ -200,7 +200,7 @@ export default class ContextManagerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-7"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice.context.watch(\r\n  'cart',\r\n  this,\r\n  (count) => {\r\n    this.$badge.textContent = count;\r\n  },\r\n  (state) => state.items.length\r\n);\r",
+               value: "slice.context.watch(\n  'cart',\n  this,\n  (count) => {\n    this.$badge.textContent = count;\n  },\n  (state) => state.items.length\n);",
                language: "javascript"
             });
             if ("Derived value selector") {
@@ -216,7 +216,7 @@ export default class ContextManagerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-8"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice.context.create(\r\n  'preferences',\r\n  { theme: 'light', locale: 'en' },\r\n  { persist: true, storageKey: 'app:preferences' }\r\n);\r",
+               value: "slice.context.create(\n  'preferences',\n  { theme: 'light', locale: 'en' },\n  { persist: true, storageKey: 'app:preferences' }\n);",
                language: "javascript"
             });
             if ("Persistent context") {
@@ -232,7 +232,7 @@ export default class ContextManagerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-9"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice.context.setState('cart', (prev) => ({\r\n  ...prev,\r\n  items: [...prev.items, newItem],\r\n  total: prev.total + newItem.price\r\n}));\r",
+               value: "slice.context.setState('cart', (prev) => ({\n  ...prev,\n  items: [...prev.items, newItem],\n  total: prev.total + newItem.price\n}));",
                language: "javascript"
             });
             if ("Functional update") {
@@ -248,7 +248,7 @@ export default class ContextManagerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-10"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "const contextService = await slice.build('ImposterGameContextService', {\r\n  sliceId: 'imposter-context-service'\r\n});\r\n\r\nexport default class GameScreen extends HTMLElement {\r\n  async init() {\r\n    this.contextService = slice.getComponent('imposter-context-service');\r\n    const config = this.contextService.getGameConfig();\r\n    this.contextService.updateGameConfig({ step: 'reveal' });\r\n  }\r\n}\r",
+               value: "const contextService = await slice.build('ImposterGameContextService', {\n  sliceId: 'imposter-context-service'\n});\n\nexport default class GameScreen extends HTMLElement {\n  async init() {\n    this.contextService = slice.getComponent('imposter-context-service');\n    const config = this.contextService.getGameConfig();\n    this.contextService.updateGameConfig({ step: 'reveal' });\n  }\n}",
                language: "javascript"
             });
             if ("Context access via singleton service") {

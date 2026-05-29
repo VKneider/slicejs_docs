@@ -1,0 +1,35 @@
+<div class="documentation-content developmentworkflow">
+
+<div class="doc-title-bar">
+  <h1 id="the-development-loop">
+    <span class="doc-title-text">The Development Loop</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p>Day-to-day Slice development is a short loop: run the dev server, create and edit components, register them, and iterate. When you are ready, build for production and serve the output.</p>
+<h2 id="the-three-commands">The three commands</h2>
+<div class="table-block" data-block-id="doc-block-1"></div>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<p>The dev port comes from <code>sliceConfig.json</code> (<code>server.port</code>, default <code>3001</code>) and falls back to the next free port if it is taken.</p>
+<h2 id="where-your-code-lives">Where your code lives</h2>
+<div class="table-block" data-block-id="doc-block-3"></div>
+<h2 id="creating-and-registering-components">Creating and registering components</h2>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<p>Components must be listed in <code>src/Components/components.js</code> (name → category) to be loadable. <code>component:create</code> updates it for you. If you ever add or move component folders by hand, resync:</p>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<div class="callout callout-warning">A common cause of "component not found" / a <code>null</code> from <code>slice.build()</code> is a component missing
+from <code>components.js</code>. Run <code>slice component list</code> to fix it.</div>
+<h2 id="adding-registry-components">Adding registry components</h2>
+<div class="code-block" data-block-id="doc-block-6"></div>
+<p>The starter ships only a small set of Visual components. Install the rest on demand so your project stays lean.</p>
+<h2 id="diagnostics-while-developing">Diagnostics while developing</h2>
+<ul><li>Enable the debug panels in <code>sliceConfig.json</code> and toggle them at runtime: <code>alt+shift+e</code></li></ul>
+<p>(events) and <code>alt+shift+c</code> (context).</p>
+<ul><li>Right-click a component (when <code>debugger.enabled</code>) to inspect and live-edit its props.</li><li>Use <code>slice doctor</code> when the project structure or config seems off.</li><li>Prefer <code>slice.logger.logInfo / logWarning / logError</code> over <code>console.log</code> — it respects the</li></ul>
+<p>configured levels and stays quiet in production.</p>
+<h2 id="production-build-briefly">Production build, briefly</h2>
+<p><code>npm run build</code> analyzes what your routes use, bundles and minifies into <code>/dist</code>, and copies your <code>publicFolders</code>. <code>npm run start</code> then serves <code>/dist</code>. Production mode disables dev-only features (prop validation, debug panels) for performance.</p>
+<div class="callout callout-tip">Add a folder you import from (for example <code>/libs</code>) to <code>publicFolders</code> in <code>sliceConfig.json</code>, or it
+will work in dev but break in the production build.</div>
+</div>

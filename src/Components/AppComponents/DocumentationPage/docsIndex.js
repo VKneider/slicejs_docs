@@ -2,12 +2,22 @@ const docsIndex = [
   {
     title: 'Components Docs Portal',
     route: '/Documentation/Components',
-    description: 'Redirects to the official visual components documentation at components.slicejs.com.',
+    description: 'Official entrypoint to visual components documentation.',
     section: 'Components Library',
     group: 'Portal',
     order: 60,
     navLabel: 'Components Docs Portal',
-    tags: ['components', 'docs', 'portal', 'redirect']
+    tags: ['components', 'docs', 'portal']
+  },
+  {
+    title: 'Component Anatomy',
+    route: '/Documentation/Component-Anatomy',
+    description: 'How to author a Slice component, generate it with the CLI, and register it.',
+    section: 'Getting Started',
+    group: 'Components',
+    order: 29,
+    navLabel: 'Component Anatomy',
+    tags: ['components', 'cli', 'anatomy', 'props']
   },
   {
     title: 'Static Props',
@@ -32,12 +42,12 @@ const docsIndex = [
   {
     title: 'Visual',
     route: '/Documentation/Visual',
-    description: 'Landing page redirecting to the official visual components documentation at components.slicejs.com.',
+    description: 'Official visual component documentation entrypoint for Slice.js.',
     section: 'Getting Started',
     group: 'Components',
     order: 32,
     navLabel: 'Visual',
-    tags: ['visual', 'components', 'docs', 'redirect']
+    tags: ['visual', 'components', 'docs']
   },
   {
     title: 'Structural',
@@ -140,6 +150,16 @@ const docsIndex = [
     tags: ['logger', 'diagnostics', 'debugging']
   },
   {
+    title: 'DevTools',
+    route: '/Documentation/DevTools',
+    description: 'The component inspector and the events and context panels, and how live editing works.',
+    section: 'Getting Started',
+    group: 'Diagnostics',
+    order: 42,
+    navLabel: 'DevTools',
+    tags: ['devtools', 'debugger', 'events', 'context', 'diagnostics']
+  },
+  {
     title: 'EventManager',
     route: '/Documentation/Structural/EventManager',
     description: 'Lightweight pub/sub for component and app events.',
@@ -148,6 +168,36 @@ const docsIndex = [
     order: 20,
     navLabel: 'Events',
     tags: ['events', 'pubsub', 'lifecycle', 'cleanup']
+  },
+  {
+    title: 'Project Anatomy',
+    route: '/Documentation/Project-Anatomy',
+    description: 'What slice init creates and which files you actually edit.',
+    section: 'Getting Started',
+    group: 'First Steps',
+    order: 11,
+    navLabel: 'Project Anatomy',
+    tags: ['getting-started', 'project', 'structure']
+  },
+  {
+    title: 'Your First Page',
+    route: '/Documentation/First-Page',
+    description: 'Edit a section and add a new one in the App Shell starter, end to end.',
+    section: 'Getting Started',
+    group: 'First Steps',
+    order: 12,
+    navLabel: 'Your First Page',
+    tags: ['getting-started', 'components', 'routing']
+  },
+  {
+    title: 'The Development Loop',
+    route: '/Documentation/Development-Workflow',
+    description: 'The dev to build to start cycle and where your components live.',
+    section: 'Getting Started',
+    group: 'First Steps',
+    order: 13,
+    navLabel: 'The Development Loop',
+    tags: ['getting-started', 'cli', 'workflow']
   },
   {
     title: 'Slice Routing',
