@@ -24,6 +24,26 @@ export const documentationRoutes = {
       title: 'Getting Started',
       items: [
          {
+            title: 'First Steps',
+            items: [
+               {
+                  title: 'Project Anatomy',
+                  path: '/Documentation/Project-Anatomy',
+                  component: 'ProjectAnatomy'
+               },
+               {
+                  title: 'Your First Page',
+                  path: '/Documentation/First-Page',
+                  component: 'FirstPage'
+               },
+               {
+                  title: 'The Development Loop',
+                  path: '/Documentation/Development-Workflow',
+                  component: 'DevelopmentWorkflow'
+               }
+            ]
+         },
+         {
             title: 'SliceConfig.json',
             path: '/Documentation/SliceConfig',
             component: 'SliceConfigDocumentation'
@@ -41,6 +61,11 @@ export const documentationRoutes = {
          {
             title: 'Components',
             items: [
+               {
+                  title: 'Component Anatomy',
+                  path: '/Documentation/Component-Anatomy',
+                  component: 'ComponentAnatomy'
+               },
                {
                   title: 'The build method',
                   path: '/Documentation/The-build-method',
@@ -128,6 +153,11 @@ export const documentationRoutes = {
             title: 'Logger',
             path: '/Documentation/Structural/Logger',
             component: 'LoggerDocumentation'
+         },
+         {
+            title: 'DevTools',
+            path: '/Documentation/DevTools',
+            component: 'DevToolsDocumentation'
          },
          {
             title: 'Slice.js MCP',
