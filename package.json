@@ -1,6 +1,6 @@
 {
   "name": "slicedocs",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "main": "index.js",
   "scripts": {
     "dev": "node ./node_modules/slicejs-cli/client.js dev",
@@ -25,7 +25,9 @@
     "get": "node ./node_modules/slicejs-cli/client.js get",
     "browse": "node ./node_modules/slicejs-cli/client.js browse",
     "sync": "node ./node_modules/slicejs-cli/client.js sync",
-    "run": "node ./node_modules/slicejs-cli/client.js dev"
+    "run": "node ./node_modules/slicejs-cli/client.js dev",
+    "docs:generate": "node parser/index.js",
+    "docs:llm": "node tools/build-llm.js"
   },
   "keywords": [],
   "author": "",

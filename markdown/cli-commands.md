@@ -63,6 +63,7 @@ SLICE_NO_LOCAL_DELEGATION=1 slice version
 | `slice version` | `slice v` | Show CLI version. |
 | `slice update` | `slice upgrade` | Update CLI/framework. |
 | `slice doctor` | `slice diagnose` | Run project diagnostics. |
+| `slice types generate` | - | Generate TypeScript typings for `slice.build`. |
 | `slice help` | `slice --help` | Show CLI help. |
 
 ## init
@@ -154,16 +155,34 @@ slice build
 - Production preserves supported absolute public-folder imports with the same behavior as development.
 
 ## component create
-Creates a new local component. Prompts for name and category from `sliceConfig.json`.
+Creates a new local component and registers it in `components.js`. Runs interactively, or
+non-interactively when you pass the name and category on the command line.
 
-```bash title="Create component"
+```bash title="Interactive (prompts for name + category)"
 slice component create
 ```
 
+```bash title="Non-interactive (pass name + --category)"
+slice component create UserCard --category AppComponents
+slice component create AuthService -c Service
+```
+
+```bash title="Through the npm script (note the -- separator)"
+npm run component:create -- UserCard --category Visual
+```
+
+| Argument / option | Notes |
+| --- | --- |
+| `[name]` | Component name (positional). If omitted, you are prompted. |
+| `-c, --category <category>` | A category from `paths.components` in `sliceConfig.json` (e.g. `Visual`, `Service`, `AppComponents`). If omitted, you are prompted. |
+
+Only the missing pieces are prompted, so `slice component create UserCard` asks just for the
+category. Passing both runs with no prompts — useful for scripts and AI agents.
+
 Rules:
 - Name must start with a letter and be alphanumeric.
-- Visual components get `.js`, `.html`, `.css`.
-- Service components get `.js` only.
+- Visual components get `.js`, `.html`, `.css`; Service components get `.js` only.
+- An invalid `--category` fails with a message listing the valid categories.
 
 ## component list
 Lists all local components by scanning category paths from `sliceConfig.json` and rewrites
@@ -174,11 +193,22 @@ slice component list
 ```
 
 ## component delete
-Deletes a local component after interactive selection and confirmation.
+Deletes a local component and updates `components.js`. Interactive by default; pass the name,
+`--category`, and `--yes` to delete non-interactively.
 
-```bash title="Delete component"
+```bash title="Interactive (select + confirm)"
 slice component delete
 ```
+
+```bash title="Non-interactive"
+slice component delete UserCard --category AppComponents --yes
+```
+
+| Argument / option | Notes |
+| --- | --- |
+| `[name]` | Component to delete. If omitted, you pick from a list. |
+| `-c, --category <category>` | Category to look in. If omitted, you are prompted. |
+| `-y, --yes` | Skip the confirmation prompt (required for a fully non-interactive run). |
 
 ## get / registry get
 Downloads components from the official registry (Visual or Service) into your project.
@@ -251,6 +281,25 @@ Shows CLI help output.
 ```bash title="Help"
 slice --help
 ```
+
+## types generate
+Generates a TypeScript declaration file from your components' `static props`, so editors can
+autocomplete and type-check `slice.build('Name', { ... })` calls.
+
+```bash title="Generate typings"
+slice types generate
+```
+
+```bash title="Custom output path"
+slice types generate --output types/slice-build.d.ts
+```
+
+| Option | Default | Notes |
+| --- | --- | --- |
+| `-o, --output <path>` | `src/slice-build.generated.d.ts` | Where to write the generated `.d.ts`. |
+
+Re-run it whenever you add or change component props. The output is generated — don't edit it by
+hand, and re-generate (or wire it into your build) to keep autocomplete in sync.
 
 ## Best Practices
 :::tip

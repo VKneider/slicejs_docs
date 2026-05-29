@@ -97,12 +97,48 @@ Once loaded, Slice.js initializes structural components based on config:
 | `routesFile` | `string` | yes | Module that exports routes array. |
 
 ### paths.components
-Each key is a category name used in `components.js`.
+This is how Slice.js knows **where your components live and how to load them**. Each key is a
+**component category**, and its value tells the framework two things:
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `path` | `string` | URL path to component folder. |
-| `type` | `Visual | Service` | Controls template/CSS loading. |
+| `path` | `string` | Folder (relative to `src/`) where that category's components live. |
+| `type` | `Visual | Service` | How to load a component in this category. |
+
+The `type` controls loading:
+- **`Visual`** — the component has a UI, so Slice loads three files per component:
+  `<Name>.js` + `<Name>.html` (template) + `<Name>.css` (styles).
+- **`Service`** — logic only, no UI, so Slice loads just `<Name>.js`.
+
+A default project ships three categories:
+
+```json title="paths.components"
+"components": {
+  "AppComponents": { "path": "/Components/AppComponents", "type": "Visual" },
+  "Visual":        { "path": "/Components/Visual",        "type": "Visual" },
+  "Service":       { "path": "/Components/Service",        "type": "Service" }
+}
+```
+
+- **`Visual`** holds reusable UI components (often the official registry components).
+- **`AppComponents`** is also a `Visual` category, reserved for your app-specific screens and
+  sections (for example `AppShell`, `HomeSection`). Same three-file pattern as `Visual`.
+- **`Service`** holds plain logic classes (API clients, storage helpers).
+
+When you call `slice.build('Name')`, Slice looks up the component's category in `components.js`,
+finds the matching `paths.components` entry, and loads the files from `<path>/<Name>/` using the
+rules for that `type`. You can add your own categories here (each needs a `path` and a `type`).
+
+:::tip
+You normally do not edit folders by hand — `slice component create` scaffolds a component in the
+right category and updates `components.js` for you. See Component Anatomy.
+:::
+
+:::warning
+If a category's `path` or `type` is wrong, `slice.build()` returns `null` with a misleading
+"component not found" error. A `Service` folder marked `Visual` will fail trying to fetch a
+missing `.html`.
+:::
 
 ## router
 | Field | Type | Default | Notes |

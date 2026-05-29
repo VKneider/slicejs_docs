@@ -22,6 +22,31 @@ Slice.js components expose three lifecycle methods for predictable behavior:
 These methods are called by the framework and are the recommended places to manage state,
 subscriptions, and DOM updates.
 
+## The constructor (before init)
+Before any lifecycle method runs, the constructor builds the component. Every Visual component's
+constructor does three things, in order:
+
+```javascript title="Canonical constructor"
+constructor(props) {
+  super();
+  slice.attachTemplate(this);                       // 1. inject the .html as children
+  // 2. (optional) cache DOM references and bind listeners — they work now
+  slice.controller.setComponentProps(this, props);  // 3. apply props — call LAST
+}
+```
+
+- The DOM is **only** available after `slice.attachTemplate(this)`. Before that call,
+  `querySelector` returns `null`; after it, queries work inside the constructor.
+- `slice.controller.setComponentProps(this, props)` assigns each prop (and each `static props`
+  default) through its **setter**, so side effects belong in setters. Call it last.
+
+There are two valid ways to cache DOM references:
+- **In the constructor**, after `attachTemplate` (what the official components do). Setters can
+  then update the DOM directly.
+- **In `init()`**, which is also where async work goes (fetching, building children).
+
+See Component Anatomy for the full authoring guide.
+
 ## Lifecycle Summary
 | Method | Called when | Async awaited | Typical responsibilities |
 | --- | --- | --- | --- |
