@@ -1,4 +1,4 @@
-export default class TheBuildMethod extends HTMLElement {
+export default class DevelopmentWorkflow extends HTMLElement {
   constructor(props) {
     super();
     slice.attachTemplate(this);
@@ -7,15 +7,15 @@ export default class TheBuildMethod extends HTMLElement {
   }
 
   async init() {
-    this.markdownPath = "getting-started/build-method.md";
-    this.markdownContent = "---\ntitle: The build method\nroute: /Documentation/The-build-method\nnavLabel: The build method\nsection: Getting Started\ngroup: Components\norder: 31\ndescription: Use slice.build to create components.\ncomponent: TheBuildMethod\ntags: [build, components]\n---\n\n# The build method\n\n## Overview\n`slice.build(componentName, props)` creates a component instance, applies Static Props, runs\n`init()`, and registers the component with the controller. It returns a ready-to-append component\ninstance.\n\nThis is the standard way to create Visual, App, and Service components in Slice.js.\n\n## API\n| Parameter | Type | Required | Notes |\n| --- | --- | --- | --- |\n| `componentName` | `string` | yes | Must exist in `components.js`. |\n| `props` | `object` | no | Public props for the component. |\n\n| Returns | Type | Notes |\n| --- | --- | --- |\n| component instance | `HTMLElement | Object | null` | Returns `null` on error. |\n\n## Lifecycle Steps\n1. Validate component name.\n2. Load template, class, and CSS (visual components only).\n3. Instantiate component and apply props.\n4. Call `init()` if present.\n5. Register component in the controller and component tree.\n\n## Basic Usage\n```javascript title=\"Basic build\"\nconst myButton = await slice.build('Button', {\n  value: 'Click me'\n});\n\ndocument.querySelector('#container').appendChild(myButton);\n```\n\n## Props and Defaults\n```javascript title=\"Props are applied immediately\"\nconst card = await slice.build('Card', {\n  title: 'My Card',\n  text: 'Card content',\n  icon: { name: 'star', iconStyle: 'filled' }\n});\n\n// Card now has this.title, this.text, this.icon\n```\n\n## id and sliceId\n`id` and `sliceId` are handled specially. They are assigned to the instance and then removed\nfrom the props object before Static Props are applied.\n\n```javascript title=\"Use sliceId for lookup\"\nconst navbar = await slice.build('Navbar', {\n  sliceId: 'main-navbar',\n  logo: { src: '/logo.png', path: '/' },\n  items: [{ text: 'Home', path: '/' }]\n});\n\nconst sameNavbar = slice.controller.getComponent('main-navbar');\n```\n\n## Nested Components\n```javascript title=\"Build children and compose\"\nconst grid = await slice.build('Grid', { columns: 3, rows: 1 });\nconst card1 = await slice.build('Card', { title: 'Card 1' });\nconst card2 = await slice.build('Card', { title: 'Card 2' });\nconst card3 = await slice.build('Card', { title: 'Card 3' });\n\nawait grid.setItem(card1);\nawait grid.setItem(card2);\nawait grid.setItem(card3);\n\nthis.appendChild(grid);\n```\n\n## Error Cases\n- Missing or non-string component name\n- Component not listed in `components.js`\n- Structural components cannot be built\n\n## Best Practices\n:::tip\nAlways await `slice.build()` to ensure templates, CSS, and `init()` are finished.\n:::\n\n:::tip\nUse `sliceId` only when you need to retrieve a component later.\n:::\n\n## Gotchas\n:::warning\nBuilding a component can return `null` if the component is missing or fails to load.\n:::\n\n:::warning\nStructural components are created by the framework and cannot be built directly.\n:::\n";
+    this.markdownPath = "getting-started/development-workflow.md";
+    this.markdownContent = "---\ntitle: The Development Loop\nroute: /Documentation/Development-Workflow\nnavLabel: The Development Loop\nsection: Getting Started\ngroup: First Steps\norder: 13\ndescription: The dev to build to start cycle and where your components live.\ncomponent: DevelopmentWorkflow\ntags: [getting-started, cli, workflow]\n---\n\n# The Development Loop\n\n## Overview\nDay-to-day Slice development is a short loop: run the dev server, create and edit components,\nregister them, and iterate. When you are ready, build for production and serve the output.\n\n## The three commands\n| Command | What it does | Serves from |\n| --- | --- | --- |\n| `npm run dev` | Dev server with hot reload. Edits to `.js` / `.html` / `.css` reload the page. | `/src` |\n| `npm run build` | Generates an optimized, bundled production build. | writes `/dist` |\n| `npm run start` | Serves the production build (run `build` first). | `/dist` |\n\n```bash title=\"Typical session\"\nnpm run dev      # work here all day at http://localhost:3001\n# ...edit components...\nnpm run build    # when ready to ship\nnpm run start    # verify the production build locally\n```\n\nThe dev port comes from `sliceConfig.json` (`server.port`, default `3001`) and falls back to the\nnext free port if it is taken.\n\n## Where your code lives\n| You want to… | Put it in |\n| --- | --- |\n| Add an app screen or section | `src/Components/AppComponents/<Name>/` |\n| Reuse a UI element across screens | a Visual component (`slice get <Name>` or create one) |\n| Hold logic/data with no UI (API client, storage) | `src/Components/Service/<Name>/` |\n| Change navigation | `src/routes.js` (and the shell's `MultiRoute`) |\n| Toggle managers, theme, port | `src/sliceConfig.json` |\n\n## Creating and registering components\n```bash title=\"Scaffold a component\"\n# Non-interactive: pass the name and category (writes files + updates components.js)\nslice component create UserCard --category AppComponents\n\n# Interactive: prompts for whatever you omit\nslice component create\n```\n\nComponents must be listed in `src/Components/components.js` (name → category) to be loadable.\n`component:create` updates it for you. If you ever add or move component folders by hand, resync:\n\n```bash title=\"Regenerate the registry\"\nslice component list\n```\n\n:::warning\nA common cause of \"component not found\" / a `null` from `slice.build()` is a component missing\nfrom `components.js`. Run `slice component list` to fix it.\n:::\n\n## Adding registry components\n```bash title=\"Browse and install\"\nslice browse                 # list official components\nslice get Card Input Select  # install the ones you need into src/Components/Visual/\nslice get FetchManager --service   # install a registry Service\n```\n\nThe starter ships only a small set of Visual components. Install the rest on demand so your\nproject stays lean.\n\n## Diagnostics while developing\n- Enable the debug panels in `sliceConfig.json` and toggle them at runtime: `alt+shift+e`\n  (events) and `alt+shift+c` (context).\n- Right-click a component (when `debugger.enabled`) to inspect and live-edit its props.\n- Use `slice doctor` when the project structure or config seems off.\n- Prefer `slice.logger.logInfo / logWarning / logError` over `console.log` — it respects the\n  configured levels and stays quiet in production.\n\n## Production build, briefly\n`npm run build` analyzes what your routes use, bundles and minifies into `/dist`, and copies your\n`publicFolders`. `npm run start` then serves `/dist`. Production mode disables dev-only features\n(prop validation, debug panels) for performance.\n\n:::tip\nAdd a folder you import from (for example `/libs`) to `publicFolders` in `sliceConfig.json`, or it\nwill work in dev but break in the production build.\n:::\n";
     if (true) {
       this.setupCopyButton();
     }
       {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
-            const lines = ["| Parameter | Type | Required | Notes |","| --- | --- | --- | --- |","| `componentName` | `string` | yes | Must exist in `components.js`. |","| `props` | `object` | no | Public props for the component. |"];
+            const lines = ["| Command | What it does | Serves from |","| --- | --- | --- |","| `npm run dev` | Dev server with hot reload. Edits to `.js` / `.html` / `.css` reload the page. | `/src` |","| `npm run build` | Generates an optimized, bundled production build. | writes `/dist` |","| `npm run start` | Serves the production build (run `build` first). | `/dist` |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -75,7 +75,23 @@ export default class TheBuildMethod extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-2"]');
          if (container) {
-            const lines = ["| Returns | Type | Notes |","| --- | --- | --- |","| component instance | `HTMLElement | Object | null` | Returns `null` on error. |"];
+            const code = await slice.build('CodeVisualizer', {
+               value: "npm run dev      # work here all day at http://localhost:3001\n# ...edit components...\nnpm run build    # when ready to ship\nnpm run start    # verify the production build locally",
+               language: "bash"
+            });
+            if ("Typical session") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "Typical session";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-3"]');
+         if (container) {
+            const lines = ["| You want to… | Put it in |","| --- | --- |","| Add an app screen or section | `src/Components/AppComponents/<Name>/` |","| Reuse a UI element across screens | a Visual component (`slice get <Name>` or create one) |","| Hold logic/data with no UI (API client, storage) | `src/Components/Service/<Name>/` |","| Change navigation | `src/routes.js` (and the shell's `MultiRoute`) |","| Toggle managers, theme, port | `src/sliceConfig.json` |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -133,32 +149,16 @@ export default class TheBuildMethod extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-3"]');
-         if (container) {
-            const code = await slice.build('CodeVisualizer', {
-               value: "const myButton = await slice.build('Button', {\n  value: 'Click me'\n});\n\ndocument.querySelector('#container').appendChild(myButton);",
-               language: "javascript"
-            });
-            if ("Basic build") {
-               const label = document.createElement('div');
-               label.classList.add('code-block-title');
-               label.textContent = "Basic build";
-               container.appendChild(label);
-            }
-            container.appendChild(code);
-         }
-      }
-      {
          const container = this.querySelector('[data-block-id="doc-block-4"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "const card = await slice.build('Card', {\n  title: 'My Card',\n  text: 'Card content',\n  icon: { name: 'star', iconStyle: 'filled' }\n});\n\n// Card now has this.title, this.text, this.icon",
-               language: "javascript"
+               value: "# Non-interactive: pass the name and category (writes files + updates components.js)\nslice component create UserCard --category AppComponents\n\n# Interactive: prompts for whatever you omit\nslice component create",
+               language: "bash"
             });
-            if ("Props are applied immediately") {
+            if ("Scaffold a component") {
                const label = document.createElement('div');
                label.classList.add('code-block-title');
-               label.textContent = "Props are applied immediately";
+               label.textContent = "Scaffold a component";
                container.appendChild(label);
             }
             container.appendChild(code);
@@ -168,13 +168,13 @@ export default class TheBuildMethod extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-5"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "const navbar = await slice.build('Navbar', {\n  sliceId: 'main-navbar',\n  logo: { src: '/logo.png', path: '/' },\n  items: [{ text: 'Home', path: '/' }]\n});\n\nconst sameNavbar = slice.controller.getComponent('main-navbar');",
-               language: "javascript"
+               value: "slice component list",
+               language: "bash"
             });
-            if ("Use sliceId for lookup") {
+            if ("Regenerate the registry") {
                const label = document.createElement('div');
                label.classList.add('code-block-title');
-               label.textContent = "Use sliceId for lookup";
+               label.textContent = "Regenerate the registry";
                container.appendChild(label);
             }
             container.appendChild(code);
@@ -184,13 +184,13 @@ export default class TheBuildMethod extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-6"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "const grid = await slice.build('Grid', { columns: 3, rows: 1 });\nconst card1 = await slice.build('Card', { title: 'Card 1' });\nconst card2 = await slice.build('Card', { title: 'Card 2' });\nconst card3 = await slice.build('Card', { title: 'Card 3' });\n\nawait grid.setItem(card1);\nawait grid.setItem(card2);\nawait grid.setItem(card3);\n\nthis.appendChild(grid);",
-               language: "javascript"
+               value: "slice browse                 # list official components\nslice get Card Input Select  # install the ones you need into src/Components/Visual/\nslice get FetchManager --service   # install a registry Service",
+               language: "bash"
             });
-            if ("Build children and compose") {
+            if ("Browse and install") {
                const label = document.createElement('div');
                label.classList.add('code-block-title');
-               label.textContent = "Build children and compose";
+               label.textContent = "Browse and install";
                container.appendChild(label);
             }
             container.appendChild(code);
@@ -222,4 +222,4 @@ export default class TheBuildMethod extends HTMLElement {
   async copyMarkdown() {}
 }
 
-customElements.define('slice-thebuildmethod', TheBuildMethod);
+customElements.define('slice-developmentworkflow', DevelopmentWorkflow);

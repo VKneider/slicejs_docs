@@ -1,0 +1,68 @@
+<div class="documentation-content componentanatomy">
+
+<div class="doc-title-bar">
+  <h1 id="component-anatomy">
+    <span class="doc-title-text">Component Anatomy</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p>A Slice component is a small folder. A <strong>Visual</strong> component (with UI) has three files; a <strong>Service</strong> component (logic only) has one. This page shows how to generate a component with the CLI, what each file is for, and how the constructor, props, and registration work.</p>
+<h2 id="generate-components-with-the-cli">Generate components with the CLI</h2>
+<p>Do not create component files by hand — let the CLI scaffold them and register them for you. Pass the <strong>name</strong> and <strong><code>--category</code></strong> to run with no prompts:</p>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<p>Omit them to be prompted instead (only the missing pieces are asked):</p>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<p>Either way, the CLI:</p>
+<ul><li>creates <code>src/Components/&lt;Category&gt;/&lt;Name&gt;/</code> with the right files, and</li><li>adds the component to <code>src/Components/components.js</code> so it is loadable immediately.</li></ul>
+<p>The category must exist in <code>paths.components</code> (see below). Through the npm script, separate the args with <code>--</code>: <code>npm run component:create -- UserCard --category Visual</code>.</p>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<div class="callout callout-tip">If you ever add or move component folders by hand, run <code>slice component list</code> to regenerate
+<code>components.js</code>.</div>
+<h2 id="the-three-files-of-a-visual-component">The three files of a Visual component</h2>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<ul><li><strong><code>.html</code></strong> contains only the <strong>inner</strong> markup — no <code>&lt;template&gt;</code> wrapper and no root element</li></ul>
+<p>matching the tag. Slice injects it as <strong>light-DOM children</strong> of the custom element. Slice does   not use Shadow DOM; do not call <code>attachShadow()</code>.</p>
+<ul><li><strong><code>.css</code></strong> should reference theme variables (<code>var(--...)</code>) instead of hardcoded colors, so theme</li></ul>
+<p>switching keeps working. Use BEM-style class names (<code>block__element--modifier</code>) to avoid clashes.</p>
+<h2 id="the-constructor">The constructor</h2>
+<p>Every Visual component's constructor does three things, in order:</p>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<p>Key rules:</p>
+<ul><li>The DOM exists <strong>only after</strong> <code>slice.attachTemplate(this)</code>. Before it, <code>querySelector</code> returns</li></ul>
+<p><code>null</code>; after it, queries work in the constructor.</p>
+<ul><li>Call <code>slice.controller.setComponentProps(this, props)</code> <strong>last</strong>.</li></ul>
+<h3 id="where-to-cache-dom-references">Where to cache DOM references</h3>
+<p>Two valid patterns:</p>
+<ul><li><strong>In the constructor</strong>, after <code>attachTemplate</code> (shown above, as the official components do).</li></ul>
+<p>Setters can update the DOM directly with no extra guards.</p>
+<ul><li><strong>In <code>init()</code></strong> instead. Because <code>setComponentProps</code> runs in the constructor (before <code>init()</code>),</li></ul>
+<p>setters fire before those references exist — so guard their DOM access with <code>?.</code>:</p>
+<div class="code-block" data-block-id="doc-block-6"></div>
+<h2 id="static-props-and-setters">static props and setters</h2>
+<p><code>static props</code> is the component's public contract. Each entry has a <code>type</code> and an optional <code>default</code> or <code>required: true</code>.</p>
+<div class="code-block" data-block-id="doc-block-7"></div>
+<p>Types: <code>string</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>function</code>. When <code>setComponentProps</code> runs, it applies defaults, validates in development, and assigns each prop <strong>through its setter</strong> (<code>this[prop] = value</code>). Defaults pass through setters too. Because of this, <strong>side effects belong in setters</strong> — assigning a prop is all the rest of your code needs to do, and the Debugger can change props live through the same path. Keep internal state (cached data, timers) on <code>this</code>, not in <code>static props</code>.</p>
+<h2 id="customelementsdefine">customElements.define</h2>
+<p>Register the custom element once at the bottom of the file:</p>
+<div class="code-block" data-block-id="doc-block-8"></div>
+<p>The tag must contain a hyphen. You rarely write the tag in HTML — <code>await slice.build('UserCard', props)</code> instantiates it for you.</p>
+<h2 id="component-categories-and-registration">Component categories and registration</h2>
+<p>Two things make a component loadable:</p>
+<ol><li><strong><code>components.js</code></strong> maps each component name to a <strong>category</strong>:</li></ol>
+<p>``<code>javascript title="src/Components/components.js (auto-generated)"    const components = {      "UserCard": "AppComponents",      "Button":   "Visual",      "AuthService": "Service"    };    export default components;    </code>``</p>
+<ol><li><strong><code>sliceConfig.json</code> → <code>paths.components</code></strong> defines each category's folder (<code>path</code>) and how to</li></ol>
+<p>load it (<code>type</code>: <code>Visual</code> loads <code>.js</code>+<code>.html</code>+<code>.css</code>; <code>Service</code> loads only <code>.js</code>). See    sliceConfig.json for the full explanation.</p>
+<p>When you call <code>slice.build('UserCard')</code>, Slice reads the category from <code>components.js</code>, finds the matching <code>paths.components</code> entry, and loads the files from <code>&lt;path&gt;/UserCard/</code>. <code>slice component create</code> keeps both in sync; if a component is missing from <code>components.js</code>, <code>slice.build()</code> returns <code>null</code>.</p>
+<h2 id="service-components">Service components</h2>
+<p>A Service is a plain class — no <code>HTMLElement</code>, no <code>static props</code>, no lifecycle, no <code>customElements.define</code>. Put it in a <code>Service</code>-type category and build it the same way:</p>
+<div class="code-block" data-block-id="doc-block-9"></div>
+<div class="code-block" data-block-id="doc-block-10"></div>
+<h2 id="best-practices">Best Practices</h2>
+<div class="callout callout-tip">Generate components with <code>slice component create</code> so files and <code>components.js</code> stay correct.</div>
+<div class="callout callout-tip">Put DOM side effects in setters; reserve <code>init()</code> for async setup and <code>update()</code> for refreshes.</div>
+<h2 id="gotchas">Gotchas</h2>
+<div class="callout callout-warning">The DOM is empty until <code>slice.attachTemplate(this)</code> runs. Querying before it returns <code>null</code>.</div>
+<div class="callout callout-warning">A component missing from <code>components.js</code>, or a wrong <code>paths.components</code> <code>path</code>/<code>type</code>, makes
+<code>slice.build()</code> return <code>null</code>. Run <code>slice component list</code> to resync.</div>
+</div>

@@ -1,0 +1,26 @@
+<div class="documentation-content projectanatomy">
+
+<div class="doc-title-bar">
+  <h1 id="project-anatomy">
+    <span class="doc-title-text">Project Anatomy</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p>After <code>slice init</code> you get a working <strong>App Shell + MultiRoute</strong> starter: a persistent navbar wrapping a content area that swaps sections by URL. This page explains every file the starter creates, which ones you edit first, and which ones to leave alone.</p>
+<p>If you have not initialized a project yet, see Installation, then come back here.</p>
+<h2 id="the-generated-tree">The generated tree</h2>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<div class="callout callout-tip">The starter installs only the Visual components it uses. Add more on demand with
+<code>slice get &lt;Name&gt;</code> (run <code>slice browse</code> to see the catalog).</div>
+<h2 id="file-by-file">File-by-file</h2>
+<div class="table-block" data-block-id="doc-block-2"></div>
+<h2 id="how-a-page-reaches-the-screen">How a page reaches the screen</h2>
+<ol><li><code>index.html</code> loads <code>/App/index.js</code>, which imports Slice and exposes the global <code>slice</code>.</li><li>The router reads <code>src/routes.js</code> and matches the current URL.</li><li>For <code>/</code> and <code>/about</code> the match is <code>AppShell</code>. The shell builds a persistent <code>Navbar</code> and a</li></ol>
+<p><code>MultiRoute</code> whose own routes pick <code>HomeSection</code> or <code>AboutSection</code> for the content area.</p>
+<ol><li>Navigating between <code>/</code> and <code>/about</code> keeps the shell mounted and only swaps the section.</li></ol>
+<h2 id="what-is-safe-to-delete">What is safe to delete</h2>
+<ul><li><code>HomeSection</code> and <code>AboutSection</code> are examples — rename or replace them with your own sections.</li><li>Keep <code>AppShell</code>, <code>routes.js</code>, <code>sliceConfig.json</code>, <code>components.js</code>, and <code>api/</code>.</li></ul>
+<h2 id="next">Next</h2>
+<p>Continue with <strong>Your First Page</strong> to add and edit a section, then <strong>The Development Loop</strong>.</p>
+</div>

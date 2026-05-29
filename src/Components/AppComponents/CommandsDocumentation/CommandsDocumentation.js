@@ -8,7 +8,7 @@ export default class CommandsDocumentation extends HTMLElement {
 
   async init() {
     this.markdownPath = "cli-commands.md";
-    this.markdownContent = "---\r\ntitle: Slice CLI\r\nroute: /Documentation/CLI\r\nnavLabel: CLI\r\nsection: Getting Started\r\ngroup: Tooling\r\norder: 15\r\ndescription: Command reference for the Slice.js CLI.\r\ncomponent: CommandsDocumentation\r\ntags: [cli, tooling]\r\n---\r\n\r\n# Slice.js CLI\r\n\r\n## Overview\r\nThe Slice.js CLI (`slice`) helps you initialize projects, manage components, run the dev server,\r\nand maintain your toolchain. It is distributed as `slicejs-cli` and can be used via `npx` or a local\r\nnpm script.\r\n\r\n## Installation\r\n```bash title=\"Local (recommended)\"\r\nnpm install slicejs-cli --save-dev\r\n```\r\n\r\n```bash title=\"Global (optional launcher install)\"\r\nnpm install -g slicejs-cli\r\n```\r\n\r\nWhen the `slice` launcher command is available (commonly after a global install\r\nthat places `slice` in your PATH), it delegates to the nearest\r\nproject-local `node_modules/slicejs-cli` from your current directory (including\r\nsubdirectories). This keeps command execution aligned with the version pinned\r\nin each project.\r\n\r\nIf the launcher command is unavailable, use:\r\n\r\n```bash\r\nnpx slicejs-cli <command>\r\n```\r\n\r\nYou can bypass delegation for a specific invocation:\r\n\r\n```bash\r\nSLICE_NO_LOCAL_DELEGATION=1 slice version\r\n```\r\n\r\n## Command Summary\r\n| Command | Alias | Purpose |\r\n| --- | --- | --- |\r\n| `slice init` | - | Initialize project structure and install Visual components. |\r\n| `slice dev` | - | Start development server. |\r\n| `slice build` | - | Build production output (bundles + dist). |\r\n| `slice build clean` | - | Remove generated bundles. |\r\n| `slice build info` | - | Show bundle configuration summary. |\r\n| `slice start` | - | Start production server. |\r\n| `slice component create` | `slice comp new` | Create a local component. |\r\n| `slice component list` | `slice comp ls` | List local components. |\r\n| `slice component delete` | `slice comp remove` | Delete a local component. |\r\n| `slice get` | `slice registry get` | Install components from registry. |\r\n| `slice browse` | `slice registry list` | List official registry components. |\r\n| `slice sync` | `slice registry sync` | Sync local Visual components from registry. |\r\n| `slice list` | - | Shortcut for `slice component list`. |\r\n| `slice version` | `slice v` | Show CLI version. |\r\n| `slice update` | `slice upgrade` | Update CLI/framework. |\r\n| `slice doctor` | `slice diagnose` | Run project diagnostics. |\r\n| `slice help` | `slice --help` | Show CLI help. |\r\n\r\n## init\r\nInitializes a new project with the framework structure and installs Visual components from the\r\nofficial registry.\r\n\r\n```bash title=\"Initialize a project\"\r\nslice init\r\n```\r\n\r\nWhat it does:\r\n- Ensures latest `slicejs-web-framework` is installed.\r\n- Creates `api/` and `src/` structure from framework base.\r\n- Installs all Visual components from the registry.\r\n- Configures `package.json` scripts (dev, start, get, browse, sync, etc.).\r\n\r\n## dev\r\nStarts the development server and serves from `/src`.\r\n\r\n```bash title=\"Start dev server\"\r\nslice dev\r\n```\r\n\r\n### Options\r\n| Flag | Type | Default | Notes |\r\n| --- | --- | --- | --- |\r\n| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |\r\n| `--no-hmr` | `boolean` | `false` | Disable hot module reload (HMR is enabled by default). |\r\n\r\n### Behavior\r\n- Ensures `src/` and `api/` exist (otherwise suggests `slice init`).\r\n- Falls back to port+1 if the requested port is busy.\r\n- Uses `api/index.js` with `--development`.\r\n\r\n### Import support scope\r\n- Supported: relative imports and absolute imports that resolve into folders listed in `publicFolders`.\r\n- Unsupported: bare package imports such as `import 'pkg'`.\r\n- `slice dev` and `slice build` keep the same rule for preserved absolute imports that target configured public folders.\r\n\r\n## start\r\nStarts the production server and serves from `/dist`.\r\n\r\n```bash title=\"Start production server\"\r\nslice start\r\n```\r\n\r\n### Options\r\n| Flag | Type | Default | Notes |\r\n| --- | --- | --- | --- |\r\n| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |\r\n\r\n:::tip\r\nProduction uses `publicFolders` from `sliceConfig.json` to expose public asset folders\r\nlike `/Themes`, `/Styles`, and `/assets`.\r\n:::\r\n\r\n## build\r\nBuilds production output by analyzing dependencies, generating bundles, and writing files to `/dist`.\r\n\r\n:::tip\r\nProduction builds include **Structural framework components** in bundles to avoid runtime fetches.\r\nThese entries are stored as `Framework/Structural/<ComponentName>` in bundle config.\r\n:::\r\n\r\n```bash title=\"Build production output\"\r\nslice build\r\n```\r\n\r\n### Options\r\n| Flag | Type | Default | Notes |\r\n| --- | --- | --- | --- |\r\n| `-a, --analyze` | `boolean` | `false` | Analyze only, do not generate bundles. |\r\n| `-v, --verbose` | `boolean` | `false` | Output analysis metrics. |\r\n| `--no-minify` | `boolean` | `false` | Disable minification (enabled by default). |\r\n| `--no-obfuscate` | `boolean` | `false` | Disable obfuscation (enabled by default). |\r\n| `--preview` | `boolean` | `false` | Start preview server after build. |\r\n| `--serve` | `boolean` | `false` | Start preview server without building. |\r\n| `--skip-clean` | `boolean` | `false` | Skip cleaning dist before build. |\r\n\r\n### Subcommands\r\n| Command | Purpose |\r\n| --- | --- |\r\n| `slice build clean` | Remove generated bundle files and config. |\r\n| `slice build info` | Show bundle configuration summary. |\r\n\r\n### Import support scope\r\n- Supported: relative imports and absolute imports that resolve into folders listed in `publicFolders`.\r\n- Unsupported: bare package imports such as `import 'pkg'`.\r\n- Production preserves supported absolute public-folder imports with the same behavior as development.\r\n\r\n## component create\r\nCreates a new local component. Prompts for name and category from `sliceConfig.json`.\r\n\r\n```bash title=\"Create component\"\r\nslice component create\r\n```\r\n\r\nRules:\r\n- Name must start with a letter and be alphanumeric.\r\n- Visual components get `.js`, `.html`, `.css`.\r\n- Service components get `.js` only.\r\n\r\n## component list\r\nLists all local components by scanning category paths from `sliceConfig.json` and rewrites\r\n`src/Components/components.js`.\r\n\r\n```bash title=\"List components\"\r\nslice component list\r\n```\r\n\r\n## component delete\r\nDeletes a local component after interactive selection and confirmation.\r\n\r\n```bash title=\"Delete component\"\r\nslice component delete\r\n```\r\n\r\n## get / registry get\r\nDownloads components from the official registry (Visual or Service) into your project.\r\n\r\n```bash title=\"Get components\"\r\nslice get Button Card Input\r\n```\r\n\r\n### Options\r\n| Flag | Type | Default | Notes |\r\n| --- | --- | --- | --- |\r\n| `-f, --force` | `boolean` | `false` | Overwrite existing components. |\r\n| `-s, --service` | `boolean` | `false` | Install as Service instead of Visual. |\r\n\r\nNotes:\r\n- If no names are provided, the CLI opens an interactive selector.\r\n- Registry is fetched from the Slice docs repo.\r\n\r\n## browse / registry list\r\nLists available registry components.\r\n\r\n```bash title=\"Browse registry\"\r\nslice browse\r\n```\r\n\r\n## sync / registry sync\r\nUpdates local Visual components to latest registry versions. Service components are detected but\r\nnot updated automatically.\r\n\r\n```bash title=\"Sync components\"\r\nslice sync\r\n```\r\n\r\n### Options\r\n| Flag | Type | Default | Notes |\r\n| --- | --- | --- | --- |\r\n| `-f, --force` | `boolean` | `false` | Skip confirmation and force update. |\r\n\r\n## update\r\nChecks for CLI and framework updates and optionally installs them.\r\n\r\n```bash title=\"Update packages\"\r\nslice update\r\n```\r\n\r\n### Options\r\n| Flag | Type | Default | Notes |\r\n| --- | --- | --- | --- |\r\n| `-y, --yes` | `boolean` | `false` | Auto-confirm updates. |\r\n| `--cli` | `boolean` | `false` | Update CLI only. |\r\n| `-f, --framework` | `boolean` | `false` | Update framework only. |\r\n\r\n## doctor\r\nRuns project diagnostics (structure, config, dependencies, components, port availability).\r\n\r\n```bash title=\"Run diagnostics\"\r\nslice doctor\r\n```\r\n\r\n## version\r\nShows CLI version info and checks for updates.\r\n\r\n```bash title=\"Version\"\r\nslice version\r\n```\r\n\r\n## help\r\nShows CLI help output.\r\n\r\n```bash title=\"Help\"\r\nslice --help\r\n```\r\n\r\n## Best Practices\r\n:::tip\r\nInstall `slicejs-cli` locally per project and use the `slice` launcher so commands resolve to the nearest project-local runtime.\r\n:::\r\n\r\n:::tip\r\nIf `slice` is not available in your shell, use `npx slicejs-cli <command>` as a fallback.\r\n:::\r\n\r\n:::tip\r\nRun `slice dev` in one terminal and use another for component commands.\r\n:::\r\n\r\n## Gotchas\r\n:::warning\r\n`slice sync` only updates Visual components. Use `slice get <Service> --service --force` for Service updates.\r\n:::\r\n\r\n:::warning\r\n`slice component list` rewrites `src/Components/components.js` based on detected folders.\r\n:::\r\n";
+    this.markdownContent = "---\ntitle: Slice CLI\nroute: /Documentation/CLI\nnavLabel: CLI\nsection: Getting Started\ngroup: Tooling\norder: 15\ndescription: Command reference for the Slice.js CLI.\ncomponent: CommandsDocumentation\ntags: [cli, tooling]\n---\n\n# Slice.js CLI\n\n## Overview\nThe Slice.js CLI (`slice`) helps you initialize projects, manage components, run the dev server,\nand maintain your toolchain. It is distributed as `slicejs-cli` and can be used via `npx` or a local\nnpm script.\n\n## Installation\n```bash title=\"Local (recommended)\"\nnpm install slicejs-cli --save-dev\n```\n\n```bash title=\"Global (optional launcher install)\"\nnpm install -g slicejs-cli\n```\n\nWhen the `slice` launcher command is available (commonly after a global install\nthat places `slice` in your PATH), it delegates to the nearest\nproject-local `node_modules/slicejs-cli` from your current directory (including\nsubdirectories). This keeps command execution aligned with the version pinned\nin each project.\n\nIf the launcher command is unavailable, use:\n\n```bash\nnpx slicejs-cli <command>\n```\n\nYou can bypass delegation for a specific invocation:\n\n```bash\nSLICE_NO_LOCAL_DELEGATION=1 slice version\n```\n\n## Command Summary\n| Command | Alias | Purpose |\n| --- | --- | --- |\n| `slice init` | - | Initialize project structure and install Visual components. |\n| `slice dev` | - | Start development server. |\n| `slice build` | - | Build production output (bundles + dist). |\n| `slice build clean` | - | Remove generated bundles. |\n| `slice build info` | - | Show bundle configuration summary. |\n| `slice start` | - | Start production server. |\n| `slice component create` | `slice comp new` | Create a local component. |\n| `slice component list` | `slice comp ls` | List local components. |\n| `slice component delete` | `slice comp remove` | Delete a local component. |\n| `slice get` | `slice registry get` | Install components from registry. |\n| `slice browse` | `slice registry list` | List official registry components. |\n| `slice sync` | `slice registry sync` | Sync local Visual components from registry. |\n| `slice list` | - | Shortcut for `slice component list`. |\n| `slice version` | `slice v` | Show CLI version. |\n| `slice update` | `slice upgrade` | Update CLI/framework. |\n| `slice doctor` | `slice diagnose` | Run project diagnostics. |\n| `slice types generate` | - | Generate TypeScript typings for `slice.build`. |\n| `slice help` | `slice --help` | Show CLI help. |\n\n## init\nInitializes a new project with the framework structure and installs Visual components from the\nofficial registry.\n\n```bash title=\"Initialize a project\"\nslice init\n```\n\nWhat it does:\n- Ensures latest `slicejs-web-framework` is installed.\n- Creates `api/` and `src/` structure from framework base.\n- Installs all Visual components from the registry.\n- Configures `package.json` scripts (dev, start, get, browse, sync, etc.).\n\n## dev\nStarts the development server and serves from `/src`.\n\n```bash title=\"Start dev server\"\nslice dev\n```\n\n### Options\n| Flag | Type | Default | Notes |\n| --- | --- | --- | --- |\n| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |\n| `--no-hmr` | `boolean` | `false` | Disable hot module reload (HMR is enabled by default). |\n\n### Behavior\n- Ensures `src/` and `api/` exist (otherwise suggests `slice init`).\n- Falls back to port+1 if the requested port is busy.\n- Uses `api/index.js` with `--development`.\n\n### Import support scope\n- Supported: relative imports and absolute imports that resolve into folders listed in `publicFolders`.\n- Unsupported: bare package imports such as `import 'pkg'`.\n- `slice dev` and `slice build` keep the same rule for preserved absolute imports that target configured public folders.\n\n## start\nStarts the production server and serves from `/dist`.\n\n```bash title=\"Start production server\"\nslice start\n```\n\n### Options\n| Flag | Type | Default | Notes |\n| --- | --- | --- | --- |\n| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |\n\n:::tip\nProduction uses `publicFolders` from `sliceConfig.json` to expose public asset folders\nlike `/Themes`, `/Styles`, and `/assets`.\n:::\n\n## build\nBuilds production output by analyzing dependencies, generating bundles, and writing files to `/dist`.\n\n:::tip\nProduction builds include **Structural framework components** in bundles to avoid runtime fetches.\nThese entries are stored as `Framework/Structural/<ComponentName>` in bundle config.\n:::\n\n```bash title=\"Build production output\"\nslice build\n```\n\n### Options\n| Flag | Type | Default | Notes |\n| --- | --- | --- | --- |\n| `-a, --analyze` | `boolean` | `false` | Analyze only, do not generate bundles. |\n| `-v, --verbose` | `boolean` | `false` | Output analysis metrics. |\n| `--no-minify` | `boolean` | `false` | Disable minification (enabled by default). |\n| `--no-obfuscate` | `boolean` | `false` | Disable obfuscation (enabled by default). |\n| `--preview` | `boolean` | `false` | Start preview server after build. |\n| `--serve` | `boolean` | `false` | Start preview server without building. |\n| `--skip-clean` | `boolean` | `false` | Skip cleaning dist before build. |\n\n### Subcommands\n| Command | Purpose |\n| --- | --- |\n| `slice build clean` | Remove generated bundle files and config. |\n| `slice build info` | Show bundle configuration summary. |\n\n### Import support scope\n- Supported: relative imports and absolute imports that resolve into folders listed in `publicFolders`.\n- Unsupported: bare package imports such as `import 'pkg'`.\n- Production preserves supported absolute public-folder imports with the same behavior as development.\n\n## component create\nCreates a new local component and registers it in `components.js`. Runs interactively, or\nnon-interactively when you pass the name and category on the command line.\n\n```bash title=\"Interactive (prompts for name + category)\"\nslice component create\n```\n\n```bash title=\"Non-interactive (pass name + --category)\"\nslice component create UserCard --category AppComponents\nslice component create AuthService -c Service\n```\n\n```bash title=\"Through the npm script (note the -- separator)\"\nnpm run component:create -- UserCard --category Visual\n```\n\n| Argument / option | Notes |\n| --- | --- |\n| `[name]` | Component name (positional). If omitted, you are prompted. |\n| `-c, --category <category>` | A category from `paths.components` in `sliceConfig.json` (e.g. `Visual`, `Service`, `AppComponents`). If omitted, you are prompted. |\n\nOnly the missing pieces are prompted, so `slice component create UserCard` asks just for the\ncategory. Passing both runs with no prompts — useful for scripts and AI agents.\n\nRules:\n- Name must start with a letter and be alphanumeric.\n- Visual components get `.js`, `.html`, `.css`; Service components get `.js` only.\n- An invalid `--category` fails with a message listing the valid categories.\n\n## component list\nLists all local components by scanning category paths from `sliceConfig.json` and rewrites\n`src/Components/components.js`.\n\n```bash title=\"List components\"\nslice component list\n```\n\n## component delete\nDeletes a local component and updates `components.js`. Interactive by default; pass the name,\n`--category`, and `--yes` to delete non-interactively.\n\n```bash title=\"Interactive (select + confirm)\"\nslice component delete\n```\n\n```bash title=\"Non-interactive\"\nslice component delete UserCard --category AppComponents --yes\n```\n\n| Argument / option | Notes |\n| --- | --- |\n| `[name]` | Component to delete. If omitted, you pick from a list. |\n| `-c, --category <category>` | Category to look in. If omitted, you are prompted. |\n| `-y, --yes` | Skip the confirmation prompt (required for a fully non-interactive run). |\n\n## get / registry get\nDownloads components from the official registry (Visual or Service) into your project.\n\n```bash title=\"Get components\"\nslice get Button Card Input\n```\n\n### Options\n| Flag | Type | Default | Notes |\n| --- | --- | --- | --- |\n| `-f, --force` | `boolean` | `false` | Overwrite existing components. |\n| `-s, --service` | `boolean` | `false` | Install as Service instead of Visual. |\n\nNotes:\n- If no names are provided, the CLI opens an interactive selector.\n- Registry is fetched from the Slice docs repo.\n\n## browse / registry list\nLists available registry components.\n\n```bash title=\"Browse registry\"\nslice browse\n```\n\n## sync / registry sync\nUpdates local Visual components to latest registry versions. Service components are detected but\nnot updated automatically.\n\n```bash title=\"Sync components\"\nslice sync\n```\n\n### Options\n| Flag | Type | Default | Notes |\n| --- | --- | --- | --- |\n| `-f, --force` | `boolean` | `false` | Skip confirmation and force update. |\n\n## update\nChecks for CLI and framework updates and optionally installs them.\n\n```bash title=\"Update packages\"\nslice update\n```\n\n### Options\n| Flag | Type | Default | Notes |\n| --- | --- | --- | --- |\n| `-y, --yes` | `boolean` | `false` | Auto-confirm updates. |\n| `--cli` | `boolean` | `false` | Update CLI only. |\n| `-f, --framework` | `boolean` | `false` | Update framework only. |\n\n## doctor\nRuns project diagnostics (structure, config, dependencies, components, port availability).\n\n```bash title=\"Run diagnostics\"\nslice doctor\n```\n\n## version\nShows CLI version info and checks for updates.\n\n```bash title=\"Version\"\nslice version\n```\n\n## help\nShows CLI help output.\n\n```bash title=\"Help\"\nslice --help\n```\n\n## types generate\nGenerates a TypeScript declaration file from your components' `static props`, so editors can\nautocomplete and type-check `slice.build('Name', { ... })` calls.\n\n```bash title=\"Generate typings\"\nslice types generate\n```\n\n```bash title=\"Custom output path\"\nslice types generate --output types/slice-build.d.ts\n```\n\n| Option | Default | Notes |\n| --- | --- | --- |\n| `-o, --output <path>` | `src/slice-build.generated.d.ts` | Where to write the generated `.d.ts`. |\n\nRe-run it whenever you add or change component props. The output is generated — don't edit it by\nhand, and re-generate (or wire it into your build) to keep autocomplete in sync.\n\n## Best Practices\n:::tip\nInstall `slicejs-cli` locally per project and use the `slice` launcher so commands resolve to the nearest project-local runtime.\n:::\n\n:::tip\nIf `slice` is not available in your shell, use `npx slicejs-cli <command>` as a fallback.\n:::\n\n:::tip\nRun `slice dev` in one terminal and use another for component commands.\n:::\n\n## Gotchas\n:::warning\n`slice sync` only updates Visual components. Use `slice get <Service> --service --force` for Service updates.\n:::\n\n:::warning\n`slice component list` rewrites `src/Components/components.js` based on detected folders.\n:::\n";
     if (true) {
       this.setupCopyButton();
     }
@@ -16,7 +16,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm install slicejs-cli --save-dev\r",
+               value: "npm install slicejs-cli --save-dev",
                language: "bash"
             });
             if ("Local (recommended)") {
@@ -32,7 +32,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-2"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm install -g slicejs-cli\r",
+               value: "npm install -g slicejs-cli",
                language: "bash"
             });
             if ("Global (optional launcher install)") {
@@ -48,7 +48,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-3"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npx slicejs-cli <command>\r",
+               value: "npx slicejs-cli <command>",
                language: "bash"
             });
             if (null) {
@@ -64,7 +64,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-4"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "SLICE_NO_LOCAL_DELEGATION=1 slice version\r",
+               value: "SLICE_NO_LOCAL_DELEGATION=1 slice version",
                language: "bash"
             });
             if (null) {
@@ -79,7 +79,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-5"]');
          if (container) {
-            const lines = ["| Command | Alias | Purpose |\r","| --- | --- | --- |\r","| `slice init` | - | Initialize project structure and install Visual components. |\r","| `slice dev` | - | Start development server. |\r","| `slice build` | - | Build production output (bundles + dist). |\r","| `slice build clean` | - | Remove generated bundles. |\r","| `slice build info` | - | Show bundle configuration summary. |\r","| `slice start` | - | Start production server. |\r","| `slice component create` | `slice comp new` | Create a local component. |\r","| `slice component list` | `slice comp ls` | List local components. |\r","| `slice component delete` | `slice comp remove` | Delete a local component. |\r","| `slice get` | `slice registry get` | Install components from registry. |\r","| `slice browse` | `slice registry list` | List official registry components. |\r","| `slice sync` | `slice registry sync` | Sync local Visual components from registry. |\r","| `slice list` | - | Shortcut for `slice component list`. |\r","| `slice version` | `slice v` | Show CLI version. |\r","| `slice update` | `slice upgrade` | Update CLI/framework. |\r","| `slice doctor` | `slice diagnose` | Run project diagnostics. |\r","| `slice help` | `slice --help` | Show CLI help. |\r"];
+            const lines = ["| Command | Alias | Purpose |","| --- | --- | --- |","| `slice init` | - | Initialize project structure and install Visual components. |","| `slice dev` | - | Start development server. |","| `slice build` | - | Build production output (bundles + dist). |","| `slice build clean` | - | Remove generated bundles. |","| `slice build info` | - | Show bundle configuration summary. |","| `slice start` | - | Start production server. |","| `slice component create` | `slice comp new` | Create a local component. |","| `slice component list` | `slice comp ls` | List local components. |","| `slice component delete` | `slice comp remove` | Delete a local component. |","| `slice get` | `slice registry get` | Install components from registry. |","| `slice browse` | `slice registry list` | List official registry components. |","| `slice sync` | `slice registry sync` | Sync local Visual components from registry. |","| `slice list` | - | Shortcut for `slice component list`. |","| `slice version` | `slice v` | Show CLI version. |","| `slice update` | `slice upgrade` | Update CLI/framework. |","| `slice doctor` | `slice diagnose` | Run project diagnostics. |","| `slice types generate` | - | Generate TypeScript typings for `slice.build`. |","| `slice help` | `slice --help` | Show CLI help. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -140,7 +140,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-6"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice init\r",
+               value: "slice init",
                language: "bash"
             });
             if ("Initialize a project") {
@@ -156,7 +156,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-7"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice dev\r",
+               value: "slice dev",
                language: "bash"
             });
             if ("Start dev server") {
@@ -171,7 +171,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-8"]');
          if (container) {
-            const lines = ["| Flag | Type | Default | Notes |\r","| --- | --- | --- | --- |\r","| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |\r","| `--no-hmr` | `boolean` | `false` | Disable hot module reload (HMR is enabled by default). |\r"];
+            const lines = ["| Flag | Type | Default | Notes |","| --- | --- | --- | --- |","| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |","| `--no-hmr` | `boolean` | `false` | Disable hot module reload (HMR is enabled by default). |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -232,7 +232,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-9"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice start\r",
+               value: "slice start",
                language: "bash"
             });
             if ("Start production server") {
@@ -247,7 +247,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-10"]');
          if (container) {
-            const lines = ["| Flag | Type | Default | Notes |\r","| --- | --- | --- | --- |\r","| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |\r"];
+            const lines = ["| Flag | Type | Default | Notes |","| --- | --- | --- | --- |","| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -308,7 +308,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-11"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice build\r",
+               value: "slice build",
                language: "bash"
             });
             if ("Build production output") {
@@ -323,7 +323,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-12"]');
          if (container) {
-            const lines = ["| Flag | Type | Default | Notes |\r","| --- | --- | --- | --- |\r","| `-a, --analyze` | `boolean` | `false` | Analyze only, do not generate bundles. |\r","| `-v, --verbose` | `boolean` | `false` | Output analysis metrics. |\r","| `--no-minify` | `boolean` | `false` | Disable minification (enabled by default). |\r","| `--no-obfuscate` | `boolean` | `false` | Disable obfuscation (enabled by default). |\r","| `--preview` | `boolean` | `false` | Start preview server after build. |\r","| `--serve` | `boolean` | `false` | Start preview server without building. |\r","| `--skip-clean` | `boolean` | `false` | Skip cleaning dist before build. |\r"];
+            const lines = ["| Flag | Type | Default | Notes |","| --- | --- | --- | --- |","| `-a, --analyze` | `boolean` | `false` | Analyze only, do not generate bundles. |","| `-v, --verbose` | `boolean` | `false` | Output analysis metrics. |","| `--no-minify` | `boolean` | `false` | Disable minification (enabled by default). |","| `--no-obfuscate` | `boolean` | `false` | Disable obfuscation (enabled by default). |","| `--preview` | `boolean` | `false` | Start preview server after build. |","| `--serve` | `boolean` | `false` | Start preview server without building. |","| `--skip-clean` | `boolean` | `false` | Skip cleaning dist before build. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -383,7 +383,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-13"]');
          if (container) {
-            const lines = ["| Command | Purpose |\r","| --- | --- |\r","| `slice build clean` | Remove generated bundle files and config. |\r","| `slice build info` | Show bundle configuration summary. |\r"];
+            const lines = ["| Command | Purpose |","| --- | --- |","| `slice build clean` | Remove generated bundle files and config. |","| `slice build info` | Show bundle configuration summary. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -444,13 +444,13 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-14"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice component create\r",
+               value: "slice component create",
                language: "bash"
             });
-            if ("Create component") {
+            if ("Interactive (prompts for name + category)") {
                const label = document.createElement('div');
                label.classList.add('code-block-title');
-               label.textContent = "Create component";
+               label.textContent = "Interactive (prompts for name + category)";
                container.appendChild(label);
             }
             container.appendChild(code);
@@ -460,13 +460,13 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-15"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice component list\r",
+               value: "slice component create UserCard --category AppComponents\nslice component create AuthService -c Service",
                language: "bash"
             });
-            if ("List components") {
+            if ("Non-interactive (pass name + --category)") {
                const label = document.createElement('div');
                label.classList.add('code-block-title');
-               label.textContent = "List components";
+               label.textContent = "Non-interactive (pass name + --category)";
                container.appendChild(label);
             }
             container.appendChild(code);
@@ -476,13 +476,13 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-16"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice component delete\r",
+               value: "npm run component:create -- UserCard --category Visual",
                language: "bash"
             });
-            if ("Delete component") {
+            if ("Through the npm script (note the -- separator)") {
                const label = document.createElement('div');
                label.classList.add('code-block-title');
-               label.textContent = "Delete component";
+               label.textContent = "Through the npm script (note the -- separator)";
                container.appendChild(label);
             }
             container.appendChild(code);
@@ -491,23 +491,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-17"]');
          if (container) {
-            const code = await slice.build('CodeVisualizer', {
-               value: "slice get Button Card Input\r",
-               language: "bash"
-            });
-            if ("Get components") {
-               const label = document.createElement('div');
-               label.classList.add('code-block-title');
-               label.textContent = "Get components";
-               container.appendChild(label);
-            }
-            container.appendChild(code);
-         }
-      }
-      {
-         const container = this.querySelector('[data-block-id="doc-block-18"]');
-         if (container) {
-            const lines = ["| Flag | Type | Default | Notes |\r","| --- | --- | --- | --- |\r","| `-f, --force` | `boolean` | `false` | Overwrite existing components. |\r","| `-s, --service` | `boolean` | `false` | Install as Service instead of Visual. |\r"];
+            const lines = ["| Argument / option | Notes |","| --- | --- |","| `[name]` | Component name (positional). If omitted, you are prompted. |","| `-c, --category <category>` | A category from `paths.components` in `sliceConfig.json` (e.g. `Visual`, `Service`, `AppComponents`). If omitted, you are prompted. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -565,16 +549,32 @@ export default class CommandsDocumentation extends HTMLElement {
          }
       }
       {
+         const container = this.querySelector('[data-block-id="doc-block-18"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "slice component list",
+               language: "bash"
+            });
+            if ("List components") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "List components";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
          const container = this.querySelector('[data-block-id="doc-block-19"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice browse\r",
+               value: "slice component delete",
                language: "bash"
             });
-            if ("Browse registry") {
+            if ("Interactive (select + confirm)") {
                const label = document.createElement('div');
                label.classList.add('code-block-title');
-               label.textContent = "Browse registry";
+               label.textContent = "Interactive (select + confirm)";
                container.appendChild(label);
             }
             container.appendChild(code);
@@ -584,13 +584,13 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-20"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice sync\r",
+               value: "slice component delete UserCard --category AppComponents --yes",
                language: "bash"
             });
-            if ("Sync components") {
+            if ("Non-interactive") {
                const label = document.createElement('div');
                label.classList.add('code-block-title');
-               label.textContent = "Sync components";
+               label.textContent = "Non-interactive";
                container.appendChild(label);
             }
             container.appendChild(code);
@@ -599,7 +599,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-21"]');
          if (container) {
-            const lines = ["| Flag | Type | Default | Notes |\r","| --- | --- | --- | --- |\r","| `-f, --force` | `boolean` | `false` | Skip confirmation and force update. |\r"];
+            const lines = ["| Argument / option | Notes |","| --- | --- |","| `[name]` | Component to delete. If omitted, you pick from a list. |","| `-c, --category <category>` | Category to look in. If omitted, you are prompted. |","| `-y, --yes` | Skip the confirmation prompt (required for a fully non-interactive run). |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -660,13 +660,13 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-22"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice update\r",
+               value: "slice get Button Card Input",
                language: "bash"
             });
-            if ("Update packages") {
+            if ("Get components") {
                const label = document.createElement('div');
                label.classList.add('code-block-title');
-               label.textContent = "Update packages";
+               label.textContent = "Get components";
                container.appendChild(label);
             }
             container.appendChild(code);
@@ -675,7 +675,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-23"]');
          if (container) {
-            const lines = ["| Flag | Type | Default | Notes |\r","| --- | --- | --- | --- |\r","| `-y, --yes` | `boolean` | `false` | Auto-confirm updates. |\r","| `--cli` | `boolean` | `false` | Update CLI only. |\r","| `-f, --framework` | `boolean` | `false` | Update framework only. |\r"];
+            const lines = ["| Flag | Type | Default | Notes |","| --- | --- | --- | --- |","| `-f, --force` | `boolean` | `false` | Overwrite existing components. |","| `-s, --service` | `boolean` | `false` | Install as Service instead of Visual. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -736,7 +736,175 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-24"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice doctor\r",
+               value: "slice browse",
+               language: "bash"
+            });
+            if ("Browse registry") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "Browse registry";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-25"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "slice sync",
+               language: "bash"
+            });
+            if ("Sync components") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "Sync components";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-26"]');
+         if (container) {
+            const lines = ["| Flag | Type | Default | Notes |","| --- | --- | --- | --- |","| `-f, --force` | `boolean` | `false` | Skip confirmation and force update. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-27"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "slice update",
+               language: "bash"
+            });
+            if ("Update packages") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "Update packages";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-28"]');
+         if (container) {
+            const lines = ["| Flag | Type | Default | Notes |","| --- | --- | --- | --- |","| `-y, --yes` | `boolean` | `false` | Auto-confirm updates. |","| `--cli` | `boolean` | `false` | Update CLI only. |","| `-f, --framework` | `boolean` | `false` | Update framework only. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-29"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "slice doctor",
                language: "bash"
             });
             if ("Run diagnostics") {
@@ -749,10 +917,10 @@ export default class CommandsDocumentation extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-25"]');
+         const container = this.querySelector('[data-block-id="doc-block-30"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice version\r",
+               value: "slice version",
                language: "bash"
             });
             if ("Version") {
@@ -765,10 +933,10 @@ export default class CommandsDocumentation extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-26"]');
+         const container = this.querySelector('[data-block-id="doc-block-31"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "slice --help\r",
+               value: "slice --help",
                language: "bash"
             });
             if ("Help") {
@@ -778,6 +946,98 @@ export default class CommandsDocumentation extends HTMLElement {
                container.appendChild(label);
             }
             container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-32"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "slice types generate",
+               language: "bash"
+            });
+            if ("Generate typings") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "Generate typings";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-33"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "slice types generate --output types/slice-build.d.ts",
+               language: "bash"
+            });
+            if ("Custom output path") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "Custom output path";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-34"]');
+         if (container) {
+            const lines = ["| Option | Default | Notes |","| --- | --- | --- |","| `-o, --output <path>` | `src/slice-build.generated.d.ts` | Where to write the generated `.d.ts`. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
          }
       }
   }

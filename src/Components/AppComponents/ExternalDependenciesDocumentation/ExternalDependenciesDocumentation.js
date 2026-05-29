@@ -8,7 +8,7 @@ export default class ExternalDependenciesDocumentation extends HTMLElement {
 
   async init() {
     this.markdownPath = "external-dependencies.md";
-    this.markdownContent = "---\r\ntitle: External Dependencies\r\nroute: /Documentation/External-Dependencies\r\nnavLabel: External Dependencies\r\nsection: Getting Started\r\ngroup: Tooling\r\norder: 25\r\ndescription: Temporary official pattern for using external scripts and libraries in Slice.js.\r\ncomponent: ExternalDependenciesDocumentation\r\ntags: [dependencies, external, publicFolders, bundling]\r\n---\r\n\r\n# External Dependencies\r\n\r\n## Overview\r\nSlice.js currently supports a temporary official pattern for external scripts and libraries using public folders.\r\n\r\nThis is the recommended approach until native bare-package imports are available.\r\n\r\n## What Is Supported Today\r\n- Relative imports (`./`, `../`) for internal project modules.\r\n- Absolute imports that point to folders listed in `sliceConfig.json` `publicFolders`.\r\n\r\nExample:\r\n\r\n```javascript title=\"Valid absolute import\"\r\nimport '/libs/dayjs/dayjs.min.js';\r\n```\r\n\r\n## What Is Not Supported Yet\r\n- Bare package imports such as:\r\n\r\n```javascript title=\"Not supported yet\"\r\nimport dayjs from 'dayjs';\r\n```\r\n\r\n- Automatic browser resolution from `node_modules`.\r\n- CommonJS package interop for browser runtime.\r\n\r\n## Configure `publicFolders`\r\nAdd one or more public folders in `sliceConfig.json`.\r\n\r\n```json title=\"sliceConfig.json\"\r\n{\r\n  \"publicFolders\": [\"/Themes\", \"/Styles\", \"/assets\", \"/libs\"]\r\n}\r\n```\r\n\r\n## Recommended Project Layout\r\nPlace third-party files in one of your configured public folders.\r\n\r\n```text\r\nsrc/\r\n  libs/\r\n    dayjs/\r\n      dayjs.min.js\r\n```\r\n\r\nThen import them with an absolute URL path:\r\n\r\n```javascript title=\"Component usage\"\r\nimport '/libs/dayjs/dayjs.min.js';\r\n```\r\n\r\n## Dev and Production Behavior\r\n- `slice dev`: absolute public-folder imports are resolved and preserved.\r\n- `slice build`: absolute public-folder imports are preserved with the same rule.\r\n- `slice start`: built output serves public files from `dist`.\r\n\r\n## Build Warnings\r\nSlice CLI warns when:\r\n- You use bare imports (`import 'pkg'`).\r\n- You use absolute imports outside configured `publicFolders`.\r\n\r\nThese warnings help keep behavior predictable between development and production.\r\n\r\n## Troubleshooting\r\n:::warning\r\nIf an external script works in dev but fails in production, verify that:\r\n- the import starts with `/` (absolute path),\r\n- the folder is included in `publicFolders`,\r\n- the file exists under `src/<public-folder>/...` before building.\r\n:::\r\n\r\n## Migration Path\r\nThis approach is temporary by design.\r\n\r\nWhen native package imports are released, you will be able to migrate from:\r\n\r\n```javascript\r\nimport '/libs/some-lib/index.js';\r\n```\r\n\r\nto:\r\n\r\n```javascript\r\nimport 'some-lib';\r\n```\r\n";
+    this.markdownContent = "---\ntitle: External Dependencies\nroute: /Documentation/External-Dependencies\nnavLabel: External Dependencies\nsection: Getting Started\ngroup: Tooling\norder: 25\ndescription: Temporary official pattern for using external scripts and libraries in Slice.js.\ncomponent: ExternalDependenciesDocumentation\ntags: [dependencies, external, publicFolders, bundling]\n---\n\n# External Dependencies\n\n## Overview\nSlice.js currently supports a temporary official pattern for external scripts and libraries using public folders.\n\nThis is the recommended approach until native bare-package imports are available.\n\n## What Is Supported Today\n- Relative imports (`./`, `../`) for internal project modules.\n- Absolute imports that point to folders listed in `sliceConfig.json` `publicFolders`.\n\nExample:\n\n```javascript title=\"Valid absolute import\"\nimport '/libs/dayjs/dayjs.min.js';\n```\n\n## What Is Not Supported Yet\n- Bare package imports such as:\n\n```javascript title=\"Not supported yet\"\nimport dayjs from 'dayjs';\n```\n\n- Automatic browser resolution from `node_modules`.\n- CommonJS package interop for browser runtime.\n\n## Configure `publicFolders`\nAdd one or more public folders in `sliceConfig.json`.\n\n```json title=\"sliceConfig.json\"\n{\n  \"publicFolders\": [\"/Themes\", \"/Styles\", \"/assets\", \"/libs\"]\n}\n```\n\n## Recommended Project Layout\nPlace third-party files in one of your configured public folders.\n\n```text\nsrc/\n  libs/\n    dayjs/\n      dayjs.min.js\n```\n\nThen import them with an absolute URL path:\n\n```javascript title=\"Component usage\"\nimport '/libs/dayjs/dayjs.min.js';\n```\n\n## Dev and Production Behavior\n- `slice dev`: absolute public-folder imports are resolved and preserved.\n- `slice build`: absolute public-folder imports are preserved with the same rule.\n- `slice start`: built output serves public files from `dist`.\n\n## Build Warnings\nSlice CLI warns when:\n- You use bare imports (`import 'pkg'`).\n- You use absolute imports outside configured `publicFolders`.\n\nThese warnings help keep behavior predictable between development and production.\n\n## Troubleshooting\n:::warning\nIf an external script works in dev but fails in production, verify that:\n- the import starts with `/` (absolute path),\n- the folder is included in `publicFolders`,\n- the file exists under `src/<public-folder>/...` before building.\n:::\n\n## Migration Path\nThis approach is temporary by design.\n\nWhen native package imports are released, you will be able to migrate from:\n\n```javascript\nimport '/libs/some-lib/index.js';\n```\n\nto:\n\n```javascript\nimport 'some-lib';\n```\n";
     if (true) {
       this.setupCopyButton();
     }
@@ -16,7 +16,7 @@ export default class ExternalDependenciesDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "import '/libs/dayjs/dayjs.min.js';\r",
+               value: "import '/libs/dayjs/dayjs.min.js';",
                language: "javascript"
             });
             if ("Valid absolute import") {
@@ -32,7 +32,7 @@ export default class ExternalDependenciesDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-2"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "import dayjs from 'dayjs';\r",
+               value: "import dayjs from 'dayjs';",
                language: "javascript"
             });
             if ("Not supported yet") {
@@ -48,7 +48,7 @@ export default class ExternalDependenciesDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-3"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "{\r\n  \"publicFolders\": [\"/Themes\", \"/Styles\", \"/assets\", \"/libs\"]\r\n}\r",
+               value: "{\n  \"publicFolders\": [\"/Themes\", \"/Styles\", \"/assets\", \"/libs\"]\n}",
                language: "json"
             });
             if ("sliceConfig.json") {
@@ -64,7 +64,7 @@ export default class ExternalDependenciesDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-4"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "src/\r\n  libs/\r\n    dayjs/\r\n      dayjs.min.js\r",
+               value: "src/\n  libs/\n    dayjs/\n      dayjs.min.js",
                language: "text"
             });
             if (null) {
@@ -80,7 +80,7 @@ export default class ExternalDependenciesDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-5"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "import '/libs/dayjs/dayjs.min.js';\r",
+               value: "import '/libs/dayjs/dayjs.min.js';",
                language: "javascript"
             });
             if ("Component usage") {
@@ -96,7 +96,7 @@ export default class ExternalDependenciesDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-6"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "import '/libs/some-lib/index.js';\r",
+               value: "import '/libs/some-lib/index.js';",
                language: "javascript"
             });
             if (null) {
@@ -112,7 +112,7 @@ export default class ExternalDependenciesDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-7"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "import 'some-lib';\r",
+               value: "import 'some-lib';",
                language: "javascript"
             });
             if (null) {

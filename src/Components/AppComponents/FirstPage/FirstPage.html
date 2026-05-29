@@ -1,0 +1,41 @@
+<div class="documentation-content firstpage">
+
+<div class="doc-title-bar">
+  <h1 id="your-first-page">
+    <span class="doc-title-text">Your First Page</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p>This walkthrough takes the App Shell starter from <code>slice init</code> to a new page on screen. You will edit an existing section, then add a brand-new one and wire it into the shell.</p>
+<h2 id="run-the-starter">Run the starter</h2>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<p>Open the printed URL (default <code>http://localhost:3001</code>). You should see the Home section with a button that navigates to About.</p>
+<h2 id="step-1-edit-the-home-section">Step 1 — Edit the Home section</h2>
+<p>Open <code>src/Components/AppComponents/HomeSection/HomeSection.html</code> and change the heading and text. Save; the dev server reloads. The markup lives in <code>.html</code>; behavior lives in <code>.js</code>.</p>
+<h2 id="step-2-add-a-new-section-component">Step 2 — Add a new section component</h2>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<p>This creates <code>src/Components/AppComponents/ContactSection/</code> with <code>.js</code>, <code>.html</code>, <code>.css</code>, and registers it in <code>components.js</code>. (Run <code>slice component create</code> with no arguments to be prompted for the name and category instead.)</p>
+<h2 id="step-3-write-the-component">Step 3 — Write the component</h2>
+<p>A Slice component follows three rules (see Lifecycle Methods for the full model):</p>
+<ul><li>The template is only available <strong>after</strong> <code>slice.attachTemplate(this)</code> — call it first in the</li></ul>
+<p>constructor; then <code>querySelector</code> and listener binding work inside the constructor.</p>
+<ul><li>Props go through setters, so put side effects in setters. Call <code>setComponentProps</code> <strong>last</strong>.</li><li><code>slice.build()</code> is async — always <code>await</code> it.</li></ul>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<h2 id="step-4-add-the-route">Step 4 — Add the route</h2>
+<p>Add the path in <code>src/routes.js</code>. Every section URL maps to <code>AppShell</code>:</p>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<h2 id="step-5-wire-it-into-the-shell">Step 5 — Wire it into the shell</h2>
+<p>In <code>AppShell.js</code>, add the section to the <code>MultiRoute</code> and a navbar item:</p>
+<div class="code-block" data-block-id="doc-block-6"></div>
+<p>Add <code>{ text: 'Contact', path: '/contact' }</code> to the navbar <code>items</code> array in the same file.</p>
+<div class="callout callout-tip">Use <code>${name}</code> for dynamic segments (e.g. <code>/users/${id}</code>), never <code>:name</code>. Read params inside the
+component with <code>slice.router.activeRoute.params</code>.</div>
+<h2 id="step-6-see-it">Step 6 — See it</h2>
+<p>Save and the page reloads. Click through Home → About → Contact. Because <code>MultiRoute</code> caches each section, give a section an <code>update()</code> method if it must refresh when revisited.</p>
+<div class="callout callout-warning">If a component does not appear, confirm it is listed in <code>src/Components/components.js</code>. If you
+created folders by hand, run <code>slice component list</code> to regenerate that file.</div>
+<h2 id="next">Next</h2>
+<p>Learn the full edit-build-ship cycle in <strong>The Development Loop</strong>.</p>
+</div>
