@@ -27,7 +27,8 @@
     "sync": "node ./node_modules/slicejs-cli/client.js sync",
     "run": "node ./node_modules/slicejs-cli/client.js dev",
     "docs:generate": "node parser/index.js",
-    "docs:llm": "node tools/build-llm.js"
+    "docs:llm": "node tools/build-llm.js",
+    "slice:types": "slice types generate"
   },
   "keywords": [],
   "author": "",
@@ -38,7 +39,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "slicejs-cli": "^3.1.0",
-    "slicejs-web-framework": "^3.2.1"
+    "slicejs-cli": "^3.5.0",
+    "slicejs-web-framework": "^3.3.1"
   }
 }

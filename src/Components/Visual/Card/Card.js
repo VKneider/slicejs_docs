@@ -66,10 +66,6 @@ export default class Card extends HTMLElement {
          type: 'string',
          default: null
       },
-      loading: {
-         type: 'boolean',
-         default: false
-      },
       disabled: {
          type: 'boolean',
          default: false
@@ -314,14 +310,6 @@ export default class Card extends HTMLElement {
    }
 
    updateState() {
-      if (this.loading) {
-         this.$card.classList.add('loading');
-         this.$card.setAttribute('aria-busy', 'true');
-      } else {
-         this.$card.classList.remove('loading');
-         this.$card.removeAttribute('aria-busy');
-      }
-
       if (this.disabled) {
          this.$card.classList.add('disabled');
          this.$card.setAttribute('aria-disabled', 'true');
@@ -424,14 +412,6 @@ export default class Card extends HTMLElement {
       }
    }
 
-   get loading() { return this._loading || false; }
-   set loading(value) {
-      this._loading = Boolean(value);
-      if (this.$card) {
-         this.updateState();
-      }
-   }
-
    get disabled() { return this._disabled || false; }
    set disabled(value) {
       this._disabled = Boolean(value);
@@ -507,14 +487,6 @@ export default class Card extends HTMLElement {
    updateActions(newActions) {
       this.actions = newActions;
       this.setupActions();
-   }
-
-   showLoading() {
-      this.loading = true;
-   }
-
-   hideLoading() {
-      this.loading = false;
    }
 
    enable() {

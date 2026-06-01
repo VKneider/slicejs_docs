@@ -57,3 +57,50 @@ slice-button .slice_button:active:after {
   opacity: 1;
   transition: 0s;
 }
+
+/* ----------------------------------------------------------------- variants
+   Every variant derives from the theme tokens — they automatically follow the
+   active theme. `filled` is the original solid look; the modifiers are declared
+   after the base rule so they win on equal specificity. */
+
+slice-button .slice_button--filled {
+  background-color: var(--primary-color);
+  color: var(--primary-color-contrast);
+  border-color: var(--primary-color);
+}
+
+slice-button .slice_button--outlined {
+  background-color: transparent;
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+slice-button .slice_button--ghost {
+  background-color: transparent;
+  color: var(--primary-color);
+  border-color: transparent;
+}
+
+slice-button .slice_button--soft {
+  background-color: color-mix(in srgb, var(--primary-color) 16%, transparent);
+  color: var(--primary-color);
+  border-color: transparent;
+}
+
+/* Hover tint for the non-filled variants */
+slice-button .slice_button--outlined:hover,
+slice-button .slice_button--ghost:hover {
+  background-color: color-mix(in srgb, var(--primary-color) 12%, transparent);
+}
+
+slice-button .slice_button--soft:hover {
+  background-color: color-mix(in srgb, var(--primary-color) 26%, transparent);
+}
+
+/* The ripple flash uses a primary-color tint on the light/transparent variants
+   (the base contrast flash would be invisible on them). */
+slice-button .slice_button--outlined:after,
+slice-button .slice_button--ghost:after,
+slice-button .slice_button--soft:after {
+  background: color-mix(in srgb, var(--primary-color) 22%, transparent);
+}
