@@ -2,96 +2,81 @@ export default class WhatIsSlice extends HTMLElement {
   constructor(props) {
     super();
     slice.attachTemplate(this);
-
-    this.$tabs = this.querySelectorAll('.tab');
-    this.$tabContents = this.querySelectorAll('.tab-content');
-    
-    // Set up tab switching functionality
-    this.$tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const tabId = tab.getAttribute('data-tab');
-        this.switchTab(tabId);
-      });
-    });
-
-    // Set up navigation buttons with Slice Router
-    this.setupNavigationButtons();
-
     slice.controller.setComponentProps(this, props);
-    this.debuggerProps = [];
+
+    this.ecosystemProjects = [
+      {
+        name: 'slice.js',
+        subtitle: 'Official Repo',
+        description: 'The core framework and the place where Slice evolves in public.',
+        links: [
+          { label: 'GitHub', href: 'https://github.com/VKneider/slice.js' }
+        ]
+      },
+      {
+        name: 'sliceDocs',
+        subtitle: 'Documentation Site',
+        description: 'Concepts, guides, and examples that explain the philosophy and the architecture.',
+        links: [
+          { label: 'Open Docs', href: 'https://slicejs.com/' },
+          { label: 'GitHub', href: 'https://github.com/VKneider/slicejs_docs' }
+        ]
+      },
+      {
+        name: 'slice.js_visual_library',
+        subtitle: 'Visual Library',
+        description: 'Reusable visual components designed for real Slice applications.',
+        links: [
+          { label: 'Open Library', href: 'https://components.slicejs.com/' }
+        ]
+      },
+      {
+        name: 'slicejs-mcp',
+        subtitle: 'Slice Docs MCP',
+        description: 'MCP bridge to consume Slice documentation in AI-assisted workflows.',
+        links: [
+          { label: 'GitHub', href: 'https://github.com/VKneider/slicejs-mcp' }
+        ]
+      }
+    ];
   }
 
   async init() {
-    // Set the first tab as active by default
-    this.switchTab('overview');
-    
-    // Add animation to code samples for better readability
-    this.highlightCode();
-    
-    // Setup diagram interactions
-    this.setupDiagramInteractions();
+    this.renderEcosystemCards();
+    this.decorateExternalLinks();
   }
-  
-  setupNavigationButtons() {
-    // Set up the Installation Guide button
-    const installationButton = this.querySelector('.installation-button');
-    if (installationButton) {
-      installationButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        // open link in new tab https://slice-js-docs.vercel.app/Documentation/Installation (its not a route of the app)
-        window.open('https://slice-js-docs.vercel.app/Documentation/Installation', '_blank');
-      });
-    }
-    
-    // Set up the Component Library button
-    const componentsButton = this.querySelector('.components-button');
-    if (componentsButton) {
-      componentsButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        // open link in new tab https://slice-js-docs.vercel.app/Documentation/Slice (its not a route of the app)
-        window.open('https://slice-js-docs.vercel.app/Documentation/Slice', '_blank');
-      });
-    }
+
+  renderEcosystemCards() {
+    const grid = this.querySelector('.ecosystem-grid');
+    if (!grid) return;
+
+    const cardMarkup = this.ecosystemProjects.map((project) => {
+      const linksMarkup = project.links
+        .map((link) => `<a class="ecosystem-link" href="${link.href}" target="_blank" rel="noopener noreferrer">${project.name} ${link.label}</a>`)
+        .join('');
+
+      return `
+        <article class="ecosystem-card">
+          <p class="ecosystem-subtitle">${project.subtitle}</p>
+          <h3>${project.name}</h3>
+          <p>${project.description}</p>
+          <div class="ecosystem-actions">${linksMarkup}</div>
+        </article>
+      `;
+    });
+
+    grid.innerHTML = cardMarkup.join('');
   }
-  
-  switchTab(tabId) {
-    // Remove active class from all tabs and tab contents
-    this.$tabs.forEach(tab => tab.classList.remove('active'));
-    this.$tabContents.forEach(content => content.classList.remove('active'));
-    
-    // Add active class to the selected tab and content
-    this.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
-    this.querySelector(`.tab-content[data-tab="${tabId}"]`).classList.add('active');
-  }
-  
-  highlightCode() {
-    // Check if Prism is available (for syntax highlighting)
-    if (typeof Prism !== 'undefined') {
-      Prism.highlightAllUnder(this);
-    }
-  }
-  
-  setupDiagramInteractions() {
-    const components = this.querySelectorAll('.component-box');
-    
-    components.forEach(component => {
-      component.addEventListener('mouseenter', () => {
-        const type = component.getAttribute('data-type');
-        const description = this.querySelector(`.component-description[data-type="${type}"]`);
-        if (description) {
-          description.classList.add('visible');
-        }
-      });
-      
-      component.addEventListener('mouseleave', () => {
-        const type = component.getAttribute('data-type');
-        const description = this.querySelector(`.component-description[data-type="${type}"]`);
-        if (description) {
-          description.classList.remove('visible');
-        }
-      });
+
+  decorateExternalLinks() {
+    this.querySelectorAll('a[target="_blank"]').forEach((link) => {
+      const rel = link.getAttribute('rel') || '';
+      const next = rel.includes('noopener') && rel.includes('noreferrer')
+        ? rel
+        : 'noopener noreferrer';
+      link.setAttribute('rel', next);
     });
   }
 }
 
-customElements.define("slice-whatisslice", WhatIsSlice);
+customElements.define('slice-whatisslice', WhatIsSlice);
