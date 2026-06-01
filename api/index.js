@@ -237,6 +237,18 @@ app.get('/api/status', (req, res) => {
 
 
 // ==============================================
+// SEO: robots.txt & sitemap.xml
+// ==============================================
+
+app.get('/robots.txt', (req, res) => {
+  res.sendFile(path.join(__dirname, `../${folderDeployed}`, 'robots.txt'));
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  res.sendFile(path.join(__dirname, `../${folderDeployed}`, 'sitemap.xml'));
+});
+
+// ==============================================
 // SPA FALLBACK
 // ==============================================
 
