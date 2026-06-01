@@ -13,7 +13,7 @@ tags: [themes, styles, configuration]
 
 # Themes in Slice.js
 
-Slice.js themes are CSS-variable driven. A theme is a plain CSS file that defines color, contrast, and surface tokens the UI can reuse consistently.
+Slice.js themes are CSS-variable driven. A theme is a plain CSS file that defines color, contrast, and surface tokens under `:root`, which the UI reuses consistently. Slice.js ships with two canonical themes: **LIGHT** and **DARK**.
 
 ## Why Themes
 
@@ -23,50 +23,137 @@ Slice.js themes are CSS-variable driven. A theme is a plain CSS file that define
 
 ## Theme Structure
 
-Themes live in `src/Themes/` and export variables under `:root`.
+Themes live in `src/Themes/` as one CSS file per theme (`LIGHT.css`, `DARK.css`). Each file exports its tokens under `:root`. The theme name used in code matches the CSS file name (without extension).
 
-```css title="Minimal theme structure"
+## Required Theme Variables
+
+Every theme MUST define these 15 variables. The Theme Creator reads them, and Visual components rely on them being present.
+
+| Variable | Purpose |
+|----------|---------|
+| `--primary-color` | Main accent / brand color |
+| `--primary-background-color` | App-level background surface |
+| `--primary-color-contrast` | Readable color on top of the primary color |
+| `--primary-color-shade` | Darker variant of the primary color |
+| `--secondary-color` | Secondary accent color |
+| `--secondary-background-color` | Secondary surface background |
+| `--secondary-color-contrast` | Readable color on top of the secondary color |
+| `--tertiary-background-color` | Tertiary surface background |
+| `--font-primary-color` | Default body text color |
+| `--font-secondary-color` | Muted / heading text color |
+| `--success-color` | Success state color |
+| `--warning-color` | Warning state color |
+| `--danger-color` | Error / danger state color |
+| `--medium-color` | Neutral mid-tone color |
+| `--disabled-color` | Disabled / inactive color |
+
+:::tip
+Optional but recommended extras include `--primary-color-rgb`, `--secondary-color-rgb`, `--success-contrast`, `--warning-contrast`, `--danger-contrast`, `--medium-contrast`, and `--accent-color`. The `*-rgb` tokens let you derive translucent borders with `rgba(var(--primary-color-rgb), 0.2)`.
+:::
+
+## LIGHT Theme
+
+The default light theme. Values below come from `src/Themes/LIGHT.css`.
+
+```css title="src/Themes/LIGHT.css"
 :root {
-  --primary-color: #1d4ed8;
-  --primary-color-rgb: 29, 78, 216;
-  --primary-color-contrast: #ffffff;
+  /* Typography */
+  --font-primary-color: #1A0B2E;
+  --font-secondary-color: #6B46C1;
 
-  --primary-background-color: #f8fafc;
-  --secondary-background-color: #eef2f6;
-  --tertiary-background-color: #e2e8f0;
+  /* Primary */
+  --primary-color: #9333EA;
+  --primary-color-rgb: 147, 51, 234;
+  --primary-background-color: #FEFBFF;
+  --primary-color-contrast: #FFFFFF;
+  --primary-color-shade: #7C3AED;
 
-  --font-primary-color: #0f172a;
-  --font-secondary-color: #475569;
+  /* Secondary */
+  --secondary-color: #0891B2;
+  --secondary-color-rgb: 8, 145, 178;
+  --secondary-background-color: #F0F9FF;
+  --secondary-color-contrast: #FFFFFF;
 
-  --success-color: #166534;
-  --warning-color: #b45309;
-  --danger-color: #b91c1c;
+  /* Tertiary */
+  --tertiary-background-color: #F0F4FF;
+
+  /* States */
+  --success-color: #059669;
+  --success-contrast: #FFFFFF;
+  --warning-color: #D97706;
+  --warning-contrast: #FFFFFF;
+  --danger-color: #DC2626;
+  --danger-contrast: #FFFFFF;
+
+  /* Neutral */
+  --medium-color: #6B7280;
+  --medium-contrast: #FFFFFF;
+  --disabled-color: #D1D5DB;
+
+  /* Accent */
+  --accent-color: #06B6D4;
 }
 ```
 
-### Required Tokens
+## DARK Theme
 
-At minimum, include:
+The default dark theme. Values below come from `src/Themes/DARK.css`.
 
-- `--primary-color`, `--primary-color-rgb`, `--primary-color-contrast`
-- `--primary-background-color`, `--secondary-background-color`, `--tertiary-background-color`
-- `--font-primary-color`, `--font-secondary-color`
+```css title="src/Themes/DARK.css"
+:root {
+  /* Typography */
+  --font-primary-color: #f1e7ff;
+  --font-secondary-color: #c4b5fd;
 
-These are used across Visual components and custom CSS.
+  /* Primary */
+  --primary-color: #a855f7;
+  --primary-color-rgb: 168, 85, 247;
+  --primary-background-color: #1a1028;
+  --primary-color-contrast: #ffffff;
+  --primary-color-shade: #2e2040;
+
+  /* Secondary */
+  --secondary-color: #34d399;
+  --secondary-color-rgb: 52, 211, 153;
+  --secondary-background-color: #1f1432;
+  --secondary-color-contrast: #052e23;
+
+  /* Tertiary */
+  --tertiary-background-color: #26183a;
+
+  /* States */
+  --success-color: #10b981;
+  --success-contrast: #03281f;
+  --warning-color: #f59e0b;
+  --warning-contrast: #2b1800;
+  --danger-color: #ef4444;
+  --danger-contrast: #2d0a0a;
+
+  /* Neutral */
+  --medium-color: #9ca3af;
+  --medium-contrast: #111827;
+  --disabled-color: #4b5563;
+
+  /* Accent */
+  --accent-color: #22d3ee;
+}
+```
 
 ## Switching Themes
 
-Slice.js applies themes with the StylesManager:
+Slice.js applies themes through the StylesManager. Pass the theme name (matching the CSS file name in `src/Themes/`):
 
 ```javascript title="Switching a theme"
-await slice.setTheme('CrimsonRed');
+await slice.setTheme('DARK');
 ```
 
-The theme name matches the CSS file name in `src/Themes/`.
+```javascript title="Back to light"
+await slice.setTheme('LIGHT');
+```
 
 ## Using Theme Tokens in Components
 
-Use CSS variables inside component styles to stay themeable:
+Use the CSS variables inside component styles so components stay themeable across LIGHT and DARK:
 
 ```css title="Theme tokens in a component"
 .card {
@@ -78,25 +165,17 @@ Use CSS variables inside component styles to stay themeable:
 
 ## Guidelines
 
-- Prefer a single accent (`--primary-color`) and derive borders via opacity
-- Keep contrast strong for text and interactive states
-- Use background tokens for surface hierarchy instead of custom colors
-
-## Suggested Theme Tokens
-
-Optional tokens you can add for richer UIs:
-
-- `--accent-color`
-- `--primary-color-shade`
-- `--secondary-color` and `--secondary-color-contrast`
-- `--success-contrast`, `--warning-contrast`, `--danger-contrast`
+- Prefer the accent tokens (`--primary-color`, `--secondary-color`) and derive borders via opacity using the `*-rgb` variants
+- Keep contrast strong for text and interactive states by pairing each color with its `*-contrast` token
+- Use the background tokens (`--primary-background-color`, `--secondary-background-color`, `--tertiary-background-color`) for surface hierarchy instead of custom hex colors
+- Define all 15 required variables in every theme so the Theme Creator and Visual components behave consistently
 
 ## Troubleshooting
 
 :::tip
-If a component looks off, check that your background and font tokens are present and readable.
+If a component looks off, check that your background and font tokens are present and readable in the active theme.
 :::
 
 :::warning
-Avoid hard-coded hex values in component CSS when a theme token exists.
+Avoid hard-coded hex values in component CSS when a theme token exists. Hard-coded colors will not adapt when switching between LIGHT and DARK.
 :::

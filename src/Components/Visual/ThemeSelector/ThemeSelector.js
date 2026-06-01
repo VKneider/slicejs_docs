@@ -21,10 +21,6 @@ export default class ThemeSelector extends HTMLElement {
     });
   }
 
-  get activeTheme() {
-    return this.currentTheme;
-  }
-
   syncActive() {
     this.$light.classList.toggle('active', this.currentTheme === 'LIGHT');
     this.$dark.classList.toggle('active', this.currentTheme === 'DARK');

@@ -1,202 +1,145 @@
+const _sliceDeprecated = new Set();
+function deprecate(oldName, newName) {
+  if (_sliceDeprecated.has(oldName)) return;
+  _sliceDeprecated.add(oldName);
+  console.warn(`[Slice] "${oldName}" is deprecated; use "${newName}" instead.`);
+}
+
 export default class Tabs extends HTMLElement {
-   constructor(props) {
-      super();
-      slice.attachTemplate(this);
-      
-      this.$headerWrapper = this.querySelector('.tabs-header-wrapper');
-      this.$listContainer = this.querySelector('.tab-list-container');
-      this.$tabList = this.querySelector('.tab-list');
-      this.$tabContent = this.querySelector('.tab-content');
-      this.$highlight = this.querySelector('.tab-highlight');
-      this.$prevBtn = this.querySelector('.tab-scroll-btn.prev');
-      this.$nextBtn = this.querySelector('.tab-scroll-btn.next');
-      
-      this.items = [];
-      this.orientation = 'vertical'; // 'vertical' or 'horizontal'
-      
-      this.checkOverflow = this.checkOverflow.bind(this);
-      
-      slice.controller.setComponentProps(this, props);
-   }
-
-   set items(value) {
-      this._items = value;
-      this.render();
-   }
-
-   get items() {
-      return this._items || [];
-   }
-
-   async init() {
-      // styles will handle orientation
-      this.classList.add(this.orientation);
-      this.render();
-      
-      // Setup Scroll Buttons
-      this.$prevBtn.addEventListener('click', () => this.scrollTabs('left'));
-      this.$nextBtn.addEventListener('click', () => this.scrollTabs('right'));
-      
-      this.$tabList.addEventListener('scroll', this.checkOverflow);
-      window.addEventListener('resize', this.checkOverflow);
-      
-      // Initial check
-      requestAnimationFrame(this.checkOverflow);
-   }
-   
-   scrollTabs(direction) {
-      const scrollAmount = 200;
-      if (direction === 'left') {
-          this.$tabList.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-      } else {
-          this.$tabList.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  static props = {
+    items: {
+      type: 'array',
+      default: [],
+      required: false,
+      items: {
+        type: 'object',
+        schema: {
+          id: { type: 'string', required: true },
+          label: { type: 'string', required: true }
+        }
       }
-   }
+    },
+    activeTab: {
+      type: 'string',
+      default: '',
+      required: false
+    },
+    // Canonical change handler. `onTabChange` is kept as a deprecated alias.
+    onChange: {
+      type: 'function',
+      default: null,
+      required: false
+    },
+    onTabChange: {
+      type: 'function',
+      default: null,
+      required: false
+    }
+  };
 
-   centerTab(targetBtn) {
-      const list = this.$tabList;
-      // Calculations relative to the scroll container
-      // We want: (btn.offsetLeft) - (list.width / 2) + (btn.width / 2)
-      
-      const scrollLeft = targetBtn.offsetLeft - (list.clientWidth / 2) + (targetBtn.offsetWidth / 2);
-      
-      list.scrollTo({
-         left: scrollLeft,
-         behavior: 'smooth'
-      });
-   }
-   
-   checkOverflow() {
-       const { scrollLeft, scrollWidth, clientWidth } = this.$tabList;
-       
-       // Show prev button if scrolled right
-       if (scrollLeft > 0) {
-           this.$prevBtn.classList.add('visible');
-       } else {
-           this.$prevBtn.classList.remove('visible');
-       }
-       
-       // Show next button if can scroll right
-       // Use a small buffer (1px) for float calculation issues
-       if (scrollWidth - scrollLeft - clientWidth > 1) {
-           this.$nextBtn.classList.add('visible');
-       } else {
-           this.$nextBtn.classList.remove('visible');
-       }
-   }
+  constructor(props) {
+    super();
+    slice.attachTemplate(this);
 
-   render() {
-      if (!this.items || this.items.length === 0) return;
-      
-      this.$tabList.innerHTML = '';
-      this.$tabContent.innerHTML = '';
-      
-      // Re-add highlight element
-      this.$tabList.appendChild(this.$highlight);
+    this.$list = this.querySelector('.slice_tabs_list');
 
+    this._items = [];
+    this._activeTab = '';
+    this._onChange = null;
 
-      this.items.forEach((item, index) => {
-         // Create Tab Button
-         const btn = document.createElement('button');
-         btn.className = 'tab-button';
-         btn.innerHTML = `<span>${item.label}</span>`;
-         btn.setAttribute('role', 'tab');
-         btn.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
-         btn.dataset.index = index; // Robust selection
-         
-         if (index === 0) btn.classList.add('active');
-         
-         btn.addEventListener('click', (e) => this.switchTab(index, e.currentTarget));
-         
-         this.$tabList.appendChild(btn);
+    slice.controller.setComponentProps(this, props || {});
+  }
 
-         // Create Panel
-         const panel = document.createElement('div');
-         panel.className = 'tab-panel';
-         panel.id = `panel-${index}`;
-         panel.setAttribute('role', 'tabpanel');
-         panel.setAttribute('aria-labelledby', `tab-${index}`);
-         panel.hidden = index !== 0;
-         
-         if (index === 0) panel.classList.add('active');
+  init() {
+    this.renderTabs();
+  }
 
-         if (item.content instanceof Node) {
-            panel.appendChild(item.content);
-         } else {
-            panel.innerHTML = item.content;
-         }
-         
-         this.$tabContent.appendChild(panel);
-      });
+  get items() {
+    return this._items;
+  }
 
-      // Initial Highlight Position
-      requestAnimationFrame(() => {
-          const firstBtn = this.$tabList.querySelector('.tab-button');
-          if(firstBtn) this.updateHighlight(firstBtn);
-      });
-      
-      // Update highlight on resize
-      window.addEventListener('resize', () => {
-         const activeBtn = this.$tabList.querySelector('.tab-button.active');
-         if(activeBtn) this.updateHighlight(activeBtn);
-      });
-   }
+  set items(value) {
+    this._items = Array.isArray(value) ? value : [];
+    this.renderTabs();
+  }
 
-   switchTab(index, btn) {
-      // Update Buttons
-      const buttons = this.$tabList.querySelectorAll('.tab-button');
-      buttons.forEach(b => {
-         b.classList.remove('active');
-         b.setAttribute('aria-selected', 'false');
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
-      
-      // Ensure button is visible in scroll view with custom logic to avoid page jumps
-      this.centerTab(btn);
+  get activeTab() {
+    return this._activeTab;
+  }
 
-      // Update Panels
-      const panels = this.$tabContent.querySelectorAll('.tab-panel');
-      panels.forEach((p, i) => {
-         if (i === index) {
-            p.hidden = false;
-            p.classList.add('active');
-         } else {
-            p.hidden = true;
-            p.classList.remove('active');
-         }
-      });
+  set activeTab(value) {
+    this._activeTab = typeof value === 'string' ? value : '';
+    this.updateActiveButton();
+  }
 
-      this.updateHighlight(btn);
-      
-      // Emit event
-      this.dispatchEvent(new CustomEvent('tab-change', {
-          detail: { index: index }
-      }));
-   }
-   
-   activateTab(index) {
-       console.log('Activating tab', index);
-       // Use data attribute selector which is safer than ID
-       const btn = this.$tabList.querySelector(`.tab-button[data-index="${index}"]`);
-       if (btn) {
-           this.switchTab(index, btn);
-       } else {
-           console.warn('Tab button not found for index', index);
-       }
-   }
+  get onChange() {
+    return this._onChange;
+  }
 
-   updateHighlight(targetBtn) {
-      if(this.classList.contains('vertical')) {
-         this.$highlight.style.height = `${targetBtn.offsetHeight}px`;
-         this.$highlight.style.width = `3px`;
-         this.$highlight.style.transform = `translateY(${targetBtn.offsetTop}px)`;
-      } else {
-         this.$highlight.style.width = `${targetBtn.offsetWidth}px`;
-         this.$highlight.style.height = `3px`;
-         this.$highlight.style.transform = `translateX(${targetBtn.offsetLeft}px)`;
+  set onChange(value) {
+    if (typeof value === 'function') this._onChange = value;
+  }
+
+  // Deprecated alias for onChange.
+  get onTabChange() {
+    return this._onChange;
+  }
+
+  set onTabChange(value) {
+    if (typeof value === 'function') {
+      this._onChange ??= value;
+      deprecate('onTabChange', 'onChange');
+    }
+  }
+
+  renderTabs() {
+    if (!this.$list) return;
+
+    this.$list.innerHTML = '';
+    if (!Array.isArray(this._items) || this._items.length === 0) return;
+
+    const hasActive = this._items.some((item) => item && item.id === this._activeTab);
+    if (!hasActive) {
+      const first = this._items[0];
+      this._activeTab = first && typeof first.id === 'string' ? first.id : '';
+    }
+
+    this._items.forEach((item) => {
+      if (!item || typeof item.id !== 'string' || typeof item.label !== 'string') {
+        return;
       }
-   }
+
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'slice_tab_button';
+      button.textContent = item.label;
+      button.setAttribute('role', 'tab');
+      button.dataset.tabId = item.id;
+
+      button.addEventListener('click', () => {
+        this.activeTab = item.id;
+        if (typeof this._onChange === 'function') {
+          this._onChange(item.id);
+        }
+        this.dispatchEvent(new CustomEvent('tab-change', { detail: { tabId: item.id } }));
+      });
+
+      this.$list.appendChild(button);
+    });
+
+    this.updateActiveButton();
+  }
+
+  updateActiveButton() {
+    if (!this.$list) return;
+
+    const buttons = this.$list.querySelectorAll('.slice_tab_button');
+    buttons.forEach((button) => {
+      const isActive = button.dataset.tabId === this._activeTab;
+      button.classList.toggle('active', isActive);
+      button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+  }
 }
 
 customElements.define('slice-tabs', Tabs);

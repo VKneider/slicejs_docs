@@ -39,7 +39,7 @@ When a component is built:
 export default class Button extends HTMLElement {
   static props = {
     value: { type: 'string', default: 'Button' },
-    onClickCallback: { type: 'function', default: null }
+    onClick: { type: 'function', default: null }
   };
 
   constructor(props) {
@@ -49,7 +49,7 @@ export default class Button extends HTMLElement {
 
     // Props are now available
     console.log(this.value);
-    console.log(this.onClickCallback);
+    console.log(this.onClick);
   }
 }
 ```
@@ -150,7 +150,7 @@ const grid = await slice.build('Grid', {
 ```javascript title="Function props"
 const button = await slice.build('Button', {
   value: 'Save',
-  onClickCallback: () => this.save()
+  onClick: () => this.save()
 });
 ```
 

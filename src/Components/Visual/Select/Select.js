@@ -1,32 +1,44 @@
+const _sliceDeprecated = new Set();
+function deprecate(oldName, newName) {
+   if (_sliceDeprecated.has(oldName)) return;
+   _sliceDeprecated.add(oldName);
+   console.warn(`[Slice] "${oldName}" is deprecated; use "${newName}" instead.`);
+}
+
 export default class Select extends HTMLElement {
 
    static props = {
-      options: { 
-         type: 'array', 
-         default: [], 
-         required: false 
+      options: {
+         type: 'array',
+         default: [],
+         required: false
       },
-      disabled: { 
-         type: 'boolean', 
-         default: false 
+      disabled: {
+         type: 'boolean',
+         default: false
       },
-      label: { 
-         type: 'string', 
-         default: '', 
-         required: false 
+      label: {
+         type: 'string',
+         default: '',
+         required: false
       },
-      multiple: { 
-         type: 'boolean', 
-         default: false 
+      multiple: {
+         type: 'boolean',
+         default: false
       },
-      visibleProp: { 
-         type: 'string', 
-         default: 'text', 
-         required: false 
+      visibleProp: {
+         type: 'string',
+         default: 'text',
+         required: false
       },
-      onOptionSelect: { 
-         type: 'function', 
-         default: null 
+      // Canonical change handler. `onOptionSelect` is kept as a deprecated alias.
+      onChange: {
+         type: 'function',
+         default: null
+      },
+      onOptionSelect: {
+         type: 'function',
+         default: null
       }
    };
 
@@ -40,17 +52,31 @@ export default class Select extends HTMLElement {
       this.$menu = this.querySelector('.slice_select_menu');
       this.$caret = this.querySelector('.caret');
 
-      this.$selectContainer.addEventListener('click', () => {
-         if (!this.disabled) {
-            this.$menu.classList.toggle('menu_open');
-            this.$caret.classList.toggle('caret_open');
+      this.$selectContainer.setAttribute('role', 'button');
+      this.$selectContainer.setAttribute('tabindex', '0');
+      this.$selectContainer.setAttribute('aria-haspopup', 'listbox');
+      this.$selectContainer.setAttribute('aria-expanded', 'false');
+      this.$menu.setAttribute('role', 'listbox');
+
+      const toggle = () => {
+         if (!this.disabled) this._setOpen(!this.$menu.classList.contains('menu_open'));
+      };
+      this.$selectContainer.addEventListener('click', toggle);
+      this.$selectContainer.addEventListener('keydown', (event) => {
+         if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            toggle();
+         } else if (event.key === 'Escape') {
+            this._setOpen(false);
          }
       });
-      
-      this.$dropdown.addEventListener('mouseleave', () => {
-         this.$menu.classList.remove('menu_open');
-         this.$caret.classList.remove('caret_open');
-      });
+
+      // Close on outside click instead of a hover-only `mouseleave`, which never
+      // fired on touch devices and left the menu stuck open after a tap.
+      this._onOutsideClick = (event) => {
+         if (!this.contains(event.target)) this._setOpen(false);
+      };
+      document.addEventListener('click', this._onOutsideClick);
 
       this._value = [];
 
@@ -59,6 +85,16 @@ export default class Select extends HTMLElement {
 
    init() {
       // Static props ensure all properties have default values
+   }
+
+   _setOpen(open) {
+      this.$menu.classList.toggle('menu_open', open);
+      this.$caret.classList.toggle('caret_open', open);
+      this.$selectContainer.setAttribute('aria-expanded', open ? 'true' : 'false');
+   }
+
+   beforeDestroy() {
+      document.removeEventListener('click', this._onOutsideClick);
    }
 
    get options() {
@@ -79,26 +115,34 @@ export default class Select extends HTMLElement {
       values.forEach((option) => {
          const opt = document.createElement('div');
          opt.textContent = option[this.visibleProp];
+         opt.setAttribute('role', 'option');
+         opt.setAttribute('aria-selected', 'false');
          opt.addEventListener('click', async () => {
-            if (this.$menu.querySelector('.active') && !this.multiple) {
-               this.$menu.querySelector('.active').classList.remove('active');
+            const previousActive = this.$menu.querySelector('.active');
+            if (previousActive && !this.multiple) {
+               previousActive.classList.remove('active');
+               previousActive.setAttribute('aria-selected', 'false');
             }
 
             if (this._value.length === 1 && !this.multiple) {
                this.removeOptionFromValue(this._value[0]);
                this.addSelectedOption(option);
-               if (this.onOptionSelect) await this.onOptionSelect.call(this);
+               opt.classList.add('active');
+               opt.setAttribute('aria-selected', 'true');
+               if (this._onChange) await this._onChange.call(this);
                return;
             }
 
             if (this.isObjectInArray(option, this._value).found) {
                this.removeOptionFromValue(option);
                opt.classList.remove('active');
+               opt.setAttribute('aria-selected', 'false');
             } else {
                this.addSelectedOption(option);
                opt.classList.add('active');
+               opt.setAttribute('aria-selected', 'true');
             }
-            if (this.onOptionSelect) await this.onOptionSelect.call(this);
+            if (this._onChange) await this._onChange.call(this);
          });
          this.$menu.appendChild(opt);
       });
@@ -132,7 +176,7 @@ export default class Select extends HTMLElement {
       this.updateSelectLabel();
       this.$label.classList.add('slice_select_value');
       if (!this.multiple) {
-         this.$menu.classList.remove('menu_open');
+         this._setOpen(false);
       }
    }
 
@@ -223,12 +267,24 @@ export default class Select extends HTMLElement {
       }
    }
 
+   get onChange() {
+      return this._onChange;
+   }
+
+   set onChange(value) {
+      if (typeof value === 'function') this._onChange = value;
+   }
+
+   // Deprecated alias for onChange.
    get onOptionSelect() {
-      return this._onOptionSelect;
+      return this._onChange;
    }
 
    set onOptionSelect(value) {
-      this._onOptionSelect = value;
+      if (typeof value === 'function') {
+         this._onChange ??= value;
+         deprecate('onOptionSelect', 'onChange');
+      }
    }
 
    isObjectInArray(objeto, arreglo) {

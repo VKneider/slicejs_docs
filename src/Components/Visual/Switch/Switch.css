@@ -1,4 +1,6 @@
-.slice_switch {
+/* Encapsulated under the custom element so the switch styles never leak. */
+
+slice-switch .slice_switch {
   --button-width: calc(var(--button-height) * 2);
   --button-height: 1.8em;
   --toggle-diameter: calc(var(--button-width) / 3);
@@ -7,43 +9,50 @@
   );
   --toggle-shadow-offset: 10px;
   --toggle-wider: 1.8em;
-}
-
-.slice_switch_container {
-  width: fit-content;
-}
-
-.slice_switch {
   display: flex;
   flex-direction: row;
   align-items: center;
   user-select: none;
 }
 
-.switch_label {
+slice-switch .slice_switch_container {
+  width: fit-content;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--secondary-background-color) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary-color-shade) 60%, transparent);
+  margin: 10px 0;
+}
+
+slice-switch .slice_switch_container:hover {
+  border-color: color-mix(in srgb, var(--primary-color) 55%, transparent);
+}
+
+slice-switch .switch_label {
   margin: 5px;
   font-family: var(--font-family);
   color: var(--font-primary-color);
+  font-size: 0.95rem;
 }
 
-.slider {
+slice-switch .slider {
   cursor: pointer;
   display: inline-block;
   width: var(--button-width);
   height: var(--button-height);
   background-color: var(--secondary-background-color);
-  border: var(--slice-border) solid var(--primary-color);
+  border: var(--slice-border) solid color-mix(in srgb, var(--primary-color) 75%, transparent);
   border-radius: calc(var(--button-height) / 2);
   position: relative;
   transition: 0.3s all ease-in-out;
 }
 
-.slider::after {
+slice-switch .slider::after {
   content: "";
   display: inline-block;
   width: var(--toggle-diameter);
   height: var(--toggle-diameter);
-  background-color: #fff;
+  background-color: #ffffff;
   border-radius: calc(var(--toggle-diameter) / 2);
   position: absolute;
   top: var(--button-toggle-offset);
@@ -51,12 +60,12 @@
   transition: 0.3s all ease-in-out;
 }
 
-.slice_switch input[type="checkbox"]:checked + .slider {
+slice-switch .slice_switch input[type="checkbox"]:checked + .slider {
   background-color: var(--success-color);
   border: var(--slice-border) solid var(--success-color);
 }
 
-.slice_switch input[type="checkbox"]:checked + .slider::after {
+slice-switch .slice_switch input[type="checkbox"]:checked + .slider::after {
   transform: translateX(
     calc(
       var(--button-width) - var(--toggle-diameter) - var(--button-toggle-offset)
@@ -64,11 +73,11 @@
   );
 }
 
-.slice_switch input[type="checkbox"] {
+slice-switch .slice_switch input[type="checkbox"] {
   display: none;
 }
 
-.disabled {
+slice-switch .disabled {
   border-color: var(--disabled-color);
   background-color: var(--primary-color-shade);
   color: var(--disabled-color);

@@ -22,18 +22,47 @@ export default class DropDown extends HTMLElement {
       this.$label = this.querySelector('.slice_dropdown_label');
       this.$caret = this.querySelector('.caret');
 
-      this.addEventListener('click', () => {
+      this.$dropdown.setAttribute('role', 'button');
+      this.$dropdown.setAttribute('tabindex', '0');
+      this.$dropdown.setAttribute('aria-haspopup', 'true');
+      this.$dropdown.setAttribute('aria-expanded', 'false');
+
+      this.$dropdown.addEventListener('click', (event) => {
+         event.stopPropagation();
          this.toggleDrop();
       });
-
-      this.$box.addEventListener('mouseleave', () => {
-         this.closeDrop();
+      this.$dropdown.addEventListener('keydown', (event) => {
+         if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            this.toggleDrop();
+         } else if (event.key === 'Escape') {
+            this.closeDrop();
+         }
       });
+
+      // Closing is handled by re-toggling the trigger, picking an option, or the
+      // outside-click listener wired in init(). A `mouseleave` auto-close was
+      // removed: it fired a synthetic close on touch taps and also closed the box
+      // the instant the pointer crossed the gap from the trigger to the options.
 
       slice.controller.setComponentProps(this, props);
    }
 
-   init() {}
+   init() {
+      this._outsideClickListener = (event) => {
+         if (!this.contains(event.target)) {
+            this.closeDrop();
+         }
+      };
+
+      document.addEventListener('click', this._outsideClickListener);
+   }
+
+   beforeDestroy() {
+      if (this._outsideClickListener) {
+         document.removeEventListener('click', this._outsideClickListener);
+      }
+   }
 
    get label() {
       return this._label;
@@ -49,27 +78,39 @@ export default class DropDown extends HTMLElement {
    }
 
    set options(values) {
-      this._options = values;
-      values.forEach((element) => {
+      this._options = Array.isArray(values) ? values : [];
+      this.$box.innerHTML = '';
+
+      this._options.forEach((element) => {
          const div = document.createElement('div');
          const e = document.createElement('a');
-         e.addEventListener('click', () => {
+
+         const text = element?.text || element?.label || '';
+         const href = element?.href || element?.path || '#';
+
+         e.addEventListener('click', async (event) => {
+            if (element?.path && slice?.router?.navigate) {
+               event.preventDefault();
+               await slice.router.navigate(element.path);
+            }
             this.closeDrop();
          });
-         e.textContent = element.text;
-         e.href = element.href;
+         e.textContent = text;
+         e.href = href;
          div.appendChild(e);
          this.$box.appendChild(div);
       });
    }
 
    toggleDrop() {
-      this.$box.classList.toggle('slice_dropbox_open');
+      const open = this.$box.classList.toggle('slice_dropbox_open');
       this.$caret.classList.toggle('caret_open');
+      this.$dropdown.setAttribute('aria-expanded', open ? 'true' : 'false');
    }
    closeDrop() {
       this.$box.classList.remove('slice_dropbox_open');
       this.$caret.classList.remove('caret_open');
+      this.$dropdown.setAttribute('aria-expanded', 'false');
    }
 }
 

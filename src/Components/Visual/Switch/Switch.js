@@ -1,29 +1,41 @@
+const _sliceDeprecated = new Set();
+function deprecate(oldName, newName) {
+   if (_sliceDeprecated.has(oldName)) return;
+   _sliceDeprecated.add(oldName);
+   console.warn(`[Slice] "${oldName}" is deprecated; use "${newName}" instead.`);
+}
+
 export default class Switch extends HTMLElement {
 
    static props = {
-      checked: { 
-         type: 'boolean', 
-         default: false 
+      checked: {
+         type: 'boolean',
+         default: false
       },
-      disabled: { 
-         type: 'boolean', 
-         default: false 
+      disabled: {
+         type: 'boolean',
+         default: false
       },
-      label: { 
-         type: 'string', 
-         default: null 
+      label: {
+         type: 'string',
+         default: null
       },
-      labelPlacement: { 
-         type: 'string', 
-         default: 'right' 
+      labelPlacement: {
+         type: 'string',
+         default: 'right'
       },
-      customColor: { 
-         type: 'string', 
-         default: null 
+      customColor: {
+         type: 'object',
+         default: null
       },
-      toggle: { 
-         type: 'function', 
-         default: null 
+      // Canonical change handler. `toggle` is kept as a deprecated alias.
+      onChange: {
+         type: 'function',
+         default: null
+      },
+      toggle: {
+         type: 'function',
+         default: null
       }
    };
 
@@ -32,12 +44,6 @@ export default class Switch extends HTMLElement {
       slice.attachTemplate(this);
       this.$switch = this.querySelector('.slice_switch');
       this.$checkbox = this.querySelector('input');
-      
-      // Handle toggle callback
-      if (props.toggle) {
-         this.toggle = props.toggle;
-         this.$checkbox.addEventListener('click', () => this.toggle());
-      }
 
       slice.controller.setComponentProps(this, props);
    }
@@ -65,6 +71,7 @@ export default class Switch extends HTMLElement {
       // Set up change listener
       this.$checkbox.addEventListener('change', (e) => {
          this.checked = e.target.checked;
+         if (this._onChange) this._onChange(this.checked);
       });
    }
 
@@ -98,7 +105,10 @@ export default class Switch extends HTMLElement {
    }
 
    applyCustomColor() {
-      this.style.setProperty('--success-color', this.customColor);
+      const v = this._customColor;
+      if (typeof v === 'string') deprecate('customColor: string', 'customColor { accent }');
+      const accent = typeof v === 'string' ? v : (v && (v.accent ?? v.background)) || null;
+      if (accent) this.style.setProperty('--success-color', accent);
    }
 
    // Getters and setters for dynamic prop updates
@@ -168,12 +178,24 @@ export default class Switch extends HTMLElement {
       }
    }
 
+   get onChange() {
+      return this._onChange;
+   }
+
+   set onChange(value) {
+      if (typeof value === 'function') this._onChange = value;
+   }
+
+   // Deprecated alias for onChange.
    get toggle() {
-      return this._toggle;
+      return this._onChange;
    }
 
    set toggle(value) {
-      this._toggle = value;
+      if (typeof value === 'function') {
+         this._onChange ??= value;
+         deprecate('toggle', 'onChange');
+      }
    }
 }
 

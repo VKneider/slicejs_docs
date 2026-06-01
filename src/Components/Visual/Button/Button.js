@@ -1,22 +1,36 @@
+// Warns once per deprecated prop name (kept module-scoped so each component
+// reports a given alias only once per session).
+const _sliceDeprecated = new Set();
+function deprecate(oldName, newName) {
+   if (_sliceDeprecated.has(oldName)) return;
+   _sliceDeprecated.add(oldName);
+   console.warn(`[Slice] "${oldName}" is deprecated; use "${newName}" instead.`);
+}
+
 export default class Button extends HTMLElement {
 
    static props = {
-      value: { 
-         type: 'string', 
-         default: 'Button', 
-         required: false 
+      value: {
+         type: 'string',
+         default: 'Button',
+         required: false
       },
-      onClickCallback: { 
-         type: 'function', 
-         default: null 
+      // Canonical click handler. `onClickCallback` is kept as a deprecated alias.
+      onClick: {
+         type: 'function',
+         default: null
       },
-      customColor: { 
-         type: 'object', 
-         default: null 
+      onClickCallback: {
+         type: 'function',
+         default: null
       },
-      icon: { 
-         type: 'object', 
-         default: null 
+      customColor: {
+         type: 'object',
+         default: null
+      },
+      icon: {
+         type: 'object',
+         default: null
       }
    };
 
@@ -26,11 +40,15 @@ export default class Button extends HTMLElement {
       this.$value = this.querySelector('.slice_button_value');
       this.$button = this.querySelector('.slice_button');
       this.$container = this.querySelector('.slice_button_container');
-      
-      if (props.onClickCallback) {
-         this.onClickCallback = props.onClickCallback;
-         this.$container.addEventListener('click', async () => await this.onClickCallback());
-      }
+
+      // type="button" prevents accidental form submission when used inside a form.
+      this.$button.setAttribute('type', 'button');
+
+      // Listener is attached unconditionally; the handler is resolved at click
+      // time so it works whether it arrived via onClick or the legacy alias.
+      this.$container.addEventListener('click', async () => {
+         if (this._onClick) await this._onClick();
+      });
 
       slice.controller.setComponentProps(this, props);
    }
@@ -38,12 +56,28 @@ export default class Button extends HTMLElement {
    async init() {
       if (this.icon) {
          this.$icon = await slice.build('Icon', {
-            name: this.icon.name,           // ✅ CORREGIDO: usar this.icon.name
-            iconStyle: this.icon.iconStyle, // ✅ AÑADIDO: pasar también iconStyle
+            name: this.icon.name,
+            iconStyle: this.icon.iconStyle,
             size: '20px',
             color: 'currentColor',
          });
          this.$button.insertBefore(this.$icon, this.$value);
+      }
+   }
+
+   get onClick() {
+      return this._onClick;
+   }
+
+   set onClick(value) {
+      if (typeof value === 'function') this._onClick = value;
+   }
+
+   // Deprecated alias for onClick.
+   set onClickCallback(value) {
+      if (typeof value === 'function') {
+         this._onClick ??= value;
+         deprecate('onClickCallback', 'onClick');
       }
    }
 
@@ -65,27 +99,35 @@ export default class Button extends HTMLElement {
    set value(value) {
       this._value = value;
       this.$value.textContent = value;
+      // Keep an accessible name even for icon-only buttons.
+      if (value) this.$button.setAttribute('aria-label', value);
    }
 
    get customColor() {
       return this._customColor;
    }
 
+   // Canonical shape: { background, text }. Legacy { button, label } still works.
    set customColor(value) {
       this._customColor = value;
       if (!value) return;
 
-      // Mantener la misma API: { button: 'color', label: 'color' }
-      if (value.button) {
-         this.$button.style.backgroundColor = value.button;
-         this.$button.style.borderColor = value.button;
+      if (value.button || value.label) {
+         deprecate('customColor { button, label }', 'customColor { background, text }');
       }
-      if (value.label) {
-         this.$button.style.color = value.label;
-         this.$value.style.color = value.label;
-         // También aplicar al icono si existe
+
+      const background = value.background ?? value.button;
+      const text = value.text ?? value.label;
+
+      if (background) {
+         this.$button.style.backgroundColor = background;
+         this.$button.style.borderColor = background;
+      }
+      if (text) {
+         this.$button.style.color = text;
+         this.$value.style.color = text;
          if (this.$icon) {
-            this.$icon.style.color = value.label;
+            this.$icon.style.color = text;
          }
       }
    }

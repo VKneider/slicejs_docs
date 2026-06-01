@@ -1,10 +1,25 @@
+// Warns once per deprecated prop name (kept module-scoped so each component
+// reports a given alias only once per session).
+const _sliceDeprecated = new Set();
+function deprecate(oldName, newName) {
+   if (_sliceDeprecated.has(oldName)) return;
+   _sliceDeprecated.add(oldName);
+   console.warn(`[Slice] "${oldName}" is deprecated; use "${newName}" instead.`);
+}
+
 export default class Loading extends HTMLElement {
 
    static props = {
-      isActive: { 
-         type: 'boolean', 
-         default: false, 
-         required: false 
+      // Canonical busy-state flag. `isActive` is kept as a deprecated alias.
+      active: {
+         type: 'boolean',
+         default: false,
+         required: false
+      },
+      isActive: {
+         type: 'boolean',
+         default: false,
+         required: false
       },
       container: {
          type: 'object',
@@ -114,16 +129,27 @@ export default class Loading extends HTMLElement {
       this._originalOverflow = undefined;
    }
 
-   get isActive() {
+   // Canonical busy-state flag. Toggling it shows/hides the spinner.
+   get active() {
       return this._isActive;
    }
 
-   set isActive(value) {
+   set active(value) {
       if (value === true && !this._isActive) {
          this.start();
       } else if (value === false && this._isActive) {
          this.stop();
       }
+   }
+
+   // Deprecated alias for `active`.
+   get isActive() {
+      return this._isActive;
+   }
+
+   set isActive(value) {
+      if (value) deprecate('isActive', 'active');
+      this.active = value;
    }
 
    get container() {

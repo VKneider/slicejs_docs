@@ -3,24 +3,26 @@
    color: var(--font-primary-color);
    user-select: none;
    cursor: pointer;
-   width: fit-content;
+   width: 100%;
    display: flex;
    flex-direction: row-reverse;
    align-items: center;
-   padding: 10px;
-   border-radius: var(--border-radius-slice);
+   justify-content: flex-end;
+   gap: 6px;
+   padding: 7px 10px;
+   border-radius: 8px;
 }
 .slice_tree_item .caret {
    color: var(--primary-color);
-   margin-right: 5px;
+   margin-right: 0;
    transform: rotate(-90deg);
 }
 .slice_tree_item .caret_open {
    transform: rotate(0deg);
 }
 .container {
-   margin-left: 14px;
-   border-left: 2px solid var(--primary-color);
+   margin-left: 10px;
+   border-left: 1px solid color-mix(in srgb, var(--primary-color-shade) 65%, transparent);
    height: 0;
    overflow: hidden;
    transition: height 0.3s ease;
@@ -31,6 +33,6 @@
 }
 
 .slice_tree_item:hover {
-   background-color: #ffffff25;
+   background-color: color-mix(in srgb, var(--secondary-background-color) 75%, transparent);
    color: var(--primary-color);
 }

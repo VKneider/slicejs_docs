@@ -161,8 +161,8 @@ export default class Navbar extends HTMLElement {
    async addButton(value, addTo) {
       if (!value.color) {
          value.color = {
-            label: 'var(--primary-color-rgb)',
-            button: 'var(--primary-background-color)',
+            text: 'var(--primary-color-rgb)',
+            background: 'var(--primary-background-color)',
          };
       }
       
@@ -170,7 +170,7 @@ export default class Navbar extends HTMLElement {
          value: value.value,
          customColor: value.color,
          icon: value.icon,
-         onClickCallback: value.onClickCallback,
+         onClick: value.onClick ?? value.onClickCallback,
       });
       
       addTo.appendChild(button);

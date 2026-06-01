@@ -49,6 +49,7 @@ export default class Table extends HTMLElement {
       const headRow = document.createElement('tr');
       headers.forEach((header) => {
         const th = document.createElement('th');
+        th.setAttribute('scope', 'col');
         th.textContent = header;
         headRow.appendChild(th);
       });
@@ -59,7 +60,7 @@ export default class Table extends HTMLElement {
       const tr = document.createElement('tr');
       (Array.isArray(row) ? row : []).forEach((cell, index) => {
         const td = document.createElement('td');
-        td.innerHTML = cell;
+        this.renderCell(td, cell);
         if (headers[index]) {
           td.dataset.label = headers[index];
         }
@@ -67,6 +68,22 @@ export default class Table extends HTMLElement {
       });
       this.$body.appendChild(tr);
     });
+  }
+
+  // Cells are rendered safely by default. A cell can be:
+  //  - a DOM Node            -> appended as-is (recommended for rich content)
+  //  - { html: '<...>' }     -> explicit opt-in for TRUSTED raw HTML
+  //  - anything else         -> coerced to text via textContent (escaped, no XSS)
+  // Plain strings are NO LONGER injected as HTML, which removes the XSS vector
+  // when rows contain unsanitized/user data.
+  renderCell(td, cell) {
+    if (cell instanceof Node) {
+      td.appendChild(cell);
+    } else if (cell && typeof cell === 'object' && typeof cell.html === 'string') {
+      td.innerHTML = cell.html;
+    } else {
+      td.textContent = cell === null || cell === undefined ? '' : String(cell);
+    }
   }
 }
 
