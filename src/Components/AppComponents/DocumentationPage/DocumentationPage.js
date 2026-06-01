@@ -62,6 +62,7 @@ const themeSelector = await slice.build('ThemeSelector');
          onClickCallback: async (item) => {
             if (item.path) {
                await slice.router.navigate(item.path);
+               window.scrollTo({ top: 0, behavior: 'smooth' });
             }
          },
       });
