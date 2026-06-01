@@ -65,14 +65,32 @@ slice-select .slice_select_menu {
 }
 
 slice-select .slice_select_menu div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   color: var(--font-primary-color);
   cursor: pointer;
   padding: 10px;
 }
 
+/* Checkmark on the right, shown only on selected options — makes the selected
+   state obvious, especially in multi-select. */
+slice-select .slice_select_menu div::after {
+  content: "";
+  flex: 0 0 auto;
+  width: 6px;
+  height: 11px;
+  margin: 0 2px 3px 0;
+  border: solid var(--primary-color);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0.5);
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
 slice-select .slice_select_menu div:hover {
-  color: var(--secondary-color-contrast);
-  background-color: var(--secondary-color);
+  background-color: color-mix(in srgb, var(--primary-color) 10%, transparent);
 }
 
 slice-select .menu_open {
@@ -93,8 +111,15 @@ slice-select .menu_open::-webkit-scrollbar-thumb {
   border-radius: var(--border-radius-slice);
 }
 
-slice-select .active {
-  background-color: var(--secondary-background-color);
+slice-select .slice_select_menu div.active {
+  color: var(--primary-color);
+  font-weight: 600;
+  background-color: color-mix(in srgb, var(--primary-color) 18%, transparent);
+}
+
+slice-select .slice_select_menu div.active::after {
+  opacity: 1;
+  transform: rotate(45deg) scale(1);
 }
 
 slice-select .slice_select_container .caret {

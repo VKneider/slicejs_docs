@@ -115,7 +115,9 @@ export default class SliceMCPDocumentation extends HTMLElement {
             };
 
             const headers = lines.length > 0 ? clean(lines[0]) : [];
-            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            // Cells carry trusted inline markup (code/bold) from the parser, so
+            // they use Table's explicit { html } opt-in (Table escapes plain strings).
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => ({ html: formatCell(cell) })));
             const table = await slice.build('Table', { headers, rows });
             container.appendChild(table);
          }
@@ -175,7 +177,9 @@ export default class SliceMCPDocumentation extends HTMLElement {
             };
 
             const headers = lines.length > 0 ? clean(lines[0]) : [];
-            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            // Cells carry trusted inline markup (code/bold) from the parser, so
+            // they use Table's explicit { html } opt-in (Table escapes plain strings).
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => ({ html: formatCell(cell) })));
             const table = await slice.build('Table', { headers, rows });
             container.appendChild(table);
          }
@@ -235,7 +239,9 @@ export default class SliceMCPDocumentation extends HTMLElement {
             };
 
             const headers = lines.length > 0 ? clean(lines[0]) : [];
-            const rows = lines.slice(2).map((line) => clean(line).map((cell) => formatCell(cell)));
+            // Cells carry trusted inline markup (code/bold) from the parser, so
+            // they use Table's explicit { html } opt-in (Table escapes plain strings).
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => ({ html: formatCell(cell) })));
             const table = await slice.build('Table', { headers, rows });
             container.appendChild(table);
          }

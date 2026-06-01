@@ -15,6 +15,14 @@ export default class Button extends HTMLElement {
          default: 'Button',
          required: false
       },
+      // Visual style, all derived from theme tokens. `filled` preserves the
+      // original solid look.
+      variant: {
+         type: 'string',
+         default: 'filled',
+         required: false,
+         allowedValues: ['filled', 'outlined', 'ghost', 'soft']
+      },
       // Canonical click handler. `onClickCallback` is kept as a deprecated alias.
       onClick: {
          type: 'function',
@@ -90,6 +98,20 @@ export default class Button extends HTMLElement {
       if (!this.$icon) return;
       this.$icon.name = value.name;
       this.$icon.iconStyle = value.iconStyle;
+   }
+
+   get variant() {
+      return this._variant;
+   }
+
+   set variant(value) {
+      const allowed = ['filled', 'outlined', 'ghost', 'soft'];
+      const next = allowed.includes(value) ? value : 'filled';
+      if (this._variant) {
+         this.$button.classList.remove('slice_button--' + this._variant);
+      }
+      this._variant = next;
+      this.$button.classList.add('slice_button--' + next);
    }
 
    get value() {
