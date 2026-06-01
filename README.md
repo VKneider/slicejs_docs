@@ -3,7 +3,7 @@
   <h1>Slice.js Documentation</h1>
   <p>Comprehensive documentation site for the Slice.js web framework</p>
   <p>
-    <a href="https://slice-js-docs.vercel.app/"><strong>View Live Documentation »</strong></a>
+    <a href="https://slicejs.com/"><strong>View Live Documentation »</strong></a>
     <br />
     <a href="https://github.com/VKneider/slice.js">Framework Repository</a>
     ·
