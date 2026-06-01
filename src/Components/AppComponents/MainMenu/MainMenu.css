@@ -13,22 +13,26 @@ slice-mainmenu {
   overflow-x: hidden;
 }
 .slice_menu {
-margin-top: 72px;
-width: 100%;
-height: calc(100% - 72px);
-overflow-y: auto;
-overflow-x: hidden;
-padding: 10px;
+  position: relative;
+  margin-top: 72px;
+  width: 100%;
+  height: calc(100% - 72px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px;
 }
 
 .slice_menu_button {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: calc(var(--docs-navbar-height, 72px) + 10px);
+  left: 16px;
   visibility: hidden;
   width: min-content;
   cursor: pointer;
-  padding: 20px;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--primary-color);
+  z-index: 101;
 }
 
 .menu_title {
@@ -38,9 +42,30 @@ padding: 10px;
 .slice_close_menu {
   visibility: hidden;
   position: absolute;
-  padding: 20px;
+  padding: 12px;
   top: 0;
   right: 0;
+  cursor: pointer;
+  z-index: 110;
+}
+
+.slice_menu_overlay {
+  position: fixed;
+  top: var(--docs-navbar-height, 72px);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 90;
+  display: none;
+}
+
+.slice_menu_overlay.is-visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 slice-treeview .simple_treeview::-webkit-scrollbar,
@@ -54,15 +79,19 @@ slice-mainmenu::-webkit-scrollbar:horizontal  {
 
 @media only screen and (max-width: 770px) {
   slice-mainmenu {
-    top: 0px;
+    top: var(--docs-navbar-height, 72px);
+    height: calc(100% - var(--docs-navbar-height, 72px));
     position: fixed;
-    z-index: 100000;
+    z-index: 99;
     display: flex;
     width: 0%;
   }
 
+  .slice_menu_overlay {
+    display: block;
+  }
+
   .slice_menu_button {
-    right: 100%;
     visibility: visible;
   }
 
