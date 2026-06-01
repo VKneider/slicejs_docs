@@ -1,6 +1,276 @@
 slice-whatisslice {
-  font-family: var(--font-family);
+  display: block;
   color: var(--font-primary-color);
+  font-family: var(--font-family);
+}
+
+slice-whatisslice .whatisslice-container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 28px 20px 56px;
+  display: grid;
+  gap: 24px;
+}
+
+slice-whatisslice .manifesto-hero,
+slice-whatisslice .narrative-card,
+slice-whatisslice .ecosystem-card,
+slice-whatisslice .collaborate-section,
+slice-whatisslice .closing-motto {
+  border-radius: var(--border-radius-slice);
+  border: 1px solid var(--primary-color-shade);
+  background:
+    linear-gradient(165deg, rgba(var(--primary-color-rgb), 0.08), transparent 42%),
+    var(--primary-background-color);
+}
+
+slice-whatisslice .manifesto-hero {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 22px;
+  padding: 24px;
+  align-items: stretch;
+}
+
+slice-whatisslice .eyebrow {
+  margin: 0 0 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary-color);
+}
+
+slice-whatisslice h1,
+slice-whatisslice h2,
+slice-whatisslice h3 {
+  color: var(--primary-color);
+  margin: 0;
+}
+
+slice-whatisslice .hero-copy h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.08;
+  margin-bottom: 12px;
+}
+
+slice-whatisslice p {
+  margin: 0;
+  line-height: 1.62;
+}
+
+slice-whatisslice .hero-copy {
+  display: grid;
+  gap: 12px;
+}
+
+slice-whatisslice .hero-emphasis {
+  border-left: 3px solid var(--primary-color);
+  padding-left: 12px;
+}
+
+slice-whatisslice .hero-tags {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+slice-whatisslice .hero-tags li {
+  border-radius: 999px;
+  border: 1px solid var(--primary-color-shade);
+  padding: 6px 12px;
+  background: var(--secondary-background-color);
+  font-size: 0.88rem;
+}
+
+slice-whatisslice .hero-visual {
+  display: flex;
+  min-height: 100%;
+}
+
+slice-whatisslice .logo-panel {
+  width: 100%;
+  border-radius: calc(var(--border-radius-slice) - 2px);
+  border: 1px solid rgba(var(--primary-color-rgb), 0.32);
+  background:
+    radial-gradient(circle at 20% 20%, rgba(var(--primary-color-rgb), 0.3), transparent 55%),
+    radial-gradient(circle at 85% 80%, rgba(var(--primary-color-rgb), 0.24), transparent 60%),
+    var(--secondary-background-color);
+  display: grid;
+  place-content: center;
+  gap: 10px;
+  text-align: center;
+  padding: 18px;
+}
+
+slice-whatisslice .slice-logo {
+  width: min(210px, 100%);
+  margin: 0 auto;
+  filter: brightness(0) saturate(100%) drop-shadow(0 0 0.3rem var(--primary-color));
+}
+
+slice-whatisslice .logo-caption {
+  font-size: 0.9rem;
+  color: var(--font-secondary-color);
+}
+
+slice-whatisslice .narrative-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+slice-whatisslice .narrative-card {
+  padding: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+slice-whatisslice .narrative-card h2 {
+  font-size: 1.18rem;
+}
+
+slice-whatisslice .ecosystem-section,
+slice-whatisslice .collaborate-section {
+  display: grid;
+  gap: 14px;
+}
+
+slice-whatisslice .section-head {
+  display: grid;
+  gap: 8px;
+}
+
+slice-whatisslice .ecosystem-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+slice-whatisslice .ecosystem-card {
+  padding: 18px;
+  display: grid;
+  gap: 10px;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+slice-whatisslice .ecosystem-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--primary-color);
+  box-shadow: 0 12px 24px rgba(var(--primary-color-rgb), 0.14);
+}
+
+slice-whatisslice .ecosystem-subtitle {
+  font-size: 0.76rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+slice-whatisslice .ecosystem-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+slice-whatisslice .ecosystem-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-slice);
+  background: var(--primary-color);
+  color: var(--primary-color-contrast);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 9px 13px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+slice-whatisslice .ecosystem-link:hover {
+  transform: translateY(-1px);
+}
+
+slice-whatisslice .ecosystem-link:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+slice-whatisslice .collaborate-section {
+  padding: 20px;
+}
+
+slice-whatisslice .collaborate-section ul {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+}
+
+slice-whatisslice .closing-motto {
+  padding: 24px;
+  text-align: center;
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+@keyframes sliceReveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+slice-whatisslice .manifesto-hero,
+slice-whatisslice .narrative-card,
+slice-whatisslice .ecosystem-card,
+slice-whatisslice .collaborate-section,
+slice-whatisslice .closing-motto {
+  animation: sliceReveal 0.46s ease both;
+}
+
+@media (max-width: 900px) {
+  slice-whatisslice .manifesto-hero {
+    grid-template-columns: 1fr;
+  }
+
+  slice-whatisslice .narrative-strip,
+  slice-whatisslice .ecosystem-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  slice-whatisslice .whatisslice-container {
+    padding: 20px 14px 44px;
+  }
+
+  slice-whatisslice .manifesto-hero,
+  slice-whatisslice .collaborate-section,
+  slice-whatisslice .closing-motto,
+  slice-whatisslice .narrative-card,
+  slice-whatisslice .ecosystem-card {
+    padding: 16px;
+  }
+
+  slice-whatisslice .ecosystem-actions {
+    display: grid;
+    gap: 8px;
+  }
+
+  slice-whatisslice .ecosystem-link {
+    width: 100%;
+  }
 }
 
 slice-whatisslice .whatisslice-container {
