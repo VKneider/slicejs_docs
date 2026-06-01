@@ -1,14 +1,26 @@
+const _sliceDeprecated = new Set();
+function deprecate(oldName, newName) {
+   if (_sliceDeprecated.has(oldName)) return;
+   _sliceDeprecated.add(oldName);
+   console.warn(`[Slice] "${oldName}" is deprecated; use "${newName}" instead.`);
+}
+
 export default class TreeView extends HTMLElement {
 
    static props = {
-      items: { 
-         type: 'array', 
-         default: [], 
-         required: false 
+      items: {
+         type: 'array',
+         default: [],
+         required: false
       },
-      onClickCallback: { 
-         type: 'function', 
-         default: null 
+      // Canonical handler. `onClickCallback` is kept as a deprecated alias.
+      onClick: {
+         type: 'function',
+         default: null
+      },
+      onClickCallback: {
+         type: 'function',
+         default: null
       }
    };
 
@@ -16,13 +28,8 @@ export default class TreeView extends HTMLElement {
       super();
       slice.attachTemplate(this);
 
-      console.log(props);
       this.$treeView = this.querySelector('.simple_treeview');
       slice.controller.setComponentProps(this, props);
-
-      if (props.onClickCallback) {
-         this.onClickCallback = props.onClickCallback;
-      }
    }
 
    async init() {
@@ -39,9 +46,25 @@ export default class TreeView extends HTMLElement {
       return this._items;
    }
 
+   get onClick() {
+      return this._onClick;
+   }
+
+   set onClick(value) {
+      if (typeof value === 'function') this._onClick = value;
+   }
+
+   // Deprecated alias for onClick.
+   set onClickCallback(value) {
+      if (typeof value === 'function') {
+         this._onClick ??= value;
+         deprecate('onClickCallback', 'onClick');
+      }
+   }
+
    async setTreeItem(item) {
-      if (this.onClickCallback) {
-         item.onClickCallback = this.onClickCallback;
+      if (this._onClick) {
+         item.onClick = this._onClick;
       }
 
       const treeItem = await slice.build('TreeItem', item);

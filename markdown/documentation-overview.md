@@ -76,21 +76,21 @@ const createHero = async () => {
   if (ctaContainer) {
     const primary = await slice.build('Button', {
       value: 'Start with Installation',
-      onClickCallback: async () => {
+      onClick: async () => {
         await slice.router.navigate('/Documentation/Installation');
       }
     });
 
     const secondary = await slice.build('Button', {
       value: 'Explore Components',
-      onClickCallback: async () => {
+      onClick: async () => {
         await slice.router.navigate('/Documentation/Visual');
       }
     });
 
     const cli = await slice.build('Button', {
       value: 'CLI Commands',
-      onClickCallback: async () => {
+      onClick: async () => {
         await slice.router.navigate('/Documentation/Commands');
       }
     });

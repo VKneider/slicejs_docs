@@ -72,12 +72,6 @@ export default class Icon extends HTMLElement {
       slice.controller.setComponentProps(this, props);
    }
 
-   get random() {
-      return this.$icon.classList;
-   }
-
-   set random(value) {}
-
    init() {
       if (this._name && !NAMES_SET.has(this._name)) {
          console.warn(

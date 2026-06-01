@@ -1,11 +1,14 @@
-.slice_select_dropdown {
+/* Encapsulated under the custom element so the select styles never leak. */
+
+slice-select .slice_select_dropdown {
   font-family: var(--font-family);
   max-width: 100%;
   margin-bottom: 25px;
   margin-top: 25px;
   position: relative;
 }
-.slice_select_container {
+
+slice-select .slice_select_container {
   cursor: pointer;
   display: flex;
   padding: 10px;
@@ -15,7 +18,13 @@
   justify-content: space-between;
   align-items: center;
 }
-.slice_select {
+
+slice-select .slice_select_container:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-color) 55%, transparent);
+}
+
+slice-select .slice_select {
   pointer-events: none;
   color: var(--font-primary-color);
   width: 100%;
@@ -23,18 +32,21 @@
   outline: none;
   border: none;
 }
-.slice_select_label {
+
+slice-select .slice_select_label {
   color: var(--primary-color);
   position: absolute;
   transition: all 0.5s;
   user-select: none;
 }
-.slice_select_value {
+
+slice-select .slice_select_value {
   scale: 0.8;
   transform: translateY(-200%);
   transition: all 0.5s;
 }
-.slice_select_menu {
+
+slice-select .slice_select_menu {
   display: none;
   border: var(--slice-border) solid var(--primary-color);
   list-style: none;
@@ -50,35 +62,41 @@
   background-color: var(--primary-background-color);
   border-radius: var(--border-radius-slice);
   box-shadow: 0 0 10px 0 #00000050;
-  div {
-    color: var(--font-primary-color);
-    cursor: pointer;
-    padding: 10px;
-    &:hover {
-      color: var(--secondary-color-contrast);
-      background-color: var(--secondary-color);
-    }
-  }
 }
-.menu_open {
+
+slice-select .slice_select_menu div {
+  color: var(--font-primary-color);
+  cursor: pointer;
+  padding: 10px;
+}
+
+slice-select .slice_select_menu div:hover {
+  color: var(--secondary-color-contrast);
+  background-color: var(--secondary-color);
+}
+
+slice-select .menu_open {
   display: block;
-  overflow-y: scroll;
+  overflow-y: auto;
   min-height: min-content;
-  max-height: 400%;
+  max-height: 240px;
   visibility: visible;
   opacity: 1;
 }
-.menu_open::-webkit-scrollbar {
-  width: 5px;
+
+slice-select .menu_open::-webkit-scrollbar {
+  width: 6px;
 }
-.menu_open::-webkit-scrollbar-thumb {
+
+slice-select .menu_open::-webkit-scrollbar-thumb {
   background: var(--secondary-color);
   border-radius: var(--border-radius-slice);
 }
-.active {
-  /* color: var(--primary-color); */
+
+slice-select .active {
   background-color: var(--secondary-background-color);
 }
-.slice_select_container .caret {
+
+slice-select .slice_select_container .caret {
   border-top-color: var(--primary-color);
 }

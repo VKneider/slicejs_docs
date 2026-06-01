@@ -3,7 +3,6 @@ export default class MultiRoute extends HTMLElement {
       super();
       this.props = props;
       this.renderedComponents = new Map(); // Cache para componentes renderizados
-      this.registeredRoutes = []; // Track routes registered in Router
    }
 
    init() {
@@ -11,63 +10,11 @@ export default class MultiRoute extends HTMLElement {
          slice.logger.logError('MultiRoute', 'No valid routes array provided in props.');
          return;
       }
-
-      // ✅ Registrar todas las rutas en el Router principal
-      this.registerRoutesInRouter();
-   }
-
-   /**
-    * Registra las rutas del MultiRoute en el Router principal
-    * Esto permite que funcionen con navigate(), guards, y metadata
-    */
-   registerRoutesInRouter() {
-      if (!slice.router) {
-         slice.logger.logWarning('MultiRoute', 'Router not available yet, skipping route registration');
-         return;
-      }
-
-      this.props.routes.forEach(route => {
-         // Agregar la ruta al pathToRouteMap del Router
-         const routeConfig = {
-            path: route.path,
-            component: route.component,
-            metadata: route.metadata || {},
-            fullPath: route.path,
-            // Marcar que esta ruta viene de un MultiRoute
-            source: 'MultiRoute',
-            multiRouteId: this.sliceId
-         };
-
-         // Solo registrar si no existe ya
-         if (!slice.router.pathToRouteMap.has(route.path)) {
-            slice.router.pathToRouteMap.set(route.path, routeConfig);
-            this.registeredRoutes.push(route.path);
-            
-            slice.logger.logInfo(
-               'MultiRoute', 
-               `Registered route: ${route.path} -> ${route.component}${route.metadata ? ' (with metadata)' : ''}`
-            );
-         } else {
-            slice.logger.logWarning(
-               'MultiRoute',
-               `Route ${route.path} already registered, skipping`
-            );
-         }
-      });
-   }
-
-   /**
-    * Desregistra las rutas cuando el MultiRoute se destruye
-    */
-   unregisterRoutesFromRouter() {
-      if (!slice.router) return;
-
-      this.registeredRoutes.forEach(path => {
-         slice.router.pathToRouteMap.delete(path);
-         slice.logger.logInfo('MultiRoute', `Unregistered route: ${path}`);
-      });
-      
-      this.registeredRoutes = [];
+      // NOTE: MultiRoute does NOT register its routes in the Router. `routes.js` is the single
+      // source of truth for what the Router knows. The Router resolves the URL on first load /
+      // refresh / deep-link BEFORE this component mounts, so a path that only lived inside a
+      // MultiRoute would 404 on a direct load — incoherent. Declare every section path in
+      // `routes.js` (pointing at the shell); MultiRoute just chooses which one to show.
    }
 
    /**
@@ -75,8 +22,14 @@ export default class MultiRoute extends HTMLElement {
     * Soporta rutas estáticas y dinámicas con parámetros ${param}
     */
    matchRoute(currentPath) {
-      // 1. Primero intentar match exacto (más rápido para rutas estáticas)
-      const exactMatch = this.props.routes.find((route) => route.path === currentPath);
+      // Normalize trailing slash so '/about/' behaves like '/about' (keep root '/').
+      currentPath = currentPath.length > 1 ? currentPath.replace(/\/+$/, '') : currentPath;
+
+      // 1. Match exacto, case-insensitive ('/About' coincide con '/about')
+      const lowerPath = currentPath.toLowerCase();
+      const exactMatch = this.props.routes.find(
+         (route) => (route.path.length > 1 ? route.path.replace(/\/+$/, '') : route.path).toLowerCase() === lowerPath
+      );
       if (exactMatch) {
          return { route: exactMatch, params: {} };
       }
@@ -114,9 +67,10 @@ export default class MultiRoute extends HTMLElement {
          return '([^/]+)'; // Captura cualquier caracter excepto /
       }) + '$';
 
-      return { 
-         regex: new RegExp(regexPattern), 
-         paramNames 
+      return {
+         // 'i': case-insensitive path matching. Captured param values keep their original case.
+         regex: new RegExp(regexPattern, 'i'),
+         paramNames
       };
    }
 
@@ -153,10 +107,9 @@ export default class MultiRoute extends HTMLElement {
             }
 
             // Crear el componente con los parámetros y metadata de la ruta
-            const newComponent = await slice.build(component, { 
-               sliceId: component,
-               params: params, // ✅ Pasar los parámetros al componente
-               metadata: metadata || {} // ✅ Pasar metadata al componente
+            const newComponent = await slice.build(component, {
+               params: params,
+               metadata: metadata || {}
             });
             
             this.innerHTML = '';
@@ -206,7 +159,6 @@ export default class MultiRoute extends HTMLElement {
     * Cleanup cuando el componente se destruye
     */
    destroy() {
-      this.unregisterRoutesFromRouter();
       this.renderedComponents.clear();
       this.innerHTML = '';
    }

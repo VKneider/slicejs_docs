@@ -55,7 +55,7 @@ export default class ContactSection extends HTMLElement {
   async init() {
     const button = await slice.build('Button', {
       value: 'Back Home',
-      onClickCallback: () => slice.router.navigate('/')
+      onClick: () => slice.router.navigate('/')
     });
     this.$cta.appendChild(button);
   }

@@ -308,23 +308,6 @@ slice-card:hover .card-media-content, .slice-card:hover .card-media-content {
   display: none;
 }
 
-.card-progress {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 3px;
-  background: var(--card-accent);
-  border-radius: 0 0 var(--card-radius) var(--card-radius);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s ease;
-  z-index: 5;
-}
-
-.card-progress[data-progress] {
-  transform: scaleX(calc(var(--progress, 0) / 100));
-}
-
 .slice-card.interactive {
   user-select: none;
 }

@@ -1,25 +1,32 @@
+const _sliceDeprecated = new Set();
+function deprecate(oldName, newName) {
+   if (_sliceDeprecated.has(oldName)) return;
+   _sliceDeprecated.add(oldName);
+   console.warn(`[Slice] "${oldName}" is deprecated; use "${newName}" instead.`);
+}
+
 export default class Checkbox extends HTMLElement {
 
    static props = {
-      checked: { 
-         type: 'boolean', 
-         default: false 
+      checked: {
+         type: 'boolean',
+         default: false
       },
-      disabled: { 
-         type: 'boolean', 
-         default: false 
+      disabled: {
+         type: 'boolean',
+         default: false
       },
-      label: { 
-         type: 'string', 
-         default: null 
+      label: {
+         type: 'string',
+         default: null
       },
-      labelPlacement: { 
-         type: 'string', 
-         default: 'right' 
+      labelPlacement: {
+         type: 'string',
+         default: 'right'
       },
-      customColor: { 
-         type: 'string', 
-         default: null 
+      customColor: {
+         type: 'object',
+         default: null
       }
    };
 
@@ -94,7 +101,10 @@ export default class Checkbox extends HTMLElement {
    }
 
    applyCustomColor() {
-      this.style.setProperty('--success-color', this.customColor);
+      const v = this._customColor;
+      if (typeof v === 'string') deprecate('customColor: string', 'customColor { accent }');
+      const accent = typeof v === 'string' ? v : (v && (v.accent ?? v.background)) || null;
+      if (accent) this.style.setProperty('--success-color', accent);
    }
 
    // Getters and setters for dynamic prop updates

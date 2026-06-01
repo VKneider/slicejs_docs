@@ -1,63 +1,33 @@
 export default class Link extends HTMLElement {
-  static props = {
-    path: { type: 'string', default: '#' },
-    classes: { type: 'string', default: '' },
-    text: { type: 'string', default: '' }
-  };
+   constructor(props = {}) {
+      super();
+      this.props = props;
+      this.render(props);
+      this.init();
+   }
 
-  constructor(props = {}) {
-    super();
-    slice.attachTemplate(this);
-    this.$anchor = this.querySelector('.slice-link');
+   init() {
+      this.addEventListener('click', this.onClick);
+   }
 
-    slice.controller.setComponentProps(this, props);
-    this.debuggerProps = ['path', 'classes', 'text'];
-  }
+   async onClick(event) {
+      event.preventDefault();
+      const path = this.querySelector('a')?.getAttribute('href');
+      if (path) slice.router.navigate(path);
+   }
 
-  async init() {
-    this.updateLink();
-    this.addEventListener('click', this.onClick.bind(this));
-  }
-
-  updateLink() {
-    if (!this.$anchor) return;
-    this.$anchor.setAttribute('href', this.path || '#');
-    this.$anchor.textContent = this.text || '';
-    this.$anchor.className = `slice-link ${this.classes || ''}`.trim();
-  }
-
-  async onClick(event) {
-    event.preventDefault();
-    const path = this.path || this.$anchor?.getAttribute('href') || '#';
-    slice.router.navigate(path);
-  }
-
-  set path(value) {
-    this._path = value;
-    this.updateLink();
-  }
-
-  get path() {
-    return this._path;
-  }
-
-  set classes(value) {
-    this._classes = value;
-    this.updateLink();
-  }
-
-  get classes() {
-    return this._classes;
-  }
-
-  set text(value) {
-    this._text = value;
-    this.updateLink();
-  }
-
-  get text() {
-    return this._text;
-  }
+   // Built with DOM APIs (setAttribute / textContent) instead of an innerHTML
+   // template so a `path` like `javascript:...` or text containing markup can't
+   // inject into the document.
+   render(props = {}) {
+      const { path = '#', classes = '', text = '' } = props;
+      const anchor = document.createElement('a');
+      anchor.setAttribute('href', path);
+      anchor.setAttribute('data-route', '');
+      if (classes) anchor.className = classes;
+      anchor.textContent = text;
+      this.replaceChildren(anchor);
+   }
 }
 
 customElements.define('slice-link', Link);

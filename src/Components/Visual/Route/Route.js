@@ -3,7 +3,6 @@ export default class Route extends HTMLElement {
       super();
       this.props = props;
       this.rendered = false;
-      this.registeredInRouter = false;
    }
 
    init() {
@@ -11,65 +10,14 @@ export default class Route extends HTMLElement {
          this.props.path = ' ';
       }
 
+      // If no component is given, derive it from routes.js (the Router's pathToRouteMap).
       if (!this.props.component) {
          this.props.component = slice.router.pathToRouteMap.get(this.props.path)?.component || ' ';
       }
-
-      // ✅ Registrar la ruta en el Router principal
-      this.registerRouteInRouter();
-   }
-
-   /**
-    * Registra la ruta del Route en el Router principal
-    * Esto permite que funcione con navigate(), guards, y metadata
-    */
-   registerRouteInRouter() {
-      if (!slice.router) {
-         slice.logger.logWarning('Route', 'Router not available yet, skipping route registration');
-         return;
-      }
-
-      if (!this.props.path || this.props.path === ' ') {
-         return;
-      }
-
-      // Agregar la ruta al pathToRouteMap del Router
-      const routeConfig = {
-         path: this.props.path,
-         component: this.props.component,
-         metadata: this.props.metadata || {},
-         fullPath: this.props.path,
-         // Marcar que esta ruta viene de un Route component
-         source: 'Route',
-         routeId: this.sliceId
-      };
-
-      // Solo registrar si no existe ya
-      if (!slice.router.pathToRouteMap.has(this.props.path)) {
-         slice.router.pathToRouteMap.set(this.props.path, routeConfig);
-         this.registeredInRouter = true;
-         
-         slice.logger.logInfo(
-            'Route', 
-            `Registered route: ${this.props.path} -> ${this.props.component}${this.props.metadata ? ' (with metadata)' : ''}`
-         );
-      } else {
-         slice.logger.logWarning(
-            'Route',
-            `Route ${this.props.path} already registered, skipping`
-         );
-      }
-   }
-
-   /**
-    * Desregistra la ruta cuando el Route se destruye
-    */
-   unregisterRouteFromRouter() {
-      if (!slice.router || !this.registeredInRouter) return;
-
-      slice.router.pathToRouteMap.delete(this.props.path);
-      slice.logger.logInfo('Route', `Unregistered route: ${this.props.path}`);
-      this.registeredInRouter = false;
+      // NOTE: Route does NOT register itself in the Router. `routes.js` is the single source of
+      // truth for what the Router knows. The Router resolves the URL on first load / refresh /
+      // deep-link BEFORE this component mounts, so a path that only lived in a Route would 404
+      // on a direct load. Declare every path in `routes.js`.
    }
 
    get path() {
@@ -93,10 +41,13 @@ export default class Route extends HTMLElement {
     * Soporta rutas estáticas y dinámicas con parámetros ${param}
     */
    matchesCurrentPath() {
-      const currentPath = window.location.pathname;
+      // Normalize trailing slash so '/about/' behaves like '/about' (keep root '/').
+      const raw = window.location.pathname;
+      const currentPath = raw.length > 1 ? raw.replace(/\/+$/, '') : raw;
+      const routePath = this.props.path.length > 1 ? this.props.path.replace(/\/+$/, '') : this.props.path;
 
-      // 1. Match exacto (rutas estáticas)
-      if (this.props.path === currentPath) {
+      // 1. Match exacto, case-insensitive ('/About' coincide con '/about')
+      if (routePath.toLowerCase() === currentPath.toLowerCase()) {
          return { matches: true, params: {} };
       }
 
@@ -130,9 +81,10 @@ export default class Route extends HTMLElement {
          return '([^/]+)'; // Captura cualquier caracter excepto /
       }) + '$';
 
-      return { 
-         regex: new RegExp(regexPattern), 
-         paramNames 
+      return {
+         // 'i': case-insensitive path matching. Captured param values keep their original case.
+         regex: new RegExp(regexPattern, 'i'),
+         paramNames
       };
    }
 
@@ -220,7 +172,6 @@ export default class Route extends HTMLElement {
     * Cleanup cuando el componente se destruye
     */
    destroy() {
-      this.unregisterRouteFromRouter();
       this.removeComponent();
    }
 }

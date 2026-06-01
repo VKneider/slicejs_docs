@@ -30,7 +30,8 @@
 .nav_bar_menu {
   width: 100%;
   overflow-y: hidden;
-  overflow-x: scroll;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   align-items: center;
   justify-content: center;

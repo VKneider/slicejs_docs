@@ -7,12 +7,12 @@ slice-codevisualizer {
   position: relative;
   font-size: smaller;
   max-width: 100%;
-  background-color: var(--secondary-background-color);
-  border: 1px solid var(--primary-color);
-  padding: 15px 10px 10px;
+  background: color-mix(in srgb, var(--secondary-background-color) 78%, var(--primary-background-color));
+  border: 1px solid color-mix(in srgb, var(--primary-color-shade) 60%, transparent);
+  padding: 14px 10px 10px;
   border-radius: var(--border-radius-slice, 10px);
   overflow-x: auto;
-  margin: 15px 0;
+  margin: 8px 0;
 }
 
 .codevisualizer pre {
@@ -34,8 +34,8 @@ slice-codevisualizer {
 /* Botón de copiar */
 .copy-button {
   position: absolute;
-  top: 5px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
   padding: 4px 8px;
   font-size: 12px;
   background-color: var(--primary-color);
@@ -43,7 +43,7 @@ slice-codevisualizer {
   border: none;
   border-radius: var(--border-radius-slice, 4px);
   cursor: pointer;
-  opacity: 0.7;
+  opacity: 0.85;
   transition: opacity 0.2s ease, background-color 0.2s ease;
   z-index: 1;
 }

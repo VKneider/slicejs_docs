@@ -1,22 +1,27 @@
-.eye {
+/* Encapsulated under the custom element so the input styles never leak. */
+
+slice-input .eye {
   color: var(--primary-color);
   position: absolute;
   user-select: none;
   cursor: pointer;
   right: 10px;
 }
-.input_area::-webkit-inner-spin-button {
+
+slice-input .input_area::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-.input_area {
+
+slice-input .input_area {
   color: var(--font-primary-color);
   width: 100%;
   background: none;
   outline: none;
   border: none;
 }
-.slice_input {
+
+slice-input .slice_input {
   display: flex;
   align-items: center;
   padding: 10px;
@@ -29,46 +34,52 @@
   margin-top: 25px;
   position: relative;
 }
-.slice_input_placeholder {
+
+slice-input .slice_input_placeholder {
   color: var(--primary-color);
   position: absolute;
   transition: all 0.5s;
   user-select: none;
   cursor: text;
 }
-.slice_input_value {
+
+slice-input .slice_input_value {
   scale: 0.8;
   transform: translateY(-200%);
   transition: all 0.5s;
 }
-.required,
-.required label,
-.required input {
+
+slice-input .required,
+slice-input .required label,
+slice-input .required input {
   border-color: var(--danger-color);
   --primary-color: var(--danger-color);
 }
 
-.disabled,
-.disabled label {
+slice-input .disabled,
+slice-input .disabled label {
   border-color: var(--disabled-color);
   cursor: not-allowed;
   pointer-events: none;
   color: var(--disabled-color);
-  div {
-    background-color: var(--primary-color-shade);
-  }
 }
-.color_input {
+
+slice-input .disabled div {
+  background-color: var(--primary-color-shade);
+}
+
+slice-input .color_input {
   border-radius: 100%;
   height: 50px;
   width: 50px;
 }
-.message {
+
+slice-input .message {
   color: var(--danger-color);
   font-size: small;
 }
 
-@keyframes shake {
+@keyframes slice_input_shake {
   0% {
     transform: translateX(0);
   }
@@ -86,7 +97,7 @@
   }
 }
 
-.error {
+slice-input .error {
   --primary-color: var(--danger-color);
-  animation: shake 0.5s infinite; /* Establece la animación y su duración */
+  animation: slice_input_shake 0.5s infinite;
 }

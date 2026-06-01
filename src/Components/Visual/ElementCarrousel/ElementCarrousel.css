@@ -1,6 +1,10 @@
-.carousel {
+/* Encapsulated under the custom element so the carrousel styles never leak.
+   Colors use theme tokens (the old hardcoded blue/--accent fallbacks were
+   off-brand and referenced variables the theme system does not define). */
+
+slice-element-carrousel .slice_carousel {
     position: relative;
-    height: 100%; /* Height handled by content */
+    height: 100%;
     width: 100%;
     margin: 0 auto;
     display: flex;
@@ -8,14 +12,14 @@
     justify-content: center;
 }
 
-.carousel-track-container {
+slice-element-carrousel .slice_carousel_track_container {
     overflow: hidden;
     width: 100%;
     height: 100%;
-    max-width: 900px; /* Limit width */
+    max-width: 900px;
 }
 
-.carousel-track {
+slice-element-carrousel .slice_carousel_track {
     display: flex;
     padding: 0;
     margin: 0;
@@ -24,30 +28,28 @@
     width: 100%;
 }
 
-.carousel-slide {
+slice-element-carrousel .slice_carousel_slide {
     min-width: 100%;
     width: 100%;
     flex-shrink: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 1rem; 
+    padding: 1rem;
     box-sizing: border-box;
 }
 
-/* Make inner content fit nicely */
-.carousel-slide > * {
+slice-element-carrousel .slice_carousel_slide > * {
     max-width: 100%;
-    width: 100%; /* Or specifically responsive */
+    width: 100%;
 }
 
-/* Buttons */
-.carousel-button {
+slice-element-carrousel .slice_carousel_btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.8);
-    color: var(--primary-color, #333);
+    background: color-mix(in srgb, var(--primary-color) 82%, transparent);
+    color: var(--primary-color-contrast);
     border: none;
     cursor: pointer;
     z-index: 10;
@@ -58,51 +60,42 @@
     justify-content: center;
     align-items: center;
     font-size: 1.2rem;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--primary-color) 35%, transparent);
     transition: background 0.3s, transform 0.2s;
 }
 
-.carousel-button:hover {
-    background: var(--primary-color, #333);
-    color: var(--primary-color-contrast, white);
+slice-element-carrousel .slice_carousel_btn:hover {
+    background: var(--primary-color);
+    color: var(--primary-color-contrast);
     transform: translateY(-50%) scale(1.1);
 }
 
-.prev-btn {
+slice-element-carrousel .slice_carousel_prev {
     left: 10px;
 }
 
-.next-btn {
+slice-element-carrousel .slice_carousel_next {
     right: 10px;
 }
 
-/* Indicators */
-.carousel-nav {
+slice-element-carrousel .slice_carousel_nav {
     display: flex;
     justify-content: center;
     padding: 10px 0;
     gap: 10px;
 }
 
-.carousel-indicator {
+slice-element-carrousel .slice_carousel_indicator {
     border: 0;
     border-radius: 50%;
     width: 12px;
     height: 12px;
-    background: rgba(0,0,0,0.3);
+    background: color-mix(in srgb, var(--primary-color) 30%, transparent);
     cursor: pointer;
-    transition: background 0.3s;
+    transition: background 0.3s, transform 0.3s;
 }
 
-.carousel-indicator.current-slide {
-    background: var(--primary-color, #333);
+slice-element-carrousel .slice_carousel_indicator.current-slide {
+    background: var(--primary-color);
     transform: scale(1.2);
-}
-
-/* Dark mode support if vars are used */
-@media (prefers-color-scheme: dark) {
-    .carousel-button {
-         background: rgba(0, 0, 0, 0.6);
-         color: white;
-    }
 }

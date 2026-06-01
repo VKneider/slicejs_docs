@@ -258,5 +258,3 @@ export default class CodeVisualizer extends HTMLElement {
 }
 
 customElements.define('slice-codevisualizer', CodeVisualizer);
-
-   

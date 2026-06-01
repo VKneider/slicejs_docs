@@ -1,24 +1,36 @@
+const _sliceDeprecated = new Set();
+function deprecate(oldName, newName) {
+   if (_sliceDeprecated.has(oldName)) return;
+   _sliceDeprecated.add(oldName);
+   console.warn(`[Slice] "${oldName}" is deprecated; use "${newName}" instead.`);
+}
+
 export default class TreeItem extends HTMLElement {
 
    static props = {
-      value: { 
-         type: 'string', 
-         default: '', 
-         required: false 
+      value: {
+         type: 'string',
+         default: '',
+         required: false
       },
-      path: { 
-         type: 'string', 
-         default: '', 
-         required: false 
+      path: {
+         type: 'string',
+         default: '',
+         required: false
       },
-      onClickCallback: { 
-         type: 'function', 
-         default: null 
+      // Canonical handler. `onClickCallback` is kept as a deprecated alias.
+      onClick: {
+         type: 'function',
+         default: null
       },
-      items: { 
-         type: 'array', 
-         default: [], 
-         required: false 
+      onClickCallback: {
+         type: 'function',
+         default: null
+      },
+      items: {
+         type: 'array',
+         default: [],
+         required: false
       }
    };
 
@@ -28,13 +40,26 @@ export default class TreeItem extends HTMLElement {
 
       this.$item = this.querySelector('.slice_tree_item');
 
-      slice.controller.setComponentProps(this, props);
+      this.$item.addEventListener('click', async () => {
+         if (this._onClick) await this._onClick(this);
+      });
 
-      if (props.onClickCallback) {
-         this.onClickCallback = props.onClickCallback;
-         this.$item.addEventListener('click', async () => {
-            await this.onClickCallback(this);
-         });
+      slice.controller.setComponentProps(this, props);
+   }
+
+   get onClick() {
+      return this._onClick;
+   }
+
+   set onClick(value) {
+      if (typeof value === 'function') this._onClick = value;
+   }
+
+   // Deprecated alias for onClick.
+   set onClickCallback(value) {
+      if (typeof value === 'function') {
+         this._onClick ??= value;
+         deprecate('onClickCallback', 'onClick');
       }
    }
 
@@ -108,12 +133,9 @@ export default class TreeItem extends HTMLElement {
          // Guardar el estado en localStorage
          localStorage.setItem(this.getContainerKey(), isOpen ? 'open' : 'closed');
       };
-            
-      caret.addEventListener('click', (e) => {
-   e.stopPropagation();  // evita que el click burbujee a $item
-   toggleContainer();
-});
       
+      caret.addEventListener('click', toggleContainer);
+
       if (!this.path) {
          this.$item.addEventListener('click', toggleContainer);
       }
@@ -139,8 +161,8 @@ export default class TreeItem extends HTMLElement {
    }
 
    async setItem(value, addTo) {
-      if (this.onClickCallback) {
-         value.onClickCallback = this.onClickCallback;
+      if (this._onClick) {
+         value.onClick = this._onClick;
       }
 
       const item = await slice.build('TreeItem', value);

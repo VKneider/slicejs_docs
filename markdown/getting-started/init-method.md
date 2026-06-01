@@ -45,7 +45,7 @@ export default class UserProfile extends HTMLElement {
     this.editButton = await slice.build('Button', {
       sliceId: 'edit-profile-btn',
       value: 'Edit Profile',
-      onClickCallback: () => this.editProfile()
+      onClick: () => this.editProfile()
     });
 
     this.addEventListener('click', this.handleClick.bind(this));

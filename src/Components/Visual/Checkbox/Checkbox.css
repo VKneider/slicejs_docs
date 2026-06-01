@@ -1,4 +1,6 @@
-.slice_checkbox input {
+/* Encapsulated under the custom element so the checkbox styles never leak. */
+
+slice-checkbox .slice_checkbox input {
   position: absolute;
   opacity: 0;
   cursor: pointer;
@@ -6,24 +8,36 @@
   width: 0;
 }
 
-.slice_checkbox_container {
+slice-checkbox .slice_checkbox_container {
   width: fit-content;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--secondary-background-color) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary-color-shade) 60%, transparent);
+  margin: 10px 0;
 }
-.slice_checkbox {
+
+slice-checkbox .slice_checkbox_container:hover {
+  border-color: color-mix(in srgb, var(--primary-color) 55%, transparent);
+}
+
+slice-checkbox .slice_checkbox {
   display: flex;
   align-items: center;
   user-select: none;
-  margin-top: 25px;
-  margin-bottom: 25px;
+  margin-top: 0;
+  margin-bottom: 0;
   position: relative;
-  user-select: none;
 }
-.checkbox_label {
-  margin: 5px;
+
+slice-checkbox .checkbox_label {
+  margin: 5px 5px 5px 5px;
   font-family: var(--font-family);
   color: var(--font-primary-color);
+  font-size: 0.95rem;
 }
-.checkmark {
+
+slice-checkbox .checkmark {
   position: relative;
   top: 0;
   left: 0;
@@ -35,53 +49,49 @@
   border-radius: var(--border-radius-slice);
   cursor: pointer;
 }
-.slice_checkbox input:checked ~ .checkmark {
+
+slice-checkbox .slice_checkbox input:checked ~ .checkmark {
   border: var(--slice-border) solid var(--success-color);
   background-color: var(--success-color);
-  animation: pop 0.5s;
+  animation: slice_checkbox_pop 0.5s;
   animation-direction: alternate;
 }
 
-.checkmark:after {
+slice-checkbox .checkmark:after {
   content: "";
   position: absolute;
   display: none;
 }
 
-.slice_checkbox input:checked ~ .checkmark:after {
+slice-checkbox .slice_checkbox input:checked ~ .checkmark:after {
   display: block;
 }
 
-.slice_checkbox .checkmark:after {
+slice-checkbox .slice_checkbox .checkmark:after {
   left: 0.45em;
   top: 0.25em;
   width: 0.25em;
   height: 0.5em;
-  border: solid white;
+  border: solid var(--success-contrast, #ffffff);
   border-width: 0 0.15em 0.15em 0;
   transform: rotate(45deg);
 }
-.disabled {
+
+slice-checkbox .disabled {
   border-color: var(--disabled-color);
   background-color: var(--primary-color-shade);
   color: var(--disabled-color);
   cursor: not-allowed;
 }
-@keyframes pop {
+
+@keyframes slice_checkbox_pop {
   0% {
     transform: scale(1);
   }
-
   50% {
     transform: scale(0.9);
   }
-
   100% {
     transform: scale(1);
   }
-}
-.checkbox_label {
-  margin-left: 5px;
-  font-family: var(--font-family);
-  color: var(--font-primary-color);
 }
