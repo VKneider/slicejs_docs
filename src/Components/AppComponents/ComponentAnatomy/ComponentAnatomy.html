@@ -17,7 +17,7 @@
 <ul><li>creates <code>src/Components/&lt;Category&gt;/&lt;Name&gt;/</code> with the right files, and</li><li>adds the component to <code>src/Components/components.js</code> so it is loadable immediately.</li></ul>
 <p>The category must exist in <code>paths.components</code> (see below). Through the npm script, separate the args with <code>--</code>: <code>npm run component:create -- UserCard --category Visual</code>.</p>
 <div class="code-block" data-block-id="doc-block-3"></div>
-<div class="callout callout-tip">If you ever add or move component folders by hand, run <code>slice component list</code> to regenerate
+<div class="callout callout-tip">If you ever add or move component folders by hand, run <code>npm run component:list</code> to regenerate
 <code>components.js</code>.</div>
 <h2 id="the-three-files-of-a-visual-component">The three files of a Visual component</h2>
 <div class="code-block" data-block-id="doc-block-4"></div>
@@ -59,10 +59,10 @@
 <div class="code-block" data-block-id="doc-block-9"></div>
 <div class="code-block" data-block-id="doc-block-10"></div>
 <h2 id="best-practices">Best Practices</h2>
-<div class="callout callout-tip">Generate components with <code>slice component create</code> so files and <code>components.js</code> stay correct.</div>
+<div class="callout callout-tip">Generate components with <code>npm run component:create</code> so files and <code>components.js</code> stay correct.</div>
 <div class="callout callout-tip">Put DOM side effects in setters; reserve <code>init()</code> for async setup and <code>update()</code> for refreshes.</div>
 <h2 id="gotchas">Gotchas</h2>
 <div class="callout callout-warning">The DOM is empty until <code>slice.attachTemplate(this)</code> runs. Querying before it returns <code>null</code>.</div>
 <div class="callout callout-warning">A component missing from <code>components.js</code>, or a wrong <code>paths.components</code> <code>path</code>/<code>type</code>, makes
-<code>slice.build()</code> return <code>null</code>. Run <code>slice component list</code> to resync.</div>
+<code>slice.build()</code> return <code>null</code>. Run <code>npm run component:list</code> to resync.</div>
 </div>

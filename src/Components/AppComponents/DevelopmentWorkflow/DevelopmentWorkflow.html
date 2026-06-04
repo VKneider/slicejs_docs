@@ -11,6 +11,7 @@
 <h2 id="the-three-commands">The three commands</h2>
 <div class="table-block" data-block-id="doc-block-1"></div>
 <div class="code-block" data-block-id="doc-block-2"></div>
+<p>These scripts are created by <code>slice init</code>; if your project uses pnpm, run them as <code>pnpm run dev</code>, <code>pnpm run build</code>, <code>pnpm run start</code> — they are identical.</p>
 <p>The dev port comes from <code>sliceConfig.json</code> (<code>server.port</code>, default <code>3001</code>) and falls back to the next free port if it is taken.</p>
 <h2 id="where-your-code-lives">Where your code lives</h2>
 <div class="table-block" data-block-id="doc-block-3"></div>
@@ -19,7 +20,7 @@
 <p>Components must be listed in <code>src/Components/components.js</code> (name → category) to be loadable. <code>component:create</code> updates it for you. If you ever add or move component folders by hand, resync:</p>
 <div class="code-block" data-block-id="doc-block-5"></div>
 <div class="callout callout-warning">A common cause of "component not found" / a <code>null</code> from <code>slice.build()</code> is a component missing
-from <code>components.js</code>. Run <code>slice component list</code> to fix it.</div>
+from <code>components.js</code>. Run <code>npm run component:list</code> to fix it.</div>
 <h2 id="adding-registry-components">Adding registry components</h2>
 <div class="code-block" data-block-id="doc-block-6"></div>
 <p>The starter ships only a small set of Visual components. Install the rest on demand so your project stays lean.</p>

@@ -11,8 +11,9 @@
 <p>If you have not initialized a project yet, see Installation, then come back here.</p>
 <h2 id="the-generated-tree">The generated tree</h2>
 <div class="code-block" data-block-id="doc-block-1"></div>
+<p><code>slice init</code> creates the <code>my-app/</code> folder itself — you don't <code>mkdir</code> or <code>npm init</code> beforehand. The <code>package.json</code> pins your package manager in the <code>packageManager</code> field, lists <code>slicejs-web-framework</code> as a dependency and <code>slicejs-cli</code> as a devDependency, and ships the scripts (<code>dev</code>, <code>start</code>, <code>get</code>, <code>browse</code>, <code>component:create</code>...).</p>
 <div class="callout callout-tip">The starter installs only the Visual components it uses. Add more on demand with
-<code>slice get &lt;Name&gt;</code> (run <code>slice browse</code> to see the catalog).</div>
+<code>npm run get -- &lt;Name&gt;</code> (run <code>npm run browse</code> to see the catalog).</div>
 <h2 id="file-by-file">File-by-file</h2>
 <div class="table-block" data-block-id="doc-block-2"></div>
 <h2 id="how-a-page-reaches-the-screen">How a page reaches the screen</h2>

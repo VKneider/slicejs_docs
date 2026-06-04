@@ -40,7 +40,7 @@ next free port if it is taken.
 | You want to… | Put it in |
 | --- | --- |
 | Add an app screen or section | `src/Components/AppComponents/<Name>/` |
-| Reuse a UI element across screens | a Visual component (`slice get <Name>` or create one) |
+| Reuse a UI element across screens | a Visual component (`npm run get -- <Name>` or create one) |
 | Hold logic/data with no UI (API client, storage) | `src/Components/Service/<Name>/` |
 | Change navigation | `src/routes.js` (and the shell's `MultiRoute`) |
 | Toggle managers, theme, port | `src/sliceConfig.json` |
@@ -48,29 +48,29 @@ next free port if it is taken.
 ## Creating and registering components
 ```bash title="Scaffold a component"
 # Non-interactive: pass the name and category (writes files + updates components.js)
-slice component create UserCard --category AppComponents
+npm run component:create -- UserCard --category AppComponents
 
 # Interactive: prompts for whatever you omit
-slice component create
+npm run component:create
 ```
 
 Components must be listed in `src/Components/components.js` (name → category) to be loadable.
 `component:create` updates it for you. If you ever add or move component folders by hand, resync:
 
 ```bash title="Regenerate the registry"
-slice component list
+npm run component:list
 ```
 
 :::warning
 A common cause of "component not found" / a `null` from `slice.build()` is a component missing
-from `components.js`. Run `slice component list` to fix it.
+from `components.js`. Run `npm run component:list` to fix it.
 :::
 
 ## Adding registry components
 ```bash title="Browse and install"
-slice browse                 # list official components
-slice get Card Input Select  # install the ones you need into src/Components/Visual/
-slice get FetchManager --service   # install a registry Service
+npm run browse                                # list official components
+npm run get -- Card Input Select              # install into src/Components/Visual/
+npm run get -- FetchManager --service         # install a registry Service
 ```
 
 The starter ships only a small set of Visual components. Install the rest on demand so your
