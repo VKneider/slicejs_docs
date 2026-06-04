@@ -40,8 +40,16 @@ my-app/
 │   ├── Styles/                  # Shared stylesheets
 │   ├── routes.js                # Route table (path -> component)
 │   └── sliceConfig.json         # Framework configuration
-└── package.json                 # Scripts: dev, start, get, browse, component:create...
+├── node_modules/                # Dependencies (framework + local CLI) — inside the project
+├── package.json                 # Scripts, packageManager field, dependencies
+└── pnpm-lock.yaml               # Lockfile of your package manager (or package-lock.json)
 ```
+
+`slice init` creates the `my-app/` folder itself — you don't `mkdir` or `npm init`
+beforehand. The `package.json` pins your package manager in the `packageManager`
+field, lists `slicejs-web-framework` as a dependency and `slicejs-cli` as a
+devDependency, and ships the scripts (`dev`, `start`, `get`, `browse`,
+`component:create`...).
 
 :::tip
 The starter installs only the Visual components it uses. Add more on demand with

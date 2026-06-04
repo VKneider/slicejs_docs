@@ -67,18 +67,35 @@ SLICE_NO_LOCAL_DELEGATION=1 slice version
 | `slice help` | `slice --help` | Show CLI help. |
 
 ## init
-Initializes a new project with the framework structure and installs Visual components from the
-official registry.
+Creates a new project folder and initializes it with the framework structure and the starter
+components from the official registry. Everything — `package.json`, `node_modules`, lockfile,
+`src/`, `api/` — is created **inside** the new folder.
 
 ```bash title="Initialize a project"
 slice init
 ```
 
+```bash title="Non-interactive"
+slice init -y my-app --pm pnpm
+```
+
+### Options
+| Flag | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `-y, --yes [name]` | `string` | `my-slice-app` | Skip prompts; optional project name. |
+| `--pm <pm>` | `npm \| pnpm \| yarn` | auto-detected | Package manager to use. When omitted, init detects it (user agent → available binaries) and only asks when ambiguous. |
+
 What it does:
-- Ensures latest `slicejs-web-framework` is installed.
-- Creates `api/` and `src/` structure from framework base.
-- Installs all Visual components from the registry.
-- Configures `package.json` scripts (dev, start, get, browse, sync, etc.).
+- Creates the project folder and a `package.json` inside it (before any install, so
+  dependencies always anchor to the project folder).
+- Pins the chosen package manager in the `packageManager` field; later commands
+  (`slice update`, `slice doctor`) detect it from there or from the lockfile.
+- Installs `slicejs-web-framework` (dependency) and `slicejs-cli` (devDependency)
+  with the chosen package manager. Versions are not hard-pinned, so pnpm
+  release-age policies (`minimumReleaseAge`) resolve cleanly.
+- Creates `api/` and `src/` structure from the framework base.
+- Installs the starter Visual and Service components from the registry.
+- Configures package scripts (dev, build, start, get, browse, sync, etc.).
 
 ## dev
 Starts the development server and serves from `/src`.
@@ -257,9 +274,10 @@ slice update
 ### Options
 | Flag | Type | Default | Notes |
 | --- | --- | --- | --- |
-| `-y, --yes` | `boolean` | `false` | Auto-confirm updates. |
+| `-y, --yes` | `boolean` | `false` | Auto-confirm package updates. Does **not** touch `api/index.js`. |
 | `--cli` | `boolean` | `false` | Update CLI only. |
 | `-f, --framework` | `boolean` | `false` | Update framework only. |
+| `--update-api` | `boolean` | `false` | Overwrite your project `api/index.js` with the framework version (a `.bak` backup is created). Never done by default — the file may carry local changes. |
 
 ## doctor
 Runs project diagnostics (structure, config, dependencies, components, port availability).

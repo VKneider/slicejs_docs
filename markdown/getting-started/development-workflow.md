@@ -30,6 +30,9 @@ npm run build    # when ready to ship
 npm run start    # verify the production build locally
 ```
 
+These scripts are created by `slice init`; if your project uses pnpm, run them as
+`pnpm run dev`, `pnpm run build`, `pnpm run start` — they are identical.
+
 The dev port comes from `sliceConfig.json` (`server.port`, default `3001`) and falls back to the
 next free port if it is taken.
 
