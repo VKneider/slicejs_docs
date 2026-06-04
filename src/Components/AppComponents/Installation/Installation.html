@@ -1,102 +1,48 @@
-<div class="installation-container">
-  <h1 id="installation-title">Installation Guide</h1>
-  
-  <p class="installation-intro">
-    Getting started with Slice.js is easy! Follow these simple steps to create your first Slice.js project:
-  </p>
-  
-  <div class="installation-steps">
-    <div class="installation-step">
-      <h2 id="step1">Step 1: Initialize your project</h2>
-      <p>First, create a new directory for your project and initialize it with npm:</p>
-      <div class="installation-step-code">
-        <pre><code>npm init</code></pre>
-        <button class="copy-button">Copy</button>
-      </div>
-      <div class="terminal">
-        <div class="terminal-header">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
-          <span class="terminal-title">Terminal</span>
-        </div>
-        <div class="terminal-content">
-          <div class="terminal-output">Follow the prompts to set up your package.json file. You can press Enter to accept the default values or customize as needed.</div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="installation-step">
-      <h2 id="step2">Step 2: Install Slice.js CLI</h2>
-      <p>Next, install the Slice.js CLI tool which will help you create components and manage your project:</p>
-      <div class="installation-step-code">
-        <pre><code>npm install -g slicejs-cli</code></pre>
-        <button class="copy-button">Copy</button>
-      </div>
-      <div class="terminal">
-        <div class="terminal-header">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
-          <span class="terminal-title">Terminal</span>
-        </div>
-        <div class="terminal-content">
-          <div class="terminal-output">added X packages, and audited Y packages in Zs</div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="installation-step">
-      <h2 id="step3">Step 3: Initialize Slice.js</h2>
-      <p>Initialize the Slice.js folder structure in your project:</p>
-      <div class="installation-step-code">
-        <pre><code>npm run slice:init</code></pre>
-        <button class="copy-button">Copy</button>
-      </div>
-      <div class="terminal">
-        <div class="terminal-header">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
-          <span class="terminal-title">Terminal</span>
-        </div>
-        <div class="terminal-content">
-          <div class="terminal-output">Creating folder structure...
-Slice framework initialized successfully!</div>
-        </div>
-      </div>
-      <p class="note">This command creates the necessary folder structure for your Slice.js project, including directories for components, styles, and themes.</p>
-    </div>
-    
-    <div class="installation-step">
-      <h2 id="step4">Step 4: Start the Server</h2>
-      <p>Finally, start the development server to see your Slice.js application in action:</p>
-      <div class="installation-step-code">
-        <pre><code>npm run slice:start</code></pre>
-        <button class="copy-button">Copy</button>
-      </div>
-      <div class="terminal">
-        <div class="terminal-header">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
-          <span class="terminal-title">Terminal</span>
-        </div>
-        <div class="terminal-content">
-          <div class="terminal-output">Server is running on port 3001, http://localhost:3001</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div class="installation-next-steps">
-    <h2 id="next-steps">Next Steps</h2>
-    <p>Congratulations! You've successfully set up your Slice.js project. Here's what you can do next:</p>
-    <ul>
-      <li>Explore the documentation to learn about components</li>
-      <li>Create your first component with <code>npm run slice:create</code></li>
-      <li>Check out the built-in Visual components library</li>
-      <li>Build your application by adding routes and services</li>
-    </ul>
-  </div>
+<div class="documentation-content installation">
+
+<div class="doc-title-bar">
+  <h1 id="installation">
+    <span class="doc-title-text">Installation</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="requirements">Requirements</h2>
+<ul><li>Node.js 20+</li><li>npm or pnpm</li></ul>
+<h2 id="initialize-a-project">Initialize a Project</h2>
+<p><code>slice init</code> creates the project folder for you — no <code>mkdir</code>, no <code>npm init</code> needed. Everything (package.json, node_modules, lockfile, <code>src/</code>, <code>api/</code>) lives <strong>inside</strong> the new folder.</p>
+<p>With npm:</p>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<p>With pnpm:</p>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<p>If the <code>slice</code> launcher is already available in your PATH:</p>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<p>The prompt asks for a project name (and for a package manager when more than one is available — pass <code>--pm npm</code> or <code>--pm pnpm</code> to skip the question). Then init:</p>
+<ul><li>Creates the project folder and its <code>package.json</code> (with the chosen package</li></ul>
+<p>manager pinned in the <code>packageManager</code> field).</p>
+<ul><li>Installs <code>slicejs-web-framework</code> as a dependency and <code>slicejs-cli</code> as a</li></ul>
+<p>devDependency — both inside the project folder.</p>
+<ul><li>Creates the <code>src/</code> and <code>api/</code> structure and installs the starter Visual and</li></ul>
+<p>Service components from the registry.</p>
+<ul><li>Configures package scripts (<code>dev</code>, <code>build</code>, <code>start</code>, <code>get</code>, <code>browse</code>, <code>sync</code>, ...).</li></ul>
+<p>Non-interactive form:</p>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<h2 id="start-dev-server">Start Dev Server</h2>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<p>Inside the project, prefer package scripts so execution is always pinned to your local <code>package.json</code> scripts:</p>
+<div class="code-block" data-block-id="doc-block-6"></div>
+<p>If you prefer direct execution from the local dependency, <code>pnpm exec</code> is also valid:</p>
+<div class="code-block" data-block-id="doc-block-7"></div>
+<p>If the CLI is installed globally, you can run the binary directly from PATH:</p>
+<div class="code-block" data-block-id="doc-block-8"></div>
+<p>If scripts were not configured (for example with hardened <code>ignore-scripts</code> setups), run <code>npx slicejs-cli postinstall</code> once to add them.</p>
+<p>If your policy blocks builds in an existing project, you can still approve manually:</p>
+<div class="code-block" data-block-id="doc-block-9"></div>
+<h2 id="install-the-launcher-optional">Install the Launcher (Optional)</h2>
+<p>You can install the CLI globally to expose the <code>slice</code> command everywhere:</p>
+<div class="code-block" data-block-id="doc-block-10"></div>
+<p>The launcher always delegates to the project-local <code>node_modules/slicejs-cli</code> when one exists, so each project keeps its pinned CLI version.</p>
+<p>To bypass local delegation for one command:</p>
+<div class="code-block" data-block-id="doc-block-11"></div>
+<h2 id="next-steps">Next Steps</h2>
+<ul><li>Explore CLI commands: /Documentation/CLI</li><li>Configure <code>sliceConfig.json</code>: /Documentation/Configuration/sliceConfig</li><li>Build your first component: /Documentation/The-build-method</li></ul>
 </div>

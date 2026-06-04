@@ -53,7 +53,7 @@ devDependency, and ships the scripts (`dev`, `start`, `get`, `browse`,
 
 :::tip
 The starter installs only the Visual components it uses. Add more on demand with
-`slice get <Name>` (run `slice browse` to see the catalog).
+`npm run get -- <Name>` (run `npm run browse` to see the catalog).
 :::
 
 ## File-by-file
@@ -67,7 +67,7 @@ The starter installs only the Visual components it uses. Add more on demand with
 | `src/App/index.html` | SPA shell: the `#app` mount and the module script tag. | Rarely |
 | `src/sliceConfig.json` | Managers (events, context, theme, logger, debugger), paths, server port. | Yes |
 | `src/Components/components.js` | Name → category map used to load components. | No — auto-generated |
-| `src/Components/Visual/*` | Installed registry components. | No — managed by `slice get` / `slice sync` |
+| `src/Components/Visual/*` | Installed registry components. | No — managed by `npm run get -- <Name>` / `npm run sync` |
 | `src/Components/Service/*` | Built-in services you can use or extend. | Optional |
 | `src/Themes/*` | Theme files defining CSS variables. | Optional |
 | `api/` | The server. Zero-config; serves `/src` in dev and `/dist` in production. | No |

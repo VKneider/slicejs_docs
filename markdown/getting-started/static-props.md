@@ -109,12 +109,12 @@ static props = {
 };
 ```
 
-## Type Generation (`slice types generate`)
+## Type Generation (`npm run slice:types`)
 You can generate declaration files from `static props` so editor IntelliSense and checks follow
 the same contract.
 
 ```bash title="Generate declarations"
-slice types generate
+npm run slice:types
 ```
 
 Then validate in JS projects with:

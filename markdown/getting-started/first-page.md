@@ -31,10 +31,10 @@ Save; the dev server reloads. The markup lives in `.html`; behavior lives in `.j
 
 ## Step 2 — Add a new section component
 ```bash title="Scaffold a component"
-slice component create ContactSection --category AppComponents
+npm run component:create -- ContactSection --category AppComponents
 ```
 This creates `src/Components/AppComponents/ContactSection/` with `.js`, `.html`, `.css`, and
-registers it in `components.js`. (Run `slice component create` with no arguments to be prompted
+registers it in `components.js`. (Run `npm run component:create` with no arguments to be prompted
 for the name and category instead.)
 
 ## Step 3 — Write the component
@@ -115,7 +115,7 @@ section, give a section an `update()` method if it must refresh when revisited.
 
 :::warning
 If a component does not appear, confirm it is listed in `src/Components/components.js`. If you
-created folders by hand, run `slice component list` to regenerate that file.
+created folders by hand, run `npm run component:list` to regenerate that file.
 :::
 
 ## Next

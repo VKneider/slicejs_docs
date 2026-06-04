@@ -14,8 +14,8 @@ tags: [cli, tooling]
 
 ## Overview
 The Slice.js CLI (`slice`) helps you initialize projects, manage components, run the dev server,
-and maintain your toolchain. It is distributed as `slicejs-cli` and can be used via `npx` or a local
-npm script.
+and maintain your toolchain. For project workflows, prefer `package.json` scripts (`pnpm run ...`
+or `npm run ...`) so execution is pinned to your local dependency tree.
 
 ## Installation
 ```bash title="Local (recommended)"
@@ -66,24 +66,70 @@ SLICE_NO_LOCAL_DELEGATION=1 slice version
 | `slice types generate` | - | Generate TypeScript typings for `slice.build`. |
 | `slice help` | `slice --help` | Show CLI help. |
 
+## Recommended package scripts
+
+Use these scripts inside initialized projects:
+
+```bash
+pnpm run dev
+pnpm run build
+pnpm run start
+pnpm run browse
+pnpm run get -- Button
+pnpm run sync
+pnpm run component:create -- UserCard --category AppComponents
+pnpm run component:list
+pnpm run component:delete -- UserCard --category AppComponents --yes
+pnpm run slice:types
+```
+
+Equivalent npm forms are the same with `npm run ...`.
+
+If you prefer direct execution through local devDependencies, use `pnpm exec`:
+
+```bash
+pnpm exec slice dev
+pnpm exec slice get Button
+```
+
+If the CLI is installed globally, you can run `slice ...` directly from PATH.
+
+### pnpm build-approval note
+With pnpm v10+, lifecycle scripts are gated by `allowBuilds` in `pnpm-workspace.yaml`.
+`slice init --pm pnpm` automatically configures:
+
+```yaml
+allowBuilds:
+  slicejs-cli: true
+```
+
+For existing projects that do not have that setting yet, use:
+
+```bash
+pnpm approve-builds slicejs-cli
+```
+
+Use direct CLI commands (`slice ...` or `npx slicejs-cli ...`) mainly for bootstrapping (`init`) or
+when scripts are not yet configured.
+
 ## init
 Creates a new project folder and initializes it with the framework structure and the starter
 components from the official registry. Everything — `package.json`, `node_modules`, lockfile,
 `src/`, `api/` — is created **inside** the new folder.
 
 ```bash title="Initialize a project"
-slice init
+npx slicejs-cli init
 ```
 
 ```bash title="Non-interactive"
-slice init -y my-app --pm pnpm
+npx slicejs-cli init -y my-app --pm pnpm
 ```
 
 ### Options
 | Flag | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `-y, --yes [name]` | `string` | `my-slice-app` | Skip prompts; optional project name. |
-| `--pm <pm>` | `npm \| pnpm \| yarn` | auto-detected | Package manager to use. When omitted, init detects it (user agent → available binaries) and only asks when ambiguous. |
+| `--pm <pm>` | `pnpm \| npm` | auto-detected | Package manager to use. When omitted, init detects it (user agent → available binaries) and only asks when ambiguous. |
 
 What it does:
 - Creates the project folder and a `package.json` inside it (before any install, so
@@ -101,7 +147,7 @@ What it does:
 Starts the development server and serves from `/src`.
 
 ```bash title="Start dev server"
-slice dev
+npm run dev
 ```
 
 ### Options
@@ -124,7 +170,7 @@ slice dev
 Starts the production server and serves from `/dist`.
 
 ```bash title="Start production server"
-slice start
+npm run start
 ```
 
 ### Options
@@ -146,7 +192,7 @@ These entries are stored as `Framework/Structural/<ComponentName>` in bundle con
 :::
 
 ```bash title="Build production output"
-slice build
+npm run build
 ```
 
 ### Options
@@ -176,12 +222,12 @@ Creates a new local component and registers it in `components.js`. Runs interact
 non-interactively when you pass the name and category on the command line.
 
 ```bash title="Interactive (prompts for name + category)"
-slice component create
+npm run component:create
 ```
 
 ```bash title="Non-interactive (pass name + --category)"
-slice component create UserCard --category AppComponents
-slice component create AuthService -c Service
+npm run component:create -- UserCard --category AppComponents
+npm run component:create -- AuthService -c Service
 ```
 
 ```bash title="Through the npm script (note the -- separator)"
@@ -193,7 +239,7 @@ npm run component:create -- UserCard --category Visual
 | `[name]` | Component name (positional). If omitted, you are prompted. |
 | `-c, --category <category>` | A category from `paths.components` in `sliceConfig.json` (e.g. `Visual`, `Service`, `AppComponents`). If omitted, you are prompted. |
 
-Only the missing pieces are prompted, so `slice component create UserCard` asks just for the
+Only the missing pieces are prompted, so `npm run component:create -- UserCard` asks just for the
 category. Passing both runs with no prompts — useful for scripts and AI agents.
 
 Rules:
@@ -206,7 +252,7 @@ Lists all local components by scanning category paths from `sliceConfig.json` an
 `src/Components/components.js`.
 
 ```bash title="List components"
-slice component list
+npm run component:list
 ```
 
 ## component delete
@@ -214,11 +260,11 @@ Deletes a local component and updates `components.js`. Interactive by default; p
 `--category`, and `--yes` to delete non-interactively.
 
 ```bash title="Interactive (select + confirm)"
-slice component delete
+npm run component:delete
 ```
 
 ```bash title="Non-interactive"
-slice component delete UserCard --category AppComponents --yes
+npm run component:delete -- UserCard --category AppComponents --yes
 ```
 
 | Argument / option | Notes |
@@ -231,7 +277,7 @@ slice component delete UserCard --category AppComponents --yes
 Downloads components from the official registry (Visual or Service) into your project.
 
 ```bash title="Get components"
-slice get Button Card Input
+npm run get -- Button Card Input
 ```
 
 ### Options
@@ -248,7 +294,7 @@ Notes:
 Lists available registry components.
 
 ```bash title="Browse registry"
-slice browse
+npm run browse
 ```
 
 ## sync / registry sync
@@ -256,7 +302,7 @@ Updates local Visual components to latest registry versions. Service components 
 not updated automatically.
 
 ```bash title="Sync components"
-slice sync
+npm run sync
 ```
 
 ### Options
@@ -283,21 +329,21 @@ slice update
 Runs project diagnostics (structure, config, dependencies, components, port availability).
 
 ```bash title="Run diagnostics"
-slice doctor
+npm run slice:doctor
 ```
 
 ## version
 Shows CLI version info and checks for updates.
 
 ```bash title="Version"
-slice version
+npm run slice:version
 ```
 
 ## help
 Shows CLI help output.
 
 ```bash title="Help"
-slice --help
+npm run slice:help
 ```
 
 ## types generate
@@ -305,11 +351,11 @@ Generates a TypeScript declaration file from your components' `static props`, so
 autocomplete and type-check `slice.build('Name', { ... })` calls.
 
 ```bash title="Generate typings"
-slice types generate
+npm run slice:types
 ```
 
 ```bash title="Custom output path"
-slice types generate --output types/slice-build.d.ts
+npm run slice:types -- --output types/slice-build.d.ts
 ```
 
 | Option | Default | Notes |
@@ -321,22 +367,22 @@ hand, and re-generate (or wire it into your build) to keep autocomplete in sync.
 
 ## Best Practices
 :::tip
-Install `slicejs-cli` locally per project and use the `slice` launcher so commands resolve to the nearest project-local runtime.
+Prefer package scripts (`pnpm run ...` / `npm run ...`) for project commands.
 :::
 
 :::tip
-If `slice` is not available in your shell, use `npx slicejs-cli <command>` as a fallback.
+Use `npx slicejs-cli <command>` for bootstrapping and recovery (for example before scripts exist).
 :::
 
 :::tip
-Run `slice dev` in one terminal and use another for component commands.
+Run `npm run dev` in one terminal and use another for component commands.
 :::
 
 ## Gotchas
 :::warning
-`slice sync` only updates Visual components. Use `slice get <Service> --service --force` for Service updates.
+`npm run sync` only updates Visual components. Use `npm run get -- <Service> --service --force` for Service updates.
 :::
 
 :::warning
-`slice component list` rewrites `src/Components/components.js` based on detected folders.
+`npm run component:list` rewrites `src/Components/components.js` based on detected folders.
 :::

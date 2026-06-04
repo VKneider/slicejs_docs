@@ -9,13 +9,14 @@
 <h2 id="overview">Overview</h2>
 <p>This walkthrough takes the App Shell starter from <code>slice init</code> to a new page on screen. You will edit an existing section, then add a brand-new one and wire it into the shell.</p>
 <h2 id="run-the-starter">Run the starter</h2>
+<p>From inside the project folder that <code>slice init</code> created (see Installation):</p>
 <div class="code-block" data-block-id="doc-block-1"></div>
 <p>Open the printed URL (default <code>http://localhost:3001</code>). You should see the Home section with a button that navigates to About.</p>
 <h2 id="step-1-edit-the-home-section">Step 1 — Edit the Home section</h2>
 <p>Open <code>src/Components/AppComponents/HomeSection/HomeSection.html</code> and change the heading and text. Save; the dev server reloads. The markup lives in <code>.html</code>; behavior lives in <code>.js</code>.</p>
 <h2 id="step-2-add-a-new-section-component">Step 2 — Add a new section component</h2>
 <div class="code-block" data-block-id="doc-block-2"></div>
-<p>This creates <code>src/Components/AppComponents/ContactSection/</code> with <code>.js</code>, <code>.html</code>, <code>.css</code>, and registers it in <code>components.js</code>. (Run <code>slice component create</code> with no arguments to be prompted for the name and category instead.)</p>
+<p>This creates <code>src/Components/AppComponents/ContactSection/</code> with <code>.js</code>, <code>.html</code>, <code>.css</code>, and registers it in <code>components.js</code>. (Run <code>npm run component:create</code> with no arguments to be prompted for the name and category instead.)</p>
 <h2 id="step-3-write-the-component">Step 3 — Write the component</h2>
 <p>A Slice component follows three rules (see Lifecycle Methods for the full model):</p>
 <ul><li>The template is only available <strong>after</strong> <code>slice.attachTemplate(this)</code> — call it first in the</li></ul>
@@ -35,7 +36,7 @@ component with <code>slice.router.activeRoute.params</code>.</div>
 <h2 id="step-6-see-it">Step 6 — See it</h2>
 <p>Save and the page reloads. Click through Home → About → Contact. Because <code>MultiRoute</code> caches each section, give a section an <code>update()</code> method if it must refresh when revisited.</p>
 <div class="callout callout-warning">If a component does not appear, confirm it is listed in <code>src/Components/components.js</code>. If you
-created folders by hand, run <code>slice component list</code> to regenerate that file.</div>
+created folders by hand, run <code>npm run component:list</code> to regenerate that file.</div>
 <h2 id="next">Next</h2>
 <p>Learn the full edit-build-ship cycle in <strong>The Development Loop</strong>.</p>
 </div>

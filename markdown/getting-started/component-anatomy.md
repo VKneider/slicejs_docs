@@ -22,15 +22,15 @@ Do not create component files by hand — let the CLI scaffold them and register
 Pass the **name** and **`--category`** to run with no prompts:
 
 ```bash title="Non-interactive (recommended for scripts and agents)"
-slice component create UserCard --category AppComponents
-slice component create AuthService -c Service
+npm run component:create -- UserCard --category AppComponents
+npm run component:create -- AuthService -c Service
 ```
 
 Omit them to be prompted instead (only the missing pieces are asked):
 
 ```bash title="Interactive"
-slice component create            # prompts for name + category
-slice component create UserCard   # prompts only for category
+npm run component:create                  # prompts for name + category
+npm run component:create -- UserCard      # prompts only for category
 ```
 
 Either way, the CLI:
@@ -66,7 +66,7 @@ customElements.define('slice-mybutton', MyButton);
 ```
 
 :::tip
-If you ever add or move component folders by hand, run `slice component list` to regenerate
+If you ever add or move component folders by hand, run `npm run component:list` to regenerate
 `components.js`.
 :::
 
@@ -215,7 +215,7 @@ const same = slice.controller.getComponent('AuthService');
 
 ## Best Practices
 :::tip
-Generate components with `slice component create` so files and `components.js` stay correct.
+Generate components with `npm run component:create` so files and `components.js` stay correct.
 :::
 
 :::tip
@@ -229,5 +229,5 @@ The DOM is empty until `slice.attachTemplate(this)` runs. Querying before it ret
 
 :::warning
 A component missing from `components.js`, or a wrong `paths.components` `path`/`type`, makes
-`slice.build()` return `null`. Run `slice component list` to resync.
+`slice.build()` return `null`. Run `npm run component:list` to resync.
 :::

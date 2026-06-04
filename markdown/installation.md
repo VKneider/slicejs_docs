@@ -8,7 +8,7 @@ order: 3
 description: Install the CLI, initialize a project, and start the dev server.
 component: Installation
 tags: [installation, cli, setup]
-generate: false
+generate: true
 ---
 
 # Installation
@@ -63,6 +63,10 @@ init is pnpm-friendly: it never pins a just-published version, so hardened pnpm
 setups (e.g. `minimumReleaseAge` quarantine) resolve the newest version allowed
 by your policy. With `ignore-scripts` enabled, no postinstall step is required —
 init configures the scripts itself.
+
+For pnpm v10+, builds are controlled by `allowBuilds` in `pnpm-workspace.yaml`.
+`slice init --pm pnpm` writes `allowBuilds.slicejs-cli: true` automatically so the
+CLI postinstall can run without a manual `pnpm approve-builds` step.
 :::
 
 ## Start Dev Server
@@ -71,12 +75,32 @@ cd my-app
 npm run dev     # or: pnpm run dev
 ```
 
-The `slice` commands also work directly inside the project (`slice dev`), since
-init installs the CLI locally and the launcher delegates to it. Fallback when no
-launcher is available:
+Inside the project, prefer package scripts so execution is always pinned to your
+local `package.json` scripts:
 
 ```bash
-npx slicejs-cli dev
+pnpm run dev
+```
+
+If you prefer direct execution from the local dependency, `pnpm exec` is also valid:
+
+```bash
+pnpm exec slice dev
+```
+
+If the CLI is installed globally, you can run the binary directly from PATH:
+
+```bash
+slice dev
+```
+
+If scripts were not configured (for example with hardened `ignore-scripts` setups),
+run `npx slicejs-cli postinstall` once to add them.
+
+If your policy blocks builds in an existing project, you can still approve manually:
+
+```bash
+pnpm approve-builds slicejs-cli
 ```
 
 ## Install the Launcher (Optional)
