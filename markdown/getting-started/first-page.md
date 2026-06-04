@@ -17,8 +17,10 @@ This walkthrough takes the App Shell starter from `slice init` to a new page on 
 edit an existing section, then add a brand-new one and wire it into the shell.
 
 ## Run the starter
+From inside the project folder that `slice init` created (see Installation):
+
 ```bash title="Start the dev server"
-npm run dev
+npm run dev     # or: pnpm run dev
 ```
 Open the printed URL (default `http://localhost:3001`). You should see the Home section with a
 button that navigates to About.
