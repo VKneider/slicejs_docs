@@ -74,3 +74,10 @@ SLICE_PUBLIC_COMPONENTS_DOCS_URL=https://example.com/docs
 :::warning
 If `SLICE_PUBLIC_COMPONENTS_DOCS_URL` is not configured, this page falls back to `/docs`.
 :::
+
+:::warning
+`id`, `sliceId`, and `singleton` are **reserved build directives** — never declare them in a Visual
+component's `static props`. `build` consumes them, so such a prop never reaches your setters. (Also:
+`singleton` itself is Service-only; a Visual cannot be a singleton.) See
+[Reserved build keys](/Documentation/The-build-method).
+:::

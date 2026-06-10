@@ -167,3 +167,9 @@ Use defaults to keep components predictable and reduce boilerplate.
 :::warning
 Static Props validation runs only in development; validate critical data yourself.
 :::
+
+:::warning
+`id`, `sliceId`, and `singleton` are **reserved build directives**, not props. Never declare them in
+`static props` — `build` strips them before Static Props are applied, so such an entry is dead and its
+setter never fires. See [Reserved build keys](/Documentation/The-build-method).
+:::

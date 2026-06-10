@@ -339,6 +339,26 @@ const docsIndex = [
     navLabel: 'Migration: Single-View to App Shell',
     tags: ['migration', 'architecture', 'multiroute', 'routing']
   },
+  {
+    title: 'Service Patterns',
+    route: '/Documentation/Architecture/Service-Patterns',
+    description: 'Where state and logic should live in a Slice app — instance fields, plain helpers, singleton services, providers — and how cleanup actually works.',
+    section: 'Project Architecture',
+    group: 'Styles and Patterns',
+    order: 6,
+    navLabel: 'Service Patterns',
+    tags: ['architecture', 'services', 'singleton', 'state', 'cleanup']
+  },
+  {
+    title: 'Refreshing Component Data',
+    route: '/Documentation/Architecture/Refreshing-Component-Data',
+    description: 'How to update what a component shows after it\'s built — prop setters, update(), context, events, or destroy+recreate — and which to reach for.',
+    section: 'Project Architecture',
+    group: 'Styles and Patterns',
+    order: 7,
+    navLabel: 'Refreshing Data',
+    tags: ['architecture', 'state', 'update', 'context', 'events']
+  },
 ];
 
 export default docsIndex;

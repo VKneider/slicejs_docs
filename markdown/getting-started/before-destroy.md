@@ -28,6 +28,8 @@ The controller does not await this method, so keep it synchronous or fire-and-fo
 - Abort pending fetch requests
 - Remove global event listeners
 - Dispose third-party instances (charts, maps, etc.)
+- **Destroy child Services you built with `slice.build`** — a Service has no DOM, so it is never
+  auto-cleaned by the parent's destroy cascade or by `destroyByContainer`. Destroy it here.
 
 ## Example
 ```javascript title="Cleanup in beforeDestroy()"
@@ -54,6 +56,17 @@ export default class LiveChart extends HTMLElement {
 }
 ```
 
+```javascript title="Destroy a Service you built (it is not auto-cleaned)"
+async init() {
+  this._store = await slice.build('CartService', { sliceId: `cart-${this.sliceId}` });
+}
+
+beforeDestroy() {
+  // A Service has no DOM, so the parent's destroy never reaches it — do it here.
+  slice.controller.destroyComponent(this._store);
+}
+```
+
 ## Best Practices
 :::tip
 Keep `beforeDestroy()` idempotent so it can be called safely.
@@ -70,4 +83,11 @@ If you add global listeners in `init()`, remove them in `beforeDestroy()`.
 
 :::warning
 Do not rely on `await` inside `beforeDestroy()`.
+:::
+
+:::warning
+A Service built with `slice.build` is **not** destroyed when its owner is — it has no DOM, so neither
+the destroy cascade nor `destroyByContainer` finds it. Call `slice.controller.destroyComponent(...)` on
+it here, or it leaks (it stays registered and its own `beforeDestroy` never runs). See
+[Service Patterns](/Documentation/Architecture/Service-Patterns).
 :::

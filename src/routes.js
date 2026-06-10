@@ -115,10 +115,18 @@ const routes = [
             path: '/Architecture/Routing-Data',
             component: 'RoutingDataDocumentation',
          },
-         {
-            path: '/Architecture/Migration',
-            component: 'MigrationSingleViewToAppShellDocumentation',
-         },
+           {
+              path: '/Architecture/Migration',
+              component: 'MigrationSingleViewToAppShellDocumentation',
+           },
+           {
+              path: '/Architecture/Service-Patterns',
+              component: 'ServicePatternsDocumentation',
+           },
+           {
+              path: '/Architecture/Refreshing-Component-Data',
+              component: 'RefreshingComponentDataDocumentation',
+           },
           {
              path: '/Components',
              component: 'VisualDocumentation'

@@ -3,8 +3,8 @@
 
 ## Overview
 The Slice.js CLI (`slice`) helps you initialize projects, manage components, run the dev server,
-and maintain your toolchain. It is distributed as `slicejs-cli` and can be used via `npx` or a local
-npm script.
+and maintain your toolchain. For project workflows, prefer `package.json` scripts (`pnpm run ...`
+or `npm run ...`) so execution is pinned to your local dependency tree.
 
 ## Installation
 ```bash title="Local (recommended)"
@@ -55,25 +55,88 @@ SLICE_NO_LOCAL_DELEGATION=1 slice version
 | `slice types generate` | - | Generate TypeScript typings for `slice.build`. |
 | `slice help` | `slice --help` | Show CLI help. |
 
-## init
-Initializes a new project with the framework structure and installs Visual components from the
-official registry.
+## Recommended package scripts
 
-```bash title="Initialize a project"
-slice init
+Use these scripts inside initialized projects:
+
+```bash
+pnpm run dev
+pnpm run build
+pnpm run start
+pnpm run browse
+pnpm run get -- Button
+pnpm run sync
+pnpm run component:create -- UserCard --category AppComponents
+pnpm run component:list
+pnpm run component:delete -- UserCard --category AppComponents --yes
+pnpm run slice:types
 ```
 
+Equivalent npm forms are the same with `npm run ...`.
+
+If you prefer direct execution through local devDependencies, use `pnpm exec`:
+
+```bash
+pnpm exec slice dev
+pnpm exec slice get Button
+```
+
+If the CLI is installed globally, you can run `slice ...` directly from PATH.
+
+### pnpm build-approval note
+With pnpm v10+, lifecycle scripts are gated by `allowBuilds` in `pnpm-workspace.yaml`.
+`slice init --pm pnpm` automatically configures:
+
+```yaml
+allowBuilds:
+  slicejs-cli: true
+```
+
+For existing projects that do not have that setting yet, use:
+
+```bash
+pnpm approve-builds slicejs-cli
+```
+
+Use direct CLI commands (`slice ...` or `npx slicejs-cli ...`) mainly for bootstrapping (`init`) or
+when scripts are not yet configured.
+
+## init
+Creates a new project folder and initializes it with the framework structure and the starter
+components from the official registry. Everything — `package.json`, `node_modules`, lockfile,
+`src/`, `api/` — is created **inside** the new folder.
+
+```bash title="Initialize a project"
+npx slicejs-cli init
+```
+
+```bash title="Non-interactive"
+npx slicejs-cli init -y my-app --pm pnpm
+```
+
+### Options
+| Flag | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `-y, --yes [name]` | `string` | `my-slice-app` | Skip prompts; optional project name. |
+| `--pm <pm>` | `pnpm \| npm` | auto-detected | Package manager to use. When omitted, init detects it (user agent → available binaries) and only asks when ambiguous. |
+
 What it does:
-- Ensures latest `slicejs-web-framework` is installed.
-- Creates `api/` and `src/` structure from framework base.
-- Installs all Visual components from the registry.
-- Configures `package.json` scripts (dev, start, get, browse, sync, etc.).
+- Creates the project folder and a `package.json` inside it (before any install, so
+  dependencies always anchor to the project folder).
+- Pins the chosen package manager in the `packageManager` field; later commands
+  (`slice update`, `slice doctor`) detect it from there or from the lockfile.
+- Installs `slicejs-web-framework` (dependency) and `slicejs-cli` (devDependency)
+  with the chosen package manager. Versions are not hard-pinned, so pnpm
+  release-age policies (`minimumReleaseAge`) resolve cleanly.
+- Creates `api/` and `src/` structure from the framework base.
+- Installs the starter Visual and Service components from the registry.
+- Configures package scripts (dev, build, start, get, browse, sync, etc.).
 
 ## dev
 Starts the development server and serves from `/src`.
 
 ```bash title="Start dev server"
-slice dev
+npm run dev
 ```
 
 ### Options
@@ -96,7 +159,7 @@ slice dev
 Starts the production server and serves from `/dist`.
 
 ```bash title="Start production server"
-slice start
+npm run start
 ```
 
 ### Options
@@ -118,7 +181,7 @@ These entries are stored as `Framework/Structural/<ComponentName>` in bundle con
 :::
 
 ```bash title="Build production output"
-slice build
+npm run build
 ```
 
 ### Options
@@ -148,12 +211,12 @@ Creates a new local component and registers it in `components.js`. Runs interact
 non-interactively when you pass the name and category on the command line.
 
 ```bash title="Interactive (prompts for name + category)"
-slice component create
+npm run component:create
 ```
 
 ```bash title="Non-interactive (pass name + --category)"
-slice component create UserCard --category AppComponents
-slice component create AuthService -c Service
+npm run component:create -- UserCard --category AppComponents
+npm run component:create -- AuthService -c Service
 ```
 
 ```bash title="Through the npm script (note the -- separator)"
@@ -165,7 +228,7 @@ npm run component:create -- UserCard --category Visual
 | `[name]` | Component name (positional). If omitted, you are prompted. |
 | `-c, --category <category>` | A category from `paths.components` in `sliceConfig.json` (e.g. `Visual`, `Service`, `AppComponents`). If omitted, you are prompted. |
 
-Only the missing pieces are prompted, so `slice component create UserCard` asks just for the
+Only the missing pieces are prompted, so `npm run component:create -- UserCard` asks just for the
 category. Passing both runs with no prompts — useful for scripts and AI agents.
 
 Rules:
@@ -178,7 +241,7 @@ Lists all local components by scanning category paths from `sliceConfig.json` an
 `src/Components/components.js`.
 
 ```bash title="List components"
-slice component list
+npm run component:list
 ```
 
 ## component delete
@@ -186,11 +249,11 @@ Deletes a local component and updates `components.js`. Interactive by default; p
 `--category`, and `--yes` to delete non-interactively.
 
 ```bash title="Interactive (select + confirm)"
-slice component delete
+npm run component:delete
 ```
 
 ```bash title="Non-interactive"
-slice component delete UserCard --category AppComponents --yes
+npm run component:delete -- UserCard --category AppComponents --yes
 ```
 
 | Argument / option | Notes |
@@ -203,7 +266,7 @@ slice component delete UserCard --category AppComponents --yes
 Downloads components from the official registry (Visual or Service) into your project.
 
 ```bash title="Get components"
-slice get Button Card Input
+npm run get -- Button Card Input
 ```
 
 ### Options
@@ -220,7 +283,7 @@ Notes:
 Lists available registry components.
 
 ```bash title="Browse registry"
-slice browse
+npm run browse
 ```
 
 ## sync / registry sync
@@ -228,7 +291,7 @@ Updates local Visual components to latest registry versions. Service components 
 not updated automatically.
 
 ```bash title="Sync components"
-slice sync
+npm run sync
 ```
 
 ### Options
@@ -246,29 +309,30 @@ slice update
 ### Options
 | Flag | Type | Default | Notes |
 | --- | --- | --- | --- |
-| `-y, --yes` | `boolean` | `false` | Auto-confirm updates. |
+| `-y, --yes` | `boolean` | `false` | Auto-confirm package updates. Does **not** touch `api/index.js`. |
 | `--cli` | `boolean` | `false` | Update CLI only. |
 | `-f, --framework` | `boolean` | `false` | Update framework only. |
+| `--update-api` | `boolean` | `false` | Overwrite your project `api/index.js` with the framework version (a `.bak` backup is created). Never done by default — the file may carry local changes. |
 
 ## doctor
 Runs project diagnostics (structure, config, dependencies, components, port availability).
 
 ```bash title="Run diagnostics"
-slice doctor
+npm run slice:doctor
 ```
 
 ## version
 Shows CLI version info and checks for updates.
 
 ```bash title="Version"
-slice version
+npm run slice:version
 ```
 
 ## help
 Shows CLI help output.
 
 ```bash title="Help"
-slice --help
+npm run slice:help
 ```
 
 ## types generate
@@ -276,11 +340,11 @@ Generates a TypeScript declaration file from your components' `static props`, so
 autocomplete and type-check `slice.build('Name', { ... })` calls.
 
 ```bash title="Generate typings"
-slice types generate
+npm run slice:types
 ```
 
 ```bash title="Custom output path"
-slice types generate --output types/slice-build.d.ts
+npm run slice:types -- --output types/slice-build.d.ts
 ```
 
 | Option | Default | Notes |
@@ -292,24 +356,24 @@ hand, and re-generate (or wire it into your build) to keep autocomplete in sync.
 
 ## Best Practices
 :::tip
-Install `slicejs-cli` locally per project and use the `slice` launcher so commands resolve to the nearest project-local runtime.
+Prefer package scripts (`pnpm run ...` / `npm run ...`) for project commands.
 :::
 
 :::tip
-If `slice` is not available in your shell, use `npx slicejs-cli <command>` as a fallback.
+Use `npx slicejs-cli <command>` for bootstrapping and recovery (for example before scripts exist).
 :::
 
 :::tip
-Run `slice dev` in one terminal and use another for component commands.
+Run `npm run dev` in one terminal and use another for component commands.
 :::
 
 ## Gotchas
 :::warning
-`slice sync` only updates Visual components. Use `slice get <Service> --service --force` for Service updates.
+`npm run sync` only updates Visual components. Use `npm run get -- <Service> --service --force` for Service updates.
 :::
 
 :::warning
-`slice component list` rewrites `src/Components/components.js` based on detected folders.
+`npm run component:list` rewrites `src/Components/components.js` based on detected folders.
 :::
 
 === markdown/components/multi-route.md ===
@@ -1118,6 +1182,8 @@ The controller does not await this method, so keep it synchronous or fire-and-fo
 - Abort pending fetch requests
 - Remove global event listeners
 - Dispose third-party instances (charts, maps, etc.)
+- **Destroy child Services you built with `slice.build`** — a Service has no DOM, so it is never
+  auto-cleaned by the parent's destroy cascade or by `destroyByContainer`. Destroy it here.
 
 ## Example
 ```javascript title="Cleanup in beforeDestroy()"
@@ -1144,6 +1210,17 @@ export default class LiveChart extends HTMLElement {
 }
 ```
 
+```javascript title="Destroy a Service you built (it is not auto-cleaned)"
+async init() {
+  this._store = await slice.build('CartService', { sliceId: `cart-${this.sliceId}` });
+}
+
+beforeDestroy() {
+  // A Service has no DOM, so the parent's destroy never reaches it — do it here.
+  slice.controller.destroyComponent(this._store);
+}
+```
+
 ## Best Practices
 :::tip
 Keep `beforeDestroy()` idempotent so it can be called safely.
@@ -1160,6 +1237,13 @@ If you add global listeners in `init()`, remove them in `beforeDestroy()`.
 
 :::warning
 Do not rely on `await` inside `beforeDestroy()`.
+:::
+
+:::warning
+A Service built with `slice.build` is **not** destroyed when its owner is — it has no DOM, so neither
+the destroy cascade nor `destroyByContainer` finds it. Call `slice.controller.destroyComponent(...)` on
+it here, or it leaks (it stays registered and its own `beforeDestroy` never runs). See
+[Service Patterns](/Documentation/Architecture/Service-Patterns).
 :::
 
 === markdown/getting-started/build-method.md ===
@@ -1209,9 +1293,10 @@ const card = await slice.build('Card', {
 // Card now has this.title, this.text, this.icon
 ```
 
-## id and sliceId
-`id` and `sliceId` are handled specially. They are assigned to the instance and then removed
-from the props object before Static Props are applied.
+## Reserved build keys: id, sliceId, singleton
+`id`, `sliceId`, and `singleton` are **build directives**, not component props. They are read by
+`build` to control how the instance is created/registered and are removed from the props object
+before Static Props are applied — so they never reach your setters.
 
 ```javascript title="Use sliceId for lookup"
 const navbar = await slice.build('Navbar', {
@@ -1222,6 +1307,17 @@ const navbar = await slice.build('Navbar', {
 
 const sameNavbar = slice.controller.getComponent('main-navbar');
 ```
+
+- `id` — sets the host element's HTML `id` (Visual components only).
+- `sliceId` — the registry key used by `getComponent` and as the singleton identity.
+- `singleton` — `true` get-or-creates one shared instance (Service components only). See
+  [Services](/Documentation/Service).
+
+:::warning
+`id`, `sliceId`, and `singleton` are **reserved names**. Do not declare them in `static props` and
+do not use them as real props — they will be consumed by `build` and never set on your component.
+A `static props` entry named `singleton`, `sliceId`, or `id` is effectively dead.
+:::
 
 ## Nested Components
 ```javascript title="Build children and compose"
@@ -1273,15 +1369,15 @@ Do not create component files by hand — let the CLI scaffold them and register
 Pass the **name** and **`--category`** to run with no prompts:
 
 ```bash title="Non-interactive (recommended for scripts and agents)"
-slice component create UserCard --category AppComponents
-slice component create AuthService -c Service
+npm run component:create -- UserCard --category AppComponents
+npm run component:create -- AuthService -c Service
 ```
 
 Omit them to be prompted instead (only the missing pieces are asked):
 
 ```bash title="Interactive"
-slice component create            # prompts for name + category
-slice component create UserCard   # prompts only for category
+npm run component:create                  # prompts for name + category
+npm run component:create -- UserCard      # prompts only for category
 ```
 
 Either way, the CLI:
@@ -1317,7 +1413,7 @@ customElements.define('slice-mybutton', MyButton);
 ```
 
 :::tip
-If you ever add or move component folders by hand, run `slice component list` to regenerate
+If you ever add or move component folders by hand, run `npm run component:list` to regenerate
 `components.js`.
 :::
 
@@ -1466,7 +1562,7 @@ const same = slice.controller.getComponent('AuthService');
 
 ## Best Practices
 :::tip
-Generate components with `slice component create` so files and `components.js` stay correct.
+Generate components with `npm run component:create` so files and `components.js` stay correct.
 :::
 
 :::tip
@@ -1480,7 +1576,7 @@ The DOM is empty until `slice.attachTemplate(this)` runs. Querying before it ret
 
 :::warning
 A component missing from `components.js`, or a wrong `paths.components` `path`/`type`, makes
-`slice.build()` return `null`. Run `slice component list` to resync.
+`slice.build()` return `null`. Run `npm run component:list` to resync.
 :::
 
 === markdown/getting-started/development-workflow.md ===
@@ -1504,6 +1600,9 @@ npm run build    # when ready to ship
 npm run start    # verify the production build locally
 ```
 
+These scripts are created by `slice init`; if your project uses pnpm, run them as
+`pnpm run dev`, `pnpm run build`, `pnpm run start` — they are identical.
+
 The dev port comes from `sliceConfig.json` (`server.port`, default `3001`) and falls back to the
 next free port if it is taken.
 
@@ -1511,7 +1610,7 @@ next free port if it is taken.
 | You want to… | Put it in |
 | --- | --- |
 | Add an app screen or section | `src/Components/AppComponents/<Name>/` |
-| Reuse a UI element across screens | a Visual component (`slice get <Name>` or create one) |
+| Reuse a UI element across screens | a Visual component (`npm run get -- <Name>` or create one) |
 | Hold logic/data with no UI (API client, storage) | `src/Components/Service/<Name>/` |
 | Change navigation | `src/routes.js` (and the shell's `MultiRoute`) |
 | Toggle managers, theme, port | `src/sliceConfig.json` |
@@ -1519,29 +1618,29 @@ next free port if it is taken.
 ## Creating and registering components
 ```bash title="Scaffold a component"
 # Non-interactive: pass the name and category (writes files + updates components.js)
-slice component create UserCard --category AppComponents
+npm run component:create -- UserCard --category AppComponents
 
 # Interactive: prompts for whatever you omit
-slice component create
+npm run component:create
 ```
 
 Components must be listed in `src/Components/components.js` (name → category) to be loadable.
 `component:create` updates it for you. If you ever add or move component folders by hand, resync:
 
 ```bash title="Regenerate the registry"
-slice component list
+npm run component:list
 ```
 
 :::warning
 A common cause of "component not found" / a `null` from `slice.build()` is a component missing
-from `components.js`. Run `slice component list` to fix it.
+from `components.js`. Run `npm run component:list` to fix it.
 :::
 
 ## Adding registry components
 ```bash title="Browse and install"
-slice browse                 # list official components
-slice get Card Input Select  # install the ones you need into src/Components/Visual/
-slice get FetchManager --service   # install a registry Service
+npm run browse                                # list official components
+npm run get -- Card Input Select              # install into src/Components/Visual/
+npm run get -- FetchManager --service         # install a registry Service
 ```
 
 The starter ships only a small set of Visual components. Install the rest on demand so your
@@ -1731,8 +1830,10 @@ This walkthrough takes the App Shell starter from `slice init` to a new page on 
 edit an existing section, then add a brand-new one and wire it into the shell.
 
 ## Run the starter
+From inside the project folder that `slice init` created (see Installation):
+
 ```bash title="Start the dev server"
-npm run dev
+npm run dev     # or: pnpm run dev
 ```
 Open the printed URL (default `http://localhost:3001`). You should see the Home section with a
 button that navigates to About.
@@ -1743,10 +1844,10 @@ Save; the dev server reloads. The markup lives in `.html`; behavior lives in `.j
 
 ## Step 2 — Add a new section component
 ```bash title="Scaffold a component"
-slice component create ContactSection --category AppComponents
+npm run component:create -- ContactSection --category AppComponents
 ```
 This creates `src/Components/AppComponents/ContactSection/` with `.js`, `.html`, `.css`, and
-registers it in `components.js`. (Run `slice component create` with no arguments to be prompted
+registers it in `components.js`. (Run `npm run component:create` with no arguments to be prompted
 for the name and category instead.)
 
 ## Step 3 — Write the component
@@ -1827,7 +1928,7 @@ section, give a section an `update()` method if it must refresh when revisited.
 
 :::warning
 If a component does not appear, confirm it is listed in `src/Components/components.js`. If you
-created folders by hand, run `slice component list` to regenerate that file.
+created folders by hand, run `npm run component:list` to regenerate that file.
 :::
 
 ## Next
@@ -2055,12 +2156,20 @@ my-app/
 │   ├── Styles/                  # Shared stylesheets
 │   ├── routes.js                # Route table (path -> component)
 │   └── sliceConfig.json         # Framework configuration
-└── package.json                 # Scripts: dev, start, get, browse, component:create...
+├── node_modules/                # Dependencies (framework + local CLI) — inside the project
+├── package.json                 # Scripts, packageManager field, dependencies
+└── pnpm-lock.yaml               # Lockfile of your package manager (or package-lock.json)
 ```
+
+`slice init` creates the `my-app/` folder itself — you don't `mkdir` or `npm init`
+beforehand. The `package.json` pins your package manager in the `packageManager`
+field, lists `slicejs-web-framework` as a dependency and `slicejs-cli` as a
+devDependency, and ships the scripts (`dev`, `start`, `get`, `browse`,
+`component:create`...).
 
 :::tip
 The starter installs only the Visual components it uses. Add more on demand with
-`slice get <Name>` (run `slice browse` to see the catalog).
+`npm run get -- <Name>` (run `npm run browse` to see the catalog).
 :::
 
 ## File-by-file
@@ -2074,7 +2183,7 @@ The starter installs only the Visual components it uses. Add more on demand with
 | `src/App/index.html` | SPA shell: the `#app` mount and the module script tag. | Rarely |
 | `src/sliceConfig.json` | Managers (events, context, theme, logger, debugger), paths, server port. | Yes |
 | `src/Components/components.js` | Name → category map used to load components. | No — auto-generated |
-| `src/Components/Visual/*` | Installed registry components. | No — managed by `slice get` / `slice sync` |
+| `src/Components/Visual/*` | Installed registry components. | No — managed by `npm run get -- <Name>` / `npm run sync` |
 | `src/Components/Service/*` | Built-in services you can use or extend. | Optional |
 | `src/Themes/*` | Theme files defining CSS variables. | Optional |
 | `api/` | The server. Zero-config; serves `/src` in dev and `/dist` in production. | No |
@@ -2382,6 +2491,103 @@ Use `sliceId` when you need a single instance across routes or screens.
 Do not store service instances or functions in `slice.context`. Persist only serializable state.
 :::
 
+## App services (composition root)
+For singletons your app needs app-wide (auth, an API client, a store, config), the cleanest pattern
+is a single **composition root**: one `AppServices` Service whose `init()` builds all the others and
+seeds any initial context. Because `init()` is awaited, one bootstrap call sets up the whole graph,
+in order. This keeps `build` calls in **one place** — everywhere else you just `getComponent`.
+
+```javascript title="Service/AppServices/AppServices.js"
+export default class AppServices {
+  async init() {
+    // Build each app-wide singleton once, with a stable sliceId = its identity.
+    this.auth = await slice.build('AuthService', { sliceId: 'AuthService' });
+    this.api  = await slice.build('FetchManager', { sliceId: 'api', baseUrl: API_URL });
+
+    // Seed contexts / register global handlers here too.
+    slice.context.set('theme', 'dark');
+  }
+
+  // Optional: explicit teardown (e.g. on logout). Children built via slice.build
+  // are NOT auto-destroyed, so dispose them by hand if you ever tear down.
+  dispose() {
+    slice.controller.destroyComponent([this.auth, this.api]);
+  }
+}
+```
+
+```javascript title="App entry — one bootstrap call"
+await slice.build('AppServices', { sliceId: 'AppServices' });
+```
+
+```javascript title="Consume anywhere — pure lookup, no creation"
+async init() {
+  this.api  = slice.getComponent('api');                    // directly by sliceId
+  this.auth = slice.getComponent('AppServices').auth;       // or via the facade
+}
+```
+
+`AppServices` and the services it builds are **app-lifetime** — you never destroy them, so there is
+no cleanup to manage. The facade (`getComponent('AppServices').auth`) doubles as a discoverable index
+of which services exist.
+
+## Singleton shortcut: `build({ singleton: true })`
+The composition root above is the recommended pattern for app-wide singletons known at startup. When
+a service is **lazy or decentralized** instead — a feature self-bootstraps a shared service on first
+use, with no central place to register it — `singleton: true` is the get-or-create shortcut.
+
+Writing `getComponent('X') || await slice.build('X', { sliceId: 'X' })` by hand is verbose, easy to
+get wrong (forgetting `sliceId`, or `sliceId !== name`), and races when two components build the same
+service at once. Pass `singleton: true` to `build` instead — it get-or-creates one shared instance
+and deduplicates concurrent builds.
+
+```javascript title="Get-or-create a singleton service"
+// First caller builds it; every later caller (from anywhere) gets the SAME instance.
+const grid = await slice.build('DataGridService', { singleton: true });
+```
+
+- `sliceId` defaults to the component name. Pass an explicit `sliceId` to keep **named** singletons
+  of the same class (e.g. two `FetchManager`s for different APIs):
+
+```javascript title="Named singletons"
+const authApi   = await slice.build('FetchManager', { singleton: true, sliceId: 'authApi',   baseUrl: AUTH_URL });
+const publicApi = await slice.build('FetchManager', { singleton: true, sliceId: 'publicApi', baseUrl: PUBLIC_URL });
+```
+
+- Both **create and access** flow through `build` — there is no separate accessor. Later calls
+  return the existing instance (a pure synchronous lookup still works via `slice.getComponent(sliceId)`).
+- Concurrent `build({ singleton: true })` calls for the same `sliceId` share a single in-flight
+  build, so they can never collide on a duplicate id.
+
+:::warning
+`props` only apply on the **first** (creating) call. Later calls return the existing instance and
+ignore any props you pass — reconfigure through the service's own API instead.
+:::
+
+:::warning
+`singleton: true` is only supported for **Service** components. A DOM node can live in one place at a
+time, so a shared Visual would teleport between mount points. For app-wide UI, build a **Provider
+Service** that owns and manages the Visual (see `ToastProvider` / `ToolTipProvider`) — the provider is
+the singleton; the Visuals it creates are ephemeral.
+:::
+
+:::warning
+`singleton` is a **reserved build directive** (like `id` and `sliceId`). Do not declare it in a
+component's `static props` or pass it as a real prop — `build` consumes it and it never reaches your
+setters. See [Reserved build keys](/Documentation/The-build-method).
+:::
+
+### Which one?
+| | App services (composition root) | `build({ singleton: true })` |
+| --- | --- | --- |
+| Creation | once, in one place (`AppServices.init`) | get-or-create at the call site |
+| Consumption | `slice.getComponent('X')` (pure lookup) | the same `build` call |
+| Best for | app-wide singletons known at startup (auth, api, store, config) | lazy / decentralized singletons; race-safe get-or-create |
+| Trade-off | needs a bootstrap step | `build` that may return an existing instance |
+
+Default to the composition root; reach for `singleton: true` when there is no central place to
+register the service.
+
 ## FetchManager API
 | Method | Signature | Returns | Notes |
 | --- | --- | --- | --- |
@@ -2538,12 +2744,12 @@ static props = {
 };
 ```
 
-## Type Generation (`slice types generate`)
+## Type Generation (`npm run slice:types`)
 You can generate declaration files from `static props` so editor IntelliSense and checks follow
 the same contract.
 
 ```bash title="Generate declarations"
-slice types generate
+npm run slice:types
 ```
 
 Then validate in JS projects with:
@@ -2595,6 +2801,12 @@ Use defaults to keep components predictable and reduce boilerplate.
 ## Gotchas
 :::warning
 Static Props validation runs only in development; validate critical data yourself.
+:::
+
+:::warning
+`id`, `sliceId`, and `singleton` are **reserved build directives**, not props. Never declare them in
+`static props` — `build` strips them before Static Props are applied, so such an entry is dead and its
+setter never fires. See [Reserved build keys](/Documentation/The-build-method).
 :::
 
 === markdown/getting-started/structural-components.md ===
@@ -2806,6 +3018,13 @@ SLICE_PUBLIC_COMPONENTS_DOCS_URL=https://example.com/docs
 If `SLICE_PUBLIC_COMPONENTS_DOCS_URL` is not configured, this page falls back to `/docs`.
 :::
 
+:::warning
+`id`, `sliceId`, and `singleton` are **reserved build directives** — never declare them in a Visual
+component's `static props`. `build` consumes them, so such a prop never reaches your setters. (Also:
+`singleton` itself is Service-only; a Visual cannot be a singleton.) See
+[Reserved build keys](/Documentation/The-build-method).
+:::
+
 === markdown/installation.md ===
 # Installation
 
@@ -2813,53 +3032,102 @@ If `SLICE_PUBLIC_COMPONENTS_DOCS_URL` is not configured, this page falls back to
 - Node.js 20+
 - npm or pnpm
 
-## Install CLI (Local Recommended)
-```bash
-npm install --save-dev slicejs-cli
-```
-
-Local installation is recommended to keep your CLI version pinned per project.
-Direct `slice` commands require the launcher binary to be available in your PATH
-(commonly via a global install).
-
-If the `slice` launcher command is unavailable in your shell, run CLI commands with:
-
-```bash
-npx slicejs-cli <command>
-```
-
-You can optionally install globally to expose the launcher command:
-
-```bash
-npm install -g slicejs-cli
-```
-
 ## Initialize a Project
 
-First-run example when `slice` is not yet available:
+`slice init` creates the project folder for you — no `mkdir`, no `npm init` needed.
+Everything (package.json, node_modules, lockfile, `src/`, `api/`) lives **inside**
+the new folder.
+
+With npm:
 
 ```bash
 npx slicejs-cli init
 ```
 
-If `slice` is available in your PATH:
+With pnpm:
+
+```bash
+pnpm dlx slicejs-cli init
+```
+
+If the `slice` launcher is already available in your PATH:
 
 ```bash
 slice init
 ```
 
-This creates `src/` and `api/`, installs Visual components, and adds scripts and framework dependency to `package.json`.
+The prompt asks for a project name (and for a package manager when more than one
+is available — pass `--pm npm` or `--pm pnpm` to skip the question). Then init:
+
+- Creates the project folder and its `package.json` (with the chosen package
+  manager pinned in the `packageManager` field).
+- Installs `slicejs-web-framework` as a dependency and `slicejs-cli` as a
+  devDependency — both inside the project folder.
+- Creates the `src/` and `api/` structure and installs the starter Visual and
+  Service components from the registry.
+- Configures package scripts (`dev`, `build`, `start`, `get`, `browse`, `sync`, ...).
+
+Non-interactive form:
+
+```bash
+npx slicejs-cli init -y my-app --pm pnpm
+```
+
+:::note pnpm
+init is pnpm-friendly: it never pins a just-published version, so hardened pnpm
+setups (e.g. `minimumReleaseAge` quarantine) resolve the newest version allowed
+by your policy. With `ignore-scripts` enabled, no postinstall step is required —
+init configures the scripts itself.
+
+For pnpm v10+, builds are controlled by `allowBuilds` in `pnpm-workspace.yaml`.
+`slice init --pm pnpm` writes `allowBuilds.slicejs-cli: true` automatically so the
+CLI postinstall can run without a manual `pnpm approve-builds` step.
+:::
 
 ## Start Dev Server
+```bash
+cd my-app
+npm run dev     # or: pnpm run dev
+```
+
+Inside the project, prefer package scripts so execution is always pinned to your
+local `package.json` scripts:
+
+```bash
+pnpm run dev
+```
+
+If you prefer direct execution from the local dependency, `pnpm exec` is also valid:
+
+```bash
+pnpm exec slice dev
+```
+
+If the CLI is installed globally, you can run the binary directly from PATH:
+
 ```bash
 slice dev
 ```
 
-Fallback when launcher is unavailable:
+If scripts were not configured (for example with hardened `ignore-scripts` setups),
+run `npx slicejs-cli postinstall` once to add them.
+
+If your policy blocks builds in an existing project, you can still approve manually:
 
 ```bash
-npx slicejs-cli dev
+pnpm approve-builds slicejs-cli
 ```
+
+## Install the Launcher (Optional)
+
+You can install the CLI globally to expose the `slice` command everywhere:
+
+```bash
+npm install -g slicejs-cli      # or: pnpm add -g slicejs-cli
+```
+
+The launcher always delegates to the project-local `node_modules/slicejs-cli`
+when one exists, so each project keeps its pinned CLI version.
 
 To bypass local delegation for one command:
 
@@ -3106,6 +3374,130 @@ const page = await slice.build('MultiRoute', {
 Migrate in small slices. Keep one route stable, move one section at a time, and verify after each move.
 :::
 
+=== markdown/project-architecture/refreshing-component-data.md ===
+# Refreshing Component Data
+
+The data behind a component changed — how do you update what's on screen? Slice gives you several
+mechanisms, from the cheapest (set a prop) to the heaviest (destroy + recreate). **Reach for the
+lightest one that fits** — the heavier the mechanism, the more you throw away (instance state, focus,
+scroll, async cost).
+
+## Which one?
+
+| Situation | Reach for |
+| --- | --- |
+| You hold the instance and the data/props changed | **a prop setter** or an update method (§1) |
+| A **cached route** is revisited | **`update()`** (§2) |
+| State that **several components** share and react to | **Context** — `watch` / `setState` (§3) |
+| "Something happened, refresh" **across the app** | **Events** — `emit` / `subscribe` (§4) |
+| The component's **structure** fundamentally changed | **Destroy + recreate** — last resort (§5) |
+
+## 1. Set a prop or call a method (the default)
+In Slice, props go through **setters** — so updating data is usually just *assigning a prop*. The setter
+re-renders; the instance (and its focus/scroll/internal state) is preserved.
+
+```javascript title="Same instance, new data"
+const table = await slice.build('Table', { columns, rows });
+
+// later — the rows changed:
+table.rows = await fetchRows();   // the setter re-renders; no rebuild
+```
+
+Components also expose **methods** for finer updates — same idea, just a call:
+
+```javascript
+select.options = await fetchOptions();   // a setter
+form.setValue('email', user.email);      // a method
+table.loading = true;                    // toggle a busy state, then set rows
+```
+
+> Design your own components so that **assigning a prop or calling a method drives the re-render** — that
+> is what makes this the default refresh path.
+
+## 2. `update()` — cached route revisits
+`MultiRoute` / `Route` **cache** instances. When you navigate away and back, Slice calls
+**`update()`**, not `init()` — so refresh route-level data there (and you can call it manually too).
+
+```javascript title="Refresh on revisit"
+export default class OrdersPage extends HTMLElement {
+  async init()   { await this.load(); }   // first visit
+  async update() { await this.load(); }   // cached revisit → refresh
+
+  async load() {
+    this.orders = await slice.getComponent('api').request('GET', null, '/orders');
+    this.render();
+  }
+}
+```
+
+See [`update()`](/Documentation/LifeCycle-Methods/update). Keep it idempotent.
+
+## 3. Context — shared state many components react to
+When several components depend on the **same** state, put it in [`slice.context`](/Documentation/Structural/ContextManager).
+Each component `watch`es it and refreshes when it changes; anyone calls `setState` to change it.
+
+```javascript title="Watch shared state"
+async init() {
+  this.$count = this.querySelector('.cart-count');
+  slice.context.watch(
+    'cart',
+    this,
+    (count) => { this.$count.textContent = count; },
+    (state) => state.items.length        // selector: only refresh when the count changes
+  );
+}
+
+// anywhere a change happens:
+slice.context.setState('cart', (prev) => ({ ...prev, items: [...prev.items, item] }));
+```
+
+Watchers registered with `this` are **auto-cleaned** on destroy — don't unwatch them by hand.
+
+## 4. Events — react to "something happened"
+For cross-cutting "X happened, refresh" signals, use [`slice.events`](/Documentation/Structural/EventManager).
+A component subscribes; some other part of the app emits.
+
+```javascript title="Refresh on an event"
+async init() {
+  this.events = slice.events.bind(this);
+  this.events.subscribe('orders:updated', () => this.refresh());
+}
+
+async refresh() {
+  this.rows = await fetchRows();   // note: re-uses the setter from §1
+}
+
+// elsewhere, after a mutation:
+slice.events.emit('orders:updated');
+```
+
+Subscriptions made via `slice.events.bind(this)` are **auto-cleaned** on destroy.
+
+**Context vs Events:** ask *"what is the current state?"* → Context. Ask *"did something happen?"* →
+Events. Prefer Context for state, and add an Event when cross-domain side effects must react.
+
+## 5. Destroy + recreate (last resort)
+Only when the component's **structure** changed so fundamentally that reconfiguring it would be more code
+than rebuilding. It is the heaviest option: you lose instance state, pay an async rebuild, and **must
+clean up** the old instance and its children first.
+
+```javascript title="Rebuild a region"
+slice.controller.destroyByContainer(this.$slot);   // runs beforeDestroy on everything inside
+this.$slot.innerHTML = '';
+const fresh = await slice.build('BigWidget', { ...newConfig });
+this.$slot.appendChild(fresh);
+```
+
+Before reaching for this, check whether a setter/method (§1) can express the change instead — e.g. the
+`Table` reconfigures its pager by **setting props**, it never destroys and rebuilds it. And remember the
+cleanup rules: components built with `slice.build` are **not** auto-destroyed by a parent, and Services
+have no DOM so they are never cascaded — see [Service Patterns](/Documentation/Architecture/Service-Patterns).
+
+## Rule of thumb
+Lightest first: **a prop/method** for the same instance, **`update()`** for cached routes,
+**Context/Events** for shared or cross-cutting state, and **destroy + recreate** only when the structure
+itself changes.
+
 === markdown/project-architecture/routing-data.md ===
 # Routing and Data Passing
 
@@ -3160,6 +3552,166 @@ slice.events.emit('checkout:started', { cartId: 'c-1001' });
 :::warning
 Do not assume `slice.router.navigate('/path', { data })` passes arbitrary props to destination components. Use context/events/URL state instead.
 :::
+
+=== markdown/project-architecture/service-patterns.md ===
+# Service Patterns
+
+How you place state and shared logic decides whether your app leaks, needs manual cleanup, or stays
+simple. This guide distils the rules that follow from how Slice builds and destroys components.
+
+## The one rule everything follows
+
+> **Registering a thing in the component registry (any `slice.build(...)`) creates a cleanup
+> obligation. Plain instance fields and plain objects do not — the garbage collector handles them.**
+
+`slice.build` stores the instance in `slice.controller.activeComponents` (a strong reference). It
+stays alive until you explicitly `destroyComponent` it. A value you keep on `this` (a number, an
+array, a `new MyClass()`) is freed automatically when its owner is destroyed. So the question for any
+piece of state or logic is: *does this need to be registered (shared/discoverable), or not?*
+
+## Where should it live?
+
+| What you have | Where it goes | Cleanup |
+| --- | --- | --- |
+| Per-instance UI state (current page, sort, open/closed) | **instance fields** on the component (`this._page`) | automatic (GC) |
+| Per-instance stateful helper (a little engine, a calculator) | **`new Helper()`** stored on `this` — NOT `slice.build` | automatic (GC) |
+| Reusable **stateless** logic shared across components | a **singleton Service** (built once) or a pure module | none — lives for the app |
+| Several **app-wide singletons** (auth, api, store) | an **`AppServices` composition root** | none — app-lifetime |
+| App-wide **UI** (toasts, tooltips, a modal portal) | a **Provider Service** that owns the Visuals | the provider is the singleton |
+| ❌ A per-instance Service built with `slice.build` | avoid — needs manual `destroyComponent` | manual + fragile |
+
+The rest of this page expands each row.
+
+## Instance state lives on the instance
+
+A component's own view state is intrinsic to that instance. Keep it in plain fields — never split it
+into a separate registered object.
+
+```javascript
+set page(value) { this._page = value; this.render(); }   // GC'd with the component, zero ceremony
+```
+
+If the state logic gets big, wrap it in a **plain class** and `new` it — still no registration, still
+GC'd with the owner:
+
+```javascript
+async init() {
+  this._engine = new DataGridEngine({ data: this._rows, pageSize: 10 });  // plain new, not slice.build
+}
+```
+
+## Reusable logic → a singleton (or a pure module)
+
+For logic shared across components, you have two leak-free options:
+
+- **Pure module** — relative `import` of plain functions (`import { paginate } from './engine.js'`).
+  Simplest; the trade-off is relative-path coupling when imported from far away in the tree.
+- **Singleton Service** — built once, retrieved by name from anywhere (no path coupling, discoverable).
+
+Bare imports are not supported in Slice, so a Service is the idiomatic way to share logic without
+relative paths. See the [Services](/Documentation/Service) guide for the singleton patterns
+(`AppServices` and the `build({ singleton: true })` shortcut).
+
+## App-wide singletons → a composition root
+
+Build app-wide singletons (auth, an API client, a store, config) in **one place** — an `AppServices`
+Service whose `init()` builds the rest and seeds context. Everywhere else, just `getComponent`.
+
+```javascript title="Service/AppServices/AppServices.js"
+export default class AppServices {
+  async init() {
+    this.auth = await slice.build('AuthService',  { sliceId: 'AuthService' });
+    this.api  = await slice.build('FetchManager', { sliceId: 'api', baseUrl: API_URL });
+    slice.context.set('theme', 'dark');
+  }
+}
+```
+
+```javascript
+await slice.build('AppServices', { sliceId: 'AppServices' });   // one bootstrap call at app start
+```
+
+`AppServices` and its services are **app-lifetime** — you never destroy them, so there is nothing to
+clean up. Reach for `build({ singleton: true })` only for the lazy/decentralized case. Full detail and
+the "which one?" table live in [Services](/Documentation/Service).
+
+## Global UI → a Provider Service
+
+A `singleton: true` works only for Services, because a DOM node can live in **one place at a time** —
+a shared Visual would teleport between mount points. So "I need one global widget" is really "I need a
+**Provider Service** that owns and manages the Visual." That is exactly how `ToastProvider` and
+`ToolTipProvider` work: the provider is the singleton; the toasts/tooltips it creates are ephemeral.
+
+## How cleanup actually works (important)
+
+> **`destroyComponent(parent)` cascades to nested Visual children, but NOT to Services — destroy any
+> Service you built by hand.**
+
+`destroyComponent(parent)` walks the parent→child index and destroys the subtree (running each
+`beforeDestroy`, deepest-first). Visual children that were built and placed in the parent's DOM by the
+time the parent finished `init()` are linked automatically, so they cascade.
+
+A **Service has no DOM element**, so it can never be discovered — not by the parent's cascade and not
+by `destroyByContainer`. **Every Service you build with `slice.build` must be destroyed explicitly** in
+the owner's `beforeDestroy()`. The same applies to any Visual child you append *after* `init()` (too
+late to be linked).
+
+```javascript
+async init() {
+  this._engine = await slice.build('DataGridEngine', { sliceId: `grid-${++Table._seq}` }); // a Service
+  this._pager  = await slice.build('Pagination', { /* ... */ });                            // a Visual child
+}
+
+beforeDestroy() {
+  // The Service is NEVER auto-cascaded — destroy it by hand.
+  slice.controller.destroyComponent(this._engine);
+  // The Visual child IS cascaded once it is in the DOM; destroying it here too is
+  // harmless (destroyComponent is idempotent) and safe across framework versions.
+  slice.controller.destroyComponent(this._pager);
+}
+```
+
+For tearing down a whole region, **`slice.controller.destroyByContainer(domNode)`** discovers every
+Visual component inside a DOM subtree and destroys them — the "destroy-before-clear" workhorse. (It
+still won't find Services, since they have no DOM node.)
+
+App-lifetime singletons (an `AppServices` graph) are the happy exception: they are never destroyed, so
+there is nothing to clean up.
+
+:::warning
+A Service built with `slice.build` is registered in the component registry but has no DOM. If you drop
+its owner without destroying the Service, it **leaks** — it stays in `activeComponents` and its
+`beforeDestroy` never runs. Always destroy built Services explicitly.
+:::
+
+:::warning
+Tearing a subtree down with `innerHTML = ''` does **not** run `beforeDestroy` and does **not** unregister
+anything — listeners stay bound and registry entries leak. Always `destroyByContainer(node)` **then**
+clear.
+:::
+
+## Worked example: the Table's data engine
+
+The built-in `Table` shows the rules together:
+
+- **State** (page, sort) lives in a `DataGridEngine` — a per-instance object. The engine is built with
+  `slice.build` (so it is discoverable and could be inspected), with a unique `sliceId` per table.
+- The Table destroys **both** the engine and the `Pagination` child in `beforeDestroy()`. The engine
+  (a Service) is never auto-cascaded, so it **must** be destroyed by hand; destroying the pager too is
+  redundant-but-safe (a Visual child does cascade, and `destroyComponent` is idempotent).
+- The pure sort/paginate math also exists as **static helpers** on the engine, so callers that only need
+  a one-off computation can skip the instance entirely.
+
+## Anti-patterns
+
+- ❌ A **stateful per-instance Service** built with `slice.build` and relied on to be auto-cleaned — it
+  will not be. Either destroy it explicitly, or (better, if it is pure per-instance state) use a plain
+  `new`.
+- ❌ Scattering `build({ singleton: true })` across many call sites for an app-wide service — centralize
+  it in `AppServices` and `getComponent` it instead.
+- ❌ Storing service instances or functions in `slice.context` — keep only serializable state there.
+- ❌ Declaring `id`, `sliceId`, or `singleton` in `static props` — they are reserved build directives,
+  consumed by `build` before your setters run. See [Reserved build keys](/Documentation/The-build-method).
 
 === markdown/project-architecture/single-view-spa.md ===
 # Single-View SPA

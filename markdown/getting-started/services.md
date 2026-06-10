@@ -64,6 +64,103 @@ Use `sliceId` when you need a single instance across routes or screens.
 Do not store service instances or functions in `slice.context`. Persist only serializable state.
 :::
 
+## App services (composition root)
+For singletons your app needs app-wide (auth, an API client, a store, config), the cleanest pattern
+is a single **composition root**: one `AppServices` Service whose `init()` builds all the others and
+seeds any initial context. Because `init()` is awaited, one bootstrap call sets up the whole graph,
+in order. This keeps `build` calls in **one place** — everywhere else you just `getComponent`.
+
+```javascript title="Service/AppServices/AppServices.js"
+export default class AppServices {
+  async init() {
+    // Build each app-wide singleton once, with a stable sliceId = its identity.
+    this.auth = await slice.build('AuthService', { sliceId: 'AuthService' });
+    this.api  = await slice.build('FetchManager', { sliceId: 'api', baseUrl: API_URL });
+
+    // Seed contexts / register global handlers here too.
+    slice.context.set('theme', 'dark');
+  }
+
+  // Optional: explicit teardown (e.g. on logout). Children built via slice.build
+  // are NOT auto-destroyed, so dispose them by hand if you ever tear down.
+  dispose() {
+    slice.controller.destroyComponent([this.auth, this.api]);
+  }
+}
+```
+
+```javascript title="App entry — one bootstrap call"
+await slice.build('AppServices', { sliceId: 'AppServices' });
+```
+
+```javascript title="Consume anywhere — pure lookup, no creation"
+async init() {
+  this.api  = slice.getComponent('api');                    // directly by sliceId
+  this.auth = slice.getComponent('AppServices').auth;       // or via the facade
+}
+```
+
+`AppServices` and the services it builds are **app-lifetime** — you never destroy them, so there is
+no cleanup to manage. The facade (`getComponent('AppServices').auth`) doubles as a discoverable index
+of which services exist.
+
+## Singleton shortcut: `build({ singleton: true })`
+The composition root above is the recommended pattern for app-wide singletons known at startup. When
+a service is **lazy or decentralized** instead — a feature self-bootstraps a shared service on first
+use, with no central place to register it — `singleton: true` is the get-or-create shortcut.
+
+Writing `getComponent('X') || await slice.build('X', { sliceId: 'X' })` by hand is verbose, easy to
+get wrong (forgetting `sliceId`, or `sliceId !== name`), and races when two components build the same
+service at once. Pass `singleton: true` to `build` instead — it get-or-creates one shared instance
+and deduplicates concurrent builds.
+
+```javascript title="Get-or-create a singleton service"
+// First caller builds it; every later caller (from anywhere) gets the SAME instance.
+const grid = await slice.build('DataGridService', { singleton: true });
+```
+
+- `sliceId` defaults to the component name. Pass an explicit `sliceId` to keep **named** singletons
+  of the same class (e.g. two `FetchManager`s for different APIs):
+
+```javascript title="Named singletons"
+const authApi   = await slice.build('FetchManager', { singleton: true, sliceId: 'authApi',   baseUrl: AUTH_URL });
+const publicApi = await slice.build('FetchManager', { singleton: true, sliceId: 'publicApi', baseUrl: PUBLIC_URL });
+```
+
+- Both **create and access** flow through `build` — there is no separate accessor. Later calls
+  return the existing instance (a pure synchronous lookup still works via `slice.getComponent(sliceId)`).
+- Concurrent `build({ singleton: true })` calls for the same `sliceId` share a single in-flight
+  build, so they can never collide on a duplicate id.
+
+:::warning
+`props` only apply on the **first** (creating) call. Later calls return the existing instance and
+ignore any props you pass — reconfigure through the service's own API instead.
+:::
+
+:::warning
+`singleton: true` is only supported for **Service** components. A DOM node can live in one place at a
+time, so a shared Visual would teleport between mount points. For app-wide UI, build a **Provider
+Service** that owns and manages the Visual (see `ToastProvider` / `ToolTipProvider`) — the provider is
+the singleton; the Visuals it creates are ephemeral.
+:::
+
+:::warning
+`singleton` is a **reserved build directive** (like `id` and `sliceId`). Do not declare it in a
+component's `static props` or pass it as a real prop — `build` consumes it and it never reaches your
+setters. See [Reserved build keys](/Documentation/The-build-method).
+:::
+
+### Which one?
+| | App services (composition root) | `build({ singleton: true })` |
+| --- | --- | --- |
+| Creation | once, in one place (`AppServices.init`) | get-or-create at the call site |
+| Consumption | `slice.getComponent('X')` (pure lookup) | the same `build` call |
+| Best for | app-wide singletons known at startup (auth, api, store, config) | lazy / decentralized singletons; race-safe get-or-create |
+| Trade-off | needs a bootstrap step | `build` that may return an existing instance |
+
+Default to the composition root; reach for `singleton: true` when there is no central place to
+register the service.
+
 ## FetchManager API
 | Method | Signature | Returns | Notes |
 | --- | --- | --- | --- |

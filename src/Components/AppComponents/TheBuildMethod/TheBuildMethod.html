@@ -18,9 +18,14 @@
 <div class="code-block" data-block-id="doc-block-3"></div>
 <h2 id="props-and-defaults">Props and Defaults</h2>
 <div class="code-block" data-block-id="doc-block-4"></div>
-<h2 id="id-and-sliceid">id and sliceId</h2>
-<p><code>id</code> and <code>sliceId</code> are handled specially. They are assigned to the instance and then removed from the props object before Static Props are applied.</p>
+<h2 id="reserved-build-keys-id-sliceid-singleton">Reserved build keys: id, sliceId, singleton</h2>
+<p><code>id</code>, <code>sliceId</code>, and <code>singleton</code> are <strong>build directives</strong>, not component props. They are read by <code>build</code> to control how the instance is created/registered and are removed from the props object before Static Props are applied — so they never reach your setters.</p>
 <div class="code-block" data-block-id="doc-block-5"></div>
+<ul><li><code>id</code> — sets the host element's HTML <code>id</code> (Visual components only).</li><li><code>sliceId</code> — the registry key used by <code>getComponent</code> and as the singleton identity.</li><li><code>singleton</code> — <code>true</code> get-or-creates one shared instance (Service components only). See</li></ul>
+<p>[Services](/Documentation/Service).</p>
+<div class="callout callout-warning"><code>id</code>, <code>sliceId</code>, and <code>singleton</code> are <strong>reserved names</strong>. Do not declare them in <code>static props</code> and
+do not use them as real props — they will be consumed by <code>build</code> and never set on your component.
+A <code>static props</code> entry named <code>singleton</code>, <code>sliceId</code>, or <code>id</code> is effectively dead.</div>
 <h2 id="nested-components">Nested Components</h2>
 <div class="code-block" data-block-id="doc-block-6"></div>
 <h2 id="error-cases">Error Cases</h2>

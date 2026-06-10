@@ -41,4 +41,7 @@
 <div class="callout callout-tip">Use defaults to keep components predictable and reduce boilerplate.</div>
 <h2 id="gotchas">Gotchas</h2>
 <div class="callout callout-warning">Static Props validation runs only in development; validate critical data yourself.</div>
+<div class="callout callout-warning"><code>id</code>, <code>sliceId</code>, and <code>singleton</code> are <strong>reserved build directives</strong>, not props. Never declare them in
+<code>static props</code> — <code>build</code> strips them before Static Props are applied, so such an entry is dead and its
+setter never fires. See [Reserved build keys](/Documentation/The-build-method).</div>
 </div>
