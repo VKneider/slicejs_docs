@@ -1,6 +1,0 @@
-allowBuilds:
-  slicejs-cli: true
-
-minimumReleaseAgeExclude:
-  - slicejs-cli
-  - slicejs-web-framework
