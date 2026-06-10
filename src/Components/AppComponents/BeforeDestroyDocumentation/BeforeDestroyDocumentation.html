@@ -12,13 +12,19 @@
 <h2 id="api">API</h2>
 <div class="table-block" data-block-id="doc-block-1"></div>
 <h2 id="ideal-use-cases">Ideal Use Cases</h2>
-<ul><li>Clear intervals and timeouts</li><li>Abort pending fetch requests</li><li>Remove global event listeners</li><li>Dispose third-party instances (charts, maps, etc.)</li></ul>
+<ul><li>Clear intervals and timeouts</li><li>Abort pending fetch requests</li><li>Remove global event listeners</li><li>Dispose third-party instances (charts, maps, etc.)</li><li><strong>Destroy child Services you built with <code>slice.build</code></strong> — a Service has no DOM, so it is never</li></ul>
+<p>auto-cleaned by the parent's destroy cascade or by <code>destroyByContainer</code>. Destroy it here.</p>
 <h2 id="example">Example</h2>
 <div class="code-block" data-block-id="doc-block-2"></div>
+<div class="code-block" data-block-id="doc-block-3"></div>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Keep <code>beforeDestroy()</code> idempotent so it can be called safely.</div>
 <div class="callout callout-tip">Use <code>AbortController</code> for fetch cleanup.</div>
 <h2 id="gotchas">Gotchas</h2>
 <div class="callout callout-warning">If you add global listeners in <code>init()</code>, remove them in <code>beforeDestroy()</code>.</div>
 <div class="callout callout-warning">Do not rely on <code>await</code> inside <code>beforeDestroy()</code>.</div>
+<div class="callout callout-warning">A Service built with <code>slice.build</code> is <strong>not</strong> destroyed when its owner is — it has no DOM, so neither
+the destroy cascade nor <code>destroyByContainer</code> finds it. Call <code>slice.controller.destroyComponent(...)</code> on
+it here, or it leaks (it stays registered and its own <code>beforeDestroy</code> never runs). See
+[Service Patterns](/Documentation/Architecture/Service-Patterns).</div>
 </div>

@@ -189,12 +189,22 @@ export const documentationRoutes = {
             path: '/Documentation/Architecture/Routing-Data',
             component: 'RoutingDataDocumentation'
          },
-         {
-            title: 'Migration: Single-View -> App Shell',
-            path: '/Documentation/Architecture/Migration',
-            component: 'MigrationSingleViewToAppShellDocumentation'
-         }
-      ]
+          {
+             title: 'Migration: Single-View -> App Shell',
+             path: '/Documentation/Architecture/Migration',
+             component: 'MigrationSingleViewToAppShellDocumentation'
+          },
+          {
+             title: 'Service Patterns',
+             path: '/Documentation/Architecture/Service-Patterns',
+             component: 'ServicePatternsDocumentation'
+          },
+          {
+             title: 'Refreshing Component Data',
+             path: '/Documentation/Architecture/Refreshing-Component-Data',
+             component: 'RefreshingComponentDataDocumentation'
+          }
+       ]
    },
    componentsLibrary: {
       title: 'Components Library',

@@ -56,9 +56,10 @@ const card = await slice.build('Card', {
 // Card now has this.title, this.text, this.icon
 ```
 
-## id and sliceId
-`id` and `sliceId` are handled specially. They are assigned to the instance and then removed
-from the props object before Static Props are applied.
+## Reserved build keys: id, sliceId, singleton
+`id`, `sliceId`, and `singleton` are **build directives**, not component props. They are read by
+`build` to control how the instance is created/registered and are removed from the props object
+before Static Props are applied — so they never reach your setters.
 
 ```javascript title="Use sliceId for lookup"
 const navbar = await slice.build('Navbar', {
@@ -69,6 +70,17 @@ const navbar = await slice.build('Navbar', {
 
 const sameNavbar = slice.controller.getComponent('main-navbar');
 ```
+
+- `id` — sets the host element's HTML `id` (Visual components only).
+- `sliceId` — the registry key used by `getComponent` and as the singleton identity.
+- `singleton` — `true` get-or-creates one shared instance (Service components only). See
+  [Services](/Documentation/Service).
+
+:::warning
+`id`, `sliceId`, and `singleton` are **reserved names**. Do not declare them in `static props` and
+do not use them as real props — they will be consumed by `build` and never set on your component.
+A `static props` entry named `singleton`, `sliceId`, or `id` is effectively dead.
+:::
 
 ## Nested Components
 ```javascript title="Build children and compose"

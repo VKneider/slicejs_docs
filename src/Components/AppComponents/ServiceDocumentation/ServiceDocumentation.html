@@ -18,15 +18,44 @@
 <div class="code-block" data-block-id="doc-block-3"></div>
 <div class="callout callout-tip">Use <code>sliceId</code> when you need a single instance across routes or screens.</div>
 <div class="callout callout-warning">Do not store service instances or functions in <code>slice.context</code>. Persist only serializable state.</div>
-<h2 id="fetchmanager-api">FetchManager API</h2>
-<div class="table-block" data-block-id="doc-block-4"></div>
-<h2 id="indexeddbmanager-api">IndexedDbManager API</h2>
-<div class="table-block" data-block-id="doc-block-5"></div>
-<h2 id="localstoragemanager-api">LocalStorageManager API</h2>
-<div class="table-block" data-block-id="doc-block-6"></div>
-<h2 id="link-api">Link API</h2>
-<div class="table-block" data-block-id="doc-block-7"></div>
+<h2 id="app-services-composition-root">App services (composition root)</h2>
+<p>For singletons your app needs app-wide (auth, an API client, a store, config), the cleanest pattern is a single <strong>composition root</strong>: one <code>AppServices</code> Service whose <code>init()</code> builds all the others and seeds any initial context. Because <code>init()</code> is awaited, one bootstrap call sets up the whole graph, in order. This keeps <code>build</code> calls in <strong>one place</strong> — everywhere else you just <code>getComponent</code>.</p>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<div class="code-block" data-block-id="doc-block-6"></div>
+<p><code>AppServices</code> and the services it builds are <strong>app-lifetime</strong> — you never destroy them, so there is no cleanup to manage. The facade (<code>getComponent('AppServices').auth</code>) doubles as a discoverable index of which services exist.</p>
+<h2 id="singleton-shortcut-build-singleton-true-">Singleton shortcut: <code>build({ singleton: true })</code></h2>
+<p>The composition root above is the recommended pattern for app-wide singletons known at startup. When a service is <strong>lazy or decentralized</strong> instead — a feature self-bootstraps a shared service on first use, with no central place to register it — <code>singleton: true</code> is the get-or-create shortcut.</p>
+<p>Writing <code>getComponent('X') || await slice.build('X', { sliceId: 'X' })</code> by hand is verbose, easy to get wrong (forgetting <code>sliceId</code>, or <code>sliceId !== name</code>), and races when two components build the same service at once. Pass <code>singleton: true</code> to <code>build</code> instead — it get-or-creates one shared instance and deduplicates concurrent builds.</p>
+<div class="code-block" data-block-id="doc-block-7"></div>
+<ul><li><code>sliceId</code> defaults to the component name. Pass an explicit <code>sliceId</code> to keep <strong>named</strong> singletons</li></ul>
+<p>of the same class (e.g. two <code>FetchManager</code>s for different APIs):</p>
 <div class="code-block" data-block-id="doc-block-8"></div>
+<ul><li>Both <strong>create and access</strong> flow through <code>build</code> — there is no separate accessor. Later calls</li></ul>
+<p>return the existing instance (a pure synchronous lookup still works via <code>slice.getComponent(sliceId)</code>).</p>
+<ul><li>Concurrent <code>build({ singleton: true })</code> calls for the same <code>sliceId</code> share a single in-flight</li></ul>
+<p>build, so they can never collide on a duplicate id.</p>
+<div class="callout callout-warning"><code>props</code> only apply on the <strong>first</strong> (creating) call. Later calls return the existing instance and
+ignore any props you pass — reconfigure through the service's own API instead.</div>
+<div class="callout callout-warning"><code>singleton: true</code> is only supported for <strong>Service</strong> components. A DOM node can live in one place at a
+time, so a shared Visual would teleport between mount points. For app-wide UI, build a <strong>Provider
+Service</strong> that owns and manages the Visual (see <code>ToastProvider</code> / <code>ToolTipProvider</code>) — the provider is
+the singleton; the Visuals it creates are ephemeral.</div>
+<div class="callout callout-warning"><code>singleton</code> is a <strong>reserved build directive</strong> (like <code>id</code> and <code>sliceId</code>). Do not declare it in a
+component's <code>static props</code> or pass it as a real prop — <code>build</code> consumes it and it never reaches your
+setters. See [Reserved build keys](/Documentation/The-build-method).</div>
+<h3 id="which-one">Which one?</h3>
+<div class="table-block" data-block-id="doc-block-9"></div>
+<p>Default to the composition root; reach for <code>singleton: true</code> when there is no central place to register the service.</p>
+<h2 id="fetchmanager-api">FetchManager API</h2>
+<div class="table-block" data-block-id="doc-block-10"></div>
+<h2 id="indexeddbmanager-api">IndexedDbManager API</h2>
+<div class="table-block" data-block-id="doc-block-11"></div>
+<h2 id="localstoragemanager-api">LocalStorageManager API</h2>
+<div class="table-block" data-block-id="doc-block-12"></div>
+<h2 id="link-api">Link API</h2>
+<div class="table-block" data-block-id="doc-block-13"></div>
+<div class="code-block" data-block-id="doc-block-14"></div>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Use <code>sliceId</code> when you need global access to a service instance.</div>
 <div class="callout callout-tip">Pair services with EventManager for notifications or ContextManager for shared state.</div>

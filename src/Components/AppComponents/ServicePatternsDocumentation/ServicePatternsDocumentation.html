@@ -1,0 +1,62 @@
+<div class="documentation-content servicepatternsdocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="service-patterns">
+    <span class="doc-title-text">Service Patterns</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<p>How you place state and shared logic decides whether your app leaks, needs manual cleanup, or stays simple. This guide distils the rules that follow from how Slice builds and destroys components.</p>
+<h2 id="the-one-rule-everything-follows">The one rule everything follows</h2>
+<p>&gt; <strong>Registering a thing in the component registry (any <code>slice.build(...)</code>) creates a cleanup &gt; obligation. Plain instance fields and plain objects do not — the garbage collector handles them.</strong></p>
+<p><code>slice.build</code> stores the instance in <code>slice.controller.activeComponents</code> (a strong reference). It stays alive until you explicitly <code>destroyComponent</code> it. A value you keep on <code>this</code> (a number, an array, a <code>new MyClass()</code>) is freed automatically when its owner is destroyed. So the question for any piece of state or logic is: *does this need to be registered (shared/discoverable), or not?*</p>
+<h2 id="where-should-it-live">Where should it live?</h2>
+<div class="table-block" data-block-id="doc-block-1"></div>
+<p>The rest of this page expands each row.</p>
+<h2 id="instance-state-lives-on-the-instance">Instance state lives on the instance</h2>
+<p>A component's own view state is intrinsic to that instance. Keep it in plain fields — never split it into a separate registered object.</p>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<p>If the state logic gets big, wrap it in a <strong>plain class</strong> and <code>new</code> it — still no registration, still GC'd with the owner:</p>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<h2 id="reusable-logic-a-singleton-or-a-pure-module">Reusable logic → a singleton (or a pure module)</h2>
+<p>For logic shared across components, you have two leak-free options:</p>
+<ul><li><strong>Pure module</strong> — relative <code>import</code> of plain functions (<code>import { paginate } from './engine.js'</code>).</li></ul>
+<p>Simplest; the trade-off is relative-path coupling when imported from far away in the tree.</p>
+<ul><li><strong>Singleton Service</strong> — built once, retrieved by name from anywhere (no path coupling, discoverable).</li></ul>
+<p>Bare imports are not supported in Slice, so a Service is the idiomatic way to share logic without relative paths. See the [Services](/Documentation/Service) guide for the singleton patterns (<code>AppServices</code> and the <code>build({ singleton: true })</code> shortcut).</p>
+<h2 id="app-wide-singletons-a-composition-root">App-wide singletons → a composition root</h2>
+<p>Build app-wide singletons (auth, an API client, a store, config) in <strong>one place</strong> — an <code>AppServices</code> Service whose <code>init()</code> builds the rest and seeds context. Everywhere else, just <code>getComponent</code>.</p>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<p><code>AppServices</code> and its services are <strong>app-lifetime</strong> — you never destroy them, so there is nothing to clean up. Reach for <code>build({ singleton: true })</code> only for the lazy/decentralized case. Full detail and the "which one?" table live in [Services](/Documentation/Service).</p>
+<h2 id="global-ui-a-provider-service">Global UI → a Provider Service</h2>
+<p>A <code>singleton: true</code> works only for Services, because a DOM node can live in <strong>one place at a time</strong> — a shared Visual would teleport between mount points. So "I need one global widget" is really "I need a <strong>Provider Service</strong> that owns and manages the Visual." That is exactly how <code>ToastProvider</code> and <code>ToolTipProvider</code> work: the provider is the singleton; the toasts/tooltips it creates are ephemeral.</p>
+<h2 id="how-cleanup-actually-works-important">How cleanup actually works (important)</h2>
+<p>&gt; <strong><code>destroyComponent(parent)</code> cascades to nested Visual children, but NOT to Services — destroy any &gt; Service you built by hand.</strong></p>
+<p><code>destroyComponent(parent)</code> walks the parent→child index and destroys the subtree (running each <code>beforeDestroy</code>, deepest-first). Visual children that were built and placed in the parent's DOM by the time the parent finished <code>init()</code> are linked automatically, so they cascade.</p>
+<p>A <strong>Service has no DOM element</strong>, so it can never be discovered — not by the parent's cascade and not by <code>destroyByContainer</code>. <strong>Every Service you build with <code>slice.build</code> must be destroyed explicitly</strong> in the owner's <code>beforeDestroy()</code>. The same applies to any Visual child you append *after* <code>init()</code> (too late to be linked).</p>
+<div class="code-block" data-block-id="doc-block-6"></div>
+<p>For tearing down a whole region, <strong><code>slice.controller.destroyByContainer(domNode)</code></strong> discovers every Visual component inside a DOM subtree and destroys them — the "destroy-before-clear" workhorse. (It still won't find Services, since they have no DOM node.)</p>
+<p>App-lifetime singletons (an <code>AppServices</code> graph) are the happy exception: they are never destroyed, so there is nothing to clean up.</p>
+<div class="callout callout-warning">A Service built with <code>slice.build</code> is registered in the component registry but has no DOM. If you drop
+its owner without destroying the Service, it <strong>leaks</strong> — it stays in <code>activeComponents</code> and its
+<code>beforeDestroy</code> never runs. Always destroy built Services explicitly.</div>
+<div class="callout callout-warning">Tearing a subtree down with <code>innerHTML = ''</code> does <strong>not</strong> run <code>beforeDestroy</code> and does <strong>not</strong> unregister
+anything — listeners stay bound and registry entries leak. Always <code>destroyByContainer(node)</code> <strong>then</strong>
+clear.</div>
+<h2 id="worked-example-the-tables-data-engine">Worked example: the Table's data engine</h2>
+<p>The built-in <code>Table</code> shows the rules together:</p>
+<ul><li><strong>State</strong> (page, sort) lives in a <code>DataGridEngine</code> — a per-instance object. The engine is built with</li></ul>
+<p><code>slice.build</code> (so it is discoverable and could be inspected), with a unique <code>sliceId</code> per table.</p>
+<ul><li>The Table destroys <strong>both</strong> the engine and the <code>Pagination</code> child in <code>beforeDestroy()</code>. The engine</li></ul>
+<p>(a Service) is never auto-cascaded, so it <strong>must</strong> be destroyed by hand; destroying the pager too is   redundant-but-safe (a Visual child does cascade, and <code>destroyComponent</code> is idempotent).</p>
+<ul><li>The pure sort/paginate math also exists as <strong>static helpers</strong> on the engine, so callers that only need</li></ul>
+<p>a one-off computation can skip the instance entirely.</p>
+<h2 id="anti-patterns">Anti-patterns</h2>
+<ul><li>❌ A <strong>stateful per-instance Service</strong> built with <code>slice.build</code> and relied on to be auto-cleaned — it</li></ul>
+<p>will not be. Either destroy it explicitly, or (better, if it is pure per-instance state) use a plain   <code>new</code>.</p>
+<ul><li>❌ Scattering <code>build({ singleton: true })</code> across many call sites for an app-wide service — centralize</li></ul>
+<p>it in <code>AppServices</code> and <code>getComponent</code> it instead.</p>
+<ul><li>❌ Storing service instances or functions in <code>slice.context</code> — keep only serializable state there.</li><li>❌ Declaring <code>id</code>, <code>sliceId</code>, or <code>singleton</code> in <code>static props</code> — they are reserved build directives,</li></ul>
+<p>consumed by <code>build</code> before your setters run. See [Reserved build keys](/Documentation/The-build-method).</p>
+</div>

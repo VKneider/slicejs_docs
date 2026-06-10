@@ -1,6 +1,6 @@
 {
   "name": "slicedocs",
-  "version": "3.6.1",
+  "version": "3.6.2",
   "main": "index.js",
   "scripts": {
     "dev": "node ./node_modules/slicejs-cli/client.js dev",
@@ -28,7 +28,9 @@
     "run": "node ./node_modules/slicejs-cli/client.js dev",
     "docs:generate": "node parser/index.js",
     "docs:llm": "node tools/build-llm.js",
-    "slice:types": "slice types generate"
+    "slice:types": "slice types generate",
+    "slice:doctor": "node ./node_modules/slicejs-cli/client.js doctor",
+    "slice:help": "node ./node_modules/slicejs-cli/client.js --help"
   },
   "keywords": [],
   "author": "",
