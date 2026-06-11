@@ -19,6 +19,8 @@ Use this style when your app is one main experience and transitions happen insid
 - Multi-step wizards with one dominant screen
 - Tools where URL sections are not the main interaction model
 
+> Deciding between this and App Shell + MultiRoute? See the [decision matrix](/Documentation/Architecture).
+
 ## Minimal Route Setup
 ```javascript title="src/routes.js"
 const routes = [

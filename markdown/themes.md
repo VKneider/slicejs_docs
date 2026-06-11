@@ -151,6 +151,25 @@ await slice.setTheme('DARK');
 await slice.setTheme('LIGHT');
 ```
 
+## Per-Theme CSS Marker
+
+When a theme is applied, the StylesManager sets a `data-slice-theme` attribute on the root element (`<html>`) with the active theme name. This lets CSS react to the theme directly — no JavaScript theme detection needed.
+
+```css title="Vary something per theme"
+/* A white logo SVG that must flip on the light theme */
+[data-slice-theme="LIGHT"] .brand-logo { filter: invert(1); }
+[data-slice-theme="DARK"]  .brand-logo { filter: none; }
+```
+
+```javascript title="Read it in JS too"
+document.documentElement.getAttribute('data-slice-theme'); // 'DARK'
+slice.theme;                                                // same value
+```
+
+:::tip
+Prefer theme **CSS variables** (`var(--token)`) for colors — they already swap automatically. Reach for the `data-slice-theme` marker only for things variables can't express per theme (a filter, a background image, a one-off layout tweak).
+:::
+
 ## Using Theme Tokens in Components
 
 Use the CSS variables inside component styles so components stay themeable across LIGHT and DARK:

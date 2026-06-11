@@ -24,8 +24,13 @@
 <ul><li><code>process.env</code> has priority over <code>.env</code> when both define the same key.</li><li>In development, values are resolved per request.</li><li>In production, values are resolved at startup and cached for the process lifetime.</li></ul>
 <h2 id="runtime-access-in-components">Runtime Access in Components</h2>
 <div class="code-block" data-block-id="doc-block-4"></div>
+<h2 id="typed-accessors-sliceenv">Typed Accessors (<code>slice.env</code>)</h2>
+<p><code>slice.getEnv</code> always returns a string (env values are strings). <code>slice.env.*</code> parses common shapes for you, so you stop re-writing <code>String(...).split(',')</code> and boolean checks across the app.</p>
+<div class="table-block" data-block-id="doc-block-5"></div>
+<div class="code-block" data-block-id="doc-block-6"></div>
+<p>Missing or empty values fall back: <code>bool</code>/<code>int</code>/<code>list</code> return the provided fallback (or <code>false</code> / <code>0</code> / <code>[]</code>).</p>
 <h2 id="recommended-workflow">Recommended Workflow</h2>
-<ol class="steps"><li>Define browser-safe keys using <code>SLICE_PUBLIC_</code>.</li><li>Keep secrets in non-public env keys.</li><li>Verify endpoint output at <code>/slice-env.json</code>.</li><li>Read values from <code>slice.getEnv(...)</code> in runtime code.</li></ol>
+<ol class="steps"><li>Define browser-safe keys using <code>SLICE_PUBLIC_</code>.</li><li>Keep secrets in non-public env keys.</li><li>Verify endpoint output at <code>/slice-env.json</code>.</li><li>Read values with <code>slice.env.*</code> (or <code>slice.getEnv</code>) in runtime code.</li></ol>
 <h2 id="troubleshooting">Troubleshooting</h2>
 <div class="callout callout-tip">If a key is missing in browser runtime, verify the key starts with <code>SLICE_PUBLIC_</code>.</div>
 <div class="callout callout-tip">If production values do not update, restart the server process to refresh cached env payload.</div>

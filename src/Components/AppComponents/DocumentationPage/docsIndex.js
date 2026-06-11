@@ -350,6 +350,16 @@ const docsIndex = [
     tags: ['architecture', 'services', 'singleton', 'state', 'cleanup']
   },
   {
+    title: 'Component Styles',
+    route: '/Documentation/Architecture/Component-Styles',
+    description: 'How to write a component\'s CSS so it stays encapsulated — scope every selector under the component tag, declare an explicit host display, and prefix keyframes.',
+    section: 'Project Architecture',
+    group: 'Styles and Patterns',
+    order: 7,
+    navLabel: 'Component Styles',
+    tags: ['css', 'styles', 'scoping', 'encapsulation', 'display', 'keyframes']
+  },
+  {
     title: 'Refreshing Component Data',
     route: '/Documentation/Architecture/Refreshing-Component-Data',
     description: 'How to update what a component shows after it\'s built — prop setters, update(), context, events, or destroy+recreate — and which to reach for.',

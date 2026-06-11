@@ -45,11 +45,13 @@ You can enable the ContextManager debug panel with a keyboard shortcut.
 | --- | --- | --- | --- |
 | `create` | `(name, initialState = {}, options = {})` | `boolean` | Options include `persist`, `storageKey`. |
 | `getState` | `(name)` | `any | null` | Returns current state or `null` if missing. |
-| `setState` | `(name, updater)` | `void` | `updater` can be object or `(prev) => newState`. |
+| `setState` | `(name, updater)` | `void` | **Replaces** the whole state. Pass the full next state, or `(prev) => newState`. |
+| `patch` | `(name, partial)` | `void` | First-level **merge** — keeps the other fields (the "update one field" case). |
 | `watch` | `(name, component, callback, selector?)` | `string | null` | Auto-cleanup via component sliceId. |
 | `has` | `(name)` | `boolean` | Check if a context exists. |
 | `destroy` | `(name)` | `boolean` | Removes a context and persisted storage. |
 | `list` | `()` | `string[]` | Returns all context names. |
+| `use` | `(name)` | `handle` | Handle bound to one context: `get/set/patch/watch/bind/has/destroy` without repeating the name. |
 
 ## Context Options
 | Option | Type | Default | Notes |
@@ -119,7 +121,7 @@ slice.context.create(
 ```
 
 ## Functional Updates
-Use functional updates when new state depends on previous state.
+`setState` **replaces** the whole state. Use the functional form when the next state depends on the previous one.
 
 ```javascript title="Functional update"
 slice.context.setState('cart', (prev) => ({
@@ -127,6 +129,40 @@ slice.context.setState('cart', (prev) => ({
   items: [...prev.items, newItem],
   total: prev.total + newItem.price
 }));
+```
+
+## Patch (partial merge)
+Because `setState` replaces, a partial object **drops the other fields**. Use `patch` to merge one or more fields and keep the rest — the common "update one field" case.
+
+```javascript title="patch vs setState"
+slice.context.setState('cart', { discount: 0.1 }); // ❌ replaces → items/total are gone
+slice.context.patch('cart', { discount: 0.1 });    // ✅ merges → keeps the rest
+```
+
+:::tip
+The classic bug is updating one field with a plain object and silently wiping the rest of the context. Reach for `patch` (or the functional `setState`) whenever you update part of a multi-field context.
+:::
+
+## Context Handles (`use`)
+`slice.context.use(name)` returns a handle bound to a single context, so you stop repeating the name. It exposes `get`, `set`, `patch`, `watch`, `bind`, `has`, and `destroy`.
+
+```javascript title="A bound handle"
+const settings = slice.context.use('settings');
+settings.get();                          // current state
+settings.patch({ selectedModel: 'pro' }); // merge
+settings.watch(this, (s) => this.render(s));
+```
+
+`bind` is `watch` **plus an immediate call** with the current value — the "render now and on every change" pattern in one line (no separate initial render):
+
+```javascript title="bind = watch + initial render"
+async init() {
+  slice.context.use('cart').bind(
+    this,
+    (count) => { this.$badge.textContent = count; },
+    (state) => state.items.length
+  );
+}
 ```
 
 ## Service Singleton Example

@@ -8,7 +8,7 @@ export default class EnvironmentVariablesDocumentation extends HTMLElement {
 
   async init() {
     this.markdownPath = "getting-started/environment-variables.md";
-    this.markdownContent = "---\ntitle: Environment Variables\nroute: /Documentation/Configuration/environment-variables\nnavLabel: Environment Variables\nsection: Getting Started\ngroup: Configuration\norder: 21\ndescription: Expose browser-safe env values with SLICE_PUBLIC_ and runtime helpers.\ncomponent: EnvironmentVariablesDocumentation\ntags: [config, env, security]\n---\n\n# Environment Variables\n\n## Overview\nSlice.js exposes browser-safe environment variables through:\n\n- `GET /slice-env.json`\n- `slice.getEnv(key, fallback)`\n- `slice.getPublicEnv()`\n\nThis is intended for public runtime configuration (for example API base URLs or feature flags).\n\n## Public vs Private Variables\nOnly variables prefixed with `SLICE_PUBLIC_` are exposed to the browser.\n\n| Variable | Exposed to browser | Example |\n| --- | --- | --- |\n| `SLICE_PUBLIC_*` | yes | `SLICE_PUBLIC_API_URL=https://api.example.com` |\n| Any other key | no | `DB_PASSWORD=...` |\n\n:::warning\nEverything sent to the browser is public. Never put secrets, private tokens, or credentials in `SLICE_PUBLIC_*` variables.\n:::\n\n## Define Variables\nCreate or update your `.env` file:\n\n```bash title=\".env\"\nSLICE_PUBLIC_API_URL=https://api.example.com\nSLICE_PUBLIC_ENABLE_CHAT=true\nDB_PASSWORD=server-only\n```\n\n## Runtime Endpoint Contract\nSlice.js serves environment data at `/slice-env.json` in both development and production.\n\n```json title=\"/slice-env.json\"\n{\n  \"mode\": \"development\",\n  \"env\": {\n    \"SLICE_PUBLIC_API_URL\": \"https://api.example.com\",\n    \"SLICE_PUBLIC_ENABLE_CHAT\": \"true\"\n  }\n}\n```\n\n### Resolution Rules\n- `process.env` has priority over `.env` when both define the same key.\n- In development, values are resolved per request.\n- In production, values are resolved at startup and cached for the process lifetime.\n\n## Runtime Access in Components\n\n```javascript title=\"Read public env from Slice runtime\"\nexport default class HomePage extends HTMLElement {\n  async init() {\n    const apiUrl = slice.getEnv('SLICE_PUBLIC_API_URL', 'http://localhost:3000');\n    const env = slice.getPublicEnv();\n\n    console.log('API URL:', apiUrl);\n    console.log('All public env:', env);\n  }\n}\n```\n\n## Recommended Workflow\n:::steps\n1. Define browser-safe keys using `SLICE_PUBLIC_`.\n2. Keep secrets in non-public env keys.\n3. Verify endpoint output at `/slice-env.json`.\n4. Read values from `slice.getEnv(...)` in runtime code.\n:::\n\n## Troubleshooting\n:::tip\nIf a key is missing in browser runtime, verify the key starts with `SLICE_PUBLIC_`.\n:::\n\n:::tip\nIf production values do not update, restart the server process to refresh cached env payload.\n:::\n\n## Related Docs\n- `sliceConfig.json`: `/Documentation/Configuration/sliceConfig`\n";
+    this.markdownContent = "---\ntitle: Environment Variables\nroute: /Documentation/Configuration/environment-variables\nnavLabel: Environment Variables\nsection: Getting Started\ngroup: Configuration\norder: 21\ndescription: Expose browser-safe env values with SLICE_PUBLIC_ and runtime helpers.\ncomponent: EnvironmentVariablesDocumentation\ntags: [config, env, security]\n---\n\n# Environment Variables\n\n## Overview\nSlice.js exposes browser-safe environment variables through:\n\n- `GET /slice-env.json`\n- `slice.getEnv(key, fallback)`\n- `slice.getPublicEnv()`\n\nThis is intended for public runtime configuration (for example API base URLs or feature flags).\n\n## Public vs Private Variables\nOnly variables prefixed with `SLICE_PUBLIC_` are exposed to the browser.\n\n| Variable | Exposed to browser | Example |\n| --- | --- | --- |\n| `SLICE_PUBLIC_*` | yes | `SLICE_PUBLIC_API_URL=https://api.example.com` |\n| Any other key | no | `DB_PASSWORD=...` |\n\n:::warning\nEverything sent to the browser is public. Never put secrets, private tokens, or credentials in `SLICE_PUBLIC_*` variables.\n:::\n\n## Define Variables\nCreate or update your `.env` file:\n\n```bash title=\".env\"\nSLICE_PUBLIC_API_URL=https://api.example.com\nSLICE_PUBLIC_ENABLE_CHAT=true\nDB_PASSWORD=server-only\n```\n\n## Runtime Endpoint Contract\nSlice.js serves environment data at `/slice-env.json` in both development and production.\n\n```json title=\"/slice-env.json\"\n{\n  \"mode\": \"development\",\n  \"env\": {\n    \"SLICE_PUBLIC_API_URL\": \"https://api.example.com\",\n    \"SLICE_PUBLIC_ENABLE_CHAT\": \"true\"\n  }\n}\n```\n\n### Resolution Rules\n- `process.env` has priority over `.env` when both define the same key.\n- In development, values are resolved per request.\n- In production, values are resolved at startup and cached for the process lifetime.\n\n## Runtime Access in Components\n\n```javascript title=\"Read public env from Slice runtime\"\nexport default class HomePage extends HTMLElement {\n  async init() {\n    const apiUrl = slice.getEnv('SLICE_PUBLIC_API_URL', 'http://localhost:3000');\n    const env = slice.getPublicEnv();\n\n    console.log('API URL:', apiUrl);\n    console.log('All public env:', env);\n  }\n}\n```\n\n## Typed Accessors (`slice.env`)\n`slice.getEnv` always returns a string (env values are strings). `slice.env.*` parses common shapes for you, so you stop re-writing `String(...).split(',')` and boolean checks across the app.\n\n| Accessor | Returns | Example |\n| --- | --- | --- |\n| `slice.env.get(key, fallback?)` | `string` | `slice.env.get('SLICE_PUBLIC_API_URL', '')` |\n| `slice.env.bool(key, fallback?)` | `boolean` | `'1' \\| 'true' \\| 'yes' \\| 'on'` → `true` |\n| `slice.env.int(key, fallback?)` | `number` | `slice.env.int('SLICE_PUBLIC_TIMEOUT', 5000)` |\n| `slice.env.list(key, fallback?)` | `string[]` | `'a, b'` → `['a','b']` (trims, drops empties) |\n| `slice.env.has(key)` | `boolean` | key present in the public env |\n| `slice.env.all()` | `object` | snapshot of all `SLICE_PUBLIC_*` keys |\n\n```javascript title=\"Typed reads\"\nconst auth   = slice.env.bool('SLICE_PUBLIC_AUTH_ENABLED');        // false if missing\nconst models = slice.env.list('SLICE_PUBLIC_MODELS', ['default']); // ['a','b',...]\nconst apiUrl = slice.env.get('SLICE_PUBLIC_API_URL', '');\n```\n\nMissing or empty values fall back: `bool`/`int`/`list` return the provided fallback (or `false` / `0` / `[]`).\n\n## Recommended Workflow\n:::steps\n1. Define browser-safe keys using `SLICE_PUBLIC_`.\n2. Keep secrets in non-public env keys.\n3. Verify endpoint output at `/slice-env.json`.\n4. Read values with `slice.env.*` (or `slice.getEnv`) in runtime code.\n:::\n\n## Troubleshooting\n:::tip\nIf a key is missing in browser runtime, verify the key starts with `SLICE_PUBLIC_`.\n:::\n\n:::tip\nIf production values do not update, restart the server process to refresh cached env payload.\n:::\n\n## Related Docs\n- `sliceConfig.json`: `/Documentation/Configuration/sliceConfig`\n";
     if (true) {
       this.setupCopyButton();
     }
@@ -117,6 +117,84 @@ export default class EnvironmentVariablesDocumentation extends HTMLElement {
                const label = document.createElement('div');
                label.classList.add('code-block-title');
                label.textContent = "Read public env from Slice runtime";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-5"]');
+         if (container) {
+            const lines = ["| Accessor | Returns | Example |","| --- | --- | --- |","| `slice.env.get(key, fallback?)` | `string` | `slice.env.get('SLICE_PUBLIC_API_URL', '')` |","| `slice.env.bool(key, fallback?)` | `boolean` | `'1' \\| 'true' \\| 'yes' \\| 'on'` → `true` |","| `slice.env.int(key, fallback?)` | `number` | `slice.env.int('SLICE_PUBLIC_TIMEOUT', 5000)` |","| `slice.env.list(key, fallback?)` | `string[]` | `'a, b'` → `['a','b']` (trims, drops empties) |","| `slice.env.has(key)` | `boolean` | key present in the public env |","| `slice.env.all()` | `object` | snapshot of all `SLICE_PUBLIC_*` keys |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            // Cells carry trusted inline markup (code/bold) from the parser, so
+            // they use Table's explicit { html } opt-in (Table escapes plain strings).
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => ({ html: formatCell(cell) })));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-6"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "const auth   = slice.env.bool('SLICE_PUBLIC_AUTH_ENABLED');        // false if missing\nconst models = slice.env.list('SLICE_PUBLIC_MODELS', ['default']); // ['a','b',...]\nconst apiUrl = slice.env.get('SLICE_PUBLIC_API_URL', '');",
+               language: "javascript"
+            });
+            if ("Typed reads") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "Typed reads";
                container.appendChild(label);
             }
             container.appendChild(code);
