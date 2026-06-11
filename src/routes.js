@@ -124,6 +124,10 @@ const routes = [
               component: 'ServicePatternsDocumentation',
            },
            {
+              path: '/Architecture/Component-Styles',
+              component: 'ComponentStylesDocumentation',
+           },
+           {
               path: '/Architecture/Refreshing-Component-Data',
               component: 'RefreshingComponentDataDocumentation',
            },

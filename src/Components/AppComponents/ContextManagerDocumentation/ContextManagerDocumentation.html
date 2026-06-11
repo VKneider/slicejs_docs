@@ -30,10 +30,19 @@
 <p>Persist a context to <code>localStorage</code> for session survival.</p>
 <div class="code-block" data-block-id="doc-block-8"></div>
 <h2 id="functional-updates">Functional Updates</h2>
-<p>Use functional updates when new state depends on previous state.</p>
+<p><code>setState</code> <strong>replaces</strong> the whole state. Use the functional form when the next state depends on the previous one.</p>
 <div class="code-block" data-block-id="doc-block-9"></div>
-<h2 id="service-singleton-example">Service Singleton Example</h2>
+<h2 id="patch-partial-merge">Patch (partial merge)</h2>
+<p>Because <code>setState</code> replaces, a partial object <strong>drops the other fields</strong>. Use <code>patch</code> to merge one or more fields and keep the rest — the common "update one field" case.</p>
 <div class="code-block" data-block-id="doc-block-10"></div>
+<div class="callout callout-tip">The classic bug is updating one field with a plain object and silently wiping the rest of the context. Reach for <code>patch</code> (or the functional <code>setState</code>) whenever you update part of a multi-field context.</div>
+<h2 id="context-handles-use">Context Handles (<code>use</code>)</h2>
+<p><code>slice.context.use(name)</code> returns a handle bound to a single context, so you stop repeating the name. It exposes <code>get</code>, <code>set</code>, <code>patch</code>, <code>watch</code>, <code>bind</code>, <code>has</code>, and <code>destroy</code>.</p>
+<div class="code-block" data-block-id="doc-block-11"></div>
+<p><code>bind</code> is <code>watch</code> <strong>plus an immediate call</strong> with the current value — the "render now and on every change" pattern in one line (no separate initial render):</p>
+<div class="code-block" data-block-id="doc-block-12"></div>
+<h2 id="service-singleton-example">Service Singleton Example</h2>
+<div class="code-block" data-block-id="doc-block-13"></div>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Keep contexts small and focused by domain.</div>
 <div class="callout callout-tip">Use selectors to reduce unnecessary updates.</div>

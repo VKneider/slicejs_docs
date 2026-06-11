@@ -19,6 +19,8 @@ Use this style when your app has multiple sections that share the same layout fr
 - Dashboard/admin panels
 - Product apps with stable global navigation
 
+> Deciding between this and Single-View SPA? See the [decision matrix](/Documentation/Architecture).
+
 ## Structure
 ```javascript title="src/routes.js"
 const routes = [

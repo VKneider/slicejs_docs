@@ -6,6 +6,7 @@ const components = {
   "CheckboxDocumentation": "AppComponents",
   "CommandsDocumentation": "AppComponents",
   "ComponentAnatomy": "AppComponents",
+  "ComponentStylesDocumentation": "AppComponents",
   "ContextManagerDocumentation": "AppComponents",
   "CopyMarkdownMenu": "AppComponents",
   "DetailsDocumentation": "AppComponents",

@@ -19,6 +19,7 @@
   height: 48px;
   display: block;
   margin: 0 auto;
+  filter: brightness(0) saturate(100%) drop-shadow(0 0 0.3rem var(--primary-color));
 }
 
 .landing-title {

@@ -127,8 +127,3 @@ Before reaching for this, check whether a setter/method (§1) can express the ch
 `Table` reconfigures its pager by **setting props**, it never destroys and rebuilds it. And remember the
 cleanup rules: components built with `slice.build` are **not** auto-destroyed by a parent, and Services
 have no DOM so they are never cascaded — see [Service Patterns](/Documentation/Architecture/Service-Patterns).
-
-## Rule of thumb
-Lightest first: **a prop/method** for the same instance, **`update()`** for cached routes,
-**Context/Events** for shared or cross-cutting state, and **destroy + recreate** only when the structure
-itself changes.

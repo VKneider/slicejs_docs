@@ -32,6 +32,4 @@
 <p>Only when the component's <strong>structure</strong> changed so fundamentally that reconfiguring it would be more code than rebuilding. It is the heaviest option: you lose instance state, pay an async rebuild, and <strong>must clean up</strong> the old instance and its children first.</p>
 <div class="code-block" data-block-id="doc-block-7"></div>
 <p>Before reaching for this, check whether a setter/method (§1) can express the change instead — e.g. the <code>Table</code> reconfigures its pager by <strong>setting props</strong>, it never destroys and rebuilds it. And remember the cleanup rules: components built with <code>slice.build</code> are <strong>not</strong> auto-destroyed by a parent, and Services have no DOM so they are never cascaded — see [Service Patterns](/Documentation/Architecture/Service-Patterns).</p>
-<h2 id="rule-of-thumb">Rule of thumb</h2>
-<p>Lightest first: <strong>a prop/method</strong> for the same instance, <strong><code>update()</code></strong> for cached routes, <strong>Context/Events</strong> for shared or cross-cutting state, and <strong>destroy + recreate</strong> only when the structure itself changes.</p>
 </div>

@@ -209,8 +209,14 @@ export default class CodeVisualizer extends HTMLElement {
    }
 
    highlightCss(code) {
-      // Utilizamos el mismo enfoque para CSS
-      let tokenizedCode = code;
+      // Los tokens placeholder (__TOKEN_N__) pueden ser capturados por
+      // expresiones regulares posteriores (como selectores) y terminar
+      // filtrándose al HTML. Procesamos los comentarios inline primero.
+      let tokenizedCode = code.replace(
+         /\/\*[\s\S]*?\*\//g,
+         (match) => `<span class="code-comment">${match}</span>`
+      );
+
       const tokens = [];
       const generateTokenId = (index) => `__TOKEN_${index}__`;
       
@@ -223,13 +229,10 @@ export default class CodeVisualizer extends HTMLElement {
          });
       };
       
-      // Comentarios CSS
-      extractTokens(/\/\*[\s\S]*?\*\//g, 'code-comment');
-      
       // Selectores CSS
       extractTokens(/([^\{\}]+)(?=\{)/g, 'code-selector');
       
-      // Propiedad y valor CSS (manipulando la coincidencia para preservar la estructura)
+      // Propiedad y valor CSS
       tokenizedCode = tokenizedCode.replace(/(\s*)([a-zA-Z-]+)(\s*):(\s*)([^;\{\}]+)(?=;)/g, (match, space1, prop, space2, space3, value) => {
          const propTokenId = generateTokenId(tokens.length);
          tokens.push({ id: propTokenId, content: prop, className: 'code-property' });
@@ -248,11 +251,11 @@ export default class CodeVisualizer extends HTMLElement {
          if (token.className !== 'no-replace') {
             tokenizedCode = tokenizedCode.replace(
                token.id, 
-               `<span class="${token.className}">${token.content}</span>`
+               () => `<span class="${token.className}">${token.content}</span>`
             );
          }
       });
-      
+
       return tokenizedCode;
    }
 }

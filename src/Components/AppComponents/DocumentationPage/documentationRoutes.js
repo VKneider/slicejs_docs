@@ -200,6 +200,11 @@ export const documentationRoutes = {
              component: 'ServicePatternsDocumentation'
           },
           {
+             title: 'Component Styles',
+             path: '/Documentation/Architecture/Component-Styles',
+             component: 'ComponentStylesDocumentation'
+          },
+          {
              title: 'Refreshing Component Data',
              path: '/Documentation/Architecture/Refreshing-Component-Data',
              component: 'RefreshingComponentDataDocumentation'

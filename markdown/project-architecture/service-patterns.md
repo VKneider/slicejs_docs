@@ -12,159 +12,96 @@ tags: [architecture, services, singleton, state, cleanup]
 
 # Service Patterns
 
-How you place state and shared logic decides whether your app leaks, needs manual cleanup, or stays
-simple. This guide distils the rules that follow from how Slice builds and destroys components.
+Where state and shared logic live decides whether your app leaks. One rule, a decision table, and the cleanup contract.
 
-## The one rule everything follows
+## The one rule
 
-> **Registering a thing in the component registry (any `slice.build(...)`) creates a cleanup
-> obligation. Plain instance fields and plain objects do not — the garbage collector handles them.**
+> **Anything built with `slice.build(...)` is registered and must be cleaned up. Plain instance fields and plain objects are not — the GC frees them with their owner.**
 
-`slice.build` stores the instance in `slice.controller.activeComponents` (a strong reference). It
-stays alive until you explicitly `destroyComponent` it. A value you keep on `this` (a number, an
-array, a `new MyClass()`) is freed automatically when its owner is destroyed. So the question for any
-piece of state or logic is: *does this need to be registered (shared/discoverable), or not?*
+`slice.build` keeps a strong reference in `slice.controller.activeComponents` until you `destroyComponent` it. A value on `this` (`new MyClass()`, an array) is freed automatically. So ask: *does this need to be registered (shared / discoverable), or not?*
 
 ## Where should it live?
 
 | What you have | Where it goes | Cleanup |
 | --- | --- | --- |
-| Per-instance UI state (current page, sort, open/closed) | **instance fields** on the component (`this._page`) | automatic (GC) |
-| Per-instance stateful helper (a little engine, a calculator) | **`new Helper()`** stored on `this` — NOT `slice.build` | automatic (GC) |
-| Reusable **stateless** logic shared across components | a **singleton Service** (built once) or a pure module | none — lives for the app |
-| Several **app-wide singletons** (auth, api, store) | an **`AppServices` composition root** | none — app-lifetime |
-| App-wide **UI** (toasts, tooltips, a modal portal) | a **Provider Service** that owns the Visuals | the provider is the singleton |
-| ❌ A per-instance Service built with `slice.build` | avoid — needs manual `destroyComponent` | manual + fragile |
+| Per-instance view state (page, sort, open/closed) | **instance fields** (`this._page`) | automatic (GC) |
+| Per-instance stateful helper (an engine, a calculator) | **`new Helper()`** on `this` — not `slice.build` | automatic (GC) |
+| Reusable **stateless** logic | a **singleton Service** or a pure module | none — app-lifetime |
+| App-wide singletons (auth, api, store) | one **composition-root** Service | none — app-lifetime |
+| App-wide **UI** (toasts, tooltips, modals) | a **Provider Service** owning the Visuals | the provider is the singleton |
+| ❌ Per-instance Service built with `slice.build` | avoid — needs manual `destroyComponent` | manual + fragile |
 
-The rest of this page expands each row.
-
-## Instance state lives on the instance
-
-A component's own view state is intrinsic to that instance. Keep it in plain fields — never split it
-into a separate registered object.
+## Instance state → plain fields
 
 ```javascript
-set page(value) { this._page = value; this.render(); }   // GC'd with the component, zero ceremony
+set page(value) { this._page = value; this.render(); }   // GC'd with the component
 ```
 
-If the state logic gets big, wrap it in a **plain class** and `new` it — still no registration, still
-GC'd with the owner:
+Big state logic → wrap in a **plain class** and `new` it (still no registration, still GC'd):
 
 ```javascript
 async init() {
-  this._engine = new DataGridEngine({ data: this._rows, pageSize: 10 });  // plain new, not slice.build
+  this._engine = new DataGridEngine({ data: this._rows, pageSize: 10 }); // plain new, not slice.build
 }
 ```
 
-## Reusable logic → a singleton (or a pure module)
-
-For logic shared across components, you have two leak-free options:
-
-- **Pure module** — relative `import` of plain functions (`import { paginate } from './engine.js'`).
-  Simplest; the trade-off is relative-path coupling when imported from far away in the tree.
-- **Singleton Service** — built once, retrieved by name from anywhere (no path coupling, discoverable).
-
-Bare imports are not supported in Slice, so a Service is the idiomatic way to share logic without
-relative paths. See the [Services](/Documentation/Service) guide for the singleton patterns
-(`AppServices` and the `build({ singleton: true })` shortcut).
-
 ## App-wide singletons → a composition root
 
-Build app-wide singletons (auth, an API client, a store, config) in **one place** — an `AppServices`
-Service whose `init()` builds the rest and seeds context. Everywhere else, just `getComponent`.
+Build app-wide singletons in **one place** — a Service (e.g. `AppServices` / `Providers`) whose `init()` builds the rest and seeds context. Everywhere else, **recover** with `slice.getComponent(name)`.
 
-```javascript title="Service/AppServices/AppServices.js"
+```javascript title="Components/AppServices/AppServices.js"
 export default class AppServices {
   async init() {
-    this.auth = await slice.build('AuthService',  { sliceId: 'AuthService' });
-    this.api  = await slice.build('FetchManager', { sliceId: 'api', baseUrl: API_URL });
-    slice.context.set('theme', 'dark');
+    await slice.build('AuthService',  { sliceId: 'AuthService' });
+    await slice.build('FetchManager', { sliceId: 'api', baseUrl: API_URL });
+    slice.context.create('settings', { theme: 'dark' });
   }
 }
 ```
 
 ```javascript
-await slice.build('AppServices', { sliceId: 'AppServices' });   // one bootstrap call at app start
+await slice.build('AppServices', { singleton: true });  // one bootstrap call from the App Shell's init()
+const auth = slice.getComponent('AuthService');          // recover anywhere
 ```
 
-`AppServices` and its services are **app-lifetime** — you never destroy them, so there is nothing to
-clean up. Reach for `build({ singleton: true })` only for the lazy/decentralized case. Full detail and
-the "which one?" table live in [Services](/Documentation/Service).
+:::tip
+**Default: build once + `getComponent`** — one owner creates, consumers only read. Use **`slice.build('X', { singleton: true })`** (Service only — get-or-create) when a service can be built from **more than one entry point** (e.g. an `AuthService` needed by both the composition root and a standalone `/login` route): it returns the shared instance with no `getComponent(x) || build(x)` guard and no duplicate-`sliceId` race. `props` apply only on the first (creating) call.
+:::
+
+:::warning
+`slice.build` **awaits the component's `init()`** — building a service already ran it. Calling `init()` again runs it twice (and re-building a child with the same `sliceId` throws "already registered"). Make `init()` idempotent: `if (this._ready) return this;`.
+:::
+
+App-lifetime singletons are never destroyed, so there is nothing to clean up.
 
 ## Global UI → a Provider Service
 
-A `singleton: true` works only for Services, because a DOM node can live in **one place at a time** —
-a shared Visual would teleport between mount points. So "I need one global widget" is really "I need a
-**Provider Service** that owns and manages the Visual." That is exactly how `ToastProvider` and
-`ToolTipProvider` work: the provider is the singleton; the toasts/tooltips it creates are ephemeral.
+`singleton: true` works only for Services, because a DOM node lives in **one place at a time** — a shared Visual would teleport between mount points. So "one global widget" means "a **Provider Service** that owns the Visual." That is how `ToastProvider` / `ToolTipProvider` work: the provider is the singleton; the toasts/tooltips it creates are ephemeral.
 
-## How cleanup actually works (important)
+## Cleanup
 
-> **`destroyComponent(parent)` cascades to nested Visual children, but NOT to Services — destroy any
-> Service you built by hand.**
+> **`destroyComponent(parent)` cascades to nested Visual children, but NOT to Services. Destroy any Service you built by hand, in `beforeDestroy()`.**
 
-`destroyComponent(parent)` walks the parent→child index and destroys the subtree (running each
-`beforeDestroy`, deepest-first). Visual children that were built and placed in the parent's DOM by the
-time the parent finished `init()` are linked automatically, so they cascade.
-
-A **Service has no DOM element**, so it can never be discovered — not by the parent's cascade and not
-by `destroyByContainer`. **Every Service you build with `slice.build` must be destroyed explicitly** in
-the owner's `beforeDestroy()`. The same applies to any Visual child you append *after* `init()` (too
-late to be linked).
+A Service has no DOM node, so nothing can discover it — not the parent cascade, not `destroyByContainer`. Same for a Visual child appended *after* `init()` (too late to be linked).
 
 ```javascript
 async init() {
-  this._engine = await slice.build('DataGridEngine', { sliceId: `grid-${++Table._seq}` }); // a Service
-  this._pager  = await slice.build('Pagination', { /* ... */ });                            // a Visual child
+  this._engine = await slice.build('DataGridEngine', { sliceId: `grid-${++Table._seq}` }); // Service
 }
-
 beforeDestroy() {
-  // The Service is NEVER auto-cascaded — destroy it by hand.
-  slice.controller.destroyComponent(this._engine);
-  // The Visual child IS cascaded once it is in the DOM; destroying it here too is
-  // harmless (destroyComponent is idempotent) and safe across framework versions.
-  slice.controller.destroyComponent(this._pager);
+  slice.controller.destroyComponent(this._engine);   // Services never cascade — destroy by hand
 }
 ```
 
-For tearing down a whole region, **`slice.controller.destroyByContainer(domNode)`** discovers every
-Visual component inside a DOM subtree and destroys them — the "destroy-before-clear" workhorse. (It
-still won't find Services, since they have no DOM node.)
-
-App-lifetime singletons (an `AppServices` graph) are the happy exception: they are never destroyed, so
-there is nothing to clean up.
+To tear down a region: **`slice.controller.destroyByContainer(node)`** (destroys every Visual inside a DOM subtree) **then** clear. `innerHTML = ''` alone skips `beforeDestroy` and leaks.
 
 :::warning
-A Service built with `slice.build` is registered in the component registry but has no DOM. If you drop
-its owner without destroying the Service, it **leaks** — it stays in `activeComponents` and its
-`beforeDestroy` never runs. Always destroy built Services explicitly.
+Tearing a subtree down with `innerHTML = ''` does **not** run `beforeDestroy` and does **not** unregister anything — listeners stay bound and registry entries leak. Always `destroyByContainer(node)` **then** clear.
 :::
-
-:::warning
-Tearing a subtree down with `innerHTML = ''` does **not** run `beforeDestroy` and does **not** unregister
-anything — listeners stay bound and registry entries leak. Always `destroyByContainer(node)` **then**
-clear.
-:::
-
-## Worked example: the Table's data engine
-
-The built-in `Table` shows the rules together:
-
-- **State** (page, sort) lives in a `DataGridEngine` — a per-instance object. The engine is built with
-  `slice.build` (so it is discoverable and could be inspected), with a unique `sliceId` per table.
-- The Table destroys **both** the engine and the `Pagination` child in `beforeDestroy()`. The engine
-  (a Service) is never auto-cascaded, so it **must** be destroyed by hand; destroying the pager too is
-  redundant-but-safe (a Visual child does cascade, and `destroyComponent` is idempotent).
-- The pure sort/paginate math also exists as **static helpers** on the engine, so callers that only need
-  a one-off computation can skip the instance entirely.
 
 ## Anti-patterns
 
-- ❌ A **stateful per-instance Service** built with `slice.build` and relied on to be auto-cleaned — it
-  will not be. Either destroy it explicitly, or (better, if it is pure per-instance state) use a plain
-  `new`.
-- ❌ Scattering `build({ singleton: true })` across many call sites for an app-wide service — centralize
-  it in `AppServices` and `getComponent` it instead.
-- ❌ Storing service instances or functions in `slice.context` — keep only serializable state there.
-- ❌ Declaring `id`, `sliceId`, or `singleton` in `static props` — they are reserved build directives,
-  consumed by `build` before your setters run. See [Reserved build keys](/Documentation/The-build-method).
+- ❌ A stateful per-instance Service via `slice.build` relied on to auto-clean — it won't. Destroy it explicitly, or (if it is pure per-instance state) use a plain `new`.
+- ❌ Scattering `build({ singleton: true })` across call sites for an app-wide service — centralize it in the composition root and `getComponent` it.
+- ❌ Storing service instances or functions in `slice.context` — keep only serializable state (and note `setState` **replaces** the value, it does not merge).
+- ❌ Declaring `id`, `sliceId`, or `singleton` in `static props` — reserved build directives, consumed by `build` before your setters run. See [Reserved build keys](/Documentation/The-build-method).
