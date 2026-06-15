@@ -25,6 +25,10 @@
                 "warning": true,
                 "info": true
             }
+        },
+        "ui": {
+            "enabled": true,
+            "shortcut": "alt+shift+l"
         }
     },
     "events": {
