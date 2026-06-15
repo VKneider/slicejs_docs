@@ -87,6 +87,13 @@ Once loaded, Slice.js initializes structural components based on config:
 | --- | --- | --- | --- |
 | `enabled` | `boolean` | `true` | Master log toggle. |
 | `showLogs` | `object` | none | Per-level log filters. |
+| `ui` | `object` | none | UI panel configuration. |
+
+### logger.ui
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | `false` | Enables the LogViewer debug panel. |
+| `shortcut` | `string` | none | Keyboard shortcut to toggle the panel (e.g. `alt+shift+l`). |
 
 ## paths
 | Field | Type | Required | Notes |
@@ -269,7 +276,8 @@ const publicEnv = slice.getPublicEnv();
     "enabled": true,
     "showLogs": {
       "console": { "error": true, "warning": true, "info": true }
-    }
+    },
+    "ui": { "enabled": true, "shortcut": "alt+shift+l" }
   },
   "paths": {
     "components": {
