@@ -28,6 +28,23 @@ by level and basic querying over the in-memory log list.
 }
 ```
 
+## Logger UI (Optional)
+You can enable the LogViewer debug panel with a keyboard shortcut.
+
+```json title="sliceConfig.json"
+{
+  "logger": {
+    "enabled": true,
+    "ui": {
+      "enabled": true,
+      "shortcut": "alt+shift+l"
+    }
+  }
+}
+```
+
+The panel shows a live feed of all logs with level filtering and a search input. It is built with the same `--si-*` tokens as the other debugger panels and only processes logs while visible (conditional subscribe on toggle).
+
 ## API Reference
 | Method | Signature | Notes |
 | --- | --- | --- |
