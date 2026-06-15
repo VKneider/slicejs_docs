@@ -8,7 +8,7 @@ export default class EventManagerDocumentation extends HTMLElement {
 
   async init() {
     this.markdownPath = "event-manager.md";
-    this.markdownContent = "---\ntitle: EventManager\nroute: /Documentation/Structural/EventManager\nnavLabel: Events\nsection: Getting Started\ngroup: Events\norder: 20\ndescription: Lightweight pub/sub for component and app events.\ncomponent: EventManagerDocumentation\ntags: [events, pubsub, lifecycle, cleanup]\n---\n\n# EventManager\n\n## Overview\nEventManager provides a lightweight pub/sub system for Slice.js. It supports global subscriptions,\ncomponent-bound subscriptions with auto-cleanup, and one-time listeners. It is designed for\ncross-cutting signals and decoupled communication between components and services.\n\n## When to Use\n- App-level signals (app:ready, user:login, notification:show)\n- Decoupled UI updates (service emits, UI listens)\n- One-time bootstrap actions\n\n## When Not to Use\n- Shared, persistent state: use ContextManager instead\n- High-frequency real-time data: use dedicated data streams\n\n## Enable\n```json\n{\n  \"events\": { \"enabled\": true }\n}\n```\n\n## Events UI (Optional)\nYou can enable the EventManager debug panel with a keyboard shortcut.\n\n```json title=\"sliceConfig.json\"\n{\n  \"events\": {\n    \"enabled\": true,\n    \"ui\": {\n      \"enabled\": true,\n      \"shortcut\": \"alt+shift+e\"\n    }\n  }\n}\n```\n\n## Concepts\n- Event names are strings, typically namespaced (`domain:action`).\n- Subscriptions can be global or component-bound.\n- Component-bound subscriptions are auto-removed when the component is destroyed.\n\n## API Reference\n| Method | Signature | Notes |\n| --- | --- | --- |\n| `subscribe` | `(eventName, callback, options?)` | Auto-cleanup if `options.component` set |\n| `subscribeOnce` | `(eventName, callback, options?)` | Auto-unsubscribe after first emit |\n| `unsubscribe` | `(eventName, subscriptionId)` | Returns boolean |\n| `emit` | `(eventName, data?)` | Emits to all subscribers |\n| `bind` | `(component)` | Returns component-bound API |\n| `hasSubscribers` | `(eventName)` | Diagnostics only |\n| `subscriberCount` | `(eventName)` | Diagnostics only |\n| `clear` | `()` | Clears all subscriptions |\n\n## Usage Patterns\n```javascript title=\"Component-bound subscription in init() (recommended)\"\nexport default class Navbar extends HTMLElement {\n  constructor(props) {\n    super();\n    slice.attachTemplate(this);\n    slice.controller.setComponentProps(this, props);\n  }\n\n  async init() {\n    this.events = slice.events.bind(this);\n    this.events.subscribe(\"user:logout\", () => this.resetUI());\n  }\n\n  resetUI() {\n    // ...\n  }\n}\n```\n\n```javascript title=\"Component-bound without bind() in init()\"\nexport default class Navbar extends HTMLElement {\n  async init() {\n    slice.events.subscribe(\n      \"user:logout\",\n      () => this.resetUI(),\n      { component: this }\n    );\n  }\n}\n```\n\n```javascript title=\"One-time initialization in init()\"\nexport default class AppShell extends HTMLElement {\n  async init() {\n    slice.events.subscribeOnce(\"app:ready\", () => {\n      console.log(\"App ready\");\n    });\n  }\n}\n```\n\n```javascript title=\"Global notification from a service\"\nexport default class NotificationService {\n  notify(message, type = \"success\") {\n    slice.events.emit(\"notification:show\", { type, message });\n  }\n}\n```\n\n## Component Integration\n```javascript title=\"Service emits, UI listens\"\nexport default class NotificationService {\n  notify(message, type = \"info\") {\n    slice.events.emit(\"notification:show\", { message, type });\n  }\n}\n\nexport default class Toasts extends HTMLElement {\n  constructor(props) {\n    super();\n    slice.attachTemplate(this);\n    slice.controller.setComponentProps(this, props);\n  }\n\n  async init() {\n    this.events = slice.events.bind(this);\n    this.events.subscribe(\"notification:show\", ({ message, type }) => {\n      this.showToast(message, type);\n    });\n  }\n}\n```\n\n## Implementation Recipe\n:::steps\n1. Choose a namespaced event name (e.g., `cart:updated`).\n2. Emit the event where the change happens.\n3. Subscribe in the UI or other consumers using `bind()`.\n4. Use `subscribeOnce` for bootstrapping or single-run tasks.\n:::\n\n## Best Practices\n:::tip\nUse namespaced event names. Avoid generic names like `update` or `change`.\n:::\n\n:::tip\nKeep payloads small and serializable when possible.\n:::\n\n:::tip\nPrefer `bind()` for components. It prevents leaks by default.\n:::\n\n:::tip\nUse EventManager for signals, not for shared state. Pair with ContextManager when state must persist.\n:::\n\n## Gotchas\n:::warning\nClearing a container does not remove subscriptions. Use component-bound subscriptions or manual\n`unsubscribe` calls.\n:::\n\n:::warning\nAvoid using EventManager as a data store. It does not retain state.\n:::\n\n## Diagnostics\n```javascript title=\"Check if anyone is listening\"\nif (slice.events.hasSubscribers(\"cart:updated\")) {\n  slice.events.emit(\"cart:updated\", { items: 3 });\n}\n```\n\n## FAQ\n:::details title=\"Should I use EventManager for shared state?\"\nNo. Use ContextManager for shared state. EventManager is for ephemeral signals.\n:::\n\n:::details title=\"What happens if events are disabled?\"\nSlice.js provides a no-op implementation so calls to `slice.events` are safe.\n:::\n\n:::details title=\"Do I need to unsubscribe manually?\"\nOnly if you are not using `bind()` or `options.component`. Component-bound subscriptions auto-clean.\n:::\n\n:::details title=\"Can I debug event usage?\"\nUse `hasSubscribers` or `subscriberCount` for diagnostics in development.\n:::\n";
+    this.markdownContent = "---\r\ntitle: EventManager\r\nroute: /Documentation/Structural/EventManager\r\nnavLabel: Events\r\nsection: Getting Started\r\ngroup: Events\r\norder: 20\r\ndescription: Lightweight pub/sub for component and app events.\r\ncomponent: EventManagerDocumentation\r\ntags: [events, pubsub, lifecycle, cleanup]\r\n---\r\n\r\n# EventManager\r\n\r\n## Overview\r\nEventManager provides a lightweight pub/sub system for Slice.js. It supports global subscriptions,\r\ncomponent-bound subscriptions with auto-cleanup, and one-time listeners. It is designed for\r\ncross-cutting signals and decoupled communication between components and services.\r\n\r\n## When to Use\r\n- App-level signals (app:ready, user:login, notification:show)\r\n- Decoupled UI updates (service emits, UI listens)\r\n- One-time bootstrap actions\r\n\r\n## When Not to Use\r\n- Shared, persistent state: use ContextManager instead\r\n- High-frequency real-time data: use dedicated data streams\r\n\r\n## Enable\r\n```json\r\n{\r\n  \"events\": { \"enabled\": true }\r\n}\r\n```\r\n\r\n## Events UI (Optional)\r\nYou can enable the EventManager debug panel with a keyboard shortcut.\r\n\r\n```json title=\"sliceConfig.json\"\r\n{\r\n  \"events\": {\r\n    \"enabled\": true,\r\n    \"ui\": {\r\n      \"enabled\": true,\r\n      \"shortcut\": \"alt+shift+e\"\r\n    }\r\n  }\r\n}\r\n```\r\n\r\n## Concepts\r\n- Event names are strings, typically namespaced (`domain:action`).\r\n- Subscriptions can be global or component-bound.\r\n- Component-bound subscriptions are auto-removed when the component is destroyed.\r\n\r\n## API Reference\r\n| Method | Signature | Notes |\r\n| --- | --- | --- |\r\n| `subscribe` | `(eventName, callback, options?)` | Auto-cleanup if `options.component` set |\r\n| `subscribeOnce` | `(eventName, callback, options?)` | Auto-unsubscribe after first emit |\r\n| `unsubscribe` | `(eventName, subscriptionId)` | Returns boolean |\r\n| `emit` | `(eventName, data?)` | Emits to all subscribers |\r\n| `bind` | `(component)` | Returns component-bound API |\r\n| `hasSubscribers` | `(eventName)` | Diagnostics only |\r\n| `subscriberCount` | `(eventName)` | Diagnostics only |\r\n| `clear` | `()` | Clears all subscriptions |\r\n| `startRecording` | `()` | Activate emit history + counters (called by debugger on open) |\r\n| `stopRecording` | `()` | Deactivate emit recording (called by debugger on close) |\r\n\r\n## Usage Patterns\r\n```javascript title=\"Component-bound subscription in init() (recommended)\"\r\nexport default class Navbar extends HTMLElement {\r\n  constructor(props) {\r\n    super();\r\n    slice.attachTemplate(this);\r\n    slice.controller.setComponentProps(this, props);\r\n  }\r\n\r\n  async init() {\r\n    this.events = slice.events.bind(this);\r\n    this.events.subscribe(\"user:logout\", () => this.resetUI());\r\n  }\r\n\r\n  resetUI() {\r\n    // ...\r\n  }\r\n}\r\n```\r\n\r\n```javascript title=\"Component-bound without bind() in init()\"\r\nexport default class Navbar extends HTMLElement {\r\n  async init() {\r\n    slice.events.subscribe(\r\n      \"user:logout\",\r\n      () => this.resetUI(),\r\n      { component: this }\r\n    );\r\n  }\r\n}\r\n```\r\n\r\n```javascript title=\"One-time initialization in init()\"\r\nexport default class AppShell extends HTMLElement {\r\n  async init() {\r\n    slice.events.subscribeOnce(\"app:ready\", () => {\r\n      console.log(\"App ready\");\r\n    });\r\n  }\r\n}\r\n```\r\n\r\n```javascript title=\"Global notification from a service\"\r\nexport default class NotificationService {\r\n  notify(message, type = \"success\") {\r\n    slice.events.emit(\"notification:show\", { type, message });\r\n  }\r\n}\r\n```\r\n\r\n## Component Integration\r\n```javascript title=\"Service emits, UI listens\"\r\nexport default class NotificationService {\r\n  notify(message, type = \"info\") {\r\n    slice.events.emit(\"notification:show\", { message, type });\r\n  }\r\n}\r\n\r\nexport default class Toasts extends HTMLElement {\r\n  constructor(props) {\r\n    super();\r\n    slice.attachTemplate(this);\r\n    slice.controller.setComponentProps(this, props);\r\n  }\r\n\r\n  async init() {\r\n    this.events = slice.events.bind(this);\r\n    this.events.subscribe(\"notification:show\", ({ message, type }) => {\r\n      this.showToast(message, type);\r\n    });\r\n  }\r\n}\r\n```\r\n\r\n## Implementation Recipe\r\n:::steps\r\n1. Choose a namespaced event name (e.g., `cart:updated`).\r\n2. Emit the event where the change happens.\r\n3. Subscribe in the UI or other consumers using `bind()`.\r\n4. Use `subscribeOnce` for bootstrapping or single-run tasks.\r\n:::\r\n\r\n## Best Practices\r\n:::tip\r\nUse namespaced event names. Avoid generic names like `update` or `change`.\r\n:::\r\n\r\n:::tip\r\nKeep payloads small and serializable when possible.\r\n:::\r\n\r\n:::tip\r\nPrefer `bind()` for components. It prevents leaks by default.\r\n:::\r\n\r\n:::tip\r\nUse EventManager for signals, not for shared state. Pair with ContextManager when state must persist.\r\n:::\r\n\r\n## Gotchas\r\n:::warning\r\nClearing a container does not remove subscriptions. Use component-bound subscriptions or manual\r\n`unsubscribe` calls.\r\n:::\r\n\r\n:::warning\r\nAvoid using EventManager as a data store. It does not retain state.\r\n:::\r\n\r\n## Diagnostics\r\n```javascript title=\"Check if anyone is listening\"\r\nif (slice.events.hasSubscribers(\"cart:updated\")) {\r\n  slice.events.emit(\"cart:updated\", { items: 3 });\r\n}\r\n```\r\n\r\n## Debugger panel\r\nEnable the EventManager UI to inspect subscriptions and recent emits in real time:\r\n\r\n```json title=\"sliceConfig.json\"\r\n{\r\n  \"events\": {\r\n    \"enabled\": true,\r\n    \"ui\": {\r\n      \"enabled\": true,\r\n      \"shortcut\": \"alt+shift+e\"\r\n    }\r\n  }\r\n}\r\n```\r\n\r\nThe panel has two tabs:\r\n\r\n- **Subscribers** — lists every registered event, its subscriber count, an **emit counter**\r\n  (⚡) showing how many times the event was fired this session, and expandable subscriber\r\n  details (component name, `sliceId`, and a `once` badge for one-time listeners).\r\n- **History** — reverse-chronological feed of every `emit()` call with relative timestamps\r\n  (\"2s ago\", \"1m ago\"). Use it to trace \"who emitted what and when\".\r\n\r\nRecording is **zero-overhead in production**: the emit log and counters are only active while\r\nthe panel is open (`startRecording`/`stopRecording`).\r\n\r\n## FAQ\r\n:::details title=\"Should I use EventManager for shared state?\"\r\nNo. Use ContextManager for shared state. EventManager is for ephemeral signals.\r\n:::\r\n\r\n:::details title=\"What happens if events are disabled?\"\r\nSlice.js provides a no-op implementation so calls to `slice.events` are safe.\r\n:::\r\n\r\n:::details title=\"Do I need to unsubscribe manually?\"\r\nOnly if you are not using `bind()` or `options.component`. Component-bound subscriptions auto-clean.\r\n:::\r\n\r\n:::details title=\"Can I debug event usage?\"\r\nOpen the EventManager debug panel (`alt+shift+e`). The **Subscribers** tab shows every event's\r\nlisteners and emit count; the **History** tab shows a live feed of every `emit()` call. Recording\r\nis zero-overhead — it only activates while the panel is open.\r\n:::\r\n";
     if (true) {
       this.setupCopyButton();
     }
@@ -16,7 +16,7 @@ export default class EventManagerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "{\n  \"events\": { \"enabled\": true }\n}",
+               value: "{\r\n  \"events\": { \"enabled\": true }\r\n}\r",
                language: "json"
             });
             if (null) {
@@ -32,7 +32,7 @@ export default class EventManagerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-2"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "{\n  \"events\": {\n    \"enabled\": true,\n    \"ui\": {\n      \"enabled\": true,\n      \"shortcut\": \"alt+shift+e\"\n    }\n  }\n}",
+               value: "{\r\n  \"events\": {\r\n    \"enabled\": true,\r\n    \"ui\": {\r\n      \"enabled\": true,\r\n      \"shortcut\": \"alt+shift+e\"\r\n    }\r\n  }\r\n}\r",
                language: "json"
             });
             if ("sliceConfig.json") {
@@ -47,7 +47,7 @@ export default class EventManagerDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-3"]');
          if (container) {
-            const lines = ["| Method | Signature | Notes |","| --- | --- | --- |","| `subscribe` | `(eventName, callback, options?)` | Auto-cleanup if `options.component` set |","| `subscribeOnce` | `(eventName, callback, options?)` | Auto-unsubscribe after first emit |","| `unsubscribe` | `(eventName, subscriptionId)` | Returns boolean |","| `emit` | `(eventName, data?)` | Emits to all subscribers |","| `bind` | `(component)` | Returns component-bound API |","| `hasSubscribers` | `(eventName)` | Diagnostics only |","| `subscriberCount` | `(eventName)` | Diagnostics only |","| `clear` | `()` | Clears all subscriptions |"];
+            const lines = ["| Method | Signature | Notes |\r","| --- | --- | --- |\r","| `subscribe` | `(eventName, callback, options?)` | Auto-cleanup if `options.component` set |\r","| `subscribeOnce` | `(eventName, callback, options?)` | Auto-unsubscribe after first emit |\r","| `unsubscribe` | `(eventName, subscriptionId)` | Returns boolean |\r","| `emit` | `(eventName, data?)` | Emits to all subscribers |\r","| `bind` | `(component)` | Returns component-bound API |\r","| `hasSubscribers` | `(eventName)` | Diagnostics only |\r","| `subscriberCount` | `(eventName)` | Diagnostics only |\r","| `clear` | `()` | Clears all subscriptions |\r","| `startRecording` | `()` | Activate emit history + counters (called by debugger on open) |\r","| `stopRecording` | `()` | Deactivate emit recording (called by debugger on close) |\r"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -110,7 +110,7 @@ export default class EventManagerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-4"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "export default class Navbar extends HTMLElement {\n  constructor(props) {\n    super();\n    slice.attachTemplate(this);\n    slice.controller.setComponentProps(this, props);\n  }\n\n  async init() {\n    this.events = slice.events.bind(this);\n    this.events.subscribe(\"user:logout\", () => this.resetUI());\n  }\n\n  resetUI() {\n    // ...\n  }\n}",
+               value: "export default class Navbar extends HTMLElement {\r\n  constructor(props) {\r\n    super();\r\n    slice.attachTemplate(this);\r\n    slice.controller.setComponentProps(this, props);\r\n  }\r\n\r\n  async init() {\r\n    this.events = slice.events.bind(this);\r\n    this.events.subscribe(\"user:logout\", () => this.resetUI());\r\n  }\r\n\r\n  resetUI() {\r\n    // ...\r\n  }\r\n}\r",
                language: "javascript"
             });
             if ("Component-bound subscription in init() (recommended)") {
@@ -126,7 +126,7 @@ export default class EventManagerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-5"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "export default class Navbar extends HTMLElement {\n  async init() {\n    slice.events.subscribe(\n      \"user:logout\",\n      () => this.resetUI(),\n      { component: this }\n    );\n  }\n}",
+               value: "export default class Navbar extends HTMLElement {\r\n  async init() {\r\n    slice.events.subscribe(\r\n      \"user:logout\",\r\n      () => this.resetUI(),\r\n      { component: this }\r\n    );\r\n  }\r\n}\r",
                language: "javascript"
             });
             if ("Component-bound without bind() in init()") {
@@ -142,7 +142,7 @@ export default class EventManagerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-6"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "export default class AppShell extends HTMLElement {\n  async init() {\n    slice.events.subscribeOnce(\"app:ready\", () => {\n      console.log(\"App ready\");\n    });\n  }\n}",
+               value: "export default class AppShell extends HTMLElement {\r\n  async init() {\r\n    slice.events.subscribeOnce(\"app:ready\", () => {\r\n      console.log(\"App ready\");\r\n    });\r\n  }\r\n}\r",
                language: "javascript"
             });
             if ("One-time initialization in init()") {
@@ -158,7 +158,7 @@ export default class EventManagerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-7"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "export default class NotificationService {\n  notify(message, type = \"success\") {\n    slice.events.emit(\"notification:show\", { type, message });\n  }\n}",
+               value: "export default class NotificationService {\r\n  notify(message, type = \"success\") {\r\n    slice.events.emit(\"notification:show\", { type, message });\r\n  }\r\n}\r",
                language: "javascript"
             });
             if ("Global notification from a service") {
@@ -174,7 +174,7 @@ export default class EventManagerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-8"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "export default class NotificationService {\n  notify(message, type = \"info\") {\n    slice.events.emit(\"notification:show\", { message, type });\n  }\n}\n\nexport default class Toasts extends HTMLElement {\n  constructor(props) {\n    super();\n    slice.attachTemplate(this);\n    slice.controller.setComponentProps(this, props);\n  }\n\n  async init() {\n    this.events = slice.events.bind(this);\n    this.events.subscribe(\"notification:show\", ({ message, type }) => {\n      this.showToast(message, type);\n    });\n  }\n}",
+               value: "export default class NotificationService {\r\n  notify(message, type = \"info\") {\r\n    slice.events.emit(\"notification:show\", { message, type });\r\n  }\r\n}\r\n\r\nexport default class Toasts extends HTMLElement {\r\n  constructor(props) {\r\n    super();\r\n    slice.attachTemplate(this);\r\n    slice.controller.setComponentProps(this, props);\r\n  }\r\n\r\n  async init() {\r\n    this.events = slice.events.bind(this);\r\n    this.events.subscribe(\"notification:show\", ({ message, type }) => {\r\n      this.showToast(message, type);\r\n    });\r\n  }\r\n}\r",
                language: "javascript"
             });
             if ("Service emits, UI listens") {
@@ -190,7 +190,7 @@ export default class EventManagerDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-9"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "if (slice.events.hasSubscribers(\"cart:updated\")) {\n  slice.events.emit(\"cart:updated\", { items: 3 });\n}",
+               value: "if (slice.events.hasSubscribers(\"cart:updated\")) {\r\n  slice.events.emit(\"cart:updated\", { items: 3 });\r\n}\r",
                language: "javascript"
             });
             if ("Check if anyone is listening") {
@@ -205,28 +205,44 @@ export default class EventManagerDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-10"]');
          if (container) {
-            const details = await slice.build('Details', { title: "Should I use EventManager for shared state?", text: "No. Use ContextManager for shared state. EventManager is for ephemeral signals." });
-            container.appendChild(details);
+            const code = await slice.build('CodeVisualizer', {
+               value: "{\r\n  \"events\": {\r\n    \"enabled\": true,\r\n    \"ui\": {\r\n      \"enabled\": true,\r\n      \"shortcut\": \"alt+shift+e\"\r\n    }\r\n  }\r\n}\r",
+               language: "json"
+            });
+            if ("sliceConfig.json") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "sliceConfig.json";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
          }
       }
       {
          const container = this.querySelector('[data-block-id="doc-block-11"]');
          if (container) {
-            const details = await slice.build('Details', { title: "What happens if events are disabled?", text: "Slice.js provides a no-op implementation so calls to `slice.events` are safe." });
+            const details = await slice.build('Details', { title: "Should I use EventManager for shared state?", text: "No. Use ContextManager for shared state. EventManager is for ephemeral signals." });
             container.appendChild(details);
          }
       }
       {
          const container = this.querySelector('[data-block-id="doc-block-12"]');
          if (container) {
-            const details = await slice.build('Details', { title: "Do I need to unsubscribe manually?", text: "Only if you are not using `bind()` or `options.component`. Component-bound subscriptions auto-clean." });
+            const details = await slice.build('Details', { title: "What happens if events are disabled?", text: "Slice.js provides a no-op implementation so calls to `slice.events` are safe." });
             container.appendChild(details);
          }
       }
       {
          const container = this.querySelector('[data-block-id="doc-block-13"]');
          if (container) {
-            const details = await slice.build('Details', { title: "Can I debug event usage?", text: "Use `hasSubscribers` or `subscriberCount` for diagnostics in development." });
+            const details = await slice.build('Details', { title: "Do I need to unsubscribe manually?", text: "Only if you are not using `bind()` or `options.component`. Component-bound subscriptions auto-clean." });
+            container.appendChild(details);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-14"]');
+         if (container) {
+            const details = await slice.build('Details', { title: "Can I debug event usage?", text: "Open the EventManager debug panel (`alt+shift+e`). The **Subscribers** tab shows every event's\r\nlisteners and emit count; the **History** tab shows a live feed of every `emit()` call. Recording\r\nis zero-overhead — it only activates while the panel is open." });
             container.appendChild(details);
          }
       }

@@ -7,7 +7,7 @@
   </h1>
 </div>
 <h2 id="overview">Overview</h2>
-<p>Structural components power the framework runtime. They are created by Slice.js and exposed under <code>slice.*</code>. You do not build them directly.</p>
+<p>Structural components power the framework runtime. They are created by Slice.js and exposed under <code>slice.*</code>. You do not build them directly.</p>
 <h2 id="key-components">Key Components</h2>
 <ul><li><code>slice.controller</code> for component lifecycle and lookup</li><li><code>slice.router</code> for navigation and route rendering</li><li><code>slice.stylesManager</code> for styles and themes</li><li><code>slice.events</code> for pub/sub (optional)</li><li><code>slice.context</code> for shared state (optional)</li></ul>
 <h2 id="controller-api">Controller API</h2>
@@ -21,6 +21,7 @@
 <h2 id="eventmanager-optional">EventManager (Optional)</h2>
 <p>Provides pub/sub via <code>slice.events</code>. When disabled, the API is a no-op.</p>
 <div class="table-block" data-block-id="doc-block-5"></div>
+<p>The Events debug panel (<code>alt+shift+e</code>) shows a <strong>Subscribers</strong> tab (live listeners + emit counters) and a <strong>History</strong> tab (reverse-chronological feed of every <code>emit()</code>). Recording is zero-overhead: it only activates while the panel is open. See DevTools for details.</p>
 <h2 id="contextmanager-optional">ContextManager (Optional)</h2>
 <p>Shared state system available at <code>slice.context</code>.</p>
 <div class="table-block" data-block-id="doc-block-6"></div>

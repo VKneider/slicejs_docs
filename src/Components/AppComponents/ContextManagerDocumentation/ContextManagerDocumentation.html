@@ -7,13 +7,14 @@
   </h1>
 </div>
 <h2 id="overview">Overview</h2>
-<p>ContextManager provides shared state across components with watchers and optional persistence. It uses EventManager internally to notify watchers and supports selectors for efficient updates.</p>
+<p>ContextManager provides shared state across components with watchers and optional persistence. It uses EventManager internally to notify watchers and supports selectors for efficient updates.</p>
 <p>Enable it in <code>sliceConfig.json</code> to use <code>slice.context</code>.</p>
 <h2 id="enable-contextmanager">Enable ContextManager</h2>
 <div class="code-block" data-block-id="doc-block-1"></div>
 <h2 id="context-ui-optional">Context UI (Optional)</h2>
 <p>You can enable the ContextManager debug panel with a keyboard shortcut.</p>
 <div class="code-block" data-block-id="doc-block-2"></div>
+<p>The panel updates <strong>in real time</strong> — whenever any context changes via <code>setState()</code> or <code>patch()</code>, the list refreshes immediately. It also detects newly created contexts (via <code>create()</code>) and subscribes to them automatically. The refresh button is available for manual updates, but the panel is designed to stay in sync without it.</p>
 <h2 id="core-api">Core API</h2>
 <div class="table-block" data-block-id="doc-block-3"></div>
 <h2 id="context-options">Context Options</h2>
@@ -24,7 +25,7 @@
 <p>Watchers are bound to components for auto-cleanup. Pass the component as the second argument.</p>
 <div class="code-block" data-block-id="doc-block-6"></div>
 <h2 id="selectors-and-derived-data">Selectors and Derived Data</h2>
-<p>Selectors run on every update and should be fast and side-effect free. ContextManager performs a shallow comparison of the selected value to decide when to notify.</p>
+<p>Selectors run on every update and should be fast and side-effect free. ContextManager performs a shallow comparison of the selected value to decide when to notify.</p>
 <div class="code-block" data-block-id="doc-block-7"></div>
 <h2 id="persistence">Persistence</h2>
 <p>Persist a context to <code>localStorage</code> for session survival.</p>

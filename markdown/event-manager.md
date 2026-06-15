@@ -64,6 +64,8 @@ You can enable the EventManager debug panel with a keyboard shortcut.
 | `hasSubscribers` | `(eventName)` | Diagnostics only |
 | `subscriberCount` | `(eventName)` | Diagnostics only |
 | `clear` | `()` | Clears all subscriptions |
+| `startRecording` | `()` | Activate emit history + counters (called by debugger on open) |
+| `stopRecording` | `()` | Deactivate emit recording (called by debugger on close) |
 
 ## Usage Patterns
 ```javascript title="Component-bound subscription in init() (recommended)"
@@ -181,6 +183,32 @@ if (slice.events.hasSubscribers("cart:updated")) {
 }
 ```
 
+## Debugger panel
+Enable the EventManager UI to inspect subscriptions and recent emits in real time:
+
+```json title="sliceConfig.json"
+{
+  "events": {
+    "enabled": true,
+    "ui": {
+      "enabled": true,
+      "shortcut": "alt+shift+e"
+    }
+  }
+}
+```
+
+The panel has two tabs:
+
+- **Subscribers** — lists every registered event, its subscriber count, an **emit counter**
+  (⚡) showing how many times the event was fired this session, and expandable subscriber
+  details (component name, `sliceId`, and a `once` badge for one-time listeners).
+- **History** — reverse-chronological feed of every `emit()` call with relative timestamps
+  ("2s ago", "1m ago"). Use it to trace "who emitted what and when".
+
+Recording is **zero-overhead in production**: the emit log and counters are only active while
+the panel is open (`startRecording`/`stopRecording`).
+
 ## FAQ
 :::details title="Should I use EventManager for shared state?"
 No. Use ContextManager for shared state. EventManager is for ephemeral signals.
@@ -195,5 +223,7 @@ Only if you are not using `bind()` or `options.component`. Component-bound subsc
 :::
 
 :::details title="Can I debug event usage?"
-Use `hasSubscribers` or `subscriberCount` for diagnostics in development.
+Open the EventManager debug panel (`alt+shift+e`). The **Subscribers** tab shows every event's
+listeners and emit count; the **History** tab shows a live feed of every `emit()` call. Recording
+is zero-overhead — it only activates while the panel is open.
 :::

@@ -40,6 +40,11 @@ You can enable the ContextManager debug panel with a keyboard shortcut.
 }
 ```
 
+The panel updates **in real time** — whenever any context changes via `setState()` or `patch()`,
+the list refreshes immediately. It also detects newly created contexts (via `create()`) and
+subscribes to them automatically. The refresh button is available for manual updates, but the
+panel is designed to stay in sync without it.
+
 ## Core API
 | Method | Signature | Returns | Notes |
 | --- | --- | --- | --- |
