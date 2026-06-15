@@ -28,7 +28,7 @@
         },
         "ui": {
             "enabled": true,
-            "shortcut": "ctrl+l"
+            "shortcut": "ctrl+shift+l"
         }
     },
     "events": {
