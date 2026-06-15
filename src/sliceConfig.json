@@ -28,7 +28,7 @@
         },
         "ui": {
             "enabled": true,
-            "shortcut": "ctrl+shift+l"
+            "shortcut": "ctrl+shift+backspace"
         }
     },
     "events": {
