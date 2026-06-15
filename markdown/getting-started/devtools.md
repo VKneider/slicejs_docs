@@ -49,9 +49,12 @@ Enable them (and their keyboard shortcuts) in `sliceConfig.json`:
 "context": { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+c" } }
 ```
 
-- **Events** (`alt+shift+e`) — every event with its live subscribers (component name + `sliceId`)
-  and an `once` badge. Use it for "my listener isn't firing" or "it fires twice".
+- **Events** (`alt+shift+e`) — two tabs: **Subscribers** (every event with live subscriber details
+  and an emit counter ⚡) and **History** (reverse-chronological feed of all `emit()` calls with
+  relative timestamps). Use it for "my listener isn't firing", "it fires twice", or "who emitted
+  what and when".
 - **Context** (`alt+shift+c`) — every context, its key count, and a live JSON preview of its state.
+  Updates **in real time** on every `setState` / `patch` and auto-discovers newly created contexts.
   Use it for "my watcher isn't firing" or "persisted state didn't survive a refresh".
 
 :::tip

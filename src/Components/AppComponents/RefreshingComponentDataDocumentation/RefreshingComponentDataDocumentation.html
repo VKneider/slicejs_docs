@@ -6,30 +6,30 @@
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
-<p>The data behind a component changed — how do you update what's on screen? Slice gives you several mechanisms, from the cheapest (set a prop) to the heaviest (destroy + recreate). <strong>Reach for the lightest one that fits</strong> — the heavier the mechanism, the more you throw away (instance state, focus, scroll, async cost).</p>
+<p>The data behind a component changed — how do you update what's on screen? Slice gives you several mechanisms, from the cheapest (set a prop) to the heaviest (destroy + recreate). <strong>Reach for the lightest one that fits</strong> — the heavier the mechanism, the more you throw away (instance state, focus, scroll, async cost).</p>
 <h2 id="which-one">Which one?</h2>
 <div class="table-block" data-block-id="doc-block-1"></div>
 <h2 id="1-set-a-prop-or-call-a-method-the-default">1. Set a prop or call a method (the default)</h2>
-<p>In Slice, props go through <strong>setters</strong> — so updating data is usually just *assigning a prop*. The setter re-renders; the instance (and its focus/scroll/internal state) is preserved.</p>
+<p>In Slice, props go through <strong>setters</strong> — so updating data is usually just *assigning a prop*. The setter re-renders; the instance (and its focus/scroll/internal state) is preserved.</p>
 <div class="code-block" data-block-id="doc-block-2"></div>
 <p>Components also expose <strong>methods</strong> for finer updates — same idea, just a call:</p>
 <div class="code-block" data-block-id="doc-block-3"></div>
-<p>&gt; Design your own components so that <strong>assigning a prop or calling a method drives the re-render</strong> — that &gt; is what makes this the default refresh path.</p>
+<p>&gt; Design your own components so that <strong>assigning a prop or calling a method drives the re-render</strong> — that &gt; is what makes this the default refresh path.</p>
 <h2 id="2-update-cached-route-revisits">2. <code>update()</code> — cached route revisits</h2>
-<p><code>MultiRoute</code> / <code>Route</code> <strong>cache</strong> instances. When you navigate away and back, Slice calls <strong><code>update()</code></strong>, not <code>init()</code> — so refresh route-level data there (and you can call it manually too).</p>
+<p><code>MultiRoute</code> / <code>Route</code> <strong>cache</strong> instances. When you navigate away and back, Slice calls <strong><code>update()</code></strong>, not <code>init()</code> — so refresh route-level data there (and you can call it manually too).</p>
 <div class="code-block" data-block-id="doc-block-4"></div>
 <p>See [<code>update()</code>](/Documentation/LifeCycle-Methods/update). Keep it idempotent.</p>
 <h2 id="3-context-shared-state-many-components-react-to">3. Context — shared state many components react to</h2>
-<p>When several components depend on the <strong>same</strong> state, put it in [<code>slice.context</code>](/Documentation/Structural/ContextManager). Each component <code>watch</code>es it and refreshes when it changes; anyone calls <code>setState</code> to change it.</p>
+<p>When several components depend on the <strong>same</strong> state, put it in [<code>slice.context</code>](/Documentation/Structural/ContextManager). Each component <code>watch</code>es it and refreshes when it changes; anyone calls <code>setState</code> to change it.</p>
 <div class="code-block" data-block-id="doc-block-5"></div>
 <p>Watchers registered with <code>this</code> are <strong>auto-cleaned</strong> on destroy — don't unwatch them by hand.</p>
 <h2 id="4-events-react-to-something-happened">4. Events — react to "something happened"</h2>
-<p>For cross-cutting "X happened, refresh" signals, use [<code>slice.events</code>](/Documentation/Structural/EventManager). A component subscribes; some other part of the app emits.</p>
+<p>For cross-cutting "X happened, refresh" signals, use [<code>slice.events</code>](/Documentation/Structural/EventManager). A component subscribes; some other part of the app emits.</p>
 <div class="code-block" data-block-id="doc-block-6"></div>
 <p>Subscriptions made via <code>slice.events.bind(this)</code> are <strong>auto-cleaned</strong> on destroy.</p>
-<p><strong>Context vs Events:</strong> ask *"what is the current state?"* → Context. Ask *"did something happen?"* → Events. Prefer Context for state, and add an Event when cross-domain side effects must react.</p>
+<p><strong>Context vs Events:</strong> ask *"what is the current state?"* → Context. Ask *"did something happen?"* → Events. Prefer Context for state, and add an Event when cross-domain side effects must react.</p>
 <h2 id="5-destroy-recreate-last-resort">5. Destroy + recreate (last resort)</h2>
-<p>Only when the component's <strong>structure</strong> changed so fundamentally that reconfiguring it would be more code than rebuilding. It is the heaviest option: you lose instance state, pay an async rebuild, and <strong>must clean up</strong> the old instance and its children first.</p>
+<p>Only when the component's <strong>structure</strong> changed so fundamentally that reconfiguring it would be more code than rebuilding. It is the heaviest option: you lose instance state, pay an async rebuild, and <strong>must clean up</strong> the old instance and its children first.</p>
 <div class="code-block" data-block-id="doc-block-7"></div>
-<p>Before reaching for this, check whether a setter/method (§1) can express the change instead — e.g. the <code>Table</code> reconfigures its pager by <strong>setting props</strong>, it never destroys and rebuilds it. And remember the cleanup rules: components built with <code>slice.build</code> are <strong>not</strong> auto-destroyed by a parent, and Services have no DOM so they are never cascaded — see [Service Patterns](/Documentation/Architecture/Service-Patterns).</p>
+<p>Before reaching for this, check whether a setter/method (§1) can express the change instead — e.g. the <code>Table</code> reconfigures its pager by <strong>setting props</strong>, it never destroys and rebuilds it. And remember the cleanup rules: components built with <code>slice.build</code> are <strong>not</strong> auto-destroyed by a parent, and Services have no DOM so they are never cascaded — see [Service Patterns](/Documentation/Architecture/Service-Patterns).</p>
 </div>

@@ -61,7 +61,6 @@ SLICE_NO_LOCAL_DELEGATION=1 slice version
 | `slice sync` | `slice registry sync` | Sync local Visual components from registry. |
 | `slice list` | - | Shortcut for `slice component list`. |
 | `slice version` | `slice v` | Show CLI version. |
-| `slice update` | `slice upgrade` | Update CLI/framework. |
 | `slice doctor` | `slice diagnose` | Run project diagnostics. |
 | `slice types generate` | - | Generate TypeScript typings for `slice.build`. |
 | `slice help` | `slice --help` | Show CLI help. |
@@ -122,20 +121,21 @@ npx slicejs-cli init
 ```
 
 ```bash title="Non-interactive"
-npx slicejs-cli init -y my-app --pm pnpm
+npx slicejs-cli init my-app -y --pm pnpm
 ```
 
 ### Options
 | Flag | Type | Default | Notes |
 | --- | --- | --- | --- |
-| `-y, --yes [name]` | `string` | `my-slice-app` | Skip prompts; optional project name. |
+| `[name]` | `string` | `my-slice-app` | Project name (positional). |
+| `-y, --yes` | `boolean` | `false` | Skip interactive prompts. |
 | `--pm <pm>` | `pnpm \| npm` | auto-detected | Package manager to use. When omitted, init detects it (user agent → available binaries) and only asks when ambiguous. |
 
 What it does:
 - Creates the project folder and a `package.json` inside it (before any install, so
   dependencies always anchor to the project folder).
 - Pins the chosen package manager in the `packageManager` field; later commands
-  (`slice update`, `slice doctor`) detect it from there or from the lockfile.
+  (`slice doctor`) detects it from there or from the lockfile.
 - Installs `slicejs-web-framework` (dependency) and `slicejs-cli` (devDependency)
   with the chosen package manager. Versions are not hard-pinned, so pnpm
   release-age policies (`minimumReleaseAge`) resolve cleanly.
@@ -309,21 +309,6 @@ npm run sync
 | Flag | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `-f, --force` | `boolean` | `false` | Skip confirmation and force update. |
-
-## update
-Checks for CLI and framework updates and optionally installs them.
-
-```bash title="Update packages"
-slice update
-```
-
-### Options
-| Flag | Type | Default | Notes |
-| --- | --- | --- | --- |
-| `-y, --yes` | `boolean` | `false` | Auto-confirm package updates. Does **not** touch `api/index.js`. |
-| `--cli` | `boolean` | `false` | Update CLI only. |
-| `-f, --framework` | `boolean` | `false` | Update framework only. |
-| `--update-api` | `boolean` | `false` | Overwrite your project `api/index.js` with the framework version (a `.bak` backup is created). Never done by default — the file may carry local changes. |
 
 ## doctor
 Runs project diagnostics (structure, config, dependencies, components, port availability).

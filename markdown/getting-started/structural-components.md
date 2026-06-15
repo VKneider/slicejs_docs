@@ -61,6 +61,12 @@ Provides pub/sub via `slice.events`. When disabled, the API is a no-op.
 | `unsubscribe` | `(eventName, id)` | Returns boolean. |
 | `emit` | `(eventName, data?)` | Emits to all subscribers. |
 | `bind` | `(component)` | Returns component-bound API. |
+| `startRecording` | `()` | Activate emit history + counters (called by debugger on open). |
+| `stopRecording` | `()` | Deactivate emit recording (called by debugger on close). |
+
+The Events debug panel (`alt+shift+e`) shows a **Subscribers** tab (live listeners + emit counters)
+and a **History** tab (reverse-chronological feed of every `emit()`). Recording is zero-overhead: it
+only activates while the panel is open. See DevTools for details.
 
 ## ContextManager (Optional)
 Shared state system available at `slice.context`.

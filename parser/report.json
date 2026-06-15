@@ -1,127 +1,127 @@
 {
   "generated": [
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\cli-commands.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\cli-commands.md",
       "component": "CommandsDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\context-manager.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\context-manager.md",
       "component": "ContextManagerDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\event-manager.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\event-manager.md",
       "component": "EventManagerDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\external-dependencies.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\external-dependencies.md",
       "component": "ExternalDependenciesDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\getting-started\\before-destroy.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\getting-started\\before-destroy.md",
       "component": "BeforeDestroyDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\getting-started\\build-method.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\getting-started\\build-method.md",
       "component": "TheBuildMethod"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\getting-started\\component-anatomy.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\getting-started\\component-anatomy.md",
       "component": "ComponentAnatomy"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\getting-started\\development-workflow.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\getting-started\\development-workflow.md",
       "component": "DevelopmentWorkflow"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\getting-started\\devtools.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\getting-started\\devtools.md",
       "component": "DevToolsDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\getting-started\\environment-variables.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\getting-started\\environment-variables.md",
       "component": "EnvironmentVariablesDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\getting-started\\first-page.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\getting-started\\first-page.md",
       "component": "FirstPage"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\getting-started\\init-method.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\getting-started\\init-method.md",
       "component": "InitMethodDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\getting-started\\lifecycle-overview.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\getting-started\\lifecycle-overview.md",
       "component": "LifeCycleMethods"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\getting-started\\project-anatomy.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\getting-started\\project-anatomy.md",
       "component": "ProjectAnatomy"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\getting-started\\routing-guards.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\getting-started\\routing-guards.md",
       "component": "RouterGuardsDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\getting-started\\services.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\getting-started\\services.md",
       "component": "ServiceDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\getting-started\\static-props.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\getting-started\\static-props.md",
       "component": "StaticPropsDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\getting-started\\structural-components.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\getting-started\\structural-components.md",
       "component": "StructuralDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\getting-started\\update-method.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\getting-started\\update-method.md",
       "component": "UpdateMethodDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\installation.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\installation.md",
       "component": "Installation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\logger.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\logger.md",
       "component": "LoggerDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\project-architecture\\app-shell-multiroute.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\project-architecture\\app-shell-multiroute.md",
       "component": "AppShellMultiRouteDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\project-architecture\\choosing-project-style.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\project-architecture\\choosing-project-style.md",
       "component": "ProjectArchitectureDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\project-architecture\\component-styles.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\project-architecture\\component-styles.md",
       "component": "ComponentStylesDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\project-architecture\\migration-single-view-to-shell.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\project-architecture\\migration-single-view-to-shell.md",
       "component": "MigrationSingleViewToAppShellDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\project-architecture\\refreshing-component-data.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\project-architecture\\refreshing-component-data.md",
       "component": "RefreshingComponentDataDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\project-architecture\\routing-data.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\project-architecture\\routing-data.md",
       "component": "RoutingDataDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\project-architecture\\service-patterns.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\project-architecture\\service-patterns.md",
       "component": "ServicePatternsDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\project-architecture\\single-view-spa.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\project-architecture\\single-view-spa.md",
       "component": "SingleViewSpaDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\slice-config.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\slice-config.md",
       "component": "SliceConfigDocumentation"
     },
     {
-      "filePath": "C:\\Users\\victo\\Documents\\frrr\\slicejs_docs\\markdown\\slicejs-mcp.md",
+      "filePath": "C:\\Users\\vkneider\\Pictures\\proyectos-mejorados\\slice_docs\\markdown\\slicejs-mcp.md",
       "component": "SliceMCPDocumentation"
     }
   ],
