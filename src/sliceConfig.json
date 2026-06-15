@@ -1,4 +1,5 @@
 {
+    "$schema": "/sliceConfig.schema.json",
     "server": {
         "port": 3000,
         "host": "localhost"
@@ -30,14 +31,14 @@
         "enabled": true,
         "ui": {
             "enabled": true,
-            "shortcut": "alt+shift+e"
+            "shortcut": "ctrl+enter"
         }
     },
     "context": {
         "enabled": true,
         "ui": {
             "enabled": true,
-            "shortcut": "alt+shift+c"
+            "shortcut": "ctrl+backspace"
         }
     },
     "paths": {
