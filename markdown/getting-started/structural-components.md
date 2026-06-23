@@ -23,10 +23,22 @@ under `slice.*`. You do not build them directly.
 - `slice.events` for pub/sub (optional)
 - `slice.context` for shared state (optional)
 
+## Which one?
+| Need | Use | One-liner |
+| --- | --- | --- |
+| Build / look up / destroy components | `slice.controller` | Lifecycle and the component registry. |
+| Navigate, guards, route params | `slice.router` | Client-side routing. |
+| Shared state many components read | `slice.context` | Holds state; watchers + selectors. |
+| Announce "something happened" | `slice.events` | Fire-and-forget pub/sub. |
+| Themes and styles | `slice.stylesManager` | `slice.setTheme(name)`. |
+
+For state vs signals see [Context vs Events](/Documentation/Structural/Context-vs-Events); for full
+signatures, the [API Reference](/Documentation/API-Reference).
+
 ## Controller API
 | Method | Signature | Returns | Notes |
 | --- | --- | --- | --- |
-| `getComponent` | `(sliceId)` | `HTMLElement | undefined` | Lookup by sliceId. |
+| `getComponent` | `(sliceId)` | instance or undefined | Lookup by sliceId. |
 | `destroyByContainer` | `(container)` | `number` | Destroys Slice components inside container. |
 | `destroyByPattern` | `(pattern)` | `number` | Destroys components whose sliceId matches pattern. |
 
@@ -51,34 +63,17 @@ container.innerHTML = '';
 await slice.setTheme('Dark');
 ```
 
-## EventManager (Optional)
-Provides pub/sub via `slice.events`. When disabled, the API is a no-op.
+## EventManager & ContextManager (Optional)
+- **`slice.events`** — pub/sub (`subscribe` / `emit` / `bind`). Full guide:
+  [EventManager](/Documentation/Structural/EventManager).
+- **`slice.context`** — shared state (`create` / `setState` / `watch`, with selectors and optional
+  persistence). Full guide: [ContextManager](/Documentation/Structural/ContextManager).
 
-| Method | Signature | Notes |
-| --- | --- | --- |
-| `subscribe` | `(eventName, callback, options?)` | Returns subscription id. |
-| `subscribeOnce` | `(eventName, callback, options?)` | Auto-unsubscribe after first emit. |
-| `unsubscribe` | `(eventName, id)` | Returns boolean. |
-| `emit` | `(eventName, data?)` | Emits to all subscribers. |
-| `bind` | `(component)` | Returns component-bound API. |
-| `startRecording` | `()` | Activate emit history + counters (called by debugger on open). |
-| `stopRecording` | `()` | Deactivate emit recording (called by debugger on close). |
+When to use which: [Context vs Events](/Documentation/Structural/Context-vs-Events). All signatures:
+[API Reference](/Documentation/API-Reference).
 
-The Events debug panel (`alt+shift+e`) shows a **Subscribers** tab (live listeners + emit counters)
-and a **History** tab (reverse-chronological feed of every `emit()`). Recording is zero-overhead: it
-only activates while the panel is open. See DevTools for details.
-
-## ContextManager (Optional)
-Shared state system available at `slice.context`.
-
-| Method | Signature | Notes |
-| --- | --- | --- |
-| `create` | `(name, initialState, options?)` | Options include `persist`. |
-| `getState` | `(name)` | Returns current state or null. |
-| `setState` | `(name, updater)` | Accepts object or updater function. |
-| `watch` | `(name, component, callback, selector?)` | Auto-cleanup via component. |
-| `destroy` | `(name)` | Removes a context. |
-| `list` | `()` | Returns context names. |
+The Events debug panel (`alt+shift+e`) shows live subscribers + an emit history; the Context panel
+shows live state. See [DevTools](/Documentation/DevTools).
 
 ## Best Practices
 :::tip

@@ -27,7 +27,7 @@ from <code>components.js</code>. Run <code>npm run component:list</code> to fix 
 <h2 id="diagnostics-while-developing">Diagnostics while developing</h2>
 <ul><li>Enable the debug panels in <code>sliceConfig.json</code> and toggle them at runtime: <code>alt+shift+e</code></li></ul>
 <p>(events) and <code>alt+shift+c</code> (context).</p>
-<ul><li>Right-click a component (when <code>debugger.enabled</code>) to inspect and live-edit its props.</li><li>Use <code>slice doctor</code> when the project structure or config seems off.</li><li>Prefer <code>slice.logger.logInfo / logWarning / logError</code> over <code>console.log</code> — it respects the</li></ul>
+<ul><li>Right-click a component (when <code>debugger.enabled</code>) to inspect and live-edit its props.</li><li>Use <code>slice doctor</code> when the project structure or config seems off.</li><li>Prefer <code>slice.logger.info / warn / error</code> over <code>console.log</code> — it respects the</li></ul>
 <p>configured levels and stays quiet in production.</p>
 <h2 id="production-build-briefly">Production build, briefly</h2>
 <p><code>npm run build</code> analyzes what your routes use, bundles and minifies into <code>/dist</code>, and copies your <code>publicFolders</code>. <code>npm run start</code> then serves <code>/dist</code>. Production mode disables dev-only features (prop validation, debug panels) for performance.</p>

@@ -42,10 +42,10 @@ export default class GameRoot extends HTMLElement {
   }
 
   async init() {
-    await this.renderPhase();
+    await this.showPhase();
   }
 
-  async renderPhase() {
+  async showPhase() {
     const viewMap = {
       setup: 'GameSetup',
       round: 'GameRound',
@@ -56,13 +56,13 @@ export default class GameRoot extends HTMLElement {
       state: this.state,
       onNext: async (patch) => {
         this.state = { ...this.state, ...patch };
-        await this.renderPhase();
+        await this.showPhase();
       }
     });
 
     const root = this.querySelector('.game-root-view');
-    root.innerHTML = '';
-    root.appendChild(component);
+    slice.controller.destroyByContainer(root);   // clean up the previous phase (no leak)
+    root.replaceChildren(component);
   }
 }
 
@@ -79,5 +79,17 @@ customElements.define('slice-game-root', GameRoot);
 Do not create many routes just to represent internal game phases. That usually increases complexity without user value.
 :::
 
-## Upgrade Trigger
-When users need independent URL-addressable sections, move to App Shell + MultiRoute.
+## Outgrowing single-view → App Shell
+When users need independent, URL-addressable sections, grow into the
+[App Shell + MultiRoute](/Documentation/Architecture/App-Shell-MultiRoute) pattern. Do it in
+slices, keeping the app working at each step:
+
+1. Add an `AppShell` that owns persistent UI (navbar, theme, footer) and hosts the section content.
+2. Wrap your current single view as **one** section route (e.g. `/play`).
+3. Add new sections only when they're independently navigable and meaningful as URLs.
+4. Move global controls into the shell; keep shared state in `slice.context` to avoid prop-drilling.
+5. Add [route guards](/Documentation/Routing/Guards) only when navigation policy needs it.
+
+:::tip
+Migrate in small slices: keep one route stable, move one section at a time, and verify after each move.
+:::

@@ -7,11 +7,11 @@
   </h1>
 </div>
 <h2 id="overview">Overview</h2>
-<p>The Slice.js CLI (<code>slice</code>) helps you initialize projects, manage components, run the dev server, and maintain your toolchain. For project workflows, prefer <code>package.json</code> scripts (<code>pnpm run ...</code> or <code>npm run ...</code>) so execution is pinned to your local dependency tree.</p>
+<p>The Slice.js CLI (<code>slice</code>) helps you initialize projects, manage components, run the dev server, and maintain your toolchain. For project workflows, prefer <code>package.json</code> scripts (<code>pnpm run ...</code> or <code>npm run ...</code>) so execution is pinned to your local dependency tree.</p>
 <h2 id="installation">Installation</h2>
 <div class="code-block" data-block-id="doc-block-1"></div>
 <div class="code-block" data-block-id="doc-block-2"></div>
-<p>When the <code>slice</code> launcher command is available (commonly after a global install that places <code>slice</code> in your PATH), it delegates to the nearest project-local <code>node_modules/slicejs-cli</code> from your current directory (including subdirectories). This keeps command execution aligned with the version pinned in each project.</p>
+<p>When the <code>slice</code> launcher command is available (commonly after a global install that places <code>slice</code> in your PATH), it delegates to the nearest project-local <code>node_modules/slicejs-cli</code> from your current directory (including subdirectories). This keeps command execution aligned with the version pinned in each project.</p>
 <p>If the launcher command is unavailable, use:</p>
 <div class="code-block" data-block-id="doc-block-3"></div>
 <p>You can bypass delegation for a specific invocation:</p>
@@ -26,13 +26,13 @@
 <div class="code-block" data-block-id="doc-block-7"></div>
 <p>If the CLI is installed globally, you can run <code>slice ...</code> directly from PATH.</p>
 <h3 id="pnpm-build-approval-note">pnpm build-approval note</h3>
-<p>With pnpm v10+, lifecycle scripts are gated by <code>allowBuilds</code> in <code>pnpm-workspace.yaml</code>. <code>slice init --pm pnpm</code> automatically configures:</p>
+<p>With pnpm v10+, lifecycle scripts are gated by <code>allowBuilds</code> in <code>pnpm-workspace.yaml</code>. <code>slice init --pm pnpm</code> automatically configures:</p>
 <div class="code-block" data-block-id="doc-block-8"></div>
 <p>For existing projects that do not have that setting yet, use:</p>
 <div class="code-block" data-block-id="doc-block-9"></div>
-<p>Use direct CLI commands (<code>slice ...</code> or <code>npx slicejs-cli ...</code>) mainly for bootstrapping (<code>init</code>) or when scripts are not yet configured.</p>
+<p>Use direct CLI commands (<code>slice ...</code> or <code>npx slicejs-cli ...</code>) mainly for bootstrapping (<code>init</code>) or when scripts are not yet configured.</p>
 <h2 id="init">init</h2>
-<p>Creates a new project folder and initializes it with the framework structure and the starter components from the official registry. Everything — <code>package.json</code>, <code>node_modules</code>, lockfile, <code>src/</code>, <code>api/</code> — is created <strong>inside</strong> the new folder.</p>
+<p>Creates a new project folder and initializes it with the framework structure and the starter components from the official registry. Everything — <code>package.json</code>, <code>node_modules</code>, lockfile, <code>src/</code>, <code>api/</code> — is created <strong>inside</strong> the new folder.</p>
 <div class="code-block" data-block-id="doc-block-10"></div>
 <div class="code-block" data-block-id="doc-block-11"></div>
 <h3 id="options">Options</h3>
@@ -43,7 +43,7 @@
 <ul><li>Pins the chosen package manager in the <code>packageManager</code> field; later commands</li></ul>
 <p>(<code>slice doctor</code>) detects it from there or from the lockfile.</p>
 <ul><li>Installs <code>slicejs-web-framework</code> (dependency) and <code>slicejs-cli</code> (devDependency)</li></ul>
-<p>with the chosen package manager. Versions are not hard-pinned, so pnpm   release-age policies (<code>minimumReleaseAge</code>) resolve cleanly.</p>
+<p>with the chosen package manager. Versions are not hard-pinned, so pnpm   release-age policies (<code>minimumReleaseAge</code>) resolve cleanly.</p>
 <ul><li>Creates <code>api/</code> and <code>src/</code> structure from the framework base.</li><li>Installs the starter Visual and Service components from the registry.</li><li>Configures package scripts (dev, build, start, get, browse, sync, etc.).</li></ul>
 <h2 id="dev">dev</h2>
 <p>Starts the development server and serves from <code>/src</code>.</p>
@@ -73,19 +73,19 @@ These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</co
 <h3 id="import-support-scope-2">Import support scope</h3>
 <ul><li>Supported: relative imports and absolute imports that resolve into folders listed in <code>publicFolders</code>.</li><li>Unsupported: bare package imports such as <code>import 'pkg'</code>.</li><li>Production preserves supported absolute public-folder imports with the same behavior as development.</li></ul>
 <h2 id="component-create">component create</h2>
-<p>Creates a new local component and registers it in <code>components.js</code>. Runs interactively, or non-interactively when you pass the name and category on the command line.</p>
+<p>Creates a new local component and registers it in <code>components.js</code>. Runs interactively, or non-interactively when you pass the name and category on the command line.</p>
 <div class="code-block" data-block-id="doc-block-20"></div>
 <div class="code-block" data-block-id="doc-block-21"></div>
 <div class="code-block" data-block-id="doc-block-22"></div>
 <div class="table-block" data-block-id="doc-block-23"></div>
-<p>Only the missing pieces are prompted, so <code>npm run component:create -- UserCard</code> asks just for the category. Passing both runs with no prompts — useful for scripts and AI agents.</p>
+<p>Only the missing pieces are prompted, so <code>npm run component:create -- UserCard</code> asks just for the category. Passing both runs with no prompts — useful for scripts and AI agents.</p>
 <p>Rules:</p>
 <ul><li>Name must start with a letter and be alphanumeric.</li><li>Visual components get <code>.js</code>, <code>.html</code>, <code>.css</code>; Service components get <code>.js</code> only.</li><li>An invalid <code>--category</code> fails with a message listing the valid categories.</li></ul>
 <h2 id="component-list">component list</h2>
-<p>Lists all local components by scanning category paths from <code>sliceConfig.json</code> and rewrites <code>src/Components/components.js</code>.</p>
+<p>Lists all local components by scanning category paths from <code>sliceConfig.json</code> and rewrites <code>src/Components/components.js</code>.</p>
 <div class="code-block" data-block-id="doc-block-24"></div>
 <h2 id="component-delete">component delete</h2>
-<p>Deletes a local component and updates <code>components.js</code>. Interactive by default; pass the name, <code>--category</code>, and <code>--yes</code> to delete non-interactively.</p>
+<p>Deletes a local component and updates <code>components.js</code>. Interactive by default; pass the name, <code>--category</code>, and <code>--yes</code> to delete non-interactively.</p>
 <div class="code-block" data-block-id="doc-block-25"></div>
 <div class="code-block" data-block-id="doc-block-26"></div>
 <div class="table-block" data-block-id="doc-block-27"></div>
@@ -100,7 +100,7 @@ These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</co
 <p>Lists available registry components.</p>
 <div class="code-block" data-block-id="doc-block-30"></div>
 <h2 id="sync-registry-sync">sync / registry sync</h2>
-<p>Updates local Visual components to latest registry versions. Service components are detected but not updated automatically.</p>
+<p>Updates local Visual components to latest registry versions. Service components are detected but not updated automatically.</p>
 <div class="code-block" data-block-id="doc-block-31"></div>
 <h3 id="options-6">Options</h3>
 <div class="table-block" data-block-id="doc-block-32"></div>
@@ -114,11 +114,11 @@ These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</co
 <p>Shows CLI help output.</p>
 <div class="code-block" data-block-id="doc-block-35"></div>
 <h2 id="types-generate">types generate</h2>
-<p>Generates a TypeScript declaration file from your components' <code>static props</code>, so editors can autocomplete and type-check <code>slice.build('Name', { ... })</code> calls.</p>
+<p>Generates a TypeScript declaration file from your components' <code>static props</code>, so editors can autocomplete and type-check <code>slice.build('Name', { ... })</code> calls.</p>
 <div class="code-block" data-block-id="doc-block-36"></div>
 <div class="code-block" data-block-id="doc-block-37"></div>
 <div class="table-block" data-block-id="doc-block-38"></div>
-<p>Re-run it whenever you add or change component props. The output is generated — don't edit it by hand, and re-generate (or wire it into your build) to keep autocomplete in sync.</p>
+<p>Re-run it whenever you add or change component props. The output is generated — don't edit it by hand, and re-generate (or wire it into your build) to keep autocomplete in sync.</p>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Prefer package scripts (<code>pnpm run ...</code> / <code>npm run ...</code>) for project commands.</div>
 <div class="callout callout-tip">Use <code>npx slicejs-cli &lt;command&gt;</code> for bootstrapping and recovery (for example before scripts exist).</div>

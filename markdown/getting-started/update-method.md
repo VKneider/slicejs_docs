@@ -13,68 +13,95 @@ tags: [lifecycle, update]
 # update()
 
 ## Overview
-`update()` runs whenever a component needs to refresh. The router calls it when a cached
-component is reused by `Route` or `MultiRoute`. You can also call it manually after changing
-props or state.
+`update()` refreshes a component **in place** after `init()` — same instance, no destroy, no
+flicker. The router calls it when a cached `Route` / `MultiRoute` is revisited; a parent, the
+component itself, or a `slice.context` watcher can call it too. Define it only when a refresh
+needs logic beyond a prop setter — rebuilding child components, an async fetch, or applying
+several props at once.
+
+The framework **wraps your `update()`**: calls are **serialized and coalesced** (last wins). An
+`async update()` driven rapidly — streaming tokens, fast state changes — never overlaps itself
+or tears the DOM. You write a plain `update()`; no manual tokens, queues, or guards.
 
 ## API
 | Method | Signature | Returns | Notes |
 | --- | --- | --- | --- |
-| `update` | `async update()` | `Promise<void>` | Called on cached components when revisited. |
+| `update` | `async update(props?)` | `Promise<void>` | Wrapped by the framework (serialized + coalesced). The router calls it with no args — read `this.props` (route params); a parent passes props as the argument. |
 
-## Ideal Use Cases
-- Re-fetch data that can change
-- Rebuild dynamic child components
-- Re-apply dynamic state to the DOM
+## Refresh in place — reuse, don't rebuild
+When the data changed but the entities persist, **reuse instances by a stable `sliceId`** and let
+each one refresh itself. Survivors are never recreated, so scroll, focus, and internal state are
+preserved.
 
-## Example
-```javascript title="Rebuild dynamic UI in update()"
-export default class ProductList extends HTMLElement {
-  async init() {
-    this.$productContainer = this.querySelector('.products-container');
-    await this.loadAndRenderProducts();
-  }
+```javascript title="Reuse surviving rows, build new ones, prune the gone"
+async update(state = {}) {
+  const items = state.items || [];
+  const alive = new Set();
 
-  async update() {
-    slice.controller.destroyByContainer(this.$productContainer);
-    this.$productContainer.innerHTML = '';
-    await this.loadAndRenderProducts();
-  }
+  for (const item of items) {
+    const sliceId = `row-${item.id}`;
+    alive.add(sliceId);
 
-  async loadAndRenderProducts() {
-    this.products = await this.fetchProducts();
-
-    for (const product of this.products) {
-      const productCard = await slice.build('ProductCard', {
-        sliceId: `product-${product.id}`,
-        title: product.title,
-        price: product.price,
-        image: product.image
-      });
-
-      this.$productContainer.appendChild(productCard);
+    const row = slice.getComponent(sliceId);
+    if (row) {
+      slice.setComponentProps(row, { title: item.title });   // refresh in place
+    } else {
+      const node = await slice.build('Row', { sliceId, ...item });
+      if (node) this.$list.appendChild(node);
     }
+  }
+
+  // prune: destroy rows whose data is gone
+  for (const el of Array.from(this.$list.children)) {
+    const id = el.getAttribute('slice-id');
+    if (id && !alive.has(id)) slice.controller.destroyComponent(id);
   }
 }
 ```
 
+`slice.setComponentProps(comp, props)` applies a bag of props to a component. On a built
+component it **refreshes**: re-runs the setters, does **not** re-apply defaults, and won't clobber
+the props you omit. (At construction time the same call applies defaults — it detects the mode.)
+
+## Total replacement — build-then-swap
+When the new data shares nothing with the old (e.g. a different conversation), build the
+replacement **off-DOM first**, then swap in one operation — no empty frame.
+
+```javascript title="Build off-DOM, then swap atomically"
+async update(state = {}) {
+  const old = Array.from(this.$slot.children)
+    .map((el) => el.getAttribute('slice-id')).filter(Boolean);
+
+  const frag = document.createDocumentFragment();
+  for (const item of state.items) {
+    const node = await slice.build('Card', { sliceId: `card-${item.id}`, ...item });
+    if (node) frag.appendChild(node);
+  }
+
+  this.$slot.replaceChildren(frag);                       // atomic swap
+  if (old.length) slice.controller.destroyComponent(old); // clean up the old instances
+}
+```
+
 ## Best Practices
-:::steps
-1. Destroy old components with `destroyByContainer`.
-2. Clear the container.
-3. Fetch fresh data.
-4. Rebuild components with stable `sliceId`s.
+:::tip
+Prefer a **prop setter** for single-value changes — see
+[Refreshing Component Data](/Documentation/Architecture/Refreshing-Component-Data). Reach for
+`update()` when the refresh needs logic: rebuilding children, an async fetch, or several props.
 :::
 
 :::tip
-Keep `update()` idempotent and safe to call multiple times.
+Reuse by `sliceId` for lists. The framework serializes your `update()`, so streaming and rapid
+calls are safe without writing any guards yourself.
 :::
 
 ## Gotchas
 :::warning
-Clearing `innerHTML` alone does not destroy Slice components.
+Clearing `innerHTML` alone does not destroy Slice components — use `destroyComponent` /
+`destroyByContainer` so `beforeDestroy` runs and the registry is cleaned.
 :::
 
 :::warning
-Do not rebuild static UI in `update()` unless it depends on changing data.
+`update()` is for refreshes **after** `init()`. The framework does not call it on first build —
+`init()` does the first paint.
 :::

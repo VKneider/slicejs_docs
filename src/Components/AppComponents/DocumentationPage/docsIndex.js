@@ -1,15 +1,5 @@
 const docsIndex = [
   {
-    title: 'Components Docs Portal',
-    route: '/Documentation/Components',
-    description: 'Official entrypoint to visual components documentation.',
-    section: 'Components Library',
-    group: 'Portal',
-    order: 60,
-    navLabel: 'Components Docs Portal',
-    tags: ['components', 'docs', 'portal']
-  },
-  {
     title: 'Component Anatomy',
     route: '/Documentation/Component-Anatomy',
     description: 'How to author a Slice component, generate it with the CLI, and register it.',
@@ -38,16 +28,6 @@ const docsIndex = [
     order: 31,
     navLabel: 'The build method',
     tags: ['build', 'components']
-  },
-  {
-    title: 'Visual',
-    route: '/Documentation/Visual',
-    description: 'Official visual component documentation entrypoint for Slice.js.',
-    section: 'Getting Started',
-    group: 'Components',
-    order: 32,
-    navLabel: 'Visual',
-    tags: ['visual', 'components', 'docs']
   },
   {
     title: 'Structural',
@@ -110,14 +90,14 @@ const docsIndex = [
     tags: ['lifecycle', 'destroy', 'cleanup']
   },
   {
-    title: 'Themes',
-    route: '/Documentation/Themes',
-    description: 'Configure and switch Slice.js themes using CSS variables.',
+    title: 'Context vs Events',
+    route: '/Documentation/Structural/Context-vs-Events',
+    description: 'When to reach for ContextManager and when for EventManager — the one decision that keeps shared state clean.',
     section: 'Getting Started',
-    group: 'Configuration',
-    order: 7,
-    navLabel: 'Themes',
-    tags: ['themes', 'styles', 'configuration']
+    group: 'Components',
+    order: 56,
+    navLabel: 'Context vs Events',
+    tags: ['context', 'events', 'state', 'architecture']
   },
   {
     title: 'sliceConfig.json',
@@ -200,14 +180,14 @@ const docsIndex = [
     tags: ['getting-started', 'cli', 'workflow']
   },
   {
-    title: 'Slice Routing',
-    route: '/Documentation/Routing',
-    description: 'Router setup, navigation, and guards.',
+    title: 'Common Gotchas',
+    route: '/Documentation/Common-Gotchas',
+    description: 'The traps Slice.js developers hit first — DOM timing, cleanup, routing, props — and how to avoid each one.',
     section: 'Getting Started',
-    group: 'Routing',
-    order: 50,
-    navLabel: 'Routing',
-    tags: ['routing', 'router', 'guards']
+    group: 'First Steps',
+    order: 28,
+    navLabel: 'Common Gotchas',
+    tags: ['gotchas', 'troubleshooting', 'errors', 'cleanup']
   },
   {
     title: 'Route Guards',
@@ -260,26 +240,6 @@ const docsIndex = [
     tags: ['mcp', 'documentation', 'ai', 'tools']
   },
   {
-    title: 'Documentation',
-    route: '/Documentation',
-    description: 'The documentation landing page for Slice.js.',
-    section: 'Introduction',
-    group: 'Overview',
-    order: 1,
-    navLabel: 'Documentation',
-    tags: ['documentation', 'overview']
-  },
-  {
-    title: 'What is Slice.js?',
-    route: '/Documentation/Slice',
-    description: 'A quick introduction to Slice.js and its philosophy.',
-    section: 'Introduction',
-    group: 'Overview',
-    order: 2,
-    navLabel: 'What is Slice.js?',
-    tags: ['introduction', 'overview']
-  },
-  {
     title: 'Installation',
     route: '/Documentation/Installation',
     description: 'Install the CLI, initialize a project, and start the dev server.',
@@ -288,6 +248,16 @@ const docsIndex = [
     order: 3,
     navLabel: 'Installation',
     tags: ['installation', 'cli', 'setup']
+  },
+  {
+    title: 'Quick API Reference',
+    route: '/Documentation/API-Reference',
+    description: 'Every public slice.* method at a glance — build, props, cleanup, router, context, events, logger, env.',
+    section: 'Introduction',
+    group: 'Reference',
+    order: 4,
+    navLabel: 'API Reference',
+    tags: ['api', 'reference']
   },
   {
     title: 'Choosing a Project Style',
@@ -328,16 +298,6 @@ const docsIndex = [
     order: 4,
     navLabel: 'Routing and Data Passing',
     tags: ['routing', 'params', 'query', 'context', 'events']
-  },
-  {
-    title: 'Migration: Single-View to App Shell',
-    route: '/Documentation/Architecture/Migration',
-    description: 'Incrementally migrate a single-view Slice app to a shell + multiroute architecture.',
-    section: 'Project Architecture',
-    group: 'Styles and Patterns',
-    order: 5,
-    navLabel: 'Migration: Single-View to App Shell',
-    tags: ['migration', 'architecture', 'multiroute', 'routing']
   },
   {
     title: 'Service Patterns',

@@ -42,10 +42,17 @@
 <h2 id="static-props-and-setters">static props and setters</h2>
 <p><code>static props</code> is the component's public contract. Each entry has a <code>type</code> and an optional <code>default</code> or <code>required: true</code>.</p>
 <div class="code-block" data-block-id="doc-block-7"></div>
-<p>Types: <code>string</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>function</code>. When <code>setComponentProps</code> runs, it applies defaults, validates in development, and assigns each prop <strong>through its setter</strong> (<code>this[prop] = value</code>). Defaults pass through setters too. Because of this, <strong>side effects belong in setters</strong> — assigning a prop is all the rest of your code needs to do, and the Debugger can change props live through the same path. Keep internal state (cached data, timers) on <code>this</code>, not in <code>static props</code>.</p>
+<p>Types: <code>string</code>, <code>number</code>, <code>boolean</code>, <code>array</code>, <code>object</code>, <code>function</code>. At <strong>build</strong>, <code>setComponentProps</code> applies defaults, validates in development, and assigns each prop <strong>through its setter</strong> (<code>this[prop] = value</code>); defaults pass through setters too. On an already-built component it <strong>refreshes</strong> instead (see *Refreshing a built component* below). Because of this, <strong>side effects belong in setters</strong> — assigning a prop is all the rest of your code needs to do, and the Debugger can change props live through the same path. Keep internal state (cached data, timers) on <code>this</code>, not in <code>static props</code>.</p>
+<h2 id="refreshing-a-built-component">Refreshing a built component</h2>
+<p>After a component is built, refresh it by <strong>assigning a prop</strong> (its setter runs) or, to apply several at once, with <code>slice.setComponentProps(component, props)</code>. It is the <strong>same</strong> function the constructor uses — it detects build vs refresh automatically:</p>
+<div class="table-block" data-block-id="doc-block-8"></div>
+<div class="code-block" data-block-id="doc-block-9"></div>
+<p>The key property: omitting a prop on refresh <strong>leaves it as-is</strong> — it is not reset to its default. That is what makes refreshing surviving instances safe.</p>
+<div class="callout callout-tip">Check whether an instance is still the live registered one (not destroyed or replaced by a rebuild)
+with <code>slice.isComponentAlive(component)</code>.</div>
 <h2 id="customelementsdefine">customElements.define</h2>
 <p>Register the custom element once at the bottom of the file:</p>
-<div class="code-block" data-block-id="doc-block-8"></div>
+<div class="code-block" data-block-id="doc-block-10"></div>
 <p>The tag must contain a hyphen. You rarely write the tag in HTML — <code>await slice.build('UserCard', props)</code> instantiates it for you.</p>
 <h2 id="component-categories-and-registration">Component categories and registration</h2>
 <p>Two things make a component loadable:</p>
@@ -56,8 +63,8 @@
 <p>When you call <code>slice.build('UserCard')</code>, Slice reads the category from <code>components.js</code>, finds the matching <code>paths.components</code> entry, and loads the files from <code>&lt;path&gt;/UserCard/</code>. <code>slice component create</code> keeps both in sync; if a component is missing from <code>components.js</code>, <code>slice.build()</code> returns <code>null</code>.</p>
 <h2 id="service-components">Service components</h2>
 <p>A Service is a plain class — no <code>HTMLElement</code>, no <code>static props</code>, no lifecycle, no <code>customElements.define</code>. Put it in a <code>Service</code>-type category and build it the same way:</p>
-<div class="code-block" data-block-id="doc-block-9"></div>
-<div class="code-block" data-block-id="doc-block-10"></div>
+<div class="code-block" data-block-id="doc-block-11"></div>
+<div class="code-block" data-block-id="doc-block-12"></div>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Generate components with <code>npm run component:create</code> so files and <code>components.js</code> stay correct.</div>
 <div class="callout callout-tip">Put DOM side effects in setters; reserve <code>init()</code> for async setup and <code>update()</code> for refreshes.</div>

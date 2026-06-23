@@ -6,26 +6,26 @@
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
-<p>A Slice component owns three files — <code>.js</code>, <code>.html</code>, and <code>.css</code>. The <code>.css</code> is loaded once when the component is first built and then applies <strong>globally</strong> to the page. That last word is the whole reason this page exists: nothing about a <code>.css</code> file is automatically scoped to its component. Encapsulation is a convention you follow, not something the framework enforces.</p>
-<p>Three rules keep component styles from leaking into — or being broken by — the rest of your app.</p>
+<p>A Slice component owns three files — <code>.js</code>, <code>.html</code>, and <code>.css</code>. The <code>.css</code> is loaded once when the component is first built and then applies <strong>globally</strong> to the page. That last word is the whole reason this page exists: nothing about a <code>.css</code> file is automatically scoped to its component. Encapsulation is a convention you follow, not something the framework enforces.</p>
+<p>Three rules keep component styles from leaking into — or being broken by — the rest of your app.</p>
 <h2 id="1-scope-every-selector-under-the-component-tag">1. Scope every selector under the component tag</h2>
-<p>Root every selector at the component's custom-element tag, never a bare class. The tag is whatever the component registers with <code>customElements.define('slice-...')</code>.</p>
+<p>Root every selector at the component's custom-element tag, never a bare class. The tag is whatever the component registers with <code>customElements.define('slice-...')</code>.</p>
 <div class="code-block" data-block-id="doc-block-1"></div>
-<p>Generic names (<code>.container</code>, <code>.item</code>, <code>.title</code>, <code>.header</code>) are the ones that bite — two components each defining a bare <code>.title</code> will silently overwrite each other. Prefixing with the tag makes collisions impossible.</p>
+<p>Generic names (<code>.container</code>, <code>.item</code>, <code>.title</code>, <code>.header</code>) are the ones that bite — two components each defining a bare <code>.title</code> will silently overwrite each other. Prefixing with the tag makes collisions impossible.</p>
 <div class="callout callout-warning"><code>@media</code> and <code>@supports</code> blocks are not an exception. Scope the selectors <strong>inside</strong> them
 too: <code>@media (max-width: 600px) { slice-my-card .card-title { ... } }</code>.</div>
 <h2 id="2-declare-an-explicit-host-display">2. Declare an explicit host display</h2>
-<p>A custom element with no <code>display</code> rule defaults to <code>display: inline</code>. For most components that is wrong and surprising: <code>width</code> and <code>height</code> are ignored, vertical <code>margin</code> is dropped, and the element sits on the text baseline. Always set <code>display</code> on the tag as the first rule of the file.</p>
+<p>A custom element with no <code>display</code> rule defaults to <code>display: inline</code>. For most components that is wrong and surprising: <code>width</code> and <code>height</code> are ignored, vertical <code>margin</code> is dropped, and the element sits on the text baseline. Always set <code>display</code> on the tag as the first rule of the file.</p>
 <div class="code-block" data-block-id="doc-block-2"></div>
 <div class="table-block" data-block-id="doc-block-3"></div>
 <div class="callout callout-tip">The tag selector has low specificity, so wherever you *use* the component you can still
 override it (<code>slice-my-card { display: flex }</code> in your app styles). Declaring a host
 <code>display</code> only removes the broken <code>inline</code> default — it never locks layout.</div>
 <h2 id="3-prefix-keyframes-with-the-component-name">3. Prefix keyframes with the component name</h2>
-<p><code>@keyframes</code> names are global. A bare <code>@keyframes spin</code> in two components is a collision waiting to happen — prefix every keyframe.</p>
+<p><code>@keyframes</code> names are global. A bare <code>@keyframes spin</code> in two components is a collision waiting to happen — prefix every keyframe.</p>
 <div class="code-block" data-block-id="doc-block-4"></div>
 <h2 id="the-one-exception-elements-you-move-to-the-body">The one exception: elements you move to the body</h2>
-<p>If your component appends an element to <code>document.body</code> (a tooltip bubble, a toast stack, a portaled overlay), that element no longer lives inside your tag, so a <code>slice-tag</code> descendant selector can't reach it. Those — and only those — stay as globally-unique classes. Give them a name unlikely to collide and a comment saying why.</p>
+<p>If your component appends an element to <code>document.body</code> (a tooltip bubble, a toast stack, a portaled overlay), that element no longer lives inside your tag, so a <code>slice-tag</code> descendant selector can't reach it. Those — and only those — stay as globally-unique classes. Give them a name unlikely to collide and a comment saying why.</p>
 <div class="code-block" data-block-id="doc-block-5"></div>
 <div class="callout callout-warning">This exception is narrow. If an element is in your component's template (queried with
 <code>this.querySelector</code> after <code>slice.attachTemplate</code>), it lives inside the tag — scope it.
@@ -34,5 +34,5 @@ Only reach for a global class when you genuinely <code>document.body.appendChild
 <div class="table-block" data-block-id="doc-block-6"></div>
 <h2 id="related">Related</h2>
 <ul><li>[Themes](/Documentation/Themes) — the CSS variable tokens (<code>--primary-color</code>,</li></ul>
-<p><code>--font-primary-color</code>, …) your scoped component styles should use instead of hard-coded   colors, so components follow the active theme.</p>
+<p><code>--font-primary-color</code>, …) your scoped component styles should use instead of hard-coded   colors, so components follow the active theme.</p>
 </div>

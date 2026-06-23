@@ -1,0 +1,37 @@
+<div class="documentation-content commongotchasdocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="common-gotchas">
+    <span class="doc-title-text">Common Gotchas</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<p>The handful of surprises that trip up most newcomers. Each one is the symptom, the cause, and the fix — skim it once and save yourself the debugging.</p>
+<h2 id="the-dom-is-empty-until-attachtemplate">The DOM is empty until <code>attachTemplate</code></h2>
+<p><code>querySelector</code> returns <code>null</code> if you call it before <code>slice.attachTemplate(this)</code>. The template is injected by that call.</p>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<h2 id="slicebuild-returns-null-when-the-component-isnt-registered"><code>slice.build()</code> returns <code>null</code> when the component isn't registered</h2>
+<p>A missing entry in <code>components.js</code> (or a wrong <code>paths.components</code> path/type) makes <code>build</code> resolve to <code>null</code> — not throw. Always guard, and resync the registry.</p>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="clearing-innerhtml-does-not-destroy-components">Clearing <code>innerHTML</code> does NOT destroy components</h2>
+<p><code>container.innerHTML = ''</code> removes the DOM but leaves the Slice instances registered — a leak, and their <code>beforeDestroy</code> never runs.</p>
+<div class="callout callout-warning">Destroy through the framework so <code>beforeDestroy</code> runs and the registry is cleaned:
+<code>slice.controller.destroyComponent(sliceId)</code> for one, or
+<code>slice.controller.destroyByContainer(node)</code> for a subtree.</div>
+<h2 id="components-built-with-slicebuild-are-not-auto-destroyed">Components built with <code>slice.build</code> are NOT auto-destroyed</h2>
+<p>A parent does not automatically destroy children you built with <code>slice.build</code>. Destroy them explicitly (or via <code>destroyByContainer</code>) when you tear down or refresh a region.</p>
+<h2 id="services-have-no-dom-clean-them-up-yourself">Services have no DOM — clean them up yourself</h2>
+<p>A Service is never cascaded by a parent's destroy (it has no DOM). Release its timers, listeners, and subscriptions in <code>beforeDestroy()</code>. See [Service Patterns](/Documentation/Architecture/Service-Patterns).</p>
+<h2 id="beforedestroy-is-not-awaited"><code>beforeDestroy()</code> is not awaited</h2>
+<p>It runs synchronously right before destruction. Keep it synchronous or fire-and-forget — do not rely on an <code>await</code> inside it completing.</p>
+<h2 id="setters-can-run-before-init">Setters can run before <code>init()</code></h2>
+<p><code>setComponentProps</code> runs in the <strong>constructor</strong>, before <code>init()</code>. If you cache DOM refs in <code>init()</code>, a setter may fire before they exist — guard with <code>?.</code>.</p>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<h2 id="update-is-not-called-on-first-build"><code>update()</code> is not called on first build</h2>
+<p>The framework calls <code>update()</code> only for <strong>refreshes</strong> (cached-route revisits, or when you call it). <code>init()</code> does the first paint. See [LifeCycle Methods](/Documentation/LifeCycle-Methods).</p>
+<h2 id="route-params-are-strings-one-per-segment">Route params are strings, one per segment</h2>
+<p>A <code>${param}</code> captures a <strong>single</strong> URL segment and arrives as a <strong>string</strong>. For multiple values use several segments or query params, and parse types yourself.</p>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<h2 id="a-refresh-keeps-the-props-you-dont-pass">A refresh keeps the props you don't pass</h2>
+<p>Refreshing a built component with <code>slice.setComponentProps(comp, { a })</code> updates <code>a</code> and <strong>leaves the rest as-is</strong> — omitted props are not reset to their defaults. To reset one, pass its value explicitly. (Defaults only apply at build.)</p>
+</div>

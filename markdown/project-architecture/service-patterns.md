@@ -34,7 +34,7 @@ Where state and shared logic live decides whether your app leaks. One rule, a de
 ## Instance state → plain fields
 
 ```javascript
-set page(value) { this._page = value; this.render(); }   // GC'd with the component
+set page(value) { this._page = value; this.$page.textContent = value; }   // GC'd with the component
 ```
 
 Big state logic → wrap in a **plain class** and `new` it (still no registration, still GC'd):

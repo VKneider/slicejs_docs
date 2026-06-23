@@ -22,6 +22,17 @@ Slice.js components expose three lifecycle methods for predictable behavior:
 These methods are called by the framework and are the recommended places to manage state,
 subscriptions, and DOM updates.
 
+## Which method do I use?
+| I want to… | Use | Why |
+| --- | --- | --- |
+| Cache DOM refs / bind listeners | constructor (after `attachTemplate`) or `init()` | constructor is synchronous; use `init()` if the setup is async |
+| Fetch initial data / build children | `init()` | it is `async` and awaited before first use |
+| Refresh after the data or route changed | `update()` | runs on cached-route revisits; safe to call manually |
+| Clean up timers / listeners / subscriptions | `beforeDestroy()` | runs right before destroy (not awaited) |
+
+For *how* to refresh (prop setter vs `update()` vs context vs events), see
+[Refreshing Component Data](/Documentation/Architecture/Refreshing-Component-Data).
+
 ## The constructor (before init)
 Before any lifecycle method runs, the constructor builds the component. Every Visual component's
 constructor does three things, in order:
@@ -51,7 +62,7 @@ See Component Anatomy for the full authoring guide.
 | Method | Called when | Async awaited | Typical responsibilities |
 | --- | --- | --- | --- |
 | `init()` | After construction, before first use | yes | Cache DOM, fetch initial data, build static children. |
-| `update()` | When a cached route/component is reused | yes | Re-fetch data, rebuild dynamic lists, update state. |
+| `update()` | Cached route revisit, or called by a parent / self / watcher | yes | Refresh **in place** (reuse children by `sliceId`); re-fetch data; apply props. The framework **serializes** repeated calls. |
 | `beforeDestroy()` | Right before destruction | no | Cleanup timers, listeners, subscriptions, aborts. |
 
 ## Call Order and Timing
@@ -72,23 +83,42 @@ class Example extends HTMLElement {
 ```
 
 ## Navigation and Reuse
-`update()` is called when a cached component is reused by routing (for example, `Route` and
-`MultiRoute` containers). This keeps UI responsive without rebuilding static structure.
+`update()` is called when a cached component is reused by routing (`Route` / `MultiRoute`
+containers), so static structure is never rebuilt. The framework **serializes** your `update()` —
+rapid or concurrent calls coalesce (last wins) — so streaming and fast revisits are safe without
+manual guards.
 
 ## Recommended Structure
-```javascript title="Recommended separation"
+Refresh **in place**: reuse children by a stable `sliceId`, build only the new ones, and prune the
+gone. Survivors keep their scroll, focus, and internal state.
+
+```javascript title="init + in-place update + cleanup"
 export default class UserList extends HTMLElement {
   async init() {
     this.$container = this.querySelector('.users');
-    await this.loadUsers();
-    await this.buildUserCards();
+    await this.refresh();
   }
 
-  async update() {
-    slice.controller.destroyByContainer(this.$container);
-    this.$container.innerHTML = '';
-    await this.loadUsers();
-    await this.buildUserCards();
+  async update() {        // cached revisit or data changed → refresh in place
+    await this.refresh();
+  }
+
+  async refresh() {
+    const users = await this.loadUsers();
+    const alive = new Set();
+
+    for (const u of users) {
+      const sliceId = `user-${u.id}`;
+      alive.add(sliceId);
+      const card = slice.getComponent(sliceId);
+      if (card) slice.setComponentProps(card, { name: u.name });   // reuse, no flicker
+      else this.$container.appendChild(await slice.build('UserCard', { sliceId, ...u }));
+    }
+
+    for (const el of Array.from(this.$container.children)) {        // prune the gone
+      const id = el.getAttribute('slice-id');
+      if (id && !alive.has(id)) slice.controller.destroyComponent(id);
+    }
   }
 
   beforeDestroy() {
@@ -104,7 +134,8 @@ Keep `init()` focused on one-time setup and cache DOM references there.
 :::
 
 :::tip
-Use `destroyByContainer` before rebuilding dynamic lists in `update()`.
+Refresh lists **in place**: reuse children by a stable `sliceId` (build new, update existing,
+prune gone). Destroy + rebuild only when the content is wholly different.
 :::
 
 ## Gotchas

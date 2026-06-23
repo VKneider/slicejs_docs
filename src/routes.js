@@ -18,7 +18,7 @@ const routes = [
             component: 'CommandsDocumentation',
          },
          {
-            path: '/SliceConfig',
+            path: '/Configuration/sliceConfig',
             component: 'SliceConfigDocumentation',
          },
          {
@@ -116,10 +116,6 @@ const routes = [
             component: 'RoutingDataDocumentation',
          },
            {
-              path: '/Architecture/Migration',
-              component: 'MigrationSingleViewToAppShellDocumentation',
-           },
-           {
               path: '/Architecture/Service-Patterns',
               component: 'ServicePatternsDocumentation',
            },
@@ -154,6 +150,18 @@ const routes = [
           {
              path: '/DevTools',
              component: 'DevToolsDocumentation',
+          },
+          {
+             path: '/Common-Gotchas',
+             component: 'CommonGotchasDocumentation',
+          },
+          {
+             path: '/Structural/Context-vs-Events',
+             component: 'ContextVsEventsDocumentation',
+          },
+          {
+             path: '/API-Reference',
+             component: 'ApiReferenceDocumentation',
           }
        ]
     },

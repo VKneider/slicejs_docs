@@ -14,15 +14,14 @@
 <h3 id="next-behavior"><code>next()</code> behavior</h3>
 <div class="table-block" data-block-id="doc-block-2"></div>
 <h2 id="guard-context">Guard Context</h2>
-<p><code>to</code> and <code>from</code> include path, component, params, query, and metadata.</p>
-<div class="table-block" data-block-id="doc-block-3"></div>
+<p><code>to</code> and <code>from</code> are <strong>Route Info</strong> objects (<code>path</code>, <code>component</code>, <code>params</code>, <code>query</code>, <code>metadata</code>). See [Routing → Route Info Object](/Documentation/Routing) for the field reference.</p>
 <h2 id="beforeeach">beforeEach</h2>
-<div class="code-block" data-block-id="doc-block-4"></div>
+<div class="code-block" data-block-id="doc-block-3"></div>
 <h2 id="aftereach">afterEach</h2>
-<div class="code-block" data-block-id="doc-block-5"></div>
+<div class="code-block" data-block-id="doc-block-4"></div>
 <h2 id="patterns">Patterns</h2>
+<div class="code-block" data-block-id="doc-block-5"></div>
 <div class="code-block" data-block-id="doc-block-6"></div>
-<div class="code-block" data-block-id="doc-block-7"></div>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Always call <code>next()</code> in <code>beforeEach</code>. Missing it logs a warning and navigation continues.</div>
 <div class="callout callout-tip">Keep guard logic fast. Long async work slows down navigation.</div>

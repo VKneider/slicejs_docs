@@ -27,7 +27,7 @@ This is the standard way to create Visual, App, and Service components in Slice.
 
 | Returns | Type | Notes |
 | --- | --- | --- |
-| component instance | `HTMLElement | Object | null` | Returns `null` on error. |
+| component instance | `HTMLElement`, `Object`, or `null` | A Visual returns the element, a Service its instance; `null` on error. |
 
 ## Lifecycle Steps
 1. Validate component name.

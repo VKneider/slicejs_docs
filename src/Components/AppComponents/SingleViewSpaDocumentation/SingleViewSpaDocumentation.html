@@ -18,6 +18,8 @@
 <ul><li>Keep flow state in root component state and/or <code>slice.context</code>.</li><li>Emit events for cross-cutting concerns (audio, analytics, notifications).</li><li>Keep URL stable unless deep links are required.</li></ul>
 <h2 id="common-mistakes">Common Mistakes</h2>
 <div class="callout callout-warning">Do not create many routes just to represent internal game phases. That usually increases complexity without user value.</div>
-<h2 id="upgrade-trigger">Upgrade Trigger</h2>
-<p>When users need independent URL-addressable sections, move to App Shell + MultiRoute.</p>
+<h2 id="outgrowing-single-view-app-shell">Outgrowing single-view → App Shell</h2>
+<p>When users need independent, URL-addressable sections, grow into the [App Shell + MultiRoute](/Documentation/Architecture/App-Shell-MultiRoute) pattern. Do it in slices, keeping the app working at each step:</p>
+<ol><li>Add an <code>AppShell</code> that owns persistent UI (navbar, theme, footer) and hosts the section content.</li><li>Wrap your current single view as <strong>one</strong> section route (e.g. <code>/play</code>).</li><li>Add new sections only when they're independently navigable and meaningful as URLs.</li><li>Move global controls into the shell; keep shared state in <code>slice.context</code> to avoid prop-drilling.</li><li>Add [route guards](/Documentation/Routing/Guards) only when navigation policy needs it.</li></ol>
+<div class="callout callout-tip">Migrate in small slices: keep one route stable, move one section at a time, and verify after each move.</div>
 </div>

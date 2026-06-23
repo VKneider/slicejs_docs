@@ -58,8 +58,8 @@ Non-interactive form:
 npx slicejs-cli init -y my-app --pm pnpm
 ```
 
-:::note pnpm
-init is pnpm-friendly: it never pins a just-published version, so hardened pnpm
+:::tip
+**pnpm:** init is pnpm-friendly: it never pins a just-published version, so hardened pnpm
 setups (e.g. `minimumReleaseAge` quarantine) resolve the newest version allowed
 by your policy. With `ignore-scripts` enabled, no postinstall step is required —
 init configures the scripts itself.
