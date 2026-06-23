@@ -19,6 +19,8 @@
 <div class="code-block" data-block-id="doc-block-2"></div>
 <h2 id="concepts">Concepts</h2>
 <ul><li>Event names are strings, typically namespaced (<code>domain:action</code>).</li><li>Subscriptions can be global or component-bound.</li><li>Component-bound subscriptions are auto-removed when the component is destroyed.</li></ul>
+<div class="callout callout-tip">Declare your events in the [Event Registry](/Documentation/Structural/EventRegistry) to get
+dev-time validation, typed <code>emit</code>/<code>subscribe</code>, and a documented graph of who emits and listens.</div>
 <h2 id="api-reference">API Reference</h2>
 <div class="table-block" data-block-id="doc-block-3"></div>
 <h2 id="usage-patterns">Usage Patterns</h2>
@@ -44,12 +46,14 @@
 <h2 id="debugger-panel">Debugger panel</h2>
 <p>Enable the EventManager UI to inspect subscriptions and recent emits in real time:</p>
 <div class="code-block" data-block-id="doc-block-10"></div>
-<p>The panel has two tabs:</p>
-<ul><li><strong>Subscribers</strong> — lists every registered event, its subscriber count, an <strong>emit counter</strong></li></ul>
-<p>(⚡) showing how many times the event was fired this session, and expandable subscriber   details (component name, <code>sliceId</code>, and a <code>once</code> badge for one-time listeners).</p>
-<ul><li><strong>History</strong> — reverse-chronological feed of every <code>emit()</code> call with relative timestamps</li></ul>
-<p>("2s ago", "1m ago"). Use it to trace "who emitted what and when".</p>
-<p>Recording is <strong>zero-overhead in production</strong>: the emit log and counters are only active while the panel is open (<code>startRecording</code>/<code>stopRecording</code>).</p>
+<p>The panel has three tabs:</p>
+<ul><li><strong>Subscribers</strong> — every event with its subscriber count, an <strong>emit counter</strong> (⚡), the</li></ul>
+<p><strong>emitters</strong> that fired it this session, and expandable subscriber details (component name,   <code>sliceId</code>, and a <code>once</code> badge for one-time listeners).</p>
+<ul><li><strong>Registry</strong> — the declared catalog grouped by namespace, with payload shapes and the static</li></ul>
+<p>emitter/listener graph. See [Event Registry](/Documentation/Structural/EventRegistry).</p>
+<ul><li><strong>History</strong> — reverse-chronological feed of every <code>emit()</code> call with its origin and relative</li></ul>
+<p>timestamps ("2s ago", "1m ago"). Use it to trace "who emitted what and when".</p>
+<p>Recording is <strong>zero-overhead in production</strong>: the emit log, counters, and emitter attribution are only active while the panel is open (<code>startRecording</code>/<code>stopRecording</code>).</p>
 <h2 id="faq">FAQ</h2>
 <div class="details-block" data-block-id="doc-block-11"></div>
 <div class="details-block" data-block-id="doc-block-12"></div>

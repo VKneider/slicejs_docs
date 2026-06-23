@@ -49,10 +49,12 @@ Enable them (and their keyboard shortcuts) in `sliceConfig.json`:
 "context": { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+c" } }
 ```
 
-- **Events** (`alt+shift+e`) — two tabs: **Subscribers** (every event with live subscriber details
-  and an emit counter ⚡) and **History** (reverse-chronological feed of all `emit()` calls with
-  relative timestamps). Use it for "my listener isn't firing", "it fires twice", or "who emitted
-  what and when".
+- **Events** (`alt+shift+e`) — three tabs: **Subscribers** (every event with live subscriber details,
+  an emit counter ⚡, and the emitters that fired it), **Registry** (the declared catalog grouped by
+  namespace with payload shapes and the static emit/listen graph — see
+  [Event Registry](/Documentation/Structural/EventRegistry)), and **History** (reverse-chronological
+  feed of all `emit()` calls with their origin and relative timestamps). Use it for "my listener isn't
+  firing", "it fires twice", or "who emitted what and when".
 - **Context** (`alt+shift+c`) — every context, its key count, and a live JSON preview of its state.
   Updates **in real time** on every `setState` / `patch` and auto-discovers newly created contexts.
   Use it for "my watcher isn't firing" or "persisted state didn't survive a refresh".
@@ -60,6 +62,19 @@ Enable them (and their keyboard shortcuts) in `sliceConfig.json`:
 :::tip
 Keep these panels enabled in development and turn off the `ui` blocks for production.
 :::
+
+## Leak Inspector
+A fourth dev-only panel surfaces components left **registered but detached from the DOM** — the
+silent leak from clearing `slice.build`'d children without `destroyComponent`. Enable it under
+`debugger` and open it with its shortcut:
+
+```json title="sliceConfig.json"
+"debugger": { "leakInspector": { "enabled": true, "shortcut": "alt+shift+k" } }
+```
+
+It lists each orphan with its retain chain and a per-row destroy probe, and flags a `growing ▲`
+trend when `activeComponents` accumulates across navigations. Cached `Route`/`MultiRoute` views are
+excluded. Full details in [Leak Inspector](/Documentation/LeakInspector).
 
 ## Built with Slice — try it yourself
 The inspector's "edit a prop, see it update" trick is small enough to build yourself. The

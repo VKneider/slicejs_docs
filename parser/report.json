@@ -1,135 +1,147 @@
 {
   "generated": [
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/api-reference.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/api-reference.md",
       "component": "ApiReferenceDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/cli-commands.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/cli-commands.md",
       "component": "CommandsDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/context-manager.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/context-manager.md",
       "component": "ContextManagerDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/event-manager.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/event-manager.md",
       "component": "EventManagerDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/external-dependencies.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/event-registry.md",
+      "component": "EventRegistryDocumentation"
+    },
+    {
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/external-dependencies.md",
       "component": "ExternalDependenciesDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/getting-started/before-destroy.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/before-destroy.md",
       "component": "BeforeDestroyDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/getting-started/build-method.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/build-method.md",
       "component": "TheBuildMethod"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/getting-started/common-gotchas.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/common-gotchas.md",
       "component": "CommonGotchasDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/getting-started/component-anatomy.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/component-anatomy.md",
       "component": "ComponentAnatomy"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/getting-started/context-vs-events.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/context-vs-events.md",
       "component": "ContextVsEventsDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/getting-started/development-workflow.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/development-workflow.md",
       "component": "DevelopmentWorkflow"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/getting-started/devtools.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/devtools.md",
       "component": "DevToolsDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/getting-started/environment-variables.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/environment-variables.md",
       "component": "EnvironmentVariablesDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/getting-started/first-page.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/first-page.md",
       "component": "FirstPage"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/getting-started/init-method.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/init-method.md",
       "component": "InitMethodDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/getting-started/lifecycle-overview.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/leak-inspector.md",
+      "component": "LeakInspectorDocumentation"
+    },
+    {
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/lifecycle-overview.md",
       "component": "LifeCycleMethods"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/getting-started/project-anatomy.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/project-anatomy.md",
       "component": "ProjectAnatomy"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/getting-started/routing-guards.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/routing-guards.md",
       "component": "RouterGuardsDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/getting-started/services.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/services.md",
       "component": "ServiceDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/getting-started/static-props.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/static-props.md",
       "component": "StaticPropsDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/getting-started/structural-components.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/structural-components.md",
       "component": "StructuralDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/getting-started/update-method.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/getting-started/update-method.md",
       "component": "UpdateMethodDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/installation.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/installation.md",
       "component": "Installation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/logger.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/logger.md",
       "component": "LoggerDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/project-architecture/app-shell-multiroute.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/project-architecture/app-shell-multiroute.md",
       "component": "AppShellMultiRouteDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/project-architecture/choosing-project-style.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/project-architecture/choosing-project-style.md",
       "component": "ProjectArchitectureDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/project-architecture/component-styles.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/project-architecture/component-styles.md",
       "component": "ComponentStylesDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/project-architecture/refreshing-component-data.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/project-architecture/refreshing-component-data.md",
       "component": "RefreshingComponentDataDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/project-architecture/routing-data.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/project-architecture/routing-data.md",
       "component": "RoutingDataDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/project-architecture/service-patterns.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/project-architecture/service-patterns.md",
       "component": "ServicePatternsDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/project-architecture/single-view-spa.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/project-architecture/single-view-spa.md",
       "component": "SingleViewSpaDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/slice-config.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/pwa.md",
+      "component": "PwaDocumentation"
+    },
+    {
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/slice-config.md",
       "component": "SliceConfigDocumentation"
     },
     {
-      "filePath": "/datadrive/vkneider/vk/slicejs_docs/markdown/slicejs-mcp.md",
+      "filePath": "/datadrive/vkneider/vk/slc/slicejs_docs/markdown/slicejs-mcp.md",
       "component": "SliceMCPDocumentation"
     }
   ],

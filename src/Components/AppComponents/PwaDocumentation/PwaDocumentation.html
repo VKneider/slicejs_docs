@@ -1,0 +1,44 @@
+<div class="documentation-content pwadocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="make-your-app-a-pwa">
+    <span class="doc-title-text">Make Your App a PWA</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p>A Progressive Web App is <strong>installable</strong> (add to home screen) and can work <strong>offline</strong>. A Slice app becomes one by adding three things — a web app manifest, some icons, and a service worker — and registering the worker from your page.</p>
+<p>You don't need any extra server setup: the Slice dev/prod server already serves <code>/manifest.json</code> and <code>/service-worker.js</code> with the correct MIME types (and the service worker with <code>Cache-Control: no-cache</code> and <code>Service-Worker-Allowed: /</code> so its scope is the whole app). Drop the files in <code>src/</code> and they're served at the site root; <code>slice build</code> copies them into <code>dist/</code> for production.</p>
+<h2 id="steps">Steps</h2>
+<ol class="steps"><li>Add <code>src/manifest.json</code>.</li><li>Add icons and expose their folder in <code>sliceConfig.json</code>.</li><li>Add <code>src/service-worker.js</code>.</li><li>Link the manifest and theme color in <code>App/index.html</code>.</li><li>Register the service worker — in production only.</li></ol>
+<h2 id="1-the-manifest">1. The manifest</h2>
+<p>Create <code>src/manifest.json</code> (served at <code>/manifest.json</code>):</p>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<h2 id="2-icons">2. Icons</h2>
+<p>Put your icons in a folder that is in <code>publicFolders</code> so they are served and copied to <code>dist/</code>. The starter already exposes <code>images/</code>, so <code>src/images/icon-192.png</code> is served at <code>/images/icon-192.png</code>. Provide at least 192×192 and 512×512, plus a 512×512 <code>maskable</code> for Android.</p>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="3-the-service-worker">3. The service worker</h2>
+<p>Create <code>src/service-worker.js</code> (served at <code>/service-worker.js</code>). A minimal app-shell worker: precache a few core assets, serve navigations network-first with an offline fallback, and serve other GETs cache-first.</p>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<p>List in <code>PRECACHE</code> the assets you want available offline. In production your code ships as hashed bundles under <code>/bundles/</code>, so add the ones your first screen needs and bump <code>CACHE</code> whenever you deploy new assets.</p>
+<h2 id="4-link-it-in-the-page">4. Link it in the page</h2>
+<p>Add the manifest and theme color to <code>App/index.html</code>:</p>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<h2 id="5-register-the-worker-production-only">5. Register the worker — production only</h2>
+<p>A caching service worker would serve stale files during development and break the live-edit loop. Register it <strong>only in production</strong>, and unregister any leftover worker in development. Add this once, e.g. at the end of <code>App/index.html</code>:</p>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<h2 id="best-practices">Best Practices</h2>
+<div class="callout callout-tip">Bump the <code>CACHE</code> string on every deploy. The <code>activate</code> handler deletes old caches,
+so users get the new assets instead of a stale shell.</div>
+<div class="callout callout-tip">Keep <code>PRECACHE</code> small — just the shell and what the first screen needs. Everything
+else is cached on demand by the cache-first <code>fetch</code> handler.</div>
+<h2 id="gotchas">Gotchas</h2>
+<div class="callout callout-warning">Never register a caching service worker in development. It serves old assets and
+hides your edits. The snippet above registers only when <code>slice-env.json</code> reports
+<code>production</code> and unregisters otherwise.</div>
+<div class="callout callout-warning">Keep <code>service-worker.js</code> at the site root (<code>/service-worker.js</code>) so its scope is the
+whole app. A worker served from a subfolder only controls that subfolder.</div>
+<h2 id="faq">FAQ</h2>
+<div class="details-block" data-block-id="doc-block-6"></div>
+<div class="details-block" data-block-id="doc-block-7"></div>
+</div>

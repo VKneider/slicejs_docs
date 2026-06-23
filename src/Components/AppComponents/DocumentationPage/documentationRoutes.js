@@ -69,6 +69,11 @@ export const documentationRoutes = {
             component: 'EnvironmentVariablesDocumentation'
          },
          {
+            title: 'PWA',
+            path: '/Documentation/Configuration/PWA',
+            component: 'PwaDocumentation'
+         },
+         {
             title: 'Components',
             items: [
                {
@@ -150,6 +155,11 @@ export const documentationRoutes = {
             component: 'EventManagerDocumentation'
          },
          {
+            title: 'Event Registry',
+            path: '/Documentation/Structural/EventRegistry',
+            component: 'EventRegistryDocumentation'
+         },
+         {
             title: 'Contexts',
             path: '/Documentation/Structural/ContextManager',
             component: 'ContextManagerDocumentation'
@@ -173,6 +183,11 @@ export const documentationRoutes = {
             title: 'DevTools',
             path: '/Documentation/DevTools',
             component: 'DevToolsDocumentation'
+         },
+         {
+            title: 'Leak Inspector',
+            path: '/Documentation/LeakInspector',
+            component: 'LeakInspectorDocumentation'
          },
          {
             title: 'Slice.js MCP',

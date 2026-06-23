@@ -53,6 +53,11 @@ You can enable the EventManager debug panel with a keyboard shortcut.
 - Subscriptions can be global or component-bound.
 - Component-bound subscriptions are auto-removed when the component is destroyed.
 
+:::tip
+Declare your events in the [Event Registry](/Documentation/Structural/EventRegistry) to get
+dev-time validation, typed `emit`/`subscribe`, and a documented graph of who emits and listens.
+:::
+
 ## API Reference
 | Method | Signature | Notes |
 | --- | --- | --- |
@@ -61,6 +66,7 @@ You can enable the EventManager debug panel with a keyboard shortcut.
 | `unsubscribe` | `(eventName, subscriptionId)` | Returns boolean |
 | `emit` | `(eventName, data?)` | Emits to all subscribers |
 | `bind` | `(component)` | Returns component-bound API |
+| `register` | `(catalog)` or `(namespace, catalog)` | Declare events — see [Event Registry](/Documentation/Structural/EventRegistry) |
 | `hasSubscribers` | `(eventName)` | Diagnostics only |
 | `subscriberCount` | `(eventName)` | Diagnostics only |
 | `clear` | `()` | Clears all subscriptions |
@@ -198,16 +204,18 @@ Enable the EventManager UI to inspect subscriptions and recent emits in real tim
 }
 ```
 
-The panel has two tabs:
+The panel has three tabs:
 
-- **Subscribers** — lists every registered event, its subscriber count, an **emit counter**
-  (⚡) showing how many times the event was fired this session, and expandable subscriber
-  details (component name, `sliceId`, and a `once` badge for one-time listeners).
-- **History** — reverse-chronological feed of every `emit()` call with relative timestamps
-  ("2s ago", "1m ago"). Use it to trace "who emitted what and when".
+- **Subscribers** — every event with its subscriber count, an **emit counter** (⚡), the
+  **emitters** that fired it this session, and expandable subscriber details (component name,
+  `sliceId`, and a `once` badge for one-time listeners).
+- **Registry** — the declared catalog grouped by namespace, with payload shapes and the static
+  emitter/listener graph. See [Event Registry](/Documentation/Structural/EventRegistry).
+- **History** — reverse-chronological feed of every `emit()` call with its origin and relative
+  timestamps ("2s ago", "1m ago"). Use it to trace "who emitted what and when".
 
-Recording is **zero-overhead in production**: the emit log and counters are only active while
-the panel is open (`startRecording`/`stopRecording`).
+Recording is **zero-overhead in production**: the emit log, counters, and emitter attribution
+are only active while the panel is open (`startRecording`/`stopRecording`).
 
 ## FAQ
 :::details title="Should I use EventManager for shared state?"

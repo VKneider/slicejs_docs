@@ -1,3 +1,94 @@
+=== markdown/api-reference.md ===
+# Quick API Reference
+
+The public `slice.*` surface in one page. Each section links to its full guide. Method names use
+`arg?` for optional arguments and `→` for the return.
+
+## Components & props
+| Method | Signature | Purpose |
+| --- | --- | --- |
+| `slice.build` | `build(name, props?) → Promise<instance>` | Build and register a component; resolves to `null` if the name isn't registered. `props.singleton: true` get-or-creates a Service. |
+| `slice.getComponent` | `getComponent(sliceId) → instance` | Get a registered instance by `sliceId` (`undefined` if none). |
+| `slice.setComponentProps` | `setComponentProps(component, props) → void` | Apply props. Auto-detects **build** (applies defaults + validates) vs **refresh** (patch in place, no defaults). |
+| `slice.isComponentAlive` | `isComponentAlive(component) → boolean` | `true` while it's the live registered instance; `false` once destroyed or replaced. |
+| `slice.attachTemplate` | `attachTemplate(component) → void` | Inject the component's `.html`. The DOM is only queryable after this. |
+
+See [Component Anatomy](/Documentation/Component-Anatomy) and
+[The build method](/Documentation/The-build-method).
+
+**Reserved props** (stripped before your setters run): `id` (HTML id), `sliceId` (registry id,
+auto-generated if omitted), `singleton` (Service-only get-or-create).
+
+## Cleanup
+| Method | Signature | Purpose |
+| --- | --- | --- |
+| `slice.controller.destroyComponent` | `destroyComponent(target) → number` | Destroy one or many and their children; `target` is a `sliceId`, an element, or an array. Returns the count. |
+| `slice.controller.destroyByContainer` | `destroyByContainer(container) → number` | Destroy every Slice component nested in a DOM node. |
+| `slice.controller.destroyByPattern` | `destroyByPattern(pattern) → number` | Destroy components whose `sliceId` matches a string/RegExp. |
+
+Destroying runs `beforeDestroy()` and cleans the registry — see [Common Gotchas](/Documentation/Common-Gotchas).
+
+## Router
+| Method | Signature | Purpose |
+| --- | --- | --- |
+| `slice.router.navigate` | `navigate(path, options?) → Promise<void>` | Navigate; `options.replace: true` uses history replace. |
+| `slice.router.start` | `start() → Promise<void>` | Start the router and load the first route (auto-starts otherwise). |
+| `slice.router.beforeEach` | `beforeEach((to, from, next) => …) → void` | Guard before each navigation; `next()` continues, `next(false)` cancels, `next('/path')` redirects. |
+| `slice.router.afterEach` | `afterEach((to, from) => …) → void` | Runs after navigation (cannot block). |
+
+Route params use `${param}` (not `:param`); each captures **one** segment and arrives as a string.
+See [Routing](/Documentation/Routing) and [Route Guards](/Documentation/Routing/Guards).
+
+## Context (shared state)
+| Method | Signature | Purpose |
+| --- | --- | --- |
+| `slice.context.create` | `create(name, initialState?, options?) → boolean` | Create a context; `options.persist: true` saves to localStorage. |
+| `slice.context.getState` | `getState(name) → state` | Read the whole state. |
+| `slice.context.setState` | `setState(name, updater) → void` | Replace state, or pass `(prev) => next`. |
+| `slice.context.patch` | `patch(name, partial) → void` | Shallow-merge a partial (keeps the rest). |
+| `slice.context.watch` | `watch(name, component, cb, selector?) → id` | React to changes; auto-cleaned on destroy. `selector` narrows what re-runs the callback. |
+| `slice.context.use` | `use(name) → { get, set, patch, watch, bind, has, destroy }` | Bound API for one context. `.bind()` watches **and** fires once with the current value. |
+
+See [ContextManager](/Documentation/Structural/ContextManager) and
+[Context vs Events](/Documentation/Structural/Context-vs-Events).
+
+## Events (pub/sub)
+| Method | Signature | Purpose |
+| --- | --- | --- |
+| `slice.events.subscribe` | `subscribe(event, cb, options?) → id` | Run `cb` on every emit. Pass `options.component` for auto-cleanup. |
+| `slice.events.subscribeOnce` | `subscribeOnce(event, cb, options?) → id` | Fire once, then auto-unsubscribe. |
+| `slice.events.unsubscribe` | `unsubscribe(event, id) → boolean` | Remove a subscription by id. |
+| `slice.events.emit` | `emit(event, ...args) → void` | Fire an event to all subscribers. |
+| `slice.events.bind` | `bind(component) → { subscribe, subscribeOnce, emit }` | Component-bound API; subscriptions auto-clean on destroy. |
+
+See [EventManager](/Documentation/Structural/EventManager).
+
+## Logger
+| Method | Signature | Purpose |
+| --- | --- | --- |
+| `slice.logger.error` | `error(sliceId, message, error?) → void` | Log an error. |
+| `slice.logger.warn` | `warn(sliceId, message, error?) → void` | Log a warning. |
+| `slice.logger.info` | `info(sliceId, message, error?) → void` | Log info. |
+| `slice.logger.debug` | `debug(sliceId, message, error?) → void` | Log debug detail. |
+
+The old `logError` / `logWarning` / `logInfo` names still work but are **deprecated** — prefer
+`error` / `warn` / `info`. See [Logger](/Documentation/Structural/Logger).
+
+## Environment & theme
+| Method | Signature | Purpose |
+| --- | --- | --- |
+| `slice.getEnv` | `getEnv(name, fallback?) → string` | Read one `SLICE_PUBLIC_*` variable. |
+| `slice.env.bool` | `env.bool(name, fallback?) → boolean` | Parse `1/true/yes/on` as `true`. |
+| `slice.env.int` | `env.int(name, fallback?) → number` | Parse an integer (fallback on `NaN`). |
+| `slice.env.list` | `env.list(name, fallback?) → string[]` | Split a CSV, trimmed. |
+| `slice.env.has` | `env.has(name) → boolean` | Whether the variable is set. |
+| `slice.setTheme` | `setTheme(name) → Promise<void>` | Apply a theme. |
+| `slice.theme` | `theme → string` | Current theme name. |
+| `slice.isProduction` | `isProduction() → boolean` | Runtime mode (reliable after `init()`). |
+
+See [Environment Variables](/Documentation/Configuration/environment-variables) and
+[Themes](/Documentation/Themes).
+
 === markdown/cli-commands.md ===
 # Slice.js CLI
 
@@ -420,11 +511,13 @@ panel is designed to stay in sync without it.
 | --- | --- | --- | --- |
 | `create` | `(name, initialState = {}, options = {})` | `boolean` | Options include `persist`, `storageKey`. |
 | `getState` | `(name)` | `any | null` | Returns current state or `null` if missing. |
-| `setState` | `(name, updater)` | `void` | `updater` can be object or `(prev) => newState`. |
+| `setState` | `(name, updater)` | `void` | **Replaces** the whole state. Pass the full next state, or `(prev) => newState`. |
+| `patch` | `(name, partial)` | `void` | First-level **merge** — keeps the other fields (the "update one field" case). |
 | `watch` | `(name, component, callback, selector?)` | `string | null` | Auto-cleanup via component sliceId. |
 | `has` | `(name)` | `boolean` | Check if a context exists. |
 | `destroy` | `(name)` | `boolean` | Removes a context and persisted storage. |
 | `list` | `()` | `string[]` | Returns all context names. |
+| `use` | `(name)` | `handle` | Handle bound to one context: `get/set/patch/watch/bind/has/destroy` without repeating the name. |
 
 ## Context Options
 | Option | Type | Default | Notes |
@@ -494,7 +587,7 @@ slice.context.create(
 ```
 
 ## Functional Updates
-Use functional updates when new state depends on previous state.
+`setState` **replaces** the whole state. Use the functional form when the next state depends on the previous one.
 
 ```javascript title="Functional update"
 slice.context.setState('cart', (prev) => ({
@@ -502,6 +595,40 @@ slice.context.setState('cart', (prev) => ({
   items: [...prev.items, newItem],
   total: prev.total + newItem.price
 }));
+```
+
+## Patch (partial merge)
+Because `setState` replaces, a partial object **drops the other fields**. Use `patch` to merge one or more fields and keep the rest — the common "update one field" case.
+
+```javascript title="patch vs setState"
+slice.context.setState('cart', { discount: 0.1 }); // ❌ replaces → items/total are gone
+slice.context.patch('cart', { discount: 0.1 });    // ✅ merges → keeps the rest
+```
+
+:::tip
+The classic bug is updating one field with a plain object and silently wiping the rest of the context. Reach for `patch` (or the functional `setState`) whenever you update part of a multi-field context.
+:::
+
+## Context Handles (`use`)
+`slice.context.use(name)` returns a handle bound to a single context, so you stop repeating the name. It exposes `get`, `set`, `patch`, `watch`, `bind`, `has`, and `destroy`.
+
+```javascript title="A bound handle"
+const settings = slice.context.use('settings');
+settings.get();                          // current state
+settings.patch({ selectedModel: 'pro' }); // merge
+settings.watch(this, (s) => { this.$model.textContent = s.selectedModel; });
+```
+
+`bind` is `watch` **plus an immediate call** with the current value — the "run now and on every change" pattern in one line (no separate initial run):
+
+```javascript title="bind = watch + initial run"
+async init() {
+  slice.context.use('cart').bind(
+    this,
+    (count) => { this.$badge.textContent = count; },
+    (state) => state.items.length
+  );
+}
 ```
 
 ## Service Singleton Example
@@ -920,6 +1047,11 @@ You can enable the EventManager debug panel with a keyboard shortcut.
 - Subscriptions can be global or component-bound.
 - Component-bound subscriptions are auto-removed when the component is destroyed.
 
+:::tip
+Declare your events in the [Event Registry](/Documentation/Structural/EventRegistry) to get
+dev-time validation, typed `emit`/`subscribe`, and a documented graph of who emits and listens.
+:::
+
 ## API Reference
 | Method | Signature | Notes |
 | --- | --- | --- |
@@ -928,6 +1060,7 @@ You can enable the EventManager debug panel with a keyboard shortcut.
 | `unsubscribe` | `(eventName, subscriptionId)` | Returns boolean |
 | `emit` | `(eventName, data?)` | Emits to all subscribers |
 | `bind` | `(component)` | Returns component-bound API |
+| `register` | `(catalog)` or `(namespace, catalog)` | Declare events — see [Event Registry](/Documentation/Structural/EventRegistry) |
 | `hasSubscribers` | `(eventName)` | Diagnostics only |
 | `subscriberCount` | `(eventName)` | Diagnostics only |
 | `clear` | `()` | Clears all subscriptions |
@@ -1065,16 +1198,18 @@ Enable the EventManager UI to inspect subscriptions and recent emits in real tim
 }
 ```
 
-The panel has two tabs:
+The panel has three tabs:
 
-- **Subscribers** — lists every registered event, its subscriber count, an **emit counter**
-  (⚡) showing how many times the event was fired this session, and expandable subscriber
-  details (component name, `sliceId`, and a `once` badge for one-time listeners).
-- **History** — reverse-chronological feed of every `emit()` call with relative timestamps
-  ("2s ago", "1m ago"). Use it to trace "who emitted what and when".
+- **Subscribers** — every event with its subscriber count, an **emit counter** (⚡), the
+  **emitters** that fired it this session, and expandable subscriber details (component name,
+  `sliceId`, and a `once` badge for one-time listeners).
+- **Registry** — the declared catalog grouped by namespace, with payload shapes and the static
+  emitter/listener graph. See [Event Registry](/Documentation/Structural/EventRegistry).
+- **History** — reverse-chronological feed of every `emit()` call with its origin and relative
+  timestamps ("2s ago", "1m ago"). Use it to trace "who emitted what and when".
 
-Recording is **zero-overhead in production**: the emit log and counters are only active while
-the panel is open (`startRecording`/`stopRecording`).
+Recording is **zero-overhead in production**: the emit log, counters, and emitter attribution
+are only active while the panel is open (`startRecording`/`stopRecording`).
 
 ## FAQ
 :::details title="Should I use EventManager for shared state?"
@@ -1093,6 +1228,188 @@ Only if you are not using `bind()` or `options.component`. Component-bound subsc
 Open the EventManager debug panel (`alt+shift+e`). The **Subscribers** tab shows every event's
 listeners and emit count; the **History** tab shows a live feed of every `emit()` call. Recording
 is zero-overhead — it only activates while the panel is open.
+:::
+
+=== markdown/event-registry.md ===
+# Event Registry
+
+## Overview
+Pub/sub decouples senders from receivers — which is exactly why it is hard to trace:
+event names are bare strings, payloads are untyped, and a typo silently creates a new
+event nobody listens to. The **Event Registry** is an opt-in catalog that turns your
+events into a **declared, typed, namespaced contract**.
+
+Declaring events buys you three things:
+- **Dev-time validation** — emitting or subscribing to an event you never declared warns once.
+- **Typed `emit`/`subscribe`** — `slice types generate` reads the catalog so payloads autocomplete and wrong shapes fail `tsc`.
+- **A documented graph** — who emits and who listens to each event, both statically (from code) and live (this session).
+
+The registry is **opt-in and safe by default**: if you never call `register()`, the
+EventManager behaves exactly as before (no warnings, no overhead).
+
+## Declaring events
+
+Declare events at your composition root (e.g. a `Providers` service built from
+`AppShell.init()`). `register()` is **mergeable** — call it as many times as you like,
+from as many modules as you like.
+
+```javascript title="Flat keys (namespace:event)"
+slice.events.register({
+  'cart:add':     { description: 'Item added to cart', payload: { sku: 'string', qty: 'number' } },
+  'cart:cleared': { description: 'Cart emptied', payload: null },   // null => no payload
+});
+```
+
+```javascript title="Grouped by namespace — register(namespace, catalog)"
+slice.events.register('user', {
+  login:  { payload: { id: 'number', name: 'string' } },
+  logout: { payload: null },
+}); // => declares 'user:login' and 'user:logout'
+```
+
+The `payload` mini-schema uses the same vocabulary as `static props` types: a field map
+like `{ id: 'number', name: 'string' }`, or `null` for events that carry no data.
+
+### Modularize by domain
+Keep one catalog per domain in its own module and register them where you wire singletons:
+
+```javascript title="src/events/cart.events.js"
+export const cartEvents = {
+  'cart:add':     { payload: { sku: 'string', qty: 'number' } },
+  'cart:cleared': { payload: null },
+};
+```
+
+```javascript title="Providers.init() — the composition root"
+import { cartEvents } from '../events/cart.events.js';
+import { userEvents } from '../events/user.events.js';
+
+slice.events.register(cartEvents).register(userEvents);
+```
+
+## Validation (dev only)
+Once any catalog is registered, the EventManager validates usage in development. It
+**never throws and never blocks delivery** — it logs a one-time warning and records the
+drift for the debugger:
+
+- **Undeclared event** — `emit`/`subscribe` for an event not in the catalog.
+- **No namespace** — an event name without a `namespace:` prefix (prefer `cart:add` over `add`).
+
+In production all of this is silent and zero-overhead.
+
+## Typed events
+Run the CLI to generate TypeScript declarations from the catalog:
+
+```bash title="Generate types + the event graph manifest"
+slice types generate
+```
+
+This emits a `SliceEventRegistry` interface and types `slice.events.emit`/`subscribe`
+by event name. Known events enforce their payload; unknown or dynamic events stay
+permissive.
+
+```typescript title="Typed at compile time"
+slice.events.emit('cart:add', { sku: 'A1', qty: 2 });   // ✅ ok
+slice.events.emit('cart:add', { sku: 'A1' });            // ❌ tsc error: qty is required
+slice.events.subscribe('user:login', (u) => u.name);     // u is { id: number; name: string }
+```
+
+## API Reference
+| Method | Signature | Notes |
+| --- | --- | --- |
+| `register` | `(catalog)` or `(namespace, catalog)` | Mergeable; turns on dev validation |
+| `isDeclared` | `(eventName)` | Whether the event is in the catalog |
+| `namespaceOf` | `(eventName)` | Segment before the first colon, or null |
+| `loadGraph` | `(manifest)` | Loads the generated static graph (documentation) |
+| `staticEmittersOf` | `(eventName)` | Code sites that emit this event |
+| `staticListenersOf` | `(eventName)` | Code sites that subscribe to this event |
+
+## Tracing: two complementary layers
+Knowing the graph "who emits, who listens" comes from two sources that cover each
+other's blind spots:
+
+| Question | Layer | Source |
+| --- | --- | --- |
+| Who can emit this event? (documentation) | Static | `slice types generate` scans `emit`/`subscribe` call sites |
+| Who actually emitted it this session? | Runtime | Live attribution recorded while the debugger is open |
+
+**Static graph (documentation).** `slice types generate` writes
+`src/slice-events.generated.js`: per event, the emitter and listener call sites
+(`file:line` plus the enclosing component). It is complete because it reads code, not
+execution — an emit on a branch that never ran is still documented. Events emitted with
+a computed name (`emit(\`cart:${x}\`)`) cannot be resolved statically and are listed as
+dynamic.
+
+**Runtime tracing (observational).** While the Events panel is open, every `emit()` is
+attributed to its source: the component when emitted through `slice.events.bind(this)`,
+or a best-effort `file:line` from the call stack for global emits. This is what *actually*
+fired, with counts — and anything that fires but is missing from the static graph is a
+dynamic emit worth a look.
+
+## Debugger panel
+Enable the Events UI and open it with the shortcut to inspect all of the above:
+
+```json title="sliceConfig.json"
+{
+  "events": { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+e" } }
+}
+```
+
+- **Registry** — the declared catalog grouped by namespace: payload shape, live listener
+  count, and the static emitters/listeners from the manifest. Drift badges flag
+  declared-but-idle and used-but-undeclared events.
+- **Subscribers** — live listeners per event plus the runtime emitters that fired.
+- **History** — reverse-chronological feed of every `emit()` with its origin and a
+  relative timestamp.
+
+## Best Practices
+:::tip
+Always namespace events (`cart:add`, not `add`). The namespace groups the catalog, the
+debugger, and the generated types.
+:::
+
+:::tip
+Declare catalogs as plain object literals (or imported literals) and pass them to
+`register()`. The type generator resolves literals statically — a computed object won't
+be typed.
+:::
+
+:::tip
+Register all catalogs from one place (your `Providers`/composition root). One file is
+standardization; many `register()` calls is modularization — both work with the same API.
+:::
+
+:::tip
+Re-run `slice types generate` after adding events or emit/subscribe sites so the types
+and the static graph stay in sync.
+:::
+
+## Gotchas
+:::warning
+Validation only activates after the first `register()`. Until then the EventManager runs
+in loose mode with no warnings — declaring the catalog is what opts you in.
+:::
+
+:::warning
+Events emitted with a computed name (`emit(\`user:${id}\`)`) cannot be typed or documented
+statically. Use literal names where you want the contract; the runtime tracer still shows
+them under dynamic sites.
+:::
+
+## FAQ
+:::details title="Is the registry required?"
+No. It is fully opt-in. Without `register()` the EventManager works exactly as before.
+:::
+
+:::details title="Why warn instead of throw on an undeclared event?"
+Safe by default: a missing declaration should never break a running app. Validation is a
+dev aid (a one-time warning plus a debugger badge), not a runtime gate.
+:::
+
+:::details title="Where do the static emitters/listeners come from?"
+From `slice types generate`, which scans your `emit`/`subscribe` call sites and writes
+`src/slice-events.generated.js`. The Events panel loads it to show the documented graph
+alongside live runtime activity. See [EventManager](/Documentation/Structural/EventManager).
 :::
 
 === markdown/external-dependencies.md ===
@@ -1284,7 +1601,7 @@ This is the standard way to create Visual, App, and Service components in Slice.
 
 | Returns | Type | Notes |
 | --- | --- | --- |
-| component instance | `HTMLElement | Object | null` | Returns `null` on error. |
+| component instance | `HTMLElement`, `Object`, or `null` | A Visual returns the element, a Service its instance; `null` on error. |
 
 ## Lifecycle Steps
 1. Validate component name.
@@ -1375,6 +1692,85 @@ Building a component can return `null` if the component is missing or fails to l
 :::warning
 Structural components are created by the framework and cannot be built directly.
 :::
+
+=== markdown/getting-started/common-gotchas.md ===
+# Common Gotchas
+
+The handful of surprises that trip up most newcomers. Each one is the symptom, the cause, and the
+fix — skim it once and save yourself the debugging.
+
+## The DOM is empty until `attachTemplate`
+`querySelector` returns `null` if you call it before `slice.attachTemplate(this)`. The template is
+injected by that call.
+
+```javascript title="✅ cache refs after attachTemplate"
+constructor(props) {
+  super();
+  slice.attachTemplate(this);                 // template is now in the DOM
+  this.$title = this.querySelector('.title'); // works
+  slice.controller.setComponentProps(this, props);
+}
+```
+
+## `slice.build()` returns `null` when the component isn't registered
+A missing entry in `components.js` (or a wrong `paths.components` path/type) makes `build` resolve
+to `null` — not throw. Always guard, and resync the registry.
+
+```javascript title="Guard the result"
+const node = await slice.build('UserCard', props);
+if (node) container.appendChild(node);   // null = not registered → run `npm run component:list`
+```
+
+## Clearing `innerHTML` does NOT destroy components
+`container.innerHTML = ''` removes the DOM but leaves the Slice instances registered — a leak, and
+their `beforeDestroy` never runs.
+
+:::warning
+Destroy through the framework so `beforeDestroy` runs and the registry is cleaned:
+`slice.controller.destroyComponent(sliceId)` for one, or
+`slice.controller.destroyByContainer(node)` for a subtree.
+:::
+
+## Components built with `slice.build` are NOT auto-destroyed
+A parent does not automatically destroy children you built with `slice.build`. Destroy them
+explicitly (or via `destroyByContainer`) when you tear down or refresh a region.
+
+## Services have no DOM — clean them up yourself
+A Service is never cascaded by a parent's destroy (it has no DOM). Release its timers, listeners,
+and subscriptions in `beforeDestroy()`. See
+[Service Patterns](/Documentation/Architecture/Service-Patterns).
+
+## `beforeDestroy()` is not awaited
+It runs synchronously right before destruction. Keep it synchronous or fire-and-forget — do not
+rely on an `await` inside it completing.
+
+## Setters can run before `init()`
+`setComponentProps` runs in the **constructor**, before `init()`. If you cache DOM refs in
+`init()`, a setter may fire before they exist — guard with `?.`.
+
+```javascript title="Guard refs cached in init()"
+set name(v) { this._name = v; this.applyName?.(); }   // setter may run before init()
+async init() { this.$name = this.querySelector('.name'); this.applyName(); }
+applyName() { if (this.$name) this.$name.textContent = this._name; }
+```
+
+## `update()` is not called on first build
+The framework calls `update()` only for **refreshes** (cached-route revisits, or when you call it).
+`init()` does the first paint. See [LifeCycle Methods](/Documentation/LifeCycle-Methods).
+
+## Route params are strings, one per segment
+A `${param}` captures a **single** URL segment and arrives as a **string**. For multiple values use
+several segments or query params, and parse types yourself.
+
+```javascript title="Params are strings"
+// route: /user/${id}
+const id = Number(params.id);   // it's a string — convert if you need a number
+```
+
+## A refresh keeps the props you don't pass
+Refreshing a built component with `slice.setComponentProps(comp, { a })` updates `a` and **leaves
+the rest as-is** — omitted props are not reset to their defaults. To reset one, pass its value
+explicitly. (Defaults only apply at build.)
 
 === markdown/getting-started/component-anatomy.md ===
 # Component Anatomy
@@ -1520,12 +1916,37 @@ static props = {
 };
 ```
 
-Types: `string`, `number`, `boolean`, `array`, `object`, `function`. When `setComponentProps`
-runs, it applies defaults, validates in development, and assigns each prop **through its setter**
-(`this[prop] = value`). Defaults pass through setters too. Because of this, **side effects belong
-in setters** — assigning a prop is all the rest of your code needs to do, and the Debugger can
-change props live through the same path. Keep internal state (cached data, timers) on `this`, not
-in `static props`.
+Types: `string`, `number`, `boolean`, `array`, `object`, `function`. At **build**,
+`setComponentProps` applies defaults, validates in development, and assigns each prop **through its
+setter** (`this[prop] = value`); defaults pass through setters too. On an already-built component it
+**refreshes** instead (see *Refreshing a built component* below). Because of this, **side effects
+belong in setters** — assigning a prop is all the rest of your code needs to do, and the Debugger
+can change props live through the same path. Keep internal state (cached data, timers) on `this`,
+not in `static props`.
+
+## Refreshing a built component
+After a component is built, refresh it by **assigning a prop** (its setter runs) or, to apply
+several at once, with `slice.setComponentProps(component, props)`. It is the **same** function the
+constructor uses — it detects build vs refresh automatically:
+
+| Context | What it does |
+| --- | --- |
+| Constructor (not yet registered) | Applies `static props` defaults, validates `required`, fires every setter. |
+| Built component (refresh) | Assigns only the props you pass — **no defaults, no `required` check** — and respects setter diff-guards, so unchanged values don't re-touch the DOM. |
+
+```javascript title="Refresh in place"
+const card = slice.getComponent('user-1');
+card.name = 'Ada';                                            // one prop: the setter runs
+slice.setComponentProps(card, { name: 'Ada', role: 'Admin' }); // several at once, omitted props kept
+```
+
+The key property: omitting a prop on refresh **leaves it as-is** — it is not reset to its default.
+That is what makes refreshing surviving instances safe.
+
+:::tip
+Check whether an instance is still the live registered one (not destroyed or replaced by a rebuild)
+with `slice.isComponentAlive(component)`.
+:::
 
 ## customElements.define
 Register the custom element once at the bottom of the file:
@@ -1567,7 +1988,7 @@ export default class AuthService {
   constructor(props = {}) { this.token = null; }
   async login(email, password) {
     const res = await fetch('/api/login', { method: 'POST', /* ... */ });
-    if (!res.ok) { slice.logger.logError('AuthService', 'Login failed'); return false; }
+    if (!res.ok) { slice.logger.error('AuthService', 'Login failed'); return false; }
     this.token = (await res.json()).token;
     return true;
   }
@@ -1597,6 +2018,76 @@ The DOM is empty until `slice.attachTemplate(this)` runs. Querying before it ret
 :::warning
 A component missing from `components.js`, or a wrong `paths.components` `path`/`type`, makes
 `slice.build()` return `null`. Run `npm run component:list` to resync.
+:::
+
+=== markdown/getting-started/context-vs-events.md ===
+# Context vs Events
+
+Both let components react to things happening elsewhere — but they answer different questions. Pick
+by the question you're asking:
+
+- **Context** → *"What is the current state?"* Shared, retained, readable at any time.
+- **Events** → *"Did something just happen?"* A one-shot signal, with no retained value.
+
+## Which one?
+| You need… | Reach for | Why |
+| --- | --- | --- |
+| A value many components read and react to | **Context** | It holds state; watchers re-run on change, and selectors narrow what triggers them. |
+| To persist state across reloads | **Context** | Contexts can persist; events are ephemeral. |
+| To announce "X happened" without holding a value | **Events** | Fire-and-forget; subscribers decide what to do. |
+| To decouple a producer from unknown consumers | **Events** | The emitter doesn't know who listens. |
+| A side effect in another domain when something changes | **Events** | Emit after the state change so the other domain reacts. |
+
+## Context — the current state
+A value several components depend on. Each `watch`es it (auto-cleaned on destroy); anyone calls
+`setState`. See [ContextManager](/Documentation/Structural/ContextManager).
+
+```javascript title="Shared state with a selector"
+async init() {
+  this.$count = this.querySelector('.cart-count');
+  slice.context.watch(
+    'cart',
+    this,
+    (count) => { this.$count.textContent = count; },
+    (state) => state.items.length            // selector: only re-run when the count changes
+  );
+}
+
+// anywhere a change happens:
+slice.context.setState('cart', (prev) => ({ ...prev, items: [...prev.items, item] }));
+```
+
+## Events — something happened
+A signal with no retained value. A component subscribes; another part of the app emits. See
+[EventManager](/Documentation/Structural/EventManager).
+
+```javascript title="React to a signal"
+async init() {
+  this.events = slice.events.bind(this);     // bound API → auto-cleaned on destroy
+  this.events.subscribe('orders:updated', () => this.refresh());
+}
+
+// elsewhere, after a mutation:
+slice.events.emit('orders:updated');
+```
+
+## They compose
+Use Context for the state, and add an Event when a **different domain** must react to a change.
+
+```javascript title="State in Context, cross-domain signal via Events"
+slice.context.setState('orders', (prev) => ({ ...prev, list: fresh }));
+slice.events.emit('orders:updated');   // let unrelated features react too
+```
+
+:::tip
+Default to **Context** for shared state. Add an **Event** only when a producer must notify
+consumers it doesn't know about. For refreshing one component you hold, you often need neither — see
+[Refreshing Component Data](/Documentation/Architecture/Refreshing-Component-Data).
+:::
+
+:::warning
+Don't model state as a stream of events you replay to rebuild it — that's what Context is for. Use
+events for *moments*, not for *state*.
 :::
 
 === markdown/getting-started/development-workflow.md ===
@@ -1671,7 +2162,7 @@ project stays lean.
   (events) and `alt+shift+c` (context).
 - Right-click a component (when `debugger.enabled`) to inspect and live-edit its props.
 - Use `slice doctor` when the project structure or config seems off.
-- Prefer `slice.logger.logInfo / logWarning / logError` over `console.log` — it respects the
+- Prefer `slice.logger.info / warn / error` over `console.log` — it respects the
   configured levels and stays quiet in production.
 
 ## Production build, briefly
@@ -1724,10 +2215,12 @@ Enable them (and their keyboard shortcuts) in `sliceConfig.json`:
 "context": { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+c" } }
 ```
 
-- **Events** (`alt+shift+e`) — two tabs: **Subscribers** (every event with live subscriber details
-  and an emit counter ⚡) and **History** (reverse-chronological feed of all `emit()` calls with
-  relative timestamps). Use it for "my listener isn't firing", "it fires twice", or "who emitted
-  what and when".
+- **Events** (`alt+shift+e`) — three tabs: **Subscribers** (every event with live subscriber details,
+  an emit counter ⚡, and the emitters that fired it), **Registry** (the declared catalog grouped by
+  namespace with payload shapes and the static emit/listen graph — see
+  [Event Registry](/Documentation/Structural/EventRegistry)), and **History** (reverse-chronological
+  feed of all `emit()` calls with their origin and relative timestamps). Use it for "my listener isn't
+  firing", "it fires twice", or "who emitted what and when".
 - **Context** (`alt+shift+c`) — every context, its key count, and a live JSON preview of its state.
   Updates **in real time** on every `setState` / `patch` and auto-discovers newly created contexts.
   Use it for "my watcher isn't firing" or "persisted state didn't survive a refresh".
@@ -1735,6 +2228,19 @@ Enable them (and their keyboard shortcuts) in `sliceConfig.json`:
 :::tip
 Keep these panels enabled in development and turn off the `ui` blocks for production.
 :::
+
+## Leak Inspector
+A fourth dev-only panel surfaces components left **registered but detached from the DOM** — the
+silent leak from clearing `slice.build`'d children without `destroyComponent`. Enable it under
+`debugger` and open it with its shortcut:
+
+```json title="sliceConfig.json"
+"debugger": { "leakInspector": { "enabled": true, "shortcut": "alt+shift+k" } }
+```
+
+It lists each orphan with its retain chain and a per-row destroy probe, and flags a `growing ▲`
+trend when `activeComponents` accumulates across navigations. Cached `Route`/`MultiRoute` views are
+excluded. Full details in [Leak Inspector](/Documentation/LeakInspector).
 
 ## Built with Slice — try it yourself
 The inspector's "edit a prop, see it update" trick is small enough to build yourself. The
@@ -1825,12 +2331,32 @@ export default class HomePage extends HTMLElement {
 }
 ```
 
+## Typed Accessors (`slice.env`)
+`slice.getEnv` always returns a string (env values are strings). `slice.env.*` parses common shapes for you, so you stop re-writing `String(...).split(',')` and boolean checks across the app.
+
+| Accessor | Returns | Example |
+| --- | --- | --- |
+| `slice.env.get(key, fallback?)` | `string` | `slice.env.get('SLICE_PUBLIC_API_URL', '')` |
+| `slice.env.bool(key, fallback?)` | `boolean` | `'1' \| 'true' \| 'yes' \| 'on'` → `true` |
+| `slice.env.int(key, fallback?)` | `number` | `slice.env.int('SLICE_PUBLIC_TIMEOUT', 5000)` |
+| `slice.env.list(key, fallback?)` | `string[]` | `'a, b'` → `['a','b']` (trims, drops empties) |
+| `slice.env.has(key)` | `boolean` | key present in the public env |
+| `slice.env.all()` | `object` | snapshot of all `SLICE_PUBLIC_*` keys |
+
+```javascript title="Typed reads"
+const auth   = slice.env.bool('SLICE_PUBLIC_AUTH_ENABLED');        // false if missing
+const models = slice.env.list('SLICE_PUBLIC_MODELS', ['default']); // ['a','b',...]
+const apiUrl = slice.env.get('SLICE_PUBLIC_API_URL', '');
+```
+
+Missing or empty values fall back: `bool`/`int`/`list` return the provided fallback (or `false` / `0` / `[]`).
+
 ## Recommended Workflow
 :::steps
 1. Define browser-safe keys using `SLICE_PUBLIC_`.
 2. Keep secrets in non-public env keys.
 3. Verify endpoint output at `/slice-env.json`.
-4. Read values from `slice.getEnv(...)` in runtime code.
+4. Read values with `slice.env.*` (or `slice.getEnv`) in runtime code.
 :::
 
 ## Troubleshooting
@@ -2036,6 +2562,138 @@ Build static child components here. Dynamic lists belong in `update()`.
 Avoid building dynamic lists in `init()` if the list needs to refresh.
 :::
 
+=== markdown/getting-started/leak-inspector.md ===
+# Leak Inspector
+
+## Overview
+The most common Slice leak is silent: a component builds children with `slice.build(...)`
+and later clears them with `innerHTML = ''`, `replaceChildren`, or `remove()` **without**
+`destroyComponent`. The DOM is gone, but the instances stay registered in
+`slice.controller.activeComponents` forever — and their `beforeDestroy()` never runs, so
+their listeners, timers, and observers leak too.
+
+The framework can't see this for you at build time, so the **Leak Inspector** is a dev-only
+panel that watches `activeComponents` and flags the orphans: components that are **registered
+but detached from the live DOM and not intentionally cached**.
+
+## Enable
+The Leak Inspector lives under the `debugger` config and is **always off in production**,
+regardless of this flag:
+
+```json title="sliceConfig.json"
+{
+  "debugger": {
+    "enabled": false,
+    "click": "right",
+    "leakInspector": { "enabled": true, "shortcut": "alt+shift+k" }
+  }
+}
+```
+
+Open it with the shortcut (`alt+shift+k` by default). The panel computes only while open —
+zero overhead otherwise.
+
+## What it flags (and what it ignores)
+A component is a **candidate leak** when all of the following hold:
+
+- it is registered in `slice.controller.activeComponents`, and
+- it is an `HTMLElement` **detached** from the live DOM (`isConnected === false`), and
+- it is **not intentionally cached**.
+
+The criteria are deliberately conservative so caching patterns are **not** false-flagged:
+
+| Excluded | Why |
+| --- | --- |
+| `Route` / `MultiRoute` cached views | Marked `__sliceCached` while parked off-DOM between navigations |
+| Router-managed instances (`route-*` ids) | Reused across navigation by the Router |
+| Descendants of a detached cached/orphan root | Only the root is reported, not every child |
+
+The panel also tracks `activeComponents.size` over time and shows a **trend** marker — a
+count that only ever grows across navigations is the signal of an accumulation leak even when
+individual orphans look ambiguous.
+
+## The panel
+- **orphans** — each candidate with its component name, `sliceId`, why it was flagged, and the
+  `parentComponent` retain chain. A per-row **destroy** action calls `destroyComponent` so you
+  can confirm a suspect frees cleanly.
+- **active** — current `activeComponents.size`.
+- **trend** — `stable` or `growing ▲`.
+
+## Programmatic API
+| Method | Signature | Notes |
+| --- | --- | --- |
+| `findOrphans` | `()` | Returns the current candidate leaks (read-only) |
+| `registerLeakExclusion` | `(predicate)` | Mark your own cached-but-detached instances as intentional |
+
+```javascript title="Exclude an app-specific cache from leak detection"
+// Your own pool/cache keeps instances off-DOM on purpose.
+slice.controller.registerLeakExclusion((component) => myPool.has(component.sliceId));
+```
+
+## Fixing a leak
+When the inspector flags a component, the fix is almost always to destroy before you detach:
+
+```javascript title="Destroy slice.build'd children before clearing"
+async update() {
+  /* ❌ leaks: instances stay in activeComponents, beforeDestroy never runs */
+  this.$list.innerHTML = '';
+
+  /* ✅ destroy first, then the DOM is safe to clear */
+  slice.controller.destroyByContainer(this.$list);
+  this.$list.replaceChildren();
+
+  for (const order of this.orders) {
+    this.$list.appendChild(await slice.build('OrderRow', { order }));
+  }
+}
+```
+
+And release anything that outlives the subtree in `beforeDestroy()`:
+
+```javascript title="Free globals/timers/observers on destroy"
+beforeDestroy() {
+  window.removeEventListener('resize', this._onResize);
+  clearInterval(this._timer);
+  this._observer.disconnect();
+}
+```
+
+See [beforeDestroy()](/Documentation/LifeCycle-Methods/beforeDestroy) for the full cleanup
+contract, and [DevTools](/Documentation/DevTools) for the other runtime panels.
+
+## Best Practices
+:::tip
+Keep the Leak Inspector enabled in development and exercise your navigation/list flows with it
+open — accumulation leaks show up as a `growing ▲` trend across route changes.
+:::
+
+:::tip
+For your own off-DOM caches, register a `registerLeakExclusion` predicate (or set
+`component.__sliceCached = true`) so the inspector doesn't flag intentional retention.
+:::
+
+## Gotchas
+:::warning
+The Leak Inspector diagnoses; it does not fix. A per-row destroy is a manual probe — the real
+fix is calling `destroyComponent` / `destroyByContainer` before clearing the DOM.
+:::
+
+:::warning
+It is dev-only. Don't rely on it in production; rely on correct cleanup. The panel never
+initializes when the app runs in production mode.
+:::
+
+## FAQ
+:::details title="Why is my cached Route view not flagged?"
+`Route` and `MultiRoute` mark their cached instances `__sliceCached` while they sit off-DOM
+between navigations, so the inspector treats them as intentional, not leaks.
+:::
+
+:::details title="It flagged a component I destroy later — is that a real leak?"
+If it is detached now and still registered, yes — it is leaking until you destroy it. Destroy at
+the moment you remove it from the DOM, not "later".
+:::
+
 === markdown/getting-started/lifecycle-overview.md ===
 # LifeCycle Methods
 
@@ -2048,6 +2706,17 @@ Slice.js components expose three lifecycle methods for predictable behavior:
 
 These methods are called by the framework and are the recommended places to manage state,
 subscriptions, and DOM updates.
+
+## Which method do I use?
+| I want to… | Use | Why |
+| --- | --- | --- |
+| Cache DOM refs / bind listeners | constructor (after `attachTemplate`) or `init()` | constructor is synchronous; use `init()` if the setup is async |
+| Fetch initial data / build children | `init()` | it is `async` and awaited before first use |
+| Refresh after the data or route changed | `update()` | runs on cached-route revisits; safe to call manually |
+| Clean up timers / listeners / subscriptions | `beforeDestroy()` | runs right before destroy (not awaited) |
+
+For *how* to refresh (prop setter vs `update()` vs context vs events), see
+[Refreshing Component Data](/Documentation/Architecture/Refreshing-Component-Data).
 
 ## The constructor (before init)
 Before any lifecycle method runs, the constructor builds the component. Every Visual component's
@@ -2078,7 +2747,7 @@ See Component Anatomy for the full authoring guide.
 | Method | Called when | Async awaited | Typical responsibilities |
 | --- | --- | --- | --- |
 | `init()` | After construction, before first use | yes | Cache DOM, fetch initial data, build static children. |
-| `update()` | When a cached route/component is reused | yes | Re-fetch data, rebuild dynamic lists, update state. |
+| `update()` | Cached route revisit, or called by a parent / self / watcher | yes | Refresh **in place** (reuse children by `sliceId`); re-fetch data; apply props. The framework **serializes** repeated calls. |
 | `beforeDestroy()` | Right before destruction | no | Cleanup timers, listeners, subscriptions, aborts. |
 
 ## Call Order and Timing
@@ -2099,23 +2768,42 @@ class Example extends HTMLElement {
 ```
 
 ## Navigation and Reuse
-`update()` is called when a cached component is reused by routing (for example, `Route` and
-`MultiRoute` containers). This keeps UI responsive without rebuilding static structure.
+`update()` is called when a cached component is reused by routing (`Route` / `MultiRoute`
+containers), so static structure is never rebuilt. The framework **serializes** your `update()` —
+rapid or concurrent calls coalesce (last wins) — so streaming and fast revisits are safe without
+manual guards.
 
 ## Recommended Structure
-```javascript title="Recommended separation"
+Refresh **in place**: reuse children by a stable `sliceId`, build only the new ones, and prune the
+gone. Survivors keep their scroll, focus, and internal state.
+
+```javascript title="init + in-place update + cleanup"
 export default class UserList extends HTMLElement {
   async init() {
     this.$container = this.querySelector('.users');
-    await this.loadUsers();
-    await this.buildUserCards();
+    await this.refresh();
   }
 
-  async update() {
-    slice.controller.destroyByContainer(this.$container);
-    this.$container.innerHTML = '';
-    await this.loadUsers();
-    await this.buildUserCards();
+  async update() {        // cached revisit or data changed → refresh in place
+    await this.refresh();
+  }
+
+  async refresh() {
+    const users = await this.loadUsers();
+    const alive = new Set();
+
+    for (const u of users) {
+      const sliceId = `user-${u.id}`;
+      alive.add(sliceId);
+      const card = slice.getComponent(sliceId);
+      if (card) slice.setComponentProps(card, { name: u.name });   // reuse, no flicker
+      else this.$container.appendChild(await slice.build('UserCard', { sliceId, ...u }));
+    }
+
+    for (const el of Array.from(this.$container.children)) {        // prune the gone
+      const id = el.getAttribute('slice-id');
+      if (id && !alive.has(id)) slice.controller.destroyComponent(id);
+    }
   }
 
   beforeDestroy() {
@@ -2131,7 +2819,8 @@ Keep `init()` focused on one-time setup and cache DOM references there.
 :::
 
 :::tip
-Use `destroyByContainer` before rebuilding dynamic lists in `update()`.
+Refresh lists **in place**: reuse children by a stable `sliceId` (build new, update existing,
+prune gone). Destroy + rebuild only when the content is wholly different.
 :::
 
 ## Gotchas
@@ -2250,15 +2939,8 @@ after registering guards to ensure they are active before the first navigation.
 | `next({ path: '/login', replace: true })` | redirect | Redirect with history replace. |
 
 ## Guard Context
-`to` and `from` include path, component, params, query, and metadata.
-
-| Field | Type | Notes |
-| --- | --- | --- |
-| `path` | `string` | Requested path or resolved full path. |
-| `component` | `string` | Component for the route (parent if nested). |
-| `params` | `object` | Params parsed from `${param}` in routes. |
-| `query` | `object` | URL query parameters. |
-| `metadata` | `object` | Route metadata from config. |
+`to` and `from` are **Route Info** objects (`path`, `component`, `params`, `query`, `metadata`).
+See [Routing → Route Info Object](/Documentation/Routing) for the field reference.
 
 ## beforeEach
 ```javascript title="Block or redirect"
@@ -2514,102 +3196,16 @@ Use `sliceId` when you need a single instance across routes or screens.
 Do not store service instances or functions in `slice.context`. Persist only serializable state.
 :::
 
-## App services (composition root)
-For singletons your app needs app-wide (auth, an API client, a store, config), the cleanest pattern
-is a single **composition root**: one `AppServices` Service whose `init()` builds all the others and
-seeds any initial context. Because `init()` is awaited, one bootstrap call sets up the whole graph,
-in order. This keeps `build` calls in **one place** — everywhere else you just `getComponent`.
+## Where services live and how to share them
+Most services are **app-lifetime singletons**. Where to build them, how to share one instance, the
+`singleton: true` get-or-create shortcut, Provider Services for global UI, and the cleanup contract
+all live in one canonical place:
 
-```javascript title="Service/AppServices/AppServices.js"
-export default class AppServices {
-  async init() {
-    // Build each app-wide singleton once, with a stable sliceId = its identity.
-    this.auth = await slice.build('AuthService', { sliceId: 'AuthService' });
-    this.api  = await slice.build('FetchManager', { sliceId: 'api', baseUrl: API_URL });
+➡️ **[Service Patterns](/Documentation/Architecture/Service-Patterns)**
 
-    // Seed contexts / register global handlers here too.
-    slice.context.set('theme', 'dark');
-  }
-
-  // Optional: explicit teardown (e.g. on logout). Children built via slice.build
-  // are NOT auto-destroyed, so dispose them by hand if you ever tear down.
-  dispose() {
-    slice.controller.destroyComponent([this.auth, this.api]);
-  }
-}
-```
-
-```javascript title="App entry — one bootstrap call"
-await slice.build('AppServices', { sliceId: 'AppServices' });
-```
-
-```javascript title="Consume anywhere — pure lookup, no creation"
-async init() {
-  this.api  = slice.getComponent('api');                    // directly by sliceId
-  this.auth = slice.getComponent('AppServices').auth;       // or via the facade
-}
-```
-
-`AppServices` and the services it builds are **app-lifetime** — you never destroy them, so there is
-no cleanup to manage. The facade (`getComponent('AppServices').auth`) doubles as a discoverable index
-of which services exist.
-
-## Singleton shortcut: `build({ singleton: true })`
-The composition root above is the recommended pattern for app-wide singletons known at startup. When
-a service is **lazy or decentralized** instead — a feature self-bootstraps a shared service on first
-use, with no central place to register it — `singleton: true` is the get-or-create shortcut.
-
-Writing `getComponent('X') || await slice.build('X', { sliceId: 'X' })` by hand is verbose, easy to
-get wrong (forgetting `sliceId`, or `sliceId !== name`), and races when two components build the same
-service at once. Pass `singleton: true` to `build` instead — it get-or-creates one shared instance
-and deduplicates concurrent builds.
-
-```javascript title="Get-or-create a singleton service"
-// First caller builds it; every later caller (from anywhere) gets the SAME instance.
-const grid = await slice.build('DataGridService', { singleton: true });
-```
-
-- `sliceId` defaults to the component name. Pass an explicit `sliceId` to keep **named** singletons
-  of the same class (e.g. two `FetchManager`s for different APIs):
-
-```javascript title="Named singletons"
-const authApi   = await slice.build('FetchManager', { singleton: true, sliceId: 'authApi',   baseUrl: AUTH_URL });
-const publicApi = await slice.build('FetchManager', { singleton: true, sliceId: 'publicApi', baseUrl: PUBLIC_URL });
-```
-
-- Both **create and access** flow through `build` — there is no separate accessor. Later calls
-  return the existing instance (a pure synchronous lookup still works via `slice.getComponent(sliceId)`).
-- Concurrent `build({ singleton: true })` calls for the same `sliceId` share a single in-flight
-  build, so they can never collide on a duplicate id.
-
-:::warning
-`props` only apply on the **first** (creating) call. Later calls return the existing instance and
-ignore any props you pass — reconfigure through the service's own API instead.
-:::
-
-:::warning
-`singleton: true` is only supported for **Service** components. A DOM node can live in one place at a
-time, so a shared Visual would teleport between mount points. For app-wide UI, build a **Provider
-Service** that owns and manages the Visual (see `ToastProvider` / `ToolTipProvider`) — the provider is
-the singleton; the Visuals it creates are ephemeral.
-:::
-
-:::warning
-`singleton` is a **reserved build directive** (like `id` and `sliceId`). Do not declare it in a
-component's `static props` or pass it as a real prop — `build` consumes it and it never reaches your
-setters. See [Reserved build keys](/Documentation/The-build-method).
-:::
-
-### Which one?
-| | App services (composition root) | `build({ singleton: true })` |
-| --- | --- | --- |
-| Creation | once, in one place (`AppServices.init`) | get-or-create at the call site |
-| Consumption | `slice.getComponent('X')` (pure lookup) | the same `build` call |
-| Best for | app-wide singletons known at startup (auth, api, store, config) | lazy / decentralized singletons; race-safe get-or-create |
-| Trade-off | needs a bootstrap step | `build` that may return an existing instance |
-
-Default to the composition root; reach for `singleton: true` when there is no central place to
-register the service.
+In short: build app-wide singletons **once** (a composition-root Service) and recover them with
+`slice.getComponent(name)`; reach for `slice.build('X', { singleton: true })` (Service only) when a
+service can be built from more than one entry point.
 
 ## FetchManager API
 | Method | Signature | Returns | Notes |
@@ -2634,7 +3230,7 @@ register the service.
 ## LocalStorageManager API
 | Method | Signature | Returns | Notes |
 | --- | --- | --- | --- |
-| `getItem` | `(key)` | `any | null` | Returns parsed JSON or null. |
+| `getItem` | `(key)` | parsed value or `null` | Returns parsed JSON or null. |
 | `setItem` | `(key, value)` | `boolean` | Returns success boolean. |
 | `removeItem` | `(key)` | `boolean` | Returns success boolean. |
 | `clear` | `()` | `boolean` | Clears localStorage. |
@@ -2846,10 +3442,22 @@ under `slice.*`. You do not build them directly.
 - `slice.events` for pub/sub (optional)
 - `slice.context` for shared state (optional)
 
+## Which one?
+| Need | Use | One-liner |
+| --- | --- | --- |
+| Build / look up / destroy components | `slice.controller` | Lifecycle and the component registry. |
+| Navigate, guards, route params | `slice.router` | Client-side routing. |
+| Shared state many components read | `slice.context` | Holds state; watchers + selectors. |
+| Announce "something happened" | `slice.events` | Fire-and-forget pub/sub. |
+| Themes and styles | `slice.stylesManager` | `slice.setTheme(name)`. |
+
+For state vs signals see [Context vs Events](/Documentation/Structural/Context-vs-Events); for full
+signatures, the [API Reference](/Documentation/API-Reference).
+
 ## Controller API
 | Method | Signature | Returns | Notes |
 | --- | --- | --- | --- |
-| `getComponent` | `(sliceId)` | `HTMLElement | undefined` | Lookup by sliceId. |
+| `getComponent` | `(sliceId)` | instance or undefined | Lookup by sliceId. |
 | `destroyByContainer` | `(container)` | `number` | Destroys Slice components inside container. |
 | `destroyByPattern` | `(pattern)` | `number` | Destroys components whose sliceId matches pattern. |
 
@@ -2874,34 +3482,17 @@ container.innerHTML = '';
 await slice.setTheme('Dark');
 ```
 
-## EventManager (Optional)
-Provides pub/sub via `slice.events`. When disabled, the API is a no-op.
+## EventManager & ContextManager (Optional)
+- **`slice.events`** — pub/sub (`subscribe` / `emit` / `bind`). Full guide:
+  [EventManager](/Documentation/Structural/EventManager).
+- **`slice.context`** — shared state (`create` / `setState` / `watch`, with selectors and optional
+  persistence). Full guide: [ContextManager](/Documentation/Structural/ContextManager).
 
-| Method | Signature | Notes |
-| --- | --- | --- |
-| `subscribe` | `(eventName, callback, options?)` | Returns subscription id. |
-| `subscribeOnce` | `(eventName, callback, options?)` | Auto-unsubscribe after first emit. |
-| `unsubscribe` | `(eventName, id)` | Returns boolean. |
-| `emit` | `(eventName, data?)` | Emits to all subscribers. |
-| `bind` | `(component)` | Returns component-bound API. |
-| `startRecording` | `()` | Activate emit history + counters (called by debugger on open). |
-| `stopRecording` | `()` | Deactivate emit recording (called by debugger on close). |
+When to use which: [Context vs Events](/Documentation/Structural/Context-vs-Events). All signatures:
+[API Reference](/Documentation/API-Reference).
 
-The Events debug panel (`alt+shift+e`) shows a **Subscribers** tab (live listeners + emit counters)
-and a **History** tab (reverse-chronological feed of every `emit()`). Recording is zero-overhead: it
-only activates while the panel is open. See DevTools for details.
-
-## ContextManager (Optional)
-Shared state system available at `slice.context`.
-
-| Method | Signature | Notes |
-| --- | --- | --- |
-| `create` | `(name, initialState, options?)` | Options include `persist`. |
-| `getState` | `(name)` | Returns current state or null. |
-| `setState` | `(name, updater)` | Accepts object or updater function. |
-| `watch` | `(name, component, callback, selector?)` | Auto-cleanup via component. |
-| `destroy` | `(name)` | Removes a context. |
-| `list` | `()` | Returns context names. |
+The Events debug panel (`alt+shift+e`) shows live subscribers + an emit history; the Context panel
+shows live state. See [DevTools](/Documentation/DevTools).
 
 ## Best Practices
 :::tip
@@ -2916,70 +3507,97 @@ Register guards before calling `slice.router.start()`.
 # update()
 
 ## Overview
-`update()` runs whenever a component needs to refresh. The router calls it when a cached
-component is reused by `Route` or `MultiRoute`. You can also call it manually after changing
-props or state.
+`update()` refreshes a component **in place** after `init()` — same instance, no destroy, no
+flicker. The router calls it when a cached `Route` / `MultiRoute` is revisited; a parent, the
+component itself, or a `slice.context` watcher can call it too. Define it only when a refresh
+needs logic beyond a prop setter — rebuilding child components, an async fetch, or applying
+several props at once.
+
+The framework **wraps your `update()`**: calls are **serialized and coalesced** (last wins). An
+`async update()` driven rapidly — streaming tokens, fast state changes — never overlaps itself
+or tears the DOM. You write a plain `update()`; no manual tokens, queues, or guards.
 
 ## API
 | Method | Signature | Returns | Notes |
 | --- | --- | --- | --- |
-| `update` | `async update()` | `Promise<void>` | Called on cached components when revisited. |
+| `update` | `async update(props?)` | `Promise<void>` | Wrapped by the framework (serialized + coalesced). The router calls it with no args — read `this.props` (route params); a parent passes props as the argument. |
 
-## Ideal Use Cases
-- Re-fetch data that can change
-- Rebuild dynamic child components
-- Re-apply dynamic state to the DOM
+## Refresh in place — reuse, don't rebuild
+When the data changed but the entities persist, **reuse instances by a stable `sliceId`** and let
+each one refresh itself. Survivors are never recreated, so scroll, focus, and internal state are
+preserved.
 
-## Example
-```javascript title="Rebuild dynamic UI in update()"
-export default class ProductList extends HTMLElement {
-  async init() {
-    this.$productContainer = this.querySelector('.products-container');
-    await this.loadAndRenderProducts();
-  }
+```javascript title="Reuse surviving rows, build new ones, prune the gone"
+async update(state = {}) {
+  const items = state.items || [];
+  const alive = new Set();
 
-  async update() {
-    slice.controller.destroyByContainer(this.$productContainer);
-    this.$productContainer.innerHTML = '';
-    await this.loadAndRenderProducts();
-  }
+  for (const item of items) {
+    const sliceId = `row-${item.id}`;
+    alive.add(sliceId);
 
-  async loadAndRenderProducts() {
-    this.products = await this.fetchProducts();
-
-    for (const product of this.products) {
-      const productCard = await slice.build('ProductCard', {
-        sliceId: `product-${product.id}`,
-        title: product.title,
-        price: product.price,
-        image: product.image
-      });
-
-      this.$productContainer.appendChild(productCard);
+    const row = slice.getComponent(sliceId);
+    if (row) {
+      slice.setComponentProps(row, { title: item.title });   // refresh in place
+    } else {
+      const node = await slice.build('Row', { sliceId, ...item });
+      if (node) this.$list.appendChild(node);
     }
+  }
+
+  // prune: destroy rows whose data is gone
+  for (const el of Array.from(this.$list.children)) {
+    const id = el.getAttribute('slice-id');
+    if (id && !alive.has(id)) slice.controller.destroyComponent(id);
   }
 }
 ```
 
+`slice.setComponentProps(comp, props)` applies a bag of props to a component. On a built
+component it **refreshes**: re-runs the setters, does **not** re-apply defaults, and won't clobber
+the props you omit. (At construction time the same call applies defaults — it detects the mode.)
+
+## Total replacement — build-then-swap
+When the new data shares nothing with the old (e.g. a different conversation), build the
+replacement **off-DOM first**, then swap in one operation — no empty frame.
+
+```javascript title="Build off-DOM, then swap atomically"
+async update(state = {}) {
+  const old = Array.from(this.$slot.children)
+    .map((el) => el.getAttribute('slice-id')).filter(Boolean);
+
+  const frag = document.createDocumentFragment();
+  for (const item of state.items) {
+    const node = await slice.build('Card', { sliceId: `card-${item.id}`, ...item });
+    if (node) frag.appendChild(node);
+  }
+
+  this.$slot.replaceChildren(frag);                       // atomic swap
+  if (old.length) slice.controller.destroyComponent(old); // clean up the old instances
+}
+```
+
 ## Best Practices
-:::steps
-1. Destroy old components with `destroyByContainer`.
-2. Clear the container.
-3. Fetch fresh data.
-4. Rebuild components with stable `sliceId`s.
+:::tip
+Prefer a **prop setter** for single-value changes — see
+[Refreshing Component Data](/Documentation/Architecture/Refreshing-Component-Data). Reach for
+`update()` when the refresh needs logic: rebuilding children, an async fetch, or several props.
 :::
 
 :::tip
-Keep `update()` idempotent and safe to call multiple times.
+Reuse by `sliceId` for lists. The framework serializes your `update()`, so streaming and rapid
+calls are safe without writing any guards yourself.
 :::
 
 ## Gotchas
 :::warning
-Clearing `innerHTML` alone does not destroy Slice components.
+Clearing `innerHTML` alone does not destroy Slice components — use `destroyComponent` /
+`destroyByContainer` so `beforeDestroy` runs and the registry is cleaned.
 :::
 
 :::warning
-Do not rebuild static UI in `update()` unless it depends on changing data.
+`update()` is for refreshes **after** `init()`. The framework does not call it on first build —
+`init()` does the first paint.
 :::
 
 === markdown/getting-started/visual-components.md ===
@@ -3102,8 +3720,8 @@ Non-interactive form:
 npx slicejs-cli init -y my-app --pm pnpm
 ```
 
-:::note pnpm
-init is pnpm-friendly: it never pins a just-published version, so hardened pnpm
+:::tip
+**pnpm:** init is pnpm-friendly: it never pins a just-published version, so hardened pnpm
 setups (e.g. `minimumReleaseAge` quarantine) resolve the newest version allowed
 by your policy. With `ignore-scripts` enabled, no postinstall step is required —
 init configures the scripts itself.
@@ -3188,23 +3806,45 @@ by level and basic querying over the in-memory log list.
 }
 ```
 
+## Logger UI (Optional)
+You can enable the LogViewer debug panel with a keyboard shortcut.
+
+```json title="sliceConfig.json"
+{
+  "logger": {
+    "enabled": true,
+    "ui": {
+      "enabled": true,
+      "shortcut": "alt+shift+l"
+    }
+  }
+}
+```
+
+The panel shows a live feed of all logs with level filtering and a search input. It is built with the same `--si-*` tokens as the other debugger panels and only processes logs while visible (conditional subscribe on toggle).
+
 ## API Reference
 | Method | Signature | Notes |
 | --- | --- | --- |
-| `logError` | `(componentSliceId, message, error?)` | Logs error + optional error object |
-| `logWarning` | `(componentSliceId, message)` | Logs warning |
-| `logInfo` | `(componentSliceId, message)` | Logs info |
-| `getLogs` | `()` | Returns all logs |
-| `clearLogs` | `()` | Clears stored logs |
-| `getLogsByLogType` | `(type)` | Filter by `error | warning | info` |
-| `getLogsByComponentCategory` | `(category)` | Filter by component category |
-| `getLogsByComponent` | `(sliceId)` | Filter by component sliceId |
+| `error` | `(sliceId, message, error?)` | Log an error (+ optional error object). |
+| `warn` | `(sliceId, message, error?)` | Log a warning. |
+| `info` | `(sliceId, message, error?)` | Log info. |
+| `debug` | `(sliceId, message, error?)` | Log debug detail. |
+| `getLogs` | `()` | Returns all log entries. |
+| `clearLogs` | `()` | Clears stored logs. |
+| `getLogsByLogType` | `(type)` | Filter by type: `error`, `warn`, `info`, `debug`. |
+| `getLogsByComponentCategory` | `(category)` | Filter by component category. |
+| `getLogsByComponent` | `(sliceId)` | Filter by component sliceId. |
+| `onLog` / `offLog` | `(callback)` | Subscribe / unsubscribe to logs in real time. |
+
+The names `logError` / `logWarning` / `logInfo` still work but are **deprecated** — prefer
+`error` / `warn` / `info`.
 
 ## Usage
 ```javascript title="Log from a component"
 export default class Navbar extends HTMLElement {
   async init() {
-    slice.logger.logInfo('Navbar', 'Navbar initialized');
+    slice.logger.info('Navbar', 'Navbar initialized');
   }
 }
 ```
@@ -3213,7 +3853,7 @@ export default class Navbar extends HTMLElement {
 try {
   await doWork();
 } catch (error) {
-  slice.logger.logError('MyService', 'Work failed', error);
+  slice.logger.error('MyService', 'Work failed', error);
 }
 ```
 
@@ -3230,6 +3870,8 @@ Use this style when your app has multiple sections that share the same layout fr
 - Portfolio or company website with several top-level sections
 - Dashboard/admin panels
 - Product apps with stable global navigation
+
+> Deciding between this and Single-View SPA? See the [decision matrix](/Documentation/Architecture).
 
 ## Structure
 ```javascript title="src/routes.js"
@@ -3353,55 +3995,107 @@ If your navigation is user-visible and URL-driven, use App Shell + MultiRoute. I
 - Single-View SPA: `/Documentation/Architecture/Single-View-SPA`
 - Routing and Data Passing: `/Documentation/Architecture/Routing-Data`
 
-=== markdown/project-architecture/migration-single-view-to-shell.md ===
-# Migration: Single-View to App Shell
+=== markdown/project-architecture/component-styles.md ===
+# Component Styles
 
-This migration keeps your app functional while introducing route-based sections.
+A Slice component owns three files — `.js`, `.html`, and `.css`. The `.css` is loaded
+once when the component is first built and then applies **globally** to the page. That
+last word is the whole reason this page exists: nothing about a `.css` file is
+automatically scoped to its component. Encapsulation is a convention you follow, not
+something the framework enforces.
 
-## Step 1: Add Shell Component
-Create an `AppShell` that owns persistent UI (navbar/theme/footer) and hosts section content.
+Three rules keep component styles from leaking into — or being broken by — the rest of
+your app.
 
-## Step 2: Keep Existing Flow as One Section
-Wrap your current single-view root as one section route (for example `/play`).
+## 1. Scope every selector under the component tag
 
-## Step 3: Add New URL Sections Incrementally
-Add new sections only when they are independently navigable and meaningful as URLs.
+Root every selector at the component's custom-element tag, never a bare class. The tag is
+whatever the component registers with `customElements.define('slice-...')`.
 
-## Example Migration Route Config
-```javascript title="routes.js"
-const routes = [
-  { path: '/', component: 'AppShell' },
-  { path: '/play', component: 'AppShell' },
-  { path: '/history', component: 'AppShell' },
-  { path: '/settings', component: 'AppShell' },
-  { path: '/404', component: 'NotFound' }
-];
+```css title="MyCard.css"
+/* ❌ leaks: every .card-title anywhere on the page is restyled */
+.card-title { font-size: 1.25rem; }
 
-export default routes;
+/* ✅ encapsulated: only inside <slice-my-card> */
+slice-my-card .card-title { font-size: 1.25rem; }
 ```
 
-## Example MultiRoute Mapping
-```javascript title="AppShell.js"
-const page = await slice.build('MultiRoute', {
-  routes: [
-    { path: '/', component: 'PlayPage' },
-    { path: '/play', component: 'PlayPage' },
-    { path: '/history', component: 'HistoryPage' },
-    { path: '/settings', component: 'SettingsPage' }
-  ]
-});
+Generic names (`.container`, `.item`, `.title`, `.header`) are the ones that bite — two
+components each defining a bare `.title` will silently overwrite each other. Prefixing
+with the tag makes collisions impossible.
+
+:::warning
+`@media` and `@supports` blocks are not an exception. Scope the selectors **inside** them
+too: `@media (max-width: 600px) { slice-my-card .card-title { ... } }`.
+:::
+
+## 2. Declare an explicit host display
+
+A custom element with no `display` rule defaults to `display: inline`. For most
+components that is wrong and surprising: `width` and `height` are ignored, vertical
+`margin` is dropped, and the element sits on the text baseline. Always set `display` on
+the tag as the first rule of the file.
+
+```css
+slice-my-card { display: block; }          /* layout / form / data blocks */
+slice-my-chip { display: inline-block; }   /* content-sized inline controls */
 ```
 
-## Migration Checklist
-1. Preserve old entry path behavior while adding shell.
-2. Move global controls into shell.
-3. Split heavy root view into section components.
-4. Keep shared state in context to avoid prop-drilling across sections.
-5. Add route guards only when navigation policy requires it.
+| `display` | Use for |
+| --- | --- |
+| `block` | form fields, layout and data containers, full-width strips |
+| `inline-block` | content-sized interactive controls that should flow inline |
+| `inline-flex` / `flex` | when the host element itself is the flex container |
+| `contents` | pure wrappers that must not introduce a box of their own |
 
 :::tip
-Migrate in small slices. Keep one route stable, move one section at a time, and verify after each move.
+The tag selector has low specificity, so wherever you *use* the component you can still
+override it (`slice-my-card { display: flex }` in your app styles). Declaring a host
+`display` only removes the broken `inline` default — it never locks layout.
 :::
+
+## 3. Prefix keyframes with the component name
+
+`@keyframes` names are global. A bare `@keyframes spin` in two components is a collision
+waiting to happen — prefix every keyframe.
+
+```css
+/* ❌ */ @keyframes spin { ... }
+/* ✅ */ @keyframes slice_my_card_spin { ... }
+```
+
+## The one exception: elements you move to the body
+
+If your component appends an element to `document.body` (a tooltip bubble, a toast stack,
+a portaled overlay), that element no longer lives inside your tag, so a `slice-tag`
+descendant selector can't reach it. Those — and only those — stay as globally-unique
+classes. Give them a name unlikely to collide and a comment saying why.
+
+```css
+/* Appended to document.body, so it can't be scoped under the tag. */
+.slice-my-tooltip-bubble { position: fixed; ... }
+```
+
+:::warning
+This exception is narrow. If an element is in your component's template (queried with
+`this.querySelector` after `slice.attachTemplate`), it lives inside the tag — scope it.
+Only reach for a global class when you genuinely `document.body.appendChild(...)` it.
+:::
+
+## Checklist
+
+| Check | Rule |
+| --- | --- |
+| Every selector starts with `slice-<tag>` (or is a documented body-portal exception) | §1 |
+| Selectors inside `@media` / `@supports` are scoped too | §1 |
+| The tag has an explicit `display` as the first rule | §2 |
+| Every `@keyframes` is prefixed with the component name | §3 |
+
+## Related
+
+- [Themes](/Documentation/Themes) — the CSS variable tokens (`--primary-color`,
+  `--font-primary-color`, …) your scoped component styles should use instead of hard-coded
+  colors, so components follow the active theme.
 
 === markdown/project-architecture/refreshing-component-data.md ===
 # Refreshing Component Data
@@ -3423,13 +4117,13 @@ scroll, async cost).
 
 ## 1. Set a prop or call a method (the default)
 In Slice, props go through **setters** — so updating data is usually just *assigning a prop*. The setter
-re-renders; the instance (and its focus/scroll/internal state) is preserved.
+updates the DOM; the instance (and its focus/scroll/internal state) is preserved.
 
 ```javascript title="Same instance, new data"
 const table = await slice.build('Table', { columns, rows });
 
 // later — the rows changed:
-table.rows = await fetchRows();   // the setter re-renders; no rebuild
+table.rows = await fetchRows();   // the setter updates the DOM; no rebuild
 ```
 
 Components also expose **methods** for finer updates — same idea, just a call:
@@ -3440,7 +4134,7 @@ form.setValue('email', user.email);      // a method
 table.loading = true;                    // toggle a busy state, then set rows
 ```
 
-> Design your own components so that **assigning a prop or calling a method drives the re-render** — that
+> Design your own components so that **assigning a prop or calling a method drives the DOM update** — that
 > is what makes this the default refresh path.
 
 ## 2. `update()` — cached route revisits
@@ -3449,17 +4143,23 @@ table.loading = true;                    // toggle a busy state, then set rows
 
 ```javascript title="Refresh on revisit"
 export default class OrdersPage extends HTMLElement {
-  async init()   { await this.load(); }   // first visit
+  async init()   { this.$list = this.querySelector('.orders'); await this.load(); }
   async update() { await this.load(); }   // cached revisit → refresh
 
   async load() {
-    this.orders = await slice.getComponent('api').request('GET', null, '/orders');
-    this.render();
+    const orders = await slice.getComponent('api').request('GET', null, '/orders');
+    this.$list.replaceChildren();
+    for (const o of orders) {
+      this.$list.appendChild(await slice.build('OrderRow', { sliceId: `order-${o.id}`, title: o.title }));
+    }
   }
 }
 ```
 
-See [`update()`](/Documentation/LifeCycle-Methods/update). Keep it idempotent.
+The framework **serializes** your `update()` — concurrent or rapid calls coalesce (last wins) — so
+it is safe under streaming or fast revisits without writing manual guards. For lists, refresh **in
+place**: reuse children by a stable `sliceId` instead of destroy + rebuild, so survivors keep their
+state. See [`update()`](/Documentation/LifeCycle-Methods/update). Keep it idempotent.
 
 ## 3. Context — shared state many components react to
 When several components depend on the **same** state, put it in [`slice.context`](/Documentation/Structural/ContextManager).
@@ -3522,11 +4222,6 @@ Before reaching for this, check whether a setter/method (§1) can express the ch
 cleanup rules: components built with `slice.build` are **not** auto-destroyed by a parent, and Services
 have no DOM so they are never cascaded — see [Service Patterns](/Documentation/Architecture/Service-Patterns).
 
-## Rule of thumb
-Lightest first: **a prop/method** for the same instance, **`update()`** for cached routes,
-**Context/Events** for shared or cross-cutting state, and **destroy + recreate** only when the structure
-itself changes.
-
 === markdown/project-architecture/routing-data.md ===
 # Routing and Data Passing
 
@@ -3585,162 +4280,99 @@ Do not assume `slice.router.navigate('/path', { data })` passes arbitrary props 
 === markdown/project-architecture/service-patterns.md ===
 # Service Patterns
 
-How you place state and shared logic decides whether your app leaks, needs manual cleanup, or stays
-simple. This guide distils the rules that follow from how Slice builds and destroys components.
+Where state and shared logic live decides whether your app leaks. One rule, a decision table, and the cleanup contract.
 
-## The one rule everything follows
+## The one rule
 
-> **Registering a thing in the component registry (any `slice.build(...)`) creates a cleanup
-> obligation. Plain instance fields and plain objects do not — the garbage collector handles them.**
+> **Anything built with `slice.build(...)` is registered and must be cleaned up. Plain instance fields and plain objects are not — the GC frees them with their owner.**
 
-`slice.build` stores the instance in `slice.controller.activeComponents` (a strong reference). It
-stays alive until you explicitly `destroyComponent` it. A value you keep on `this` (a number, an
-array, a `new MyClass()`) is freed automatically when its owner is destroyed. So the question for any
-piece of state or logic is: *does this need to be registered (shared/discoverable), or not?*
+`slice.build` keeps a strong reference in `slice.controller.activeComponents` until you `destroyComponent` it. A value on `this` (`new MyClass()`, an array) is freed automatically. So ask: *does this need to be registered (shared / discoverable), or not?*
 
 ## Where should it live?
 
 | What you have | Where it goes | Cleanup |
 | --- | --- | --- |
-| Per-instance UI state (current page, sort, open/closed) | **instance fields** on the component (`this._page`) | automatic (GC) |
-| Per-instance stateful helper (a little engine, a calculator) | **`new Helper()`** stored on `this` — NOT `slice.build` | automatic (GC) |
-| Reusable **stateless** logic shared across components | a **singleton Service** (built once) or a pure module | none — lives for the app |
-| Several **app-wide singletons** (auth, api, store) | an **`AppServices` composition root** | none — app-lifetime |
-| App-wide **UI** (toasts, tooltips, a modal portal) | a **Provider Service** that owns the Visuals | the provider is the singleton |
-| ❌ A per-instance Service built with `slice.build` | avoid — needs manual `destroyComponent` | manual + fragile |
+| Per-instance view state (page, sort, open/closed) | **instance fields** (`this._page`) | automatic (GC) |
+| Per-instance stateful helper (an engine, a calculator) | **`new Helper()`** on `this` — not `slice.build` | automatic (GC) |
+| Reusable **stateless** logic | a **singleton Service** or a pure module | none — app-lifetime |
+| App-wide singletons (auth, api, store) | one **composition-root** Service | none — app-lifetime |
+| App-wide **UI** (toasts, tooltips, modals) | a **Provider Service** owning the Visuals | the provider is the singleton |
+| ❌ Per-instance Service built with `slice.build` | avoid — needs manual `destroyComponent` | manual + fragile |
 
-The rest of this page expands each row.
-
-## Instance state lives on the instance
-
-A component's own view state is intrinsic to that instance. Keep it in plain fields — never split it
-into a separate registered object.
+## Instance state → plain fields
 
 ```javascript
-set page(value) { this._page = value; this.render(); }   // GC'd with the component, zero ceremony
+set page(value) { this._page = value; this.$page.textContent = value; }   // GC'd with the component
 ```
 
-If the state logic gets big, wrap it in a **plain class** and `new` it — still no registration, still
-GC'd with the owner:
+Big state logic → wrap in a **plain class** and `new` it (still no registration, still GC'd):
 
 ```javascript
 async init() {
-  this._engine = new DataGridEngine({ data: this._rows, pageSize: 10 });  // plain new, not slice.build
+  this._engine = new DataGridEngine({ data: this._rows, pageSize: 10 }); // plain new, not slice.build
 }
 ```
 
-## Reusable logic → a singleton (or a pure module)
-
-For logic shared across components, you have two leak-free options:
-
-- **Pure module** — relative `import` of plain functions (`import { paginate } from './engine.js'`).
-  Simplest; the trade-off is relative-path coupling when imported from far away in the tree.
-- **Singleton Service** — built once, retrieved by name from anywhere (no path coupling, discoverable).
-
-Bare imports are not supported in Slice, so a Service is the idiomatic way to share logic without
-relative paths. See the [Services](/Documentation/Service) guide for the singleton patterns
-(`AppServices` and the `build({ singleton: true })` shortcut).
-
 ## App-wide singletons → a composition root
 
-Build app-wide singletons (auth, an API client, a store, config) in **one place** — an `AppServices`
-Service whose `init()` builds the rest and seeds context. Everywhere else, just `getComponent`.
+Build app-wide singletons in **one place** — a Service (e.g. `AppServices` / `Providers`) whose `init()` builds the rest and seeds context. Everywhere else, **recover** with `slice.getComponent(name)`.
 
-```javascript title="Service/AppServices/AppServices.js"
+```javascript title="Components/AppServices/AppServices.js"
 export default class AppServices {
   async init() {
-    this.auth = await slice.build('AuthService',  { sliceId: 'AuthService' });
-    this.api  = await slice.build('FetchManager', { sliceId: 'api', baseUrl: API_URL });
-    slice.context.set('theme', 'dark');
+    await slice.build('AuthService',  { sliceId: 'AuthService' });
+    await slice.build('FetchManager', { sliceId: 'api', baseUrl: API_URL });
+    slice.context.create('settings', { theme: 'dark' });
   }
 }
 ```
 
 ```javascript
-await slice.build('AppServices', { sliceId: 'AppServices' });   // one bootstrap call at app start
+await slice.build('AppServices', { singleton: true });  // one bootstrap call from the App Shell's init()
+const auth = slice.getComponent('AuthService');          // recover anywhere
 ```
 
-`AppServices` and its services are **app-lifetime** — you never destroy them, so there is nothing to
-clean up. Reach for `build({ singleton: true })` only for the lazy/decentralized case. Full detail and
-the "which one?" table live in [Services](/Documentation/Service).
+:::tip
+**Default: build once + `getComponent`** — one owner creates, consumers only read. Use **`slice.build('X', { singleton: true })`** (Service only — get-or-create) when a service can be built from **more than one entry point** (e.g. an `AuthService` needed by both the composition root and a standalone `/login` route): it returns the shared instance with no `getComponent(x) || build(x)` guard and no duplicate-`sliceId` race. `props` apply only on the first (creating) call.
+:::
+
+:::warning
+`slice.build` **awaits the component's `init()`** — building a service already ran it. Calling `init()` again runs it twice (and re-building a child with the same `sliceId` throws "already registered"). Make `init()` idempotent: `if (this._ready) return this;`.
+:::
+
+App-lifetime singletons are never destroyed, so there is nothing to clean up.
 
 ## Global UI → a Provider Service
 
-A `singleton: true` works only for Services, because a DOM node can live in **one place at a time** —
-a shared Visual would teleport between mount points. So "I need one global widget" is really "I need a
-**Provider Service** that owns and manages the Visual." That is exactly how `ToastProvider` and
-`ToolTipProvider` work: the provider is the singleton; the toasts/tooltips it creates are ephemeral.
+`singleton: true` works only for Services, because a DOM node lives in **one place at a time** — a shared Visual would teleport between mount points. So "one global widget" means "a **Provider Service** that owns the Visual." That is how `ToastProvider` / `ToolTipProvider` work: the provider is the singleton; the toasts/tooltips it creates are ephemeral.
 
-## How cleanup actually works (important)
+## Cleanup
 
-> **`destroyComponent(parent)` cascades to nested Visual children, but NOT to Services — destroy any
-> Service you built by hand.**
+> **`destroyComponent(parent)` cascades to nested Visual children, but NOT to Services. Destroy any Service you built by hand, in `beforeDestroy()`.**
 
-`destroyComponent(parent)` walks the parent→child index and destroys the subtree (running each
-`beforeDestroy`, deepest-first). Visual children that were built and placed in the parent's DOM by the
-time the parent finished `init()` are linked automatically, so they cascade.
-
-A **Service has no DOM element**, so it can never be discovered — not by the parent's cascade and not
-by `destroyByContainer`. **Every Service you build with `slice.build` must be destroyed explicitly** in
-the owner's `beforeDestroy()`. The same applies to any Visual child you append *after* `init()` (too
-late to be linked).
+A Service has no DOM node, so nothing can discover it — not the parent cascade, not `destroyByContainer`. Same for a Visual child appended *after* `init()` (too late to be linked).
 
 ```javascript
 async init() {
-  this._engine = await slice.build('DataGridEngine', { sliceId: `grid-${++Table._seq}` }); // a Service
-  this._pager  = await slice.build('Pagination', { /* ... */ });                            // a Visual child
+  this._engine = await slice.build('DataGridEngine', { sliceId: `grid-${++Table._seq}` }); // Service
 }
-
 beforeDestroy() {
-  // The Service is NEVER auto-cascaded — destroy it by hand.
-  slice.controller.destroyComponent(this._engine);
-  // The Visual child IS cascaded once it is in the DOM; destroying it here too is
-  // harmless (destroyComponent is idempotent) and safe across framework versions.
-  slice.controller.destroyComponent(this._pager);
+  slice.controller.destroyComponent(this._engine);   // Services never cascade — destroy by hand
 }
 ```
 
-For tearing down a whole region, **`slice.controller.destroyByContainer(domNode)`** discovers every
-Visual component inside a DOM subtree and destroys them — the "destroy-before-clear" workhorse. (It
-still won't find Services, since they have no DOM node.)
-
-App-lifetime singletons (an `AppServices` graph) are the happy exception: they are never destroyed, so
-there is nothing to clean up.
+To tear down a region: **`slice.controller.destroyByContainer(node)`** (destroys every Visual inside a DOM subtree) **then** clear. `innerHTML = ''` alone skips `beforeDestroy` and leaks.
 
 :::warning
-A Service built with `slice.build` is registered in the component registry but has no DOM. If you drop
-its owner without destroying the Service, it **leaks** — it stays in `activeComponents` and its
-`beforeDestroy` never runs. Always destroy built Services explicitly.
+Tearing a subtree down with `innerHTML = ''` does **not** run `beforeDestroy` and does **not** unregister anything — listeners stay bound and registry entries leak. Always `destroyByContainer(node)` **then** clear.
 :::
-
-:::warning
-Tearing a subtree down with `innerHTML = ''` does **not** run `beforeDestroy` and does **not** unregister
-anything — listeners stay bound and registry entries leak. Always `destroyByContainer(node)` **then**
-clear.
-:::
-
-## Worked example: the Table's data engine
-
-The built-in `Table` shows the rules together:
-
-- **State** (page, sort) lives in a `DataGridEngine` — a per-instance object. The engine is built with
-  `slice.build` (so it is discoverable and could be inspected), with a unique `sliceId` per table.
-- The Table destroys **both** the engine and the `Pagination` child in `beforeDestroy()`. The engine
-  (a Service) is never auto-cascaded, so it **must** be destroyed by hand; destroying the pager too is
-  redundant-but-safe (a Visual child does cascade, and `destroyComponent` is idempotent).
-- The pure sort/paginate math also exists as **static helpers** on the engine, so callers that only need
-  a one-off computation can skip the instance entirely.
 
 ## Anti-patterns
 
-- ❌ A **stateful per-instance Service** built with `slice.build` and relied on to be auto-cleaned — it
-  will not be. Either destroy it explicitly, or (better, if it is pure per-instance state) use a plain
-  `new`.
-- ❌ Scattering `build({ singleton: true })` across many call sites for an app-wide service — centralize
-  it in `AppServices` and `getComponent` it instead.
-- ❌ Storing service instances or functions in `slice.context` — keep only serializable state there.
-- ❌ Declaring `id`, `sliceId`, or `singleton` in `static props` — they are reserved build directives,
-  consumed by `build` before your setters run. See [Reserved build keys](/Documentation/The-build-method).
+- ❌ A stateful per-instance Service via `slice.build` relied on to auto-clean — it won't. Destroy it explicitly, or (if it is pure per-instance state) use a plain `new`.
+- ❌ Scattering `build({ singleton: true })` across call sites for an app-wide service — centralize it in the composition root and `getComponent` it.
+- ❌ Storing service instances or functions in `slice.context` — keep only serializable state (and note `setState` **replaces** the value, it does not merge).
+- ❌ Declaring `id`, `sliceId`, or `singleton` in `static props` — reserved build directives, consumed by `build` before your setters run. See [Reserved build keys](/Documentation/The-build-method).
 
 === markdown/project-architecture/single-view-spa.md ===
 # Single-View SPA
@@ -3751,6 +4383,8 @@ Use this style when your app is one main experience and transitions happen insid
 - Games (Impostor-style)
 - Multi-step wizards with one dominant screen
 - Tools where URL sections are not the main interaction model
+
+> Deciding between this and App Shell + MultiRoute? See the [decision matrix](/Documentation/Architecture).
 
 ## Minimal Route Setup
 ```javascript title="src/routes.js"
@@ -3773,10 +4407,10 @@ export default class GameRoot extends HTMLElement {
   }
 
   async init() {
-    await this.renderPhase();
+    await this.showPhase();
   }
 
-  async renderPhase() {
+  async showPhase() {
     const viewMap = {
       setup: 'GameSetup',
       round: 'GameRound',
@@ -3787,13 +4421,13 @@ export default class GameRoot extends HTMLElement {
       state: this.state,
       onNext: async (patch) => {
         this.state = { ...this.state, ...patch };
-        await this.renderPhase();
+        await this.showPhase();
       }
     });
 
     const root = this.querySelector('.game-root-view');
-    root.innerHTML = '';
-    root.appendChild(component);
+    slice.controller.destroyByContainer(root);   // clean up the previous phase (no leak)
+    root.replaceChildren(component);
   }
 }
 
@@ -3810,8 +4444,177 @@ customElements.define('slice-game-root', GameRoot);
 Do not create many routes just to represent internal game phases. That usually increases complexity without user value.
 :::
 
-## Upgrade Trigger
-When users need independent URL-addressable sections, move to App Shell + MultiRoute.
+## Outgrowing single-view → App Shell
+When users need independent, URL-addressable sections, grow into the
+[App Shell + MultiRoute](/Documentation/Architecture/App-Shell-MultiRoute) pattern. Do it in
+slices, keeping the app working at each step:
+
+1. Add an `AppShell` that owns persistent UI (navbar, theme, footer) and hosts the section content.
+2. Wrap your current single view as **one** section route (e.g. `/play`).
+3. Add new sections only when they're independently navigable and meaningful as URLs.
+4. Move global controls into the shell; keep shared state in `slice.context` to avoid prop-drilling.
+5. Add [route guards](/Documentation/Routing/Guards) only when navigation policy needs it.
+
+:::tip
+Migrate in small slices: keep one route stable, move one section at a time, and verify after each move.
+:::
+
+=== markdown/pwa.md ===
+# Make Your App a PWA
+
+## Overview
+A Progressive Web App is **installable** (add to home screen) and can work
+**offline**. A Slice app becomes one by adding three things — a web app manifest,
+some icons, and a service worker — and registering the worker from your page.
+
+You don't need any extra server setup: the Slice dev/prod server already serves
+`/manifest.json` and `/service-worker.js` with the correct MIME types (and the
+service worker with `Cache-Control: no-cache` and `Service-Worker-Allowed: /` so
+its scope is the whole app). Drop the files in `src/` and they're served at the
+site root; `slice build` copies them into `dist/` for production.
+
+## Steps
+:::steps
+1. Add `src/manifest.json`.
+2. Add icons and expose their folder in `sliceConfig.json`.
+3. Add `src/service-worker.js`.
+4. Link the manifest and theme color in `App/index.html`.
+5. Register the service worker — in production only.
+:::
+
+## 1. The manifest
+Create `src/manifest.json` (served at `/manifest.json`):
+
+```json title="src/manifest.json"
+{
+  "name": "Orders Dashboard",
+  "short_name": "Orders",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#11131c",
+  "background_color": "#11131c",
+  "icons": [
+    { "src": "/images/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/images/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/images/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
+```
+
+## 2. Icons
+Put your icons in a folder that is in `publicFolders` so they are served and
+copied to `dist/`. The starter already exposes `images/`, so `src/images/icon-192.png`
+is served at `/images/icon-192.png`. Provide at least 192×192 and 512×512, plus a
+512×512 `maskable` for Android.
+
+```json title="sliceConfig.json — already includes images by default"
+{ "publicFolders": ["/Themes", "/Styles", "/assets", "/images"] }
+```
+
+## 3. The service worker
+Create `src/service-worker.js` (served at `/service-worker.js`). A minimal
+app-shell worker: precache a few core assets, serve navigations network-first with
+an offline fallback, and serve other GETs cache-first.
+
+```javascript title="src/service-worker.js"
+const CACHE = 'app-v1'; // bump this string when you ship new assets
+const PRECACHE = ['/', '/manifest.json', '/images/icon-192.png'];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(caches.open(CACHE).then((c) => c.addAll(PRECACHE)).then(() => self.skipWaiting()));
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys()
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  if (request.method !== 'GET') return;
+  if (request.mode === 'navigate') {
+    event.respondWith(fetch(request).catch(() => caches.match('/')));
+    return;
+  }
+  event.respondWith(caches.match(request).then((hit) => hit || fetch(request)));
+});
+```
+
+List in `PRECACHE` the assets you want available offline. In production your code
+ships as hashed bundles under `/bundles/`, so add the ones your first screen needs
+and bump `CACHE` whenever you deploy new assets.
+
+## 4. Link it in the page
+Add the manifest and theme color to `App/index.html`:
+
+```html title="App/index.html (inside <head>)"
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#11131c" />
+<link rel="apple-touch-icon" href="/images/icon-192.png" />
+```
+
+## 5. Register the worker — production only
+A caching service worker would serve stale files during development and break the
+live-edit loop. Register it **only in production**, and unregister any leftover
+worker in development. Add this once, e.g. at the end of `App/index.html`:
+
+```html title="App/index.html (before </body>)"
+<script type="module">
+  if ('serviceWorker' in navigator) {
+    const isProduction = await fetch('/slice-env.json', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((env) => env?.mode === 'production')
+      .catch(() => true);
+
+    if (isProduction) {
+      navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
+    } else {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      registrations.forEach((registration) => registration.unregister());
+    }
+  }
+</script>
+```
+
+## Best Practices
+:::tip
+Bump the `CACHE` string on every deploy. The `activate` handler deletes old caches,
+so users get the new assets instead of a stale shell.
+:::
+
+:::tip
+Keep `PRECACHE` small — just the shell and what the first screen needs. Everything
+else is cached on demand by the cache-first `fetch` handler.
+:::
+
+## Gotchas
+:::warning
+Never register a caching service worker in development. It serves old assets and
+hides your edits. The snippet above registers only when `slice-env.json` reports
+`production` and unregisters otherwise.
+:::
+
+:::warning
+Keep `service-worker.js` at the site root (`/service-worker.js`) so its scope is the
+whole app. A worker served from a subfolder only controls that subfolder.
+:::
+
+## FAQ
+:::details title="Do I need to configure the server to serve these files?"
+No. The Slice server already serves `/manifest.json` and `/service-worker.js` (with
+the right MIME types and no-cache headers for the worker). Just place the files in
+`src/` — they are served in dev and copied to `dist/` by `slice build`.
+:::
+
+:::details title="Why isn't my app updating after I deploy?"
+A service worker keeps serving its cached assets until a new worker activates. Bump
+the `CACHE` string so `activate` clears the old cache, and reload twice (once to
+install the new worker, once for it to take control).
+:::
 
 === markdown/slice-config.md ===
 # sliceConfig.json
@@ -3891,6 +4694,13 @@ Once loaded, Slice.js initializes structural components based on config:
 | --- | --- | --- | --- |
 | `enabled` | `boolean` | `true` | Master log toggle. |
 | `showLogs` | `object` | none | Per-level log filters. |
+| `ui` | `object` | none | UI panel configuration. |
+
+### logger.ui
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | `false` | Enables the LogViewer debug panel. |
+| `shortcut` | `string` | none | Keyboard shortcut to toggle the panel (e.g. `alt+shift+l`). |
 
 ## paths
 | Field | Type | Required | Notes |
@@ -3907,7 +4717,7 @@ This is how Slice.js knows **where your components live and how to load them**. 
 | Field | Type | Notes |
 | --- | --- | --- |
 | `path` | `string` | Folder (relative to `src/`) where that category's components live. |
-| `type` | `Visual | Service` | How to load a component in this category. |
+| `type` | `Visual` or `Service` | How to load a component in this category. |
 
 The `type` controls loading:
 - **`Visual`** — the component has a UI, so Slice loads three files per component:
@@ -4040,7 +4850,7 @@ Response shape:
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `mode` | `"development" | "production"` | Current runtime mode. |
+| `mode` | `"development"` or `"production"` | Current runtime mode. |
 | `env` | `object` | Key/value map of browser-exposed `SLICE_PUBLIC_*` variables. |
 
 In development and production, the contract is the same: the endpoint returns `{ mode, env }` and `env` only contains `SLICE_PUBLIC_*` keys.
@@ -4073,7 +4883,8 @@ const publicEnv = slice.getPublicEnv();
     "enabled": true,
     "showLogs": {
       "console": { "error": true, "warning": true, "info": true }
-    }
+    },
+    "ui": { "enabled": true, "shortcut": "alt+shift+l" }
   },
   "paths": {
     "components": {
@@ -4356,6 +5167,25 @@ await slice.setTheme('DARK');
 ```javascript title="Back to light"
 await slice.setTheme('LIGHT');
 ```
+
+## Per-Theme CSS Marker
+
+When a theme is applied, the StylesManager sets a `data-slice-theme` attribute on the root element (`<html>`) with the active theme name. This lets CSS react to the theme directly — no JavaScript theme detection needed.
+
+```css title="Vary something per theme"
+/* A white logo SVG that must flip on the light theme */
+[data-slice-theme="LIGHT"] .brand-logo { filter: invert(1); }
+[data-slice-theme="DARK"]  .brand-logo { filter: none; }
+```
+
+```javascript title="Read it in JS too"
+document.documentElement.getAttribute('data-slice-theme'); // 'DARK'
+slice.theme;                                                // same value
+```
+
+:::tip
+Prefer theme **CSS variables** (`var(--token)`) for colors — they already swap automatically. Reach for the `data-slice-theme` marker only for things variables can't express per theme (a filter, a background image, a one-off layout tweak).
+:::
 
 ## Using Theme Tokens in Components
 

@@ -1,4 +1,7 @@
 const components = {
+  "EventRegistryDocumentation": "AppComponents",
+  "LeakInspectorDocumentation": "AppComponents",
+  "PwaDocumentation": "AppComponents",
   "ApiReferenceDocumentation": "AppComponents",
   "CommonGotchasDocumentation": "AppComponents",
   "ContextVsEventsDocumentation": "AppComponents",
