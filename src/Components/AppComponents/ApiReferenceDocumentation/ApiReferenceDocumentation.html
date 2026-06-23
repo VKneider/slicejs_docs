@@ -1,0 +1,32 @@
+<div class="documentation-content apireferencedocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="quick-api-reference">
+    <span class="doc-title-text">Quick API Reference</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<p>The public <code>slice.*</code> surface in one page. Each section links to its full guide. Method names use <code>arg?</code> for optional arguments and <code>→</code> for the return.</p>
+<h2 id="components-props">Components &amp; props</h2>
+<div class="table-block" data-block-id="doc-block-1"></div>
+<p>See [Component Anatomy](/Documentation/Component-Anatomy) and [The build method](/Documentation/The-build-method).</p>
+<p><strong>Reserved props</strong> (stripped before your setters run): <code>id</code> (HTML id), <code>sliceId</code> (registry id, auto-generated if omitted), <code>singleton</code> (Service-only get-or-create).</p>
+<h2 id="cleanup">Cleanup</h2>
+<div class="table-block" data-block-id="doc-block-2"></div>
+<p>Destroying runs <code>beforeDestroy()</code> and cleans the registry — see [Common Gotchas](/Documentation/Common-Gotchas).</p>
+<h2 id="router">Router</h2>
+<div class="table-block" data-block-id="doc-block-3"></div>
+<p>Route params use <code>${param}</code> (not <code>:param</code>); each captures <strong>one</strong> segment and arrives as a string. See [Routing](/Documentation/Routing) and [Route Guards](/Documentation/Routing/Guards).</p>
+<h2 id="context-shared-state">Context (shared state)</h2>
+<div class="table-block" data-block-id="doc-block-4"></div>
+<p>See [ContextManager](/Documentation/Structural/ContextManager) and [Context vs Events](/Documentation/Structural/Context-vs-Events).</p>
+<h2 id="events-pubsub">Events (pub/sub)</h2>
+<div class="table-block" data-block-id="doc-block-5"></div>
+<p>See [EventManager](/Documentation/Structural/EventManager).</p>
+<h2 id="logger">Logger</h2>
+<div class="table-block" data-block-id="doc-block-6"></div>
+<p>The old <code>logError</code> / <code>logWarning</code> / <code>logInfo</code> names still work but are <strong>deprecated</strong> — prefer <code>error</code> / <code>warn</code> / <code>info</code>. See [Logger](/Documentation/Structural/Logger).</p>
+<h2 id="environment-theme">Environment &amp; theme</h2>
+<div class="table-block" data-block-id="doc-block-7"></div>
+<p>See [Environment Variables](/Documentation/Configuration/environment-variables) and [Themes](/Documentation/Themes).</p>
+</div>

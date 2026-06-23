@@ -110,7 +110,7 @@ This is how Slice.js knows **where your components live and how to load them**. 
 | Field | Type | Notes |
 | --- | --- | --- |
 | `path` | `string` | Folder (relative to `src/`) where that category's components live. |
-| `type` | `Visual | Service` | How to load a component in this category. |
+| `type` | `Visual` or `Service` | How to load a component in this category. |
 
 The `type` controls loading:
 - **`Visual`** — the component has a UI, so Slice loads three files per component:
@@ -243,7 +243,7 @@ Response shape:
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `mode` | `"development" | "production"` | Current runtime mode. |
+| `mode` | `"development"` or `"production"` | Current runtime mode. |
 | `env` | `object` | Key/value map of browser-exposed `SLICE_PUBLIC_*` variables. |
 
 In development and production, the contract is the same: the endpoint returns `{ mode, env }` and `env` only contains `SLICE_PUBLIC_*` keys.

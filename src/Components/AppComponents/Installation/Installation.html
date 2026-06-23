@@ -26,6 +26,14 @@
 <ul><li>Configures package scripts (<code>dev</code>, <code>build</code>, <code>start</code>, <code>get</code>, <code>browse</code>, <code>sync</code>, ...).</li></ul>
 <p>Non-interactive form:</p>
 <div class="code-block" data-block-id="doc-block-4"></div>
+<div class="callout callout-tip"><strong>pnpm:</strong> init is pnpm-friendly: it never pins a just-published version, so hardened pnpm
+setups (e.g. <code>minimumReleaseAge</code> quarantine) resolve the newest version allowed
+by your policy. With <code>ignore-scripts</code> enabled, no postinstall step is required —
+init configures the scripts itself.
+
+For pnpm v10+, builds are controlled by <code>allowBuilds</code> in <code>pnpm-workspace.yaml</code>.
+<code>slice init --pm pnpm</code> writes <code>allowBuilds.slicejs-cli: true</code> automatically so the
+CLI postinstall can run without a manual <code>pnpm approve-builds</code> step.</div>
 <h2 id="start-dev-server">Start Dev Server</h2>
 <div class="code-block" data-block-id="doc-block-5"></div>
 <p>Inside the project, prefer package scripts so execution is always pinned to your local <code>package.json</code> scripts:</p>

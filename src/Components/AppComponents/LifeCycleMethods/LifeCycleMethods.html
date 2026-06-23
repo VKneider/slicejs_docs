@@ -10,9 +10,12 @@
 <p>Slice.js components expose three lifecycle methods for predictable behavior:</p>
 <ul><li><code>init()</code> for one-time setup</li><li><code>update()</code> for refreshes when data or routes change</li><li><code>beforeDestroy()</code> for cleanup and memory safety</li></ul>
 <p>These methods are called by the framework and are the recommended places to manage state, subscriptions, and DOM updates.</p>
+<h2 id="which-method-do-i-use">Which method do I use?</h2>
+<div class="table-block" data-block-id="doc-block-1"></div>
+<p>For *how* to refresh (prop setter vs <code>update()</code> vs context vs events), see [Refreshing Component Data](/Documentation/Architecture/Refreshing-Component-Data).</p>
 <h2 id="the-constructor-before-init">The constructor (before init)</h2>
 <p>Before any lifecycle method runs, the constructor builds the component. Every Visual component's constructor does three things, in order:</p>
-<div class="code-block" data-block-id="doc-block-1"></div>
+<div class="code-block" data-block-id="doc-block-2"></div>
 <ul><li>The DOM is <strong>only</strong> available after <code>slice.attachTemplate(this)</code>. Before that call,</li></ul>
 <p><code>querySelector</code> returns <code>null</code>; after it, queries work inside the constructor.</p>
 <ul><li><code>slice.controller.setComponentProps(this, props)</code> assigns each prop (and each <code>static props</code></li></ul>
@@ -23,16 +26,18 @@
 <ul><li><strong>In <code>init()</code></strong>, which is also where async work goes (fetching, building children).</li></ul>
 <p>See Component Anatomy for the full authoring guide.</p>
 <h2 id="lifecycle-summary">Lifecycle Summary</h2>
-<div class="table-block" data-block-id="doc-block-2"></div>
+<div class="table-block" data-block-id="doc-block-3"></div>
 <h2 id="call-order-and-timing">Call Order and Timing</h2>
-<div class="code-block" data-block-id="doc-block-3"></div>
-<h2 id="navigation-and-reuse">Navigation and Reuse</h2>
-<p><code>update()</code> is called when a cached component is reused by routing (for example, <code>Route</code> and <code>MultiRoute</code> containers). This keeps UI responsive without rebuilding static structure.</p>
-<h2 id="recommended-structure">Recommended Structure</h2>
 <div class="code-block" data-block-id="doc-block-4"></div>
+<h2 id="navigation-and-reuse">Navigation and Reuse</h2>
+<p><code>update()</code> is called when a cached component is reused by routing (<code>Route</code> / <code>MultiRoute</code> containers), so static structure is never rebuilt. The framework <strong>serializes</strong> your <code>update()</code> — rapid or concurrent calls coalesce (last wins) — so streaming and fast revisits are safe without manual guards.</p>
+<h2 id="recommended-structure">Recommended Structure</h2>
+<p>Refresh <strong>in place</strong>: reuse children by a stable <code>sliceId</code>, build only the new ones, and prune the gone. Survivors keep their scroll, focus, and internal state.</p>
+<div class="code-block" data-block-id="doc-block-5"></div>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Keep <code>init()</code> focused on one-time setup and cache DOM references there.</div>
-<div class="callout callout-tip">Use <code>destroyByContainer</code> before rebuilding dynamic lists in <code>update()</code>.</div>
+<div class="callout callout-tip">Refresh lists <strong>in place</strong>: reuse children by a stable <code>sliceId</code> (build new, update existing,
+prune gone). Destroy + rebuild only when the content is wholly different.</div>
 <h2 id="gotchas">Gotchas</h2>
 <div class="callout callout-warning"><code>beforeDestroy()</code> is not awaited. Keep it synchronous or fire-and-forget.</div>
 <div class="callout callout-warning">Clearing <code>innerHTML</code> does not destroy Slice components. Use <code>destroyByContainer</code> first.</div>

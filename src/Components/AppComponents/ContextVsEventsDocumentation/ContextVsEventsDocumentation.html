@@ -1,0 +1,27 @@
+<div class="documentation-content contextvseventsdocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="context-vs-events">
+    <span class="doc-title-text">Context vs Events</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<p>Both let components react to things happening elsewhere — but they answer different questions. Pick by the question you're asking:</p>
+<ul><li><strong>Context</strong> → *"What is the current state?"* Shared, retained, readable at any time.</li><li><strong>Events</strong> → *"Did something just happen?"* A one-shot signal, with no retained value.</li></ul>
+<h2 id="which-one">Which one?</h2>
+<div class="table-block" data-block-id="doc-block-1"></div>
+<h2 id="context-the-current-state">Context — the current state</h2>
+<p>A value several components depend on. Each <code>watch</code>es it (auto-cleaned on destroy); anyone calls <code>setState</code>. See [ContextManager](/Documentation/Structural/ContextManager).</p>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="events-something-happened">Events — something happened</h2>
+<p>A signal with no retained value. A component subscribes; another part of the app emits. See [EventManager](/Documentation/Structural/EventManager).</p>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<h2 id="they-compose">They compose</h2>
+<p>Use Context for the state, and add an Event when a <strong>different domain</strong> must react to a change.</p>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<div class="callout callout-tip">Default to <strong>Context</strong> for shared state. Add an <strong>Event</strong> only when a producer must notify
+consumers it doesn't know about. For refreshing one component you hold, you often need neither — see
+[Refreshing Component Data](/Documentation/Architecture/Refreshing-Component-Data).</div>
+<div class="callout callout-warning">Don't model state as a stream of events you replay to rebuild it — that's what Context is for. Use
+events for *moments*, not for *state*.</div>
+</div>

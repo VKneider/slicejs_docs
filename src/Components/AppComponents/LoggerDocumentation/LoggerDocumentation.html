@@ -10,11 +10,16 @@
 <p>Logger collects logs and routes them to configured outputs (e.g. console). It supports filtering by level and basic querying over the in-memory log list.</p>
 <h2 id="enable">Enable</h2>
 <div class="code-block" data-block-id="doc-block-1"></div>
+<h2 id="logger-ui-optional">Logger UI (Optional)</h2>
+<p>You can enable the LogViewer debug panel with a keyboard shortcut.</p>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<p>The panel shows a live feed of all logs with level filtering and a search input. It is built with the same <code>--si-*</code> tokens as the other debugger panels and only processes logs while visible (conditional subscribe on toggle).</p>
 <h2 id="api-reference">API Reference</h2>
-<div class="table-block" data-block-id="doc-block-2"></div>
+<div class="table-block" data-block-id="doc-block-3"></div>
+<p>The names <code>logError</code> / <code>logWarning</code> / <code>logInfo</code> still work but are <strong>deprecated</strong> — prefer <code>error</code> / <code>warn</code> / <code>info</code>.</p>
 <h2 id="usage">Usage</h2>
-<div class="code-block" data-block-id="doc-block-3"></div>
 <div class="code-block" data-block-id="doc-block-4"></div>
+<div class="code-block" data-block-id="doc-block-5"></div>
 <h2 id="notes">Notes</h2>
 <ul><li>Logging is disabled when <code>logger.enabled</code> is false.</li><li>Log outputs depend on <code>logger.showLogs</code> configuration.</li></ul>
 </div>

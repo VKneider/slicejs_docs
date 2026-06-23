@@ -7,24 +7,27 @@
   </h1>
 </div>
 <h2 id="overview">Overview</h2>
-<p>Structural components power the framework runtime. They are created by Slice.js and exposed under <code>slice.*</code>. You do not build them directly.</p>
+<p>Structural components power the framework runtime. They are created by Slice.js and exposed under <code>slice.*</code>. You do not build them directly.</p>
 <h2 id="key-components">Key Components</h2>
 <ul><li><code>slice.controller</code> for component lifecycle and lookup</li><li><code>slice.router</code> for navigation and route rendering</li><li><code>slice.stylesManager</code> for styles and themes</li><li><code>slice.events</code> for pub/sub (optional)</li><li><code>slice.context</code> for shared state (optional)</li></ul>
-<h2 id="controller-api">Controller API</h2>
+<h2 id="which-one">Which one?</h2>
 <div class="table-block" data-block-id="doc-block-1"></div>
-<div class="code-block" data-block-id="doc-block-2"></div>
+<p>For state vs signals see [Context vs Events](/Documentation/Structural/Context-vs-Events); for full signatures, the [API Reference](/Documentation/API-Reference).</p>
+<h2 id="controller-api">Controller API</h2>
+<div class="table-block" data-block-id="doc-block-2"></div>
+<div class="code-block" data-block-id="doc-block-3"></div>
 <h2 id="router-api">Router API</h2>
-<div class="table-block" data-block-id="doc-block-3"></div>
+<div class="table-block" data-block-id="doc-block-4"></div>
 <h2 id="styles-and-themes">Styles and Themes</h2>
 <p><code>slice.setTheme(themeName)</code> applies a theme through the StylesManager.</p>
-<div class="code-block" data-block-id="doc-block-4"></div>
-<h2 id="eventmanager-optional">EventManager (Optional)</h2>
-<p>Provides pub/sub via <code>slice.events</code>. When disabled, the API is a no-op.</p>
-<div class="table-block" data-block-id="doc-block-5"></div>
-<p>The Events debug panel (<code>alt+shift+e</code>) shows a <strong>Subscribers</strong> tab (live listeners + emit counters) and a <strong>History</strong> tab (reverse-chronological feed of every <code>emit()</code>). Recording is zero-overhead: it only activates while the panel is open. See DevTools for details.</p>
-<h2 id="contextmanager-optional">ContextManager (Optional)</h2>
-<p>Shared state system available at <code>slice.context</code>.</p>
-<div class="table-block" data-block-id="doc-block-6"></div>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<h2 id="eventmanager-contextmanager-optional">EventManager &amp; ContextManager (Optional)</h2>
+<ul><li><strong><code>slice.events</code></strong> — pub/sub (<code>subscribe</code> / <code>emit</code> / <code>bind</code>). Full guide:</li></ul>
+<p>[EventManager](/Documentation/Structural/EventManager).</p>
+<ul><li><strong><code>slice.context</code></strong> — shared state (<code>create</code> / <code>setState</code> / <code>watch</code>, with selectors and optional</li></ul>
+<p>persistence). Full guide: [ContextManager](/Documentation/Structural/ContextManager).</p>
+<p>When to use which: [Context vs Events](/Documentation/Structural/Context-vs-Events). All signatures: [API Reference](/Documentation/API-Reference).</p>
+<p>The Events debug panel (<code>alt+shift+e</code>) shows live subscribers + an emit history; the Context panel shows live state. See [DevTools](/Documentation/DevTools).</p>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Use <code>destroyByContainer</code> before recreating dynamic lists to avoid leaks.</div>
 <div class="callout callout-tip">Register guards before calling <code>slice.router.start()</code>.</div>

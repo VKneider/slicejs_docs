@@ -153,12 +153,37 @@ static props = {
 };
 ```
 
-Types: `string`, `number`, `boolean`, `array`, `object`, `function`. When `setComponentProps`
-runs, it applies defaults, validates in development, and assigns each prop **through its setter**
-(`this[prop] = value`). Defaults pass through setters too. Because of this, **side effects belong
-in setters** — assigning a prop is all the rest of your code needs to do, and the Debugger can
-change props live through the same path. Keep internal state (cached data, timers) on `this`, not
-in `static props`.
+Types: `string`, `number`, `boolean`, `array`, `object`, `function`. At **build**,
+`setComponentProps` applies defaults, validates in development, and assigns each prop **through its
+setter** (`this[prop] = value`); defaults pass through setters too. On an already-built component it
+**refreshes** instead (see *Refreshing a built component* below). Because of this, **side effects
+belong in setters** — assigning a prop is all the rest of your code needs to do, and the Debugger
+can change props live through the same path. Keep internal state (cached data, timers) on `this`,
+not in `static props`.
+
+## Refreshing a built component
+After a component is built, refresh it by **assigning a prop** (its setter runs) or, to apply
+several at once, with `slice.setComponentProps(component, props)`. It is the **same** function the
+constructor uses — it detects build vs refresh automatically:
+
+| Context | What it does |
+| --- | --- |
+| Constructor (not yet registered) | Applies `static props` defaults, validates `required`, fires every setter. |
+| Built component (refresh) | Assigns only the props you pass — **no defaults, no `required` check** — and respects setter diff-guards, so unchanged values don't re-touch the DOM. |
+
+```javascript title="Refresh in place"
+const card = slice.getComponent('user-1');
+card.name = 'Ada';                                            // one prop: the setter runs
+slice.setComponentProps(card, { name: 'Ada', role: 'Admin' }); // several at once, omitted props kept
+```
+
+The key property: omitting a prop on refresh **leaves it as-is** — it is not reset to its default.
+That is what makes refreshing surviving instances safe.
+
+:::tip
+Check whether an instance is still the live registered one (not destroyed or replaced by a rebuild)
+with `slice.isComponentAlive(component)`.
+:::
 
 ## customElements.define
 Register the custom element once at the bottom of the file:
@@ -200,7 +225,7 @@ export default class AuthService {
   constructor(props = {}) { this.token = null; }
   async login(email, password) {
     const res = await fetch('/api/login', { method: 'POST', /* ... */ });
-    if (!res.ok) { slice.logger.logError('AuthService', 'Login failed'); return false; }
+    if (!res.ok) { slice.logger.error('AuthService', 'Login failed'); return false; }
     this.token = (await res.json()).token;
     return true;
   }

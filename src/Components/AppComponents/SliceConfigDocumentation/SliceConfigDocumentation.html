@@ -28,17 +28,19 @@
 <div class="table-block" data-block-id="doc-block-6"></div>
 <h2 id="logger">logger</h2>
 <div class="table-block" data-block-id="doc-block-7"></div>
-<h2 id="paths">paths</h2>
+<h3 id="loggerui">logger.ui</h3>
 <div class="table-block" data-block-id="doc-block-8"></div>
+<h2 id="paths">paths</h2>
+<div class="table-block" data-block-id="doc-block-9"></div>
 <h3 id="pathscomponents">paths.components</h3>
 <p>This is how Slice.js knows <strong>where your components live and how to load them</strong>. Each key is a <strong>component category</strong>, and its value tells the framework two things:</p>
-<div class="table-block" data-block-id="doc-block-9"></div>
+<div class="table-block" data-block-id="doc-block-10"></div>
 <p>The <code>type</code> controls loading:</p>
 <ul><li><strong><code>Visual</code></strong> — the component has a UI, so Slice loads three files per component:</li></ul>
 <p><code>&lt;Name&gt;.js</code> + <code>&lt;Name&gt;.html</code> (template) + <code>&lt;Name&gt;.css</code> (styles).</p>
 <ul><li><strong><code>Service</code></strong> — logic only, no UI, so Slice loads just <code>&lt;Name&gt;.js</code>.</li></ul>
 <p>A default project ships three categories:</p>
-<div class="code-block" data-block-id="doc-block-10"></div>
+<div class="code-block" data-block-id="doc-block-11"></div>
 <ul><li><strong><code>Visual</code></strong> holds reusable UI components (often the official registry components).</li><li><strong><code>AppComponents</code></strong> is also a <code>Visual</code> category, reserved for your app-specific screens and</li></ul>
 <p>sections (for example <code>AppShell</code>, <code>HomeSection</code>). Same three-file pattern as <code>Visual</code>.</p>
 <ul><li><strong><code>Service</code></strong> holds plain logic classes (API clients, storage helpers).</li></ul>
@@ -49,47 +51,47 @@ right category and updates <code>components.js</code> for you. See Component Ana
 "component not found" error. A <code>Service</code> folder marked <code>Visual</code> will fail trying to fetch a
 missing <code>.html</code>.</div>
 <h2 id="router">router</h2>
-<div class="table-block" data-block-id="doc-block-11"></div>
-<h2 id="loading">loading</h2>
 <div class="table-block" data-block-id="doc-block-12"></div>
-<h2 id="events">events</h2>
+<h2 id="loading">loading</h2>
 <div class="table-block" data-block-id="doc-block-13"></div>
-<h3 id="eventsui">events.ui</h3>
+<h2 id="events">events</h2>
 <div class="table-block" data-block-id="doc-block-14"></div>
-<h2 id="context">context</h2>
+<h3 id="eventsui">events.ui</h3>
 <div class="table-block" data-block-id="doc-block-15"></div>
-<h3 id="contextui">context.ui</h3>
+<h2 id="context">context</h2>
 <div class="table-block" data-block-id="doc-block-16"></div>
-<h2 id="production">production</h2>
+<h3 id="contextui">context.ui</h3>
 <div class="table-block" data-block-id="doc-block-17"></div>
+<h2 id="production">production</h2>
+<div class="table-block" data-block-id="doc-block-18"></div>
 <h2 id="publicfolders">publicFolders</h2>
 <p>Use <code>publicFolders</code> to declare <strong>public asset folders</strong> that should be served in production. This keeps source-only folders private while still exposing the assets your app needs.</p>
 <p>Defaults are intended to be sensible for most apps: <code>/Themes</code>, <code>/Styles</code>, <code>/assets</code>.</p>
 <p>Import resolution scope tied to <code>publicFolders</code>:</p>
 <ul><li>Supported: relative imports and absolute imports that point into configured <code>publicFolders</code>.</li><li>Unsupported: bare package imports such as <code>import 'pkg'</code>.</li><li>Behavior parity: when an absolute import targets a configured public folder, it is preserved consistently in both development and production.</li></ul>
 <p>Structural framework components are bundled automatically during <code>slice build</code> based on which features are enabled in <code>sliceConfig.json</code> (e.g. <code>logger.enabled</code>, <code>events.enabled</code>).</p>
-<div class="table-block" data-block-id="doc-block-18"></div>
-<h2 id="server">server</h2>
 <div class="table-block" data-block-id="doc-block-19"></div>
+<h2 id="server">server</h2>
+<div class="table-block" data-block-id="doc-block-20"></div>
 <h2 id="public-browser-environment-slicepublic">Public Browser Environment (<code>SLICE_PUBLIC_*</code>)</h2>
 <p>Slice.js can expose selected environment variables to the browser runtime.</p>
 <p>Only variables that start with <code>SLICE_PUBLIC_</code> are included in the browser payload. Any variable without this prefix stays server-only and is not exposed through the runtime env endpoint.</p>
 <div class="callout callout-warning">All values exposed with <code>SLICE_PUBLIC_*</code> are public and readable by any user in the browser.
 Never place secrets, tokens, private keys, or credentials in these variables.</div>
 <h3 id="naming-contract">Naming Contract</h3>
-<div class="table-block" data-block-id="doc-block-20"></div>
+<div class="table-block" data-block-id="doc-block-21"></div>
 <h3 id="runtime-endpoint-contract-slice-envjson">Runtime Endpoint Contract (<code>/slice-env.json</code>)</h3>
 <p>Slice.js serves browser-safe runtime environment data at <code>/slice-env.json</code>.</p>
 <p>Response shape:</p>
-<div class="code-block" data-block-id="doc-block-21"></div>
-<div class="table-block" data-block-id="doc-block-22"></div>
+<div class="code-block" data-block-id="doc-block-22"></div>
+<div class="table-block" data-block-id="doc-block-23"></div>
 <p>In development and production, the contract is the same: the endpoint returns <code>{ mode, env }</code> and <code>env</code> only contains <code>SLICE_PUBLIC_*</code> keys.</p>
 <h3 id="runtime-api-access">Runtime API Access</h3>
 <p>After Slice.js initializes, use these runtime helpers:</p>
-<div class="table-block" data-block-id="doc-block-23"></div>
-<div class="code-block" data-block-id="doc-block-24"></div>
-<h2 id="example">Example</h2>
+<div class="table-block" data-block-id="doc-block-24"></div>
 <div class="code-block" data-block-id="doc-block-25"></div>
+<h2 id="example">Example</h2>
+<div class="code-block" data-block-id="doc-block-26"></div>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Keep <code>paths</code> accurate or component loading will fail.</div>
 <div class="callout callout-tip">Load shared styles through <code>stylesManager.requestedStyles</code>.</div>

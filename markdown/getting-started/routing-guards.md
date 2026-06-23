@@ -34,15 +34,8 @@ after registering guards to ensure they are active before the first navigation.
 | `next({ path: '/login', replace: true })` | redirect | Redirect with history replace. |
 
 ## Guard Context
-`to` and `from` include path, component, params, query, and metadata.
-
-| Field | Type | Notes |
-| --- | --- | --- |
-| `path` | `string` | Requested path or resolved full path. |
-| `component` | `string` | Component for the route (parent if nested). |
-| `params` | `object` | Params parsed from `${param}` in routes. |
-| `query` | `object` | URL query parameters. |
-| `metadata` | `object` | Route metadata from config. |
+`to` and `from` are **Route Info** objects (`path`, `component`, `params`, `query`, `metadata`).
+See [Routing → Route Info Object](/Documentation/Routing) for the field reference.
 
 ## beforeEach
 ```javascript title="Block or redirect"

@@ -29,13 +29,13 @@ scroll, async cost).
 
 ## 1. Set a prop or call a method (the default)
 In Slice, props go through **setters** — so updating data is usually just *assigning a prop*. The setter
-re-renders; the instance (and its focus/scroll/internal state) is preserved.
+updates the DOM; the instance (and its focus/scroll/internal state) is preserved.
 
 ```javascript title="Same instance, new data"
 const table = await slice.build('Table', { columns, rows });
 
 // later — the rows changed:
-table.rows = await fetchRows();   // the setter re-renders; no rebuild
+table.rows = await fetchRows();   // the setter updates the DOM; no rebuild
 ```
 
 Components also expose **methods** for finer updates — same idea, just a call:
@@ -46,7 +46,7 @@ form.setValue('email', user.email);      // a method
 table.loading = true;                    // toggle a busy state, then set rows
 ```
 
-> Design your own components so that **assigning a prop or calling a method drives the re-render** — that
+> Design your own components so that **assigning a prop or calling a method drives the DOM update** — that
 > is what makes this the default refresh path.
 
 ## 2. `update()` — cached route revisits
@@ -55,17 +55,23 @@ table.loading = true;                    // toggle a busy state, then set rows
 
 ```javascript title="Refresh on revisit"
 export default class OrdersPage extends HTMLElement {
-  async init()   { await this.load(); }   // first visit
+  async init()   { this.$list = this.querySelector('.orders'); await this.load(); }
   async update() { await this.load(); }   // cached revisit → refresh
 
   async load() {
-    this.orders = await slice.getComponent('api').request('GET', null, '/orders');
-    this.render();
+    const orders = await slice.getComponent('api').request('GET', null, '/orders');
+    this.$list.replaceChildren();
+    for (const o of orders) {
+      this.$list.appendChild(await slice.build('OrderRow', { sliceId: `order-${o.id}`, title: o.title }));
+    }
   }
 }
 ```
 
-See [`update()`](/Documentation/LifeCycle-Methods/update). Keep it idempotent.
+The framework **serializes** your `update()` — concurrent or rapid calls coalesce (last wins) — so
+it is safe under streaming or fast revisits without writing manual guards. For lists, refresh **in
+place**: reuse children by a stable `sliceId` instead of destroy + rebuild, so survivors keep their
+state. See [`update()`](/Documentation/LifeCycle-Methods/update). Keep it idempotent.
 
 ## 3. Context — shared state many components react to
 When several components depend on the **same** state, put it in [`slice.context`](/Documentation/Structural/ContextManager).

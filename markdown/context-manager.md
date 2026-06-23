@@ -155,12 +155,12 @@ The classic bug is updating one field with a plain object and silently wiping th
 const settings = slice.context.use('settings');
 settings.get();                          // current state
 settings.patch({ selectedModel: 'pro' }); // merge
-settings.watch(this, (s) => this.render(s));
+settings.watch(this, (s) => { this.$model.textContent = s.selectedModel; });
 ```
 
-`bind` is `watch` **plus an immediate call** with the current value — the "render now and on every change" pattern in one line (no separate initial render):
+`bind` is `watch` **plus an immediate call** with the current value — the "run now and on every change" pattern in one line (no separate initial run):
 
-```javascript title="bind = watch + initial render"
+```javascript title="bind = watch + initial run"
 async init() {
   slice.context.use('cart').bind(
     this,

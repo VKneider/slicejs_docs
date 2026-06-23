@@ -48,20 +48,25 @@ The panel shows a live feed of all logs with level filtering and a search input.
 ## API Reference
 | Method | Signature | Notes |
 | --- | --- | --- |
-| `logError` | `(componentSliceId, message, error?)` | Logs error + optional error object |
-| `logWarning` | `(componentSliceId, message)` | Logs warning |
-| `logInfo` | `(componentSliceId, message)` | Logs info |
-| `getLogs` | `()` | Returns all logs |
-| `clearLogs` | `()` | Clears stored logs |
-| `getLogsByLogType` | `(type)` | Filter by `error | warning | info` |
-| `getLogsByComponentCategory` | `(category)` | Filter by component category |
-| `getLogsByComponent` | `(sliceId)` | Filter by component sliceId |
+| `error` | `(sliceId, message, error?)` | Log an error (+ optional error object). |
+| `warn` | `(sliceId, message, error?)` | Log a warning. |
+| `info` | `(sliceId, message, error?)` | Log info. |
+| `debug` | `(sliceId, message, error?)` | Log debug detail. |
+| `getLogs` | `()` | Returns all log entries. |
+| `clearLogs` | `()` | Clears stored logs. |
+| `getLogsByLogType` | `(type)` | Filter by type: `error`, `warn`, `info`, `debug`. |
+| `getLogsByComponentCategory` | `(category)` | Filter by component category. |
+| `getLogsByComponent` | `(sliceId)` | Filter by component sliceId. |
+| `onLog` / `offLog` | `(callback)` | Subscribe / unsubscribe to logs in real time. |
+
+The names `logError` / `logWarning` / `logInfo` still work but are **deprecated** — prefer
+`error` / `warn` / `info`.
 
 ## Usage
 ```javascript title="Log from a component"
 export default class Navbar extends HTMLElement {
   async init() {
-    slice.logger.logInfo('Navbar', 'Navbar initialized');
+    slice.logger.info('Navbar', 'Navbar initialized');
   }
 }
 ```
@@ -70,7 +75,7 @@ export default class Navbar extends HTMLElement {
 try {
   await doWork();
 } catch (error) {
-  slice.logger.logError('MyService', 'Work failed', error);
+  slice.logger.error('MyService', 'Work failed', error);
 }
 ```
 

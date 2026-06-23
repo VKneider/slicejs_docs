@@ -135,7 +135,7 @@ document.querySelector('#app').appendChild(card);`
         tag: 'State',
         title: 'Context Manager',
         description: 'Shared state with watchers, selectors, and persistence.',
-        path: '/Documentation/ContextManager',
+        path: '/Documentation/Structural/ContextManager',
         accent: 'warning'
       }
     ];

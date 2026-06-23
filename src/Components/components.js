@@ -1,4 +1,7 @@
 const components = {
+  "ApiReferenceDocumentation": "AppComponents",
+  "CommonGotchasDocumentation": "AppComponents",
+  "ContextVsEventsDocumentation": "AppComponents",
   "AppShellMultiRouteDocumentation": "AppComponents",
   "BeforeDestroyDocumentation": "AppComponents",
   "ButtonDocumentation": "AppComponents",
@@ -32,7 +35,6 @@ const components = {
   "LoadingDocumentation": "AppComponents",
   "LoggerDocumentation": "AppComponents",
   "MainMenu": "AppComponents",
-  "MigrationSingleViewToAppShellDocumentation": "AppComponents",
   "MultiRouteDocumentation": "AppComponents",
   "MyLayout": "AppComponents",
   "MyNavigation": "AppComponents",

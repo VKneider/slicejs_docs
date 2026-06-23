@@ -81,7 +81,7 @@ project stays lean.
   (events) and `alt+shift+c` (context).
 - Right-click a component (when `debugger.enabled`) to inspect and live-edit its props.
 - Use `slice doctor` when the project structure or config seems off.
-- Prefer `slice.logger.logInfo / logWarning / logError` over `console.log` — it respects the
+- Prefer `slice.logger.info / warn / error` over `console.log` — it respects the
   configured levels and stays quiet in production.
 
 ## Production build, briefly

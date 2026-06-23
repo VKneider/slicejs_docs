@@ -17,6 +17,11 @@ export const documentationRoutes = {
             title: 'Slice-cli Commands',
             path: '/Documentation/Commands',
             component: 'CommandsDocumentation'
+         },
+         {
+            title: 'API Reference',
+            path: '/Documentation/API-Reference',
+            component: 'ApiReferenceDocumentation'
          }
       ]
    },
@@ -40,12 +45,17 @@ export const documentationRoutes = {
                   title: 'The Development Loop',
                   path: '/Documentation/Development-Workflow',
                   component: 'DevelopmentWorkflow'
+               },
+               {
+                  title: 'Common Gotchas',
+                  path: '/Documentation/Common-Gotchas',
+                  component: 'CommonGotchasDocumentation'
                }
             ]
          },
          {
             title: 'SliceConfig.json',
-            path: '/Documentation/SliceConfig',
+            path: '/Documentation/Configuration/sliceConfig',
             component: 'SliceConfigDocumentation'
          },
          {
@@ -145,6 +155,11 @@ export const documentationRoutes = {
             component: 'ContextManagerDocumentation'
          },
          {
+            title: 'Context vs Events',
+            path: '/Documentation/Structural/Context-vs-Events',
+            component: 'ContextVsEventsDocumentation'
+         },
+         {
             title: 'Themes',
             path: '/Documentation/Themes',
             component: 'ThemesDocumentation'
@@ -189,11 +204,6 @@ export const documentationRoutes = {
             path: '/Documentation/Architecture/Routing-Data',
             component: 'RoutingDataDocumentation'
          },
-          {
-             title: 'Migration: Single-View -> App Shell',
-             path: '/Documentation/Architecture/Migration',
-             component: 'MigrationSingleViewToAppShellDocumentation'
-          },
           {
              title: 'Service Patterns',
              path: '/Documentation/Architecture/Service-Patterns',

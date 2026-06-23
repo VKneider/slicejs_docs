@@ -8,7 +8,7 @@ export default class CommandsDocumentation extends HTMLElement {
 
   async init() {
     this.markdownPath = "cli-commands.md";
-    this.markdownContent = "---\r\ntitle: Slice CLI\r\nroute: /Documentation/CLI\r\nnavLabel: CLI\r\nsection: Getting Started\r\ngroup: Tooling\r\norder: 15\r\ndescription: Command reference for the Slice.js CLI.\r\ncomponent: CommandsDocumentation\r\ntags: [cli, tooling]\r\n---\r\n\r\n# Slice.js CLI\r\n\r\n## Overview\r\nThe Slice.js CLI (`slice`) helps you initialize projects, manage components, run the dev server,\r\nand maintain your toolchain. For project workflows, prefer `package.json` scripts (`pnpm run ...`\r\nor `npm run ...`) so execution is pinned to your local dependency tree.\r\n\r\n## Installation\r\n```bash title=\"Local (recommended)\"\r\nnpm install slicejs-cli --save-dev\r\n```\r\n\r\n```bash title=\"Global (optional launcher install)\"\r\nnpm install -g slicejs-cli\r\n```\r\n\r\nWhen the `slice` launcher command is available (commonly after a global install\r\nthat places `slice` in your PATH), it delegates to the nearest\r\nproject-local `node_modules/slicejs-cli` from your current directory (including\r\nsubdirectories). This keeps command execution aligned with the version pinned\r\nin each project.\r\n\r\nIf the launcher command is unavailable, use:\r\n\r\n```bash\r\nnpx slicejs-cli <command>\r\n```\r\n\r\nYou can bypass delegation for a specific invocation:\r\n\r\n```bash\r\nSLICE_NO_LOCAL_DELEGATION=1 slice version\r\n```\r\n\r\n## Command Summary\r\n| Command | Alias | Purpose |\r\n| --- | --- | --- |\r\n| `slice init` | - | Initialize project structure and install Visual components. |\r\n| `slice dev` | - | Start development server. |\r\n| `slice build` | - | Build production output (bundles + dist). |\r\n| `slice build clean` | - | Remove generated bundles. |\r\n| `slice build info` | - | Show bundle configuration summary. |\r\n| `slice start` | - | Start production server. |\r\n| `slice component create` | `slice comp new` | Create a local component. |\r\n| `slice component list` | `slice comp ls` | List local components. |\r\n| `slice component delete` | `slice comp remove` | Delete a local component. |\r\n| `slice get` | `slice registry get` | Install components from registry. |\r\n| `slice browse` | `slice registry list` | List official registry components. |\r\n| `slice sync` | `slice registry sync` | Sync local Visual components from registry. |\r\n| `slice list` | - | Shortcut for `slice component list`. |\r\n| `slice version` | `slice v` | Show CLI version. |\r\n| `slice doctor` | `slice diagnose` | Run project diagnostics. |\r\n| `slice types generate` | - | Generate TypeScript typings for `slice.build`. |\r\n| `slice help` | `slice --help` | Show CLI help. |\r\n\r\n## Recommended package scripts\r\n\r\nUse these scripts inside initialized projects:\r\n\r\n```bash\r\npnpm run dev\r\npnpm run build\r\npnpm run start\r\npnpm run browse\r\npnpm run get -- Button\r\npnpm run sync\r\npnpm run component:create -- UserCard --category AppComponents\r\npnpm run component:list\r\npnpm run component:delete -- UserCard --category AppComponents --yes\r\npnpm run slice:types\r\n```\r\n\r\nEquivalent npm forms are the same with `npm run ...`.\r\n\r\nIf you prefer direct execution through local devDependencies, use `pnpm exec`:\r\n\r\n```bash\r\npnpm exec slice dev\r\npnpm exec slice get Button\r\n```\r\n\r\nIf the CLI is installed globally, you can run `slice ...` directly from PATH.\r\n\r\n### pnpm build-approval note\r\nWith pnpm v10+, lifecycle scripts are gated by `allowBuilds` in `pnpm-workspace.yaml`.\r\n`slice init --pm pnpm` automatically configures:\r\n\r\n```yaml\r\nallowBuilds:\r\n  slicejs-cli: true\r\n```\r\n\r\nFor existing projects that do not have that setting yet, use:\r\n\r\n```bash\r\npnpm approve-builds slicejs-cli\r\n```\r\n\r\nUse direct CLI commands (`slice ...` or `npx slicejs-cli ...`) mainly for bootstrapping (`init`) or\r\nwhen scripts are not yet configured.\r\n\r\n## init\r\nCreates a new project folder and initializes it with the framework structure and the starter\r\ncomponents from the official registry. Everything — `package.json`, `node_modules`, lockfile,\r\n`src/`, `api/` — is created **inside** the new folder.\r\n\r\n```bash title=\"Initialize a project\"\r\nnpx slicejs-cli init\r\n```\r\n\r\n```bash title=\"Non-interactive\"\r\nnpx slicejs-cli init my-app -y --pm pnpm\r\n```\r\n\r\n### Options\r\n| Flag | Type | Default | Notes |\r\n| --- | --- | --- | --- |\r\n| `[name]` | `string` | `my-slice-app` | Project name (positional). |\r\n| `-y, --yes` | `boolean` | `false` | Skip interactive prompts. |\r\n| `--pm <pm>` | `pnpm \\| npm` | auto-detected | Package manager to use. When omitted, init detects it (user agent → available binaries) and only asks when ambiguous. |\r\n\r\nWhat it does:\r\n- Creates the project folder and a `package.json` inside it (before any install, so\r\n  dependencies always anchor to the project folder).\r\n- Pins the chosen package manager in the `packageManager` field; later commands\r\n  (`slice doctor`) detects it from there or from the lockfile.\r\n- Installs `slicejs-web-framework` (dependency) and `slicejs-cli` (devDependency)\r\n  with the chosen package manager. Versions are not hard-pinned, so pnpm\r\n  release-age policies (`minimumReleaseAge`) resolve cleanly.\r\n- Creates `api/` and `src/` structure from the framework base.\r\n- Installs the starter Visual and Service components from the registry.\r\n- Configures package scripts (dev, build, start, get, browse, sync, etc.).\r\n\r\n## dev\r\nStarts the development server and serves from `/src`.\r\n\r\n```bash title=\"Start dev server\"\r\nnpm run dev\r\n```\r\n\r\n### Options\r\n| Flag | Type | Default | Notes |\r\n| --- | --- | --- | --- |\r\n| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |\r\n| `--no-hmr` | `boolean` | `false` | Disable hot module reload (HMR is enabled by default). |\r\n\r\n### Behavior\r\n- Ensures `src/` and `api/` exist (otherwise suggests `slice init`).\r\n- Falls back to port+1 if the requested port is busy.\r\n- Uses `api/index.js` with `--development`.\r\n\r\n### Import support scope\r\n- Supported: relative imports and absolute imports that resolve into folders listed in `publicFolders`.\r\n- Unsupported: bare package imports such as `import 'pkg'`.\r\n- `slice dev` and `slice build` keep the same rule for preserved absolute imports that target configured public folders.\r\n\r\n## start\r\nStarts the production server and serves from `/dist`.\r\n\r\n```bash title=\"Start production server\"\r\nnpm run start\r\n```\r\n\r\n### Options\r\n| Flag | Type | Default | Notes |\r\n| --- | --- | --- | --- |\r\n| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |\r\n\r\n:::tip\r\nProduction uses `publicFolders` from `sliceConfig.json` to expose public asset folders\r\nlike `/Themes`, `/Styles`, and `/assets`.\r\n:::\r\n\r\n## build\r\nBuilds production output by analyzing dependencies, generating bundles, and writing files to `/dist`.\r\n\r\n:::tip\r\nProduction builds include **Structural framework components** in bundles to avoid runtime fetches.\r\nThese entries are stored as `Framework/Structural/<ComponentName>` in bundle config.\r\n:::\r\n\r\n```bash title=\"Build production output\"\r\nnpm run build\r\n```\r\n\r\n### Options\r\n| Flag | Type | Default | Notes |\r\n| --- | --- | --- | --- |\r\n| `-a, --analyze` | `boolean` | `false` | Analyze only, do not generate bundles. |\r\n| `-v, --verbose` | `boolean` | `false` | Output analysis metrics. |\r\n| `--no-minify` | `boolean` | `false` | Disable minification (enabled by default). |\r\n| `--no-obfuscate` | `boolean` | `false` | Disable obfuscation (enabled by default). |\r\n| `--preview` | `boolean` | `false` | Start preview server after build. |\r\n| `--serve` | `boolean` | `false` | Start preview server without building. |\r\n| `--skip-clean` | `boolean` | `false` | Skip cleaning dist before build. |\r\n\r\n### Subcommands\r\n| Command | Purpose |\r\n| --- | --- |\r\n| `slice build clean` | Remove generated bundle files and config. |\r\n| `slice build info` | Show bundle configuration summary. |\r\n\r\n### Import support scope\r\n- Supported: relative imports and absolute imports that resolve into folders listed in `publicFolders`.\r\n- Unsupported: bare package imports such as `import 'pkg'`.\r\n- Production preserves supported absolute public-folder imports with the same behavior as development.\r\n\r\n## component create\r\nCreates a new local component and registers it in `components.js`. Runs interactively, or\r\nnon-interactively when you pass the name and category on the command line.\r\n\r\n```bash title=\"Interactive (prompts for name + category)\"\r\nnpm run component:create\r\n```\r\n\r\n```bash title=\"Non-interactive (pass name + --category)\"\r\nnpm run component:create -- UserCard --category AppComponents\r\nnpm run component:create -- AuthService -c Service\r\n```\r\n\r\n```bash title=\"Through the npm script (note the -- separator)\"\r\nnpm run component:create -- UserCard --category Visual\r\n```\r\n\r\n| Argument / option | Notes |\r\n| --- | --- |\r\n| `[name]` | Component name (positional). If omitted, you are prompted. |\r\n| `-c, --category <category>` | A category from `paths.components` in `sliceConfig.json` (e.g. `Visual`, `Service`, `AppComponents`). If omitted, you are prompted. |\r\n\r\nOnly the missing pieces are prompted, so `npm run component:create -- UserCard` asks just for the\r\ncategory. Passing both runs with no prompts — useful for scripts and AI agents.\r\n\r\nRules:\r\n- Name must start with a letter and be alphanumeric.\r\n- Visual components get `.js`, `.html`, `.css`; Service components get `.js` only.\r\n- An invalid `--category` fails with a message listing the valid categories.\r\n\r\n## component list\r\nLists all local components by scanning category paths from `sliceConfig.json` and rewrites\r\n`src/Components/components.js`.\r\n\r\n```bash title=\"List components\"\r\nnpm run component:list\r\n```\r\n\r\n## component delete\r\nDeletes a local component and updates `components.js`. Interactive by default; pass the name,\r\n`--category`, and `--yes` to delete non-interactively.\r\n\r\n```bash title=\"Interactive (select + confirm)\"\r\nnpm run component:delete\r\n```\r\n\r\n```bash title=\"Non-interactive\"\r\nnpm run component:delete -- UserCard --category AppComponents --yes\r\n```\r\n\r\n| Argument / option | Notes |\r\n| --- | --- |\r\n| `[name]` | Component to delete. If omitted, you pick from a list. |\r\n| `-c, --category <category>` | Category to look in. If omitted, you are prompted. |\r\n| `-y, --yes` | Skip the confirmation prompt (required for a fully non-interactive run). |\r\n\r\n## get / registry get\r\nDownloads components from the official registry (Visual or Service) into your project.\r\n\r\n```bash title=\"Get components\"\r\nnpm run get -- Button Card Input\r\n```\r\n\r\n### Options\r\n| Flag | Type | Default | Notes |\r\n| --- | --- | --- | --- |\r\n| `-f, --force` | `boolean` | `false` | Overwrite existing components. |\r\n| `-s, --service` | `boolean` | `false` | Install as Service instead of Visual. |\r\n\r\nNotes:\r\n- If no names are provided, the CLI opens an interactive selector.\r\n- Registry is fetched from the Slice docs repo.\r\n\r\n## browse / registry list\r\nLists available registry components.\r\n\r\n```bash title=\"Browse registry\"\r\nnpm run browse\r\n```\r\n\r\n## sync / registry sync\r\nUpdates local Visual components to latest registry versions. Service components are detected but\r\nnot updated automatically.\r\n\r\n```bash title=\"Sync components\"\r\nnpm run sync\r\n```\r\n\r\n### Options\r\n| Flag | Type | Default | Notes |\r\n| --- | --- | --- | --- |\r\n| `-f, --force` | `boolean` | `false` | Skip confirmation and force update. |\r\n\r\n## doctor\r\nRuns project diagnostics (structure, config, dependencies, components, port availability).\r\n\r\n```bash title=\"Run diagnostics\"\r\nnpm run slice:doctor\r\n```\r\n\r\n## version\r\nShows CLI version info and checks for updates.\r\n\r\n```bash title=\"Version\"\r\nnpm run slice:version\r\n```\r\n\r\n## help\r\nShows CLI help output.\r\n\r\n```bash title=\"Help\"\r\nnpm run slice:help\r\n```\r\n\r\n## types generate\r\nGenerates a TypeScript declaration file from your components' `static props`, so editors can\r\nautocomplete and type-check `slice.build('Name', { ... })` calls.\r\n\r\n```bash title=\"Generate typings\"\r\nnpm run slice:types\r\n```\r\n\r\n```bash title=\"Custom output path\"\r\nnpm run slice:types -- --output types/slice-build.d.ts\r\n```\r\n\r\n| Option | Default | Notes |\r\n| --- | --- | --- |\r\n| `-o, --output <path>` | `src/slice-build.generated.d.ts` | Where to write the generated `.d.ts`. |\r\n\r\nRe-run it whenever you add or change component props. The output is generated — don't edit it by\r\nhand, and re-generate (or wire it into your build) to keep autocomplete in sync.\r\n\r\n## Best Practices\r\n:::tip\r\nPrefer package scripts (`pnpm run ...` / `npm run ...`) for project commands.\r\n:::\r\n\r\n:::tip\r\nUse `npx slicejs-cli <command>` for bootstrapping and recovery (for example before scripts exist).\r\n:::\r\n\r\n:::tip\r\nRun `npm run dev` in one terminal and use another for component commands.\r\n:::\r\n\r\n## Gotchas\r\n:::warning\r\n`npm run sync` only updates Visual components. Use `npm run get -- <Service> --service --force` for Service updates.\r\n:::\r\n\r\n:::warning\r\n`npm run component:list` rewrites `src/Components/components.js` based on detected folders.\r\n:::\r\n";
+    this.markdownContent = "---\ntitle: Slice CLI\nroute: /Documentation/CLI\nnavLabel: CLI\nsection: Getting Started\ngroup: Tooling\norder: 15\ndescription: Command reference for the Slice.js CLI.\ncomponent: CommandsDocumentation\ntags: [cli, tooling]\n---\n\n# Slice.js CLI\n\n## Overview\nThe Slice.js CLI (`slice`) helps you initialize projects, manage components, run the dev server,\nand maintain your toolchain. For project workflows, prefer `package.json` scripts (`pnpm run ...`\nor `npm run ...`) so execution is pinned to your local dependency tree.\n\n## Installation\n```bash title=\"Local (recommended)\"\nnpm install slicejs-cli --save-dev\n```\n\n```bash title=\"Global (optional launcher install)\"\nnpm install -g slicejs-cli\n```\n\nWhen the `slice` launcher command is available (commonly after a global install\nthat places `slice` in your PATH), it delegates to the nearest\nproject-local `node_modules/slicejs-cli` from your current directory (including\nsubdirectories). This keeps command execution aligned with the version pinned\nin each project.\n\nIf the launcher command is unavailable, use:\n\n```bash\nnpx slicejs-cli <command>\n```\n\nYou can bypass delegation for a specific invocation:\n\n```bash\nSLICE_NO_LOCAL_DELEGATION=1 slice version\n```\n\n## Command Summary\n| Command | Alias | Purpose |\n| --- | --- | --- |\n| `slice init` | - | Initialize project structure and install Visual components. |\n| `slice dev` | - | Start development server. |\n| `slice build` | - | Build production output (bundles + dist). |\n| `slice build clean` | - | Remove generated bundles. |\n| `slice build info` | - | Show bundle configuration summary. |\n| `slice start` | - | Start production server. |\n| `slice component create` | `slice comp new` | Create a local component. |\n| `slice component list` | `slice comp ls` | List local components. |\n| `slice component delete` | `slice comp remove` | Delete a local component. |\n| `slice get` | `slice registry get` | Install components from registry. |\n| `slice browse` | `slice registry list` | List official registry components. |\n| `slice sync` | `slice registry sync` | Sync local Visual components from registry. |\n| `slice list` | - | Shortcut for `slice component list`. |\n| `slice version` | `slice v` | Show CLI version. |\n| `slice doctor` | `slice diagnose` | Run project diagnostics. |\n| `slice types generate` | - | Generate TypeScript typings for `slice.build`. |\n| `slice help` | `slice --help` | Show CLI help. |\n\n## Recommended package scripts\n\nUse these scripts inside initialized projects:\n\n```bash\npnpm run dev\npnpm run build\npnpm run start\npnpm run browse\npnpm run get -- Button\npnpm run sync\npnpm run component:create -- UserCard --category AppComponents\npnpm run component:list\npnpm run component:delete -- UserCard --category AppComponents --yes\npnpm run slice:types\n```\n\nEquivalent npm forms are the same with `npm run ...`.\n\nIf you prefer direct execution through local devDependencies, use `pnpm exec`:\n\n```bash\npnpm exec slice dev\npnpm exec slice get Button\n```\n\nIf the CLI is installed globally, you can run `slice ...` directly from PATH.\n\n### pnpm build-approval note\nWith pnpm v10+, lifecycle scripts are gated by `allowBuilds` in `pnpm-workspace.yaml`.\n`slice init --pm pnpm` automatically configures:\n\n```yaml\nallowBuilds:\n  slicejs-cli: true\n```\n\nFor existing projects that do not have that setting yet, use:\n\n```bash\npnpm approve-builds slicejs-cli\n```\n\nUse direct CLI commands (`slice ...` or `npx slicejs-cli ...`) mainly for bootstrapping (`init`) or\nwhen scripts are not yet configured.\n\n## init\nCreates a new project folder and initializes it with the framework structure and the starter\ncomponents from the official registry. Everything — `package.json`, `node_modules`, lockfile,\n`src/`, `api/` — is created **inside** the new folder.\n\n```bash title=\"Initialize a project\"\nnpx slicejs-cli init\n```\n\n```bash title=\"Non-interactive\"\nnpx slicejs-cli init my-app -y --pm pnpm\n```\n\n### Options\n| Flag | Type | Default | Notes |\n| --- | --- | --- | --- |\n| `[name]` | `string` | `my-slice-app` | Project name (positional). |\n| `-y, --yes` | `boolean` | `false` | Skip interactive prompts. |\n| `--pm <pm>` | `pnpm \\| npm` | auto-detected | Package manager to use. When omitted, init detects it (user agent → available binaries) and only asks when ambiguous. |\n\nWhat it does:\n- Creates the project folder and a `package.json` inside it (before any install, so\n  dependencies always anchor to the project folder).\n- Pins the chosen package manager in the `packageManager` field; later commands\n  (`slice doctor`) detects it from there or from the lockfile.\n- Installs `slicejs-web-framework` (dependency) and `slicejs-cli` (devDependency)\n  with the chosen package manager. Versions are not hard-pinned, so pnpm\n  release-age policies (`minimumReleaseAge`) resolve cleanly.\n- Creates `api/` and `src/` structure from the framework base.\n- Installs the starter Visual and Service components from the registry.\n- Configures package scripts (dev, build, start, get, browse, sync, etc.).\n\n## dev\nStarts the development server and serves from `/src`.\n\n```bash title=\"Start dev server\"\nnpm run dev\n```\n\n### Options\n| Flag | Type | Default | Notes |\n| --- | --- | --- | --- |\n| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |\n| `--no-hmr` | `boolean` | `false` | Disable hot module reload (HMR is enabled by default). |\n\n### Behavior\n- Ensures `src/` and `api/` exist (otherwise suggests `slice init`).\n- Falls back to port+1 if the requested port is busy.\n- Uses `api/index.js` with `--development`.\n\n### Import support scope\n- Supported: relative imports and absolute imports that resolve into folders listed in `publicFolders`.\n- Unsupported: bare package imports such as `import 'pkg'`.\n- `slice dev` and `slice build` keep the same rule for preserved absolute imports that target configured public folders.\n\n## start\nStarts the production server and serves from `/dist`.\n\n```bash title=\"Start production server\"\nnpm run start\n```\n\n### Options\n| Flag | Type | Default | Notes |\n| --- | --- | --- | --- |\n| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |\n\n:::tip\nProduction uses `publicFolders` from `sliceConfig.json` to expose public asset folders\nlike `/Themes`, `/Styles`, and `/assets`.\n:::\n\n## build\nBuilds production output by analyzing dependencies, generating bundles, and writing files to `/dist`.\n\n:::tip\nProduction builds include **Structural framework components** in bundles to avoid runtime fetches.\nThese entries are stored as `Framework/Structural/<ComponentName>` in bundle config.\n:::\n\n```bash title=\"Build production output\"\nnpm run build\n```\n\n### Options\n| Flag | Type | Default | Notes |\n| --- | --- | --- | --- |\n| `-a, --analyze` | `boolean` | `false` | Analyze only, do not generate bundles. |\n| `-v, --verbose` | `boolean` | `false` | Output analysis metrics. |\n| `--no-minify` | `boolean` | `false` | Disable minification (enabled by default). |\n| `--no-obfuscate` | `boolean` | `false` | Disable obfuscation (enabled by default). |\n| `--preview` | `boolean` | `false` | Start preview server after build. |\n| `--serve` | `boolean` | `false` | Start preview server without building. |\n| `--skip-clean` | `boolean` | `false` | Skip cleaning dist before build. |\n\n### Subcommands\n| Command | Purpose |\n| --- | --- |\n| `slice build clean` | Remove generated bundle files and config. |\n| `slice build info` | Show bundle configuration summary. |\n\n### Import support scope\n- Supported: relative imports and absolute imports that resolve into folders listed in `publicFolders`.\n- Unsupported: bare package imports such as `import 'pkg'`.\n- Production preserves supported absolute public-folder imports with the same behavior as development.\n\n## component create\nCreates a new local component and registers it in `components.js`. Runs interactively, or\nnon-interactively when you pass the name and category on the command line.\n\n```bash title=\"Interactive (prompts for name + category)\"\nnpm run component:create\n```\n\n```bash title=\"Non-interactive (pass name + --category)\"\nnpm run component:create -- UserCard --category AppComponents\nnpm run component:create -- AuthService -c Service\n```\n\n```bash title=\"Through the npm script (note the -- separator)\"\nnpm run component:create -- UserCard --category Visual\n```\n\n| Argument / option | Notes |\n| --- | --- |\n| `[name]` | Component name (positional). If omitted, you are prompted. |\n| `-c, --category <category>` | A category from `paths.components` in `sliceConfig.json` (e.g. `Visual`, `Service`, `AppComponents`). If omitted, you are prompted. |\n\nOnly the missing pieces are prompted, so `npm run component:create -- UserCard` asks just for the\ncategory. Passing both runs with no prompts — useful for scripts and AI agents.\n\nRules:\n- Name must start with a letter and be alphanumeric.\n- Visual components get `.js`, `.html`, `.css`; Service components get `.js` only.\n- An invalid `--category` fails with a message listing the valid categories.\n\n## component list\nLists all local components by scanning category paths from `sliceConfig.json` and rewrites\n`src/Components/components.js`.\n\n```bash title=\"List components\"\nnpm run component:list\n```\n\n## component delete\nDeletes a local component and updates `components.js`. Interactive by default; pass the name,\n`--category`, and `--yes` to delete non-interactively.\n\n```bash title=\"Interactive (select + confirm)\"\nnpm run component:delete\n```\n\n```bash title=\"Non-interactive\"\nnpm run component:delete -- UserCard --category AppComponents --yes\n```\n\n| Argument / option | Notes |\n| --- | --- |\n| `[name]` | Component to delete. If omitted, you pick from a list. |\n| `-c, --category <category>` | Category to look in. If omitted, you are prompted. |\n| `-y, --yes` | Skip the confirmation prompt (required for a fully non-interactive run). |\n\n## get / registry get\nDownloads components from the official registry (Visual or Service) into your project.\n\n```bash title=\"Get components\"\nnpm run get -- Button Card Input\n```\n\n### Options\n| Flag | Type | Default | Notes |\n| --- | --- | --- | --- |\n| `-f, --force` | `boolean` | `false` | Overwrite existing components. |\n| `-s, --service` | `boolean` | `false` | Install as Service instead of Visual. |\n\nNotes:\n- If no names are provided, the CLI opens an interactive selector.\n- Registry is fetched from the Slice docs repo.\n\n## browse / registry list\nLists available registry components.\n\n```bash title=\"Browse registry\"\nnpm run browse\n```\n\n## sync / registry sync\nUpdates local Visual components to latest registry versions. Service components are detected but\nnot updated automatically.\n\n```bash title=\"Sync components\"\nnpm run sync\n```\n\n### Options\n| Flag | Type | Default | Notes |\n| --- | --- | --- | --- |\n| `-f, --force` | `boolean` | `false` | Skip confirmation and force update. |\n\n## doctor\nRuns project diagnostics (structure, config, dependencies, components, port availability).\n\n```bash title=\"Run diagnostics\"\nnpm run slice:doctor\n```\n\n## version\nShows CLI version info and checks for updates.\n\n```bash title=\"Version\"\nnpm run slice:version\n```\n\n## help\nShows CLI help output.\n\n```bash title=\"Help\"\nnpm run slice:help\n```\n\n## types generate\nGenerates a TypeScript declaration file from your components' `static props`, so editors can\nautocomplete and type-check `slice.build('Name', { ... })` calls.\n\n```bash title=\"Generate typings\"\nnpm run slice:types\n```\n\n```bash title=\"Custom output path\"\nnpm run slice:types -- --output types/slice-build.d.ts\n```\n\n| Option | Default | Notes |\n| --- | --- | --- |\n| `-o, --output <path>` | `src/slice-build.generated.d.ts` | Where to write the generated `.d.ts`. |\n\nRe-run it whenever you add or change component props. The output is generated — don't edit it by\nhand, and re-generate (or wire it into your build) to keep autocomplete in sync.\n\n## Best Practices\n:::tip\nPrefer package scripts (`pnpm run ...` / `npm run ...`) for project commands.\n:::\n\n:::tip\nUse `npx slicejs-cli <command>` for bootstrapping and recovery (for example before scripts exist).\n:::\n\n:::tip\nRun `npm run dev` in one terminal and use another for component commands.\n:::\n\n## Gotchas\n:::warning\n`npm run sync` only updates Visual components. Use `npm run get -- <Service> --service --force` for Service updates.\n:::\n\n:::warning\n`npm run component:list` rewrites `src/Components/components.js` based on detected folders.\n:::\n";
     if (true) {
       this.setupCopyButton();
     }
@@ -16,7 +16,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm install slicejs-cli --save-dev\r",
+               value: "npm install slicejs-cli --save-dev",
                language: "bash"
             });
             if ("Local (recommended)") {
@@ -32,7 +32,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-2"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm install -g slicejs-cli\r",
+               value: "npm install -g slicejs-cli",
                language: "bash"
             });
             if ("Global (optional launcher install)") {
@@ -48,7 +48,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-3"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npx slicejs-cli <command>\r",
+               value: "npx slicejs-cli <command>",
                language: "bash"
             });
             if (null) {
@@ -64,7 +64,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-4"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "SLICE_NO_LOCAL_DELEGATION=1 slice version\r",
+               value: "SLICE_NO_LOCAL_DELEGATION=1 slice version",
                language: "bash"
             });
             if (null) {
@@ -79,7 +79,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-5"]');
          if (container) {
-            const lines = ["| Command | Alias | Purpose |\r","| --- | --- | --- |\r","| `slice init` | - | Initialize project structure and install Visual components. |\r","| `slice dev` | - | Start development server. |\r","| `slice build` | - | Build production output (bundles + dist). |\r","| `slice build clean` | - | Remove generated bundles. |\r","| `slice build info` | - | Show bundle configuration summary. |\r","| `slice start` | - | Start production server. |\r","| `slice component create` | `slice comp new` | Create a local component. |\r","| `slice component list` | `slice comp ls` | List local components. |\r","| `slice component delete` | `slice comp remove` | Delete a local component. |\r","| `slice get` | `slice registry get` | Install components from registry. |\r","| `slice browse` | `slice registry list` | List official registry components. |\r","| `slice sync` | `slice registry sync` | Sync local Visual components from registry. |\r","| `slice list` | - | Shortcut for `slice component list`. |\r","| `slice version` | `slice v` | Show CLI version. |\r","| `slice doctor` | `slice diagnose` | Run project diagnostics. |\r","| `slice types generate` | - | Generate TypeScript typings for `slice.build`. |\r","| `slice help` | `slice --help` | Show CLI help. |\r"];
+            const lines = ["| Command | Alias | Purpose |","| --- | --- | --- |","| `slice init` | - | Initialize project structure and install Visual components. |","| `slice dev` | - | Start development server. |","| `slice build` | - | Build production output (bundles + dist). |","| `slice build clean` | - | Remove generated bundles. |","| `slice build info` | - | Show bundle configuration summary. |","| `slice start` | - | Start production server. |","| `slice component create` | `slice comp new` | Create a local component. |","| `slice component list` | `slice comp ls` | List local components. |","| `slice component delete` | `slice comp remove` | Delete a local component. |","| `slice get` | `slice registry get` | Install components from registry. |","| `slice browse` | `slice registry list` | List official registry components. |","| `slice sync` | `slice registry sync` | Sync local Visual components from registry. |","| `slice list` | - | Shortcut for `slice component list`. |","| `slice version` | `slice v` | Show CLI version. |","| `slice doctor` | `slice diagnose` | Run project diagnostics. |","| `slice types generate` | - | Generate TypeScript typings for `slice.build`. |","| `slice help` | `slice --help` | Show CLI help. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -142,7 +142,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-6"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "pnpm run dev\r\npnpm run build\r\npnpm run start\r\npnpm run browse\r\npnpm run get -- Button\r\npnpm run sync\r\npnpm run component:create -- UserCard --category AppComponents\r\npnpm run component:list\r\npnpm run component:delete -- UserCard --category AppComponents --yes\r\npnpm run slice:types\r",
+               value: "pnpm run dev\npnpm run build\npnpm run start\npnpm run browse\npnpm run get -- Button\npnpm run sync\npnpm run component:create -- UserCard --category AppComponents\npnpm run component:list\npnpm run component:delete -- UserCard --category AppComponents --yes\npnpm run slice:types",
                language: "bash"
             });
             if (null) {
@@ -158,7 +158,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-7"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "pnpm exec slice dev\r\npnpm exec slice get Button\r",
+               value: "pnpm exec slice dev\npnpm exec slice get Button",
                language: "bash"
             });
             if (null) {
@@ -174,7 +174,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-8"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "allowBuilds:\r\n  slicejs-cli: true\r",
+               value: "allowBuilds:\n  slicejs-cli: true",
                language: "yaml"
             });
             if (null) {
@@ -190,7 +190,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-9"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "pnpm approve-builds slicejs-cli\r",
+               value: "pnpm approve-builds slicejs-cli",
                language: "bash"
             });
             if (null) {
@@ -206,7 +206,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-10"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npx slicejs-cli init\r",
+               value: "npx slicejs-cli init",
                language: "bash"
             });
             if ("Initialize a project") {
@@ -222,7 +222,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-11"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npx slicejs-cli init my-app -y --pm pnpm\r",
+               value: "npx slicejs-cli init my-app -y --pm pnpm",
                language: "bash"
             });
             if ("Non-interactive") {
@@ -237,7 +237,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-12"]');
          if (container) {
-            const lines = ["| Flag | Type | Default | Notes |\r","| --- | --- | --- | --- |\r","| `[name]` | `string` | `my-slice-app` | Project name (positional). |\r","| `-y, --yes` | `boolean` | `false` | Skip interactive prompts. |\r","| `--pm <pm>` | `pnpm \\| npm` | auto-detected | Package manager to use. When omitted, init detects it (user agent → available binaries) and only asks when ambiguous. |\r"];
+            const lines = ["| Flag | Type | Default | Notes |","| --- | --- | --- | --- |","| `[name]` | `string` | `my-slice-app` | Project name (positional). |","| `-y, --yes` | `boolean` | `false` | Skip interactive prompts. |","| `--pm <pm>` | `pnpm \\| npm` | auto-detected | Package manager to use. When omitted, init detects it (user agent → available binaries) and only asks when ambiguous. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -300,7 +300,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-13"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm run dev\r",
+               value: "npm run dev",
                language: "bash"
             });
             if ("Start dev server") {
@@ -315,7 +315,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-14"]');
          if (container) {
-            const lines = ["| Flag | Type | Default | Notes |\r","| --- | --- | --- | --- |\r","| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |\r","| `--no-hmr` | `boolean` | `false` | Disable hot module reload (HMR is enabled by default). |\r"];
+            const lines = ["| Flag | Type | Default | Notes |","| --- | --- | --- | --- |","| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |","| `--no-hmr` | `boolean` | `false` | Disable hot module reload (HMR is enabled by default). |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -378,7 +378,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-15"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm run start\r",
+               value: "npm run start",
                language: "bash"
             });
             if ("Start production server") {
@@ -393,7 +393,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-16"]');
          if (container) {
-            const lines = ["| Flag | Type | Default | Notes |\r","| --- | --- | --- | --- |\r","| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |\r"];
+            const lines = ["| Flag | Type | Default | Notes |","| --- | --- | --- | --- |","| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -456,7 +456,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-17"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm run build\r",
+               value: "npm run build",
                language: "bash"
             });
             if ("Build production output") {
@@ -471,7 +471,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-18"]');
          if (container) {
-            const lines = ["| Flag | Type | Default | Notes |\r","| --- | --- | --- | --- |\r","| `-a, --analyze` | `boolean` | `false` | Analyze only, do not generate bundles. |\r","| `-v, --verbose` | `boolean` | `false` | Output analysis metrics. |\r","| `--no-minify` | `boolean` | `false` | Disable minification (enabled by default). |\r","| `--no-obfuscate` | `boolean` | `false` | Disable obfuscation (enabled by default). |\r","| `--preview` | `boolean` | `false` | Start preview server after build. |\r","| `--serve` | `boolean` | `false` | Start preview server without building. |\r","| `--skip-clean` | `boolean` | `false` | Skip cleaning dist before build. |\r"];
+            const lines = ["| Flag | Type | Default | Notes |","| --- | --- | --- | --- |","| `-a, --analyze` | `boolean` | `false` | Analyze only, do not generate bundles. |","| `-v, --verbose` | `boolean` | `false` | Output analysis metrics. |","| `--no-minify` | `boolean` | `false` | Disable minification (enabled by default). |","| `--no-obfuscate` | `boolean` | `false` | Disable obfuscation (enabled by default). |","| `--preview` | `boolean` | `false` | Start preview server after build. |","| `--serve` | `boolean` | `false` | Start preview server without building. |","| `--skip-clean` | `boolean` | `false` | Skip cleaning dist before build. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -533,7 +533,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-19"]');
          if (container) {
-            const lines = ["| Command | Purpose |\r","| --- | --- |\r","| `slice build clean` | Remove generated bundle files and config. |\r","| `slice build info` | Show bundle configuration summary. |\r"];
+            const lines = ["| Command | Purpose |","| --- | --- |","| `slice build clean` | Remove generated bundle files and config. |","| `slice build info` | Show bundle configuration summary. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -596,7 +596,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-20"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm run component:create\r",
+               value: "npm run component:create",
                language: "bash"
             });
             if ("Interactive (prompts for name + category)") {
@@ -612,7 +612,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-21"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm run component:create -- UserCard --category AppComponents\r\nnpm run component:create -- AuthService -c Service\r",
+               value: "npm run component:create -- UserCard --category AppComponents\nnpm run component:create -- AuthService -c Service",
                language: "bash"
             });
             if ("Non-interactive (pass name + --category)") {
@@ -628,7 +628,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-22"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm run component:create -- UserCard --category Visual\r",
+               value: "npm run component:create -- UserCard --category Visual",
                language: "bash"
             });
             if ("Through the npm script (note the -- separator)") {
@@ -643,7 +643,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-23"]');
          if (container) {
-            const lines = ["| Argument / option | Notes |\r","| --- | --- |\r","| `[name]` | Component name (positional). If omitted, you are prompted. |\r","| `-c, --category <category>` | A category from `paths.components` in `sliceConfig.json` (e.g. `Visual`, `Service`, `AppComponents`). If omitted, you are prompted. |\r"];
+            const lines = ["| Argument / option | Notes |","| --- | --- |","| `[name]` | Component name (positional). If omitted, you are prompted. |","| `-c, --category <category>` | A category from `paths.components` in `sliceConfig.json` (e.g. `Visual`, `Service`, `AppComponents`). If omitted, you are prompted. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -706,7 +706,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-24"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm run component:list\r",
+               value: "npm run component:list",
                language: "bash"
             });
             if ("List components") {
@@ -722,7 +722,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-25"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm run component:delete\r",
+               value: "npm run component:delete",
                language: "bash"
             });
             if ("Interactive (select + confirm)") {
@@ -738,7 +738,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-26"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm run component:delete -- UserCard --category AppComponents --yes\r",
+               value: "npm run component:delete -- UserCard --category AppComponents --yes",
                language: "bash"
             });
             if ("Non-interactive") {
@@ -753,7 +753,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-27"]');
          if (container) {
-            const lines = ["| Argument / option | Notes |\r","| --- | --- |\r","| `[name]` | Component to delete. If omitted, you pick from a list. |\r","| `-c, --category <category>` | Category to look in. If omitted, you are prompted. |\r","| `-y, --yes` | Skip the confirmation prompt (required for a fully non-interactive run). |\r"];
+            const lines = ["| Argument / option | Notes |","| --- | --- |","| `[name]` | Component to delete. If omitted, you pick from a list. |","| `-c, --category <category>` | Category to look in. If omitted, you are prompted. |","| `-y, --yes` | Skip the confirmation prompt (required for a fully non-interactive run). |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -816,7 +816,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-28"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm run get -- Button Card Input\r",
+               value: "npm run get -- Button Card Input",
                language: "bash"
             });
             if ("Get components") {
@@ -831,7 +831,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-29"]');
          if (container) {
-            const lines = ["| Flag | Type | Default | Notes |\r","| --- | --- | --- | --- |\r","| `-f, --force` | `boolean` | `false` | Overwrite existing components. |\r","| `-s, --service` | `boolean` | `false` | Install as Service instead of Visual. |\r"];
+            const lines = ["| Flag | Type | Default | Notes |","| --- | --- | --- | --- |","| `-f, --force` | `boolean` | `false` | Overwrite existing components. |","| `-s, --service` | `boolean` | `false` | Install as Service instead of Visual. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -894,7 +894,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-30"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm run browse\r",
+               value: "npm run browse",
                language: "bash"
             });
             if ("Browse registry") {
@@ -910,7 +910,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-31"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm run sync\r",
+               value: "npm run sync",
                language: "bash"
             });
             if ("Sync components") {
@@ -925,7 +925,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-32"]');
          if (container) {
-            const lines = ["| Flag | Type | Default | Notes |\r","| --- | --- | --- | --- |\r","| `-f, --force` | `boolean` | `false` | Skip confirmation and force update. |\r"];
+            const lines = ["| Flag | Type | Default | Notes |","| --- | --- | --- | --- |","| `-f, --force` | `boolean` | `false` | Skip confirmation and force update. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -988,7 +988,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-33"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm run slice:doctor\r",
+               value: "npm run slice:doctor",
                language: "bash"
             });
             if ("Run diagnostics") {
@@ -1004,7 +1004,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-34"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm run slice:version\r",
+               value: "npm run slice:version",
                language: "bash"
             });
             if ("Version") {
@@ -1020,7 +1020,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-35"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm run slice:help\r",
+               value: "npm run slice:help",
                language: "bash"
             });
             if ("Help") {
@@ -1036,7 +1036,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-36"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm run slice:types\r",
+               value: "npm run slice:types",
                language: "bash"
             });
             if ("Generate typings") {
@@ -1052,7 +1052,7 @@ export default class CommandsDocumentation extends HTMLElement {
          const container = this.querySelector('[data-block-id="doc-block-37"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
-               value: "npm run slice:types -- --output types/slice-build.d.ts\r",
+               value: "npm run slice:types -- --output types/slice-build.d.ts",
                language: "bash"
             });
             if ("Custom output path") {
@@ -1067,7 +1067,7 @@ export default class CommandsDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-38"]');
          if (container) {
-            const lines = ["| Option | Default | Notes |\r","| --- | --- | --- |\r","| `-o, --output <path>` | `src/slice-build.generated.d.ts` | Where to write the generated `.d.ts`. |\r"];
+            const lines = ["| Option | Default | Notes |","| --- | --- | --- |","| `-o, --output <path>` | `src/slice-build.generated.d.ts` | Where to write the generated `.d.ts`. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
