@@ -1,5 +1,15 @@
 const docsIndex = [
   {
+    title: 'Components Docs Portal',
+    route: '/Documentation/Components',
+    description: 'Official entrypoint to visual components documentation.',
+    section: 'Components Library',
+    group: 'Portal',
+    order: 60,
+    navLabel: 'Components Docs Portal',
+    tags: ['components', 'docs', 'portal']
+  },
+  {
     title: 'Component Anatomy',
     route: '/Documentation/Component-Anatomy',
     description: 'How to author a Slice component, generate it with the CLI, and register it.',
@@ -28,6 +38,16 @@ const docsIndex = [
     order: 31,
     navLabel: 'The build method',
     tags: ['build', 'components']
+  },
+  {
+    title: 'Visual',
+    route: '/Documentation/Visual',
+    description: 'Official visual component documentation entrypoint for Slice.js.',
+    section: 'Getting Started',
+    group: 'Components',
+    order: 32,
+    navLabel: 'Visual',
+    tags: ['visual', 'components', 'docs']
   },
   {
     title: 'Structural',
@@ -100,6 +120,16 @@ const docsIndex = [
     tags: ['context', 'events', 'state', 'architecture']
   },
   {
+    title: 'Themes',
+    route: '/Documentation/Themes',
+    description: 'Configure and switch Slice.js themes using CSS variables.',
+    section: 'Getting Started',
+    group: 'Configuration',
+    order: 7,
+    navLabel: 'Themes',
+    tags: ['themes', 'styles', 'configuration']
+  },
+  {
     title: 'sliceConfig.json',
     route: '/Documentation/Configuration/sliceConfig',
     description: 'How Slice.js loads and uses sliceConfig.json.',
@@ -118,6 +148,16 @@ const docsIndex = [
     order: 21,
     navLabel: 'Environment Variables',
     tags: ['config', 'env', 'security']
+  },
+  {
+    title: 'Make Your App a PWA',
+    route: '/Documentation/Configuration/PWA',
+    description: 'Manually turn a Slice app into an installable PWA with a manifest and a service worker.',
+    section: 'Getting Started',
+    group: 'Configuration',
+    order: 22,
+    navLabel: 'PWA',
+    tags: ['pwa', 'manifest', 'service-worker', 'offline', 'configuration']
   },
   {
     title: 'Logger',
@@ -140,6 +180,16 @@ const docsIndex = [
     tags: ['devtools', 'debugger', 'events', 'context', 'diagnostics']
   },
   {
+    title: 'Leak Inspector',
+    route: '/Documentation/LeakInspector',
+    description: 'Dev-only panel that surfaces components left registered but detached from the DOM.',
+    section: 'Getting Started',
+    group: 'Diagnostics',
+    order: 43,
+    navLabel: 'Leak Inspector',
+    tags: ['diagnostics', 'leaks', 'cleanup', 'lifecycle', 'devtools']
+  },
+  {
     title: 'EventManager',
     route: '/Documentation/Structural/EventManager',
     description: 'Lightweight pub/sub for component and app events.',
@@ -148,6 +198,16 @@ const docsIndex = [
     order: 20,
     navLabel: 'Events',
     tags: ['events', 'pubsub', 'lifecycle', 'cleanup']
+  },
+  {
+    title: 'Event Registry',
+    route: '/Documentation/Structural/EventRegistry',
+    description: 'Declare a typed, namespaced catalog of events for dev validation, autocompletion, and pub/sub tracing.',
+    section: 'Getting Started',
+    group: 'Events',
+    order: 21,
+    navLabel: 'Event Registry',
+    tags: ['events', 'registry', 'pubsub', 'types', 'tracing']
   },
   {
     title: 'Project Anatomy',
@@ -188,6 +248,16 @@ const docsIndex = [
     order: 28,
     navLabel: 'Common Gotchas',
     tags: ['gotchas', 'troubleshooting', 'errors', 'cleanup']
+  },
+  {
+    title: 'Slice Routing',
+    route: '/Documentation/Routing',
+    description: 'Router setup, navigation, and guards.',
+    section: 'Getting Started',
+    group: 'Routing',
+    order: 50,
+    navLabel: 'Routing',
+    tags: ['routing', 'router', 'guards']
   },
   {
     title: 'Route Guards',
@@ -238,6 +308,26 @@ const docsIndex = [
     order: 21,
     navLabel: 'MCP',
     tags: ['mcp', 'documentation', 'ai', 'tools']
+  },
+  {
+    title: 'Documentation',
+    route: '/Documentation',
+    description: 'The documentation landing page for Slice.js.',
+    section: 'Introduction',
+    group: 'Overview',
+    order: 1,
+    navLabel: 'Documentation',
+    tags: ['documentation', 'overview']
+  },
+  {
+    title: 'What is Slice.js?',
+    route: '/Documentation/Slice',
+    description: 'A quick introduction to Slice.js and its philosophy.',
+    section: 'Introduction',
+    group: 'Overview',
+    order: 2,
+    navLabel: 'What is Slice.js?',
+    tags: ['introduction', 'overview']
   },
   {
     title: 'Installation',

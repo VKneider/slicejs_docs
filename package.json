@@ -1,6 +1,6 @@
 {
   "name": "slicedocs",
-  "version": "3.7.0",
+  "version": "3.8.0",
   "main": "index.js",
   "scripts": {
     "dev": "node ./node_modules/slicejs-cli/client.js dev",
@@ -41,7 +41,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "slicejs-cli": "^3.6.6",
-    "slicejs-web-framework": "^3.4.3"
+    "slicejs-cli": "^3.7.0",
+    "slicejs-web-framework": "^3.5.0"
   }
 }

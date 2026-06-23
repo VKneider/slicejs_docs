@@ -1,0 +1,48 @@
+<div class="documentation-content leakinspectordocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="leak-inspector">
+    <span class="doc-title-text">Leak Inspector</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p>The most common Slice leak is silent: a component builds children with <code>slice.build(...)</code> and later clears them with <code>innerHTML = ''</code>, <code>replaceChildren</code>, or <code>remove()</code> <strong>without</strong> <code>destroyComponent</code>. The DOM is gone, but the instances stay registered in <code>slice.controller.activeComponents</code> forever — and their <code>beforeDestroy()</code> never runs, so their listeners, timers, and observers leak too.</p>
+<p>The framework can't see this for you at build time, so the <strong>Leak Inspector</strong> is a dev-only panel that watches <code>activeComponents</code> and flags the orphans: components that are <strong>registered but detached from the live DOM and not intentionally cached</strong>.</p>
+<h2 id="enable">Enable</h2>
+<p>The Leak Inspector lives under the <code>debugger</code> config and is <strong>always off in production</strong>, regardless of this flag:</p>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<p>Open it with the shortcut (<code>alt+shift+k</code> by default). The panel computes only while open — zero overhead otherwise.</p>
+<h2 id="what-it-flags-and-what-it-ignores">What it flags (and what it ignores)</h2>
+<p>A component is a <strong>candidate leak</strong> when all of the following hold:</p>
+<ul><li>it is registered in <code>slice.controller.activeComponents</code>, and</li><li>it is an <code>HTMLElement</code> <strong>detached</strong> from the live DOM (<code>isConnected === false</code>), and</li><li>it is <strong>not intentionally cached</strong>.</li></ul>
+<p>The criteria are deliberately conservative so caching patterns are <strong>not</strong> false-flagged:</p>
+<div class="table-block" data-block-id="doc-block-2"></div>
+<p>The panel also tracks <code>activeComponents.size</code> over time and shows a <strong>trend</strong> marker — a count that only ever grows across navigations is the signal of an accumulation leak even when individual orphans look ambiguous.</p>
+<h2 id="the-panel">The panel</h2>
+<ul><li><strong>orphans</strong> — each candidate with its component name, <code>sliceId</code>, why it was flagged, and the</li></ul>
+<p><code>parentComponent</code> retain chain. A per-row <strong>destroy</strong> action calls <code>destroyComponent</code> so you   can confirm a suspect frees cleanly.</p>
+<ul><li><strong>active</strong> — current <code>activeComponents.size</code>.</li><li><strong>trend</strong> — <code>stable</code> or <code>growing ▲</code>.</li></ul>
+<h2 id="programmatic-api">Programmatic API</h2>
+<div class="table-block" data-block-id="doc-block-3"></div>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<h2 id="fixing-a-leak">Fixing a leak</h2>
+<p>When the inspector flags a component, the fix is almost always to destroy before you detach:</p>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<p>And release anything that outlives the subtree in <code>beforeDestroy()</code>:</p>
+<div class="code-block" data-block-id="doc-block-6"></div>
+<p>See [beforeDestroy()](/Documentation/LifeCycle-Methods/beforeDestroy) for the full cleanup contract, and [DevTools](/Documentation/DevTools) for the other runtime panels.</p>
+<h2 id="best-practices">Best Practices</h2>
+<div class="callout callout-tip">Keep the Leak Inspector enabled in development and exercise your navigation/list flows with it
+open — accumulation leaks show up as a <code>growing ▲</code> trend across route changes.</div>
+<div class="callout callout-tip">For your own off-DOM caches, register a <code>registerLeakExclusion</code> predicate (or set
+<code>component.__sliceCached = true</code>) so the inspector doesn't flag intentional retention.</div>
+<h2 id="gotchas">Gotchas</h2>
+<div class="callout callout-warning">The Leak Inspector diagnoses; it does not fix. A per-row destroy is a manual probe — the real
+fix is calling <code>destroyComponent</code> / <code>destroyByContainer</code> before clearing the DOM.</div>
+<div class="callout callout-warning">It is dev-only. Don't rely on it in production; rely on correct cleanup. The panel never
+initializes when the app runs in production mode.</div>
+<h2 id="faq">FAQ</h2>
+<div class="details-block" data-block-id="doc-block-7"></div>
+<div class="details-block" data-block-id="doc-block-8"></div>
+</div>

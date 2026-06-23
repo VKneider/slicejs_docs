@@ -29,6 +29,10 @@ const routes = [
             path: '/Configuration/environment-variables',
             component: 'EnvironmentVariablesDocumentation',
          },
+         {
+            path: '/Configuration/PWA',
+            component: 'PwaDocumentation',
+         },
 
          {
             path: '/Visual',
@@ -45,6 +49,10 @@ const routes = [
          {
             path: '/Structural/EventManager',
             component: 'EventManagerDocumentation',
+         },
+         {
+            path: '/Structural/EventRegistry',
+            component: 'EventRegistryDocumentation',
          },
          {
             path: '/Structural/ContextManager',
@@ -150,6 +158,10 @@ const routes = [
           {
              path: '/DevTools',
              component: 'DevToolsDocumentation',
+          },
+          {
+             path: '/LeakInspector',
+             component: 'LeakInspectorDocumentation',
           },
           {
              path: '/Common-Gotchas',

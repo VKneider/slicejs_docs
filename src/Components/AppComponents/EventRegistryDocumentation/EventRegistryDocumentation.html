@@ -1,0 +1,66 @@
+<div class="documentation-content eventregistrydocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="event-registry">
+    <span class="doc-title-text">Event Registry</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<h2 id="overview">Overview</h2>
+<p>Pub/sub decouples senders from receivers — which is exactly why it is hard to trace: event names are bare strings, payloads are untyped, and a typo silently creates a new event nobody listens to. The <strong>Event Registry</strong> is an opt-in catalog that turns your events into a <strong>declared, typed, namespaced contract</strong>.</p>
+<p>Declaring events buys you three things:</p>
+<ul><li><strong>Dev-time validation</strong> — emitting or subscribing to an event you never declared warns once.</li><li><strong>Typed <code>emit</code>/<code>subscribe</code></strong> — <code>slice types generate</code> reads the catalog so payloads autocomplete and wrong shapes fail <code>tsc</code>.</li><li><strong>A documented graph</strong> — who emits and who listens to each event, both statically (from code) and live (this session).</li></ul>
+<p>The registry is <strong>opt-in and safe by default</strong>: if you never call <code>register()</code>, the EventManager behaves exactly as before (no warnings, no overhead).</p>
+<h2 id="declaring-events">Declaring events</h2>
+<p>Declare events at your composition root (e.g. a <code>Providers</code> service built from <code>AppShell.init()</code>). <code>register()</code> is <strong>mergeable</strong> — call it as many times as you like, from as many modules as you like.</p>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<p>The <code>payload</code> mini-schema uses the same vocabulary as <code>static props</code> types: a field map like <code>{ id: 'number', name: 'string' }</code>, or <code>null</code> for events that carry no data.</p>
+<h3 id="modularize-by-domain">Modularize by domain</h3>
+<p>Keep one catalog per domain in its own module and register them where you wire singletons:</p>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<h2 id="validation-dev-only">Validation (dev only)</h2>
+<p>Once any catalog is registered, the EventManager validates usage in development. It <strong>never throws and never blocks delivery</strong> — it logs a one-time warning and records the drift for the debugger:</p>
+<ul><li><strong>Undeclared event</strong> — <code>emit</code>/<code>subscribe</code> for an event not in the catalog.</li><li><strong>No namespace</strong> — an event name without a <code>namespace:</code> prefix (prefer <code>cart:add</code> over <code>add</code>).</li></ul>
+<p>In production all of this is silent and zero-overhead.</p>
+<h2 id="typed-events">Typed events</h2>
+<p>Run the CLI to generate TypeScript declarations from the catalog:</p>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<p>This emits a <code>SliceEventRegistry</code> interface and types <code>slice.events.emit</code>/<code>subscribe</code> by event name. Known events enforce their payload; unknown or dynamic events stay permissive.</p>
+<div class="code-block" data-block-id="doc-block-6"></div>
+<h2 id="api-reference">API Reference</h2>
+<div class="table-block" data-block-id="doc-block-7"></div>
+<h2 id="tracing-two-complementary-layers">Tracing: two complementary layers</h2>
+<p>Knowing the graph "who emits, who listens" comes from two sources that cover each other's blind spots:</p>
+<div class="table-block" data-block-id="doc-block-8"></div>
+<p><strong>Static graph (documentation).</strong> <code>slice types generate</code> writes <code>src/slice-events.generated.js</code>: per event, the emitter and listener call sites (<code>file:line</code> plus the enclosing component). It is complete because it reads code, not execution — an emit on a branch that never ran is still documented. Events emitted with a computed name (<code>emit(\</code>cart:${x}\<code>)</code>) cannot be resolved statically and are listed as dynamic.</p>
+<p><strong>Runtime tracing (observational).</strong> While the Events panel is open, every <code>emit()</code> is attributed to its source: the component when emitted through <code>slice.events.bind(this)</code>, or a best-effort <code>file:line</code> from the call stack for global emits. This is what *actually* fired, with counts — and anything that fires but is missing from the static graph is a dynamic emit worth a look.</p>
+<h2 id="debugger-panel">Debugger panel</h2>
+<p>Enable the Events UI and open it with the shortcut to inspect all of the above:</p>
+<div class="code-block" data-block-id="doc-block-9"></div>
+<ul><li><strong>Registry</strong> — the declared catalog grouped by namespace: payload shape, live listener</li></ul>
+<p>count, and the static emitters/listeners from the manifest. Drift badges flag   declared-but-idle and used-but-undeclared events.</p>
+<ul><li><strong>Subscribers</strong> — live listeners per event plus the runtime emitters that fired.</li><li><strong>History</strong> — reverse-chronological feed of every <code>emit()</code> with its origin and a</li></ul>
+<p>relative timestamp.</p>
+<h2 id="best-practices">Best Practices</h2>
+<div class="callout callout-tip">Always namespace events (<code>cart:add</code>, not <code>add</code>). The namespace groups the catalog, the
+debugger, and the generated types.</div>
+<div class="callout callout-tip">Declare catalogs as plain object literals (or imported literals) and pass them to
+<code>register()</code>. The type generator resolves literals statically — a computed object won't
+be typed.</div>
+<div class="callout callout-tip">Register all catalogs from one place (your <code>Providers</code>/composition root). One file is
+standardization; many <code>register()</code> calls is modularization — both work with the same API.</div>
+<div class="callout callout-tip">Re-run <code>slice types generate</code> after adding events or emit/subscribe sites so the types
+and the static graph stay in sync.</div>
+<h2 id="gotchas">Gotchas</h2>
+<div class="callout callout-warning">Validation only activates after the first <code>register()</code>. Until then the EventManager runs
+in loose mode with no warnings — declaring the catalog is what opts you in.</div>
+<div class="callout callout-warning">Events emitted with a computed name (<code>emit(\</code>user:${id}\<code>)</code>) cannot be typed or documented
+statically. Use literal names where you want the contract; the runtime tracer still shows
+them under dynamic sites.</div>
+<h2 id="faq">FAQ</h2>
+<div class="details-block" data-block-id="doc-block-10"></div>
+<div class="details-block" data-block-id="doc-block-11"></div>
+<div class="details-block" data-block-id="doc-block-12"></div>
+</div>

@@ -21,14 +21,18 @@
 <h2 id="events-and-context-panels">Events and context panels</h2>
 <p>Enable them (and their keyboard shortcuts) in <code>sliceConfig.json</code>:</p>
 <div class="code-block" data-block-id="doc-block-3"></div>
-<ul><li><strong>Events</strong> (<code>alt+shift+e</code>) — two tabs: <strong>Subscribers</strong> (every event with live subscriber details</li></ul>
-<p>and an emit counter ⚡) and <strong>History</strong> (reverse-chronological feed of all <code>emit()</code> calls with   relative timestamps). Use it for "my listener isn't firing", "it fires twice", or "who emitted   what and when".</p>
+<ul><li><strong>Events</strong> (<code>alt+shift+e</code>) — three tabs: <strong>Subscribers</strong> (every event with live subscriber details,</li></ul>
+<p>an emit counter ⚡, and the emitters that fired it), <strong>Registry</strong> (the declared catalog grouped by   namespace with payload shapes and the static emit/listen graph — see   [Event Registry](/Documentation/Structural/EventRegistry)), and <strong>History</strong> (reverse-chronological   feed of all <code>emit()</code> calls with their origin and relative timestamps). Use it for "my listener isn't   firing", "it fires twice", or "who emitted what and when".</p>
 <ul><li><strong>Context</strong> (<code>alt+shift+c</code>) — every context, its key count, and a live JSON preview of its state.</li></ul>
 <p>Updates <strong>in real time</strong> on every <code>setState</code> / <code>patch</code> and auto-discovers newly created contexts.   Use it for "my watcher isn't firing" or "persisted state didn't survive a refresh".</p>
 <div class="callout callout-tip">Keep these panels enabled in development and turn off the <code>ui</code> blocks for production.</div>
+<h2 id="leak-inspector">Leak Inspector</h2>
+<p>A fourth dev-only panel surfaces components left <strong>registered but detached from the DOM</strong> — the silent leak from clearing <code>slice.build</code>'d children without <code>destroyComponent</code>. Enable it under <code>debugger</code> and open it with its shortcut:</p>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<p>It lists each orphan with its retain chain and a per-row destroy probe, and flags a <code>growing ▲</code> trend when <code>activeComponents</code> accumulates across navigations. Cached <code>Route</code>/<code>MultiRoute</code> views are excluded. Full details in [Leak Inspector](/Documentation/LeakInspector).</p>
 <h2 id="built-with-slice-try-it-yourself">Built with Slice — try it yourself</h2>
 <p>The inspector's "edit a prop, see it update" trick is small enough to build yourself. The <code>MiniInspector</code> component (in the visual library) does exactly that in ~80 lines:</p>
-<div class="code-block" data-block-id="doc-block-4"></div>
+<div class="code-block" data-block-id="doc-block-5"></div>
 <p><code>MiniInspector</code> reads <code>target.constructor.props</code>, builds an input per prop, and writes <code>target[prop] = value</code> on change. Read its source to see the pattern, then read the built-in DevTools (<code>Slice/Components/Structural/Debugger</code>, <code>.../EventManager/EventManagerDebugger</code>, <code>.../ContextManager/ContextManagerDebugger</code>) to see the full version.</p>
 <h2 id="gotchas">Gotchas</h2>
 <div class="callout callout-warning">A prop only updates the UI if its <strong>setter</strong> does the DOM work. If editing a value in the inspector
