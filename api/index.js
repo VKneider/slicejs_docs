@@ -46,9 +46,15 @@ app.use(sliceFrameworkProtection());
 // 3. Middleware de seguridad general
 app.use(securityMiddleware({
   allowedExtensions: [
-    '.js', '.css', '.html', '.json', 
-    '.svg', '.png', '.jpg', '.jpeg', '.gif', 
-    '.woff', '.woff2', '.ttf', '.ico', '.txt', '.xml'
+    '.js', '.mjs', '.cjs',
+    '.css',
+    '.html', '.htm',
+    '.json',
+    '.svg', '.png', '.jpg', '.jpeg', '.gif', '.webp', '.avif', '.ico',
+    '.woff', '.woff2', '.ttf', '.otf', '.eot',
+    '.txt', '.xml', '.pdf',
+    '.webm', '.mp4', '.mp3', '.wav', '.ogg',
+    '.wasm'
   ],
   blockedPaths: [
     '/node_modules',
