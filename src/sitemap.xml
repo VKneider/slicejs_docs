@@ -26,7 +26,7 @@
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://slicejs.com/Documentation/SliceConfig</loc>
+    <loc>https://slicejs.com/Documentation/Configuration/sliceConfig</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
@@ -37,6 +37,11 @@
   </url>
   <url>
     <loc>https://slicejs.com/Documentation/Configuration/environment-variables</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://slicejs.com/Documentation/Configuration/PWA</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
@@ -61,12 +66,22 @@
     <changefreq>monthly</changefreq>
   </url>
   <url>
+    <loc>https://slicejs.com/Documentation/Structural/EventRegistry</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
     <loc>https://slicejs.com/Documentation/Structural/ContextManager</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://slicejs.com/Documentation/Structural/Logger</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://slicejs.com/Documentation/Structural/Context-vs-Events</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
@@ -141,7 +156,17 @@
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://slicejs.com/Documentation/Architecture/Migration</loc>
+    <loc>https://slicejs.com/Documentation/Architecture/Service-Patterns</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://slicejs.com/Documentation/Architecture/Component-Styles</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://slicejs.com/Documentation/Architecture/Refreshing-Component-Data</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
@@ -172,6 +197,21 @@
   </url>
   <url>
     <loc>https://slicejs.com/Documentation/DevTools</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://slicejs.com/Documentation/LeakInspector</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://slicejs.com/Documentation/Common-Gotchas</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://slicejs.com/Documentation/API-Reference</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
