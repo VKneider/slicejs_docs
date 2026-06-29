@@ -59,10 +59,13 @@ const themeSelector = await slice.build('ThemeSelector');
       const treeviewItems = createTreeViewItems(routesConfig);
       const treeview = await slice.build('TreeView', {
          items: treeviewItems,
-         onClickCallback: async (item) => {
+         onClick: async (item) => {
             if (item.path) {
                await slice.router.navigate(item.path);
                window.scrollTo({ top: 0, behavior: 'smooth' });
+               if (typeof mainMenu.handleCloseMenu === 'function') {
+                  mainMenu.handleCloseMenu();
+               }
             }
          },
       });
@@ -73,12 +76,15 @@ const themeSelector = await slice.build('ThemeSelector');
          onSelect: async (item) => {
             if (!item?.route) return;
             await slice.router.navigate(item.route);
+            if (typeof mainMenu.handleCloseMenu === 'function') {
+               mainMenu.handleCloseMenu();
+            }
          }
       });
 
       const mainMenu = await slice.build('MainMenu', {});
       mainMenu.add(searchInput);
-      mainMenu.add(treeview);
+      mainMenu.setMenuTree(treeview);
 
       const myNavigation = await slice.build('MyNavigation', {
          page: VisualComponentsMultiRoute,

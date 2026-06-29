@@ -6,6 +6,7 @@ export default class MainMenu extends HTMLElement {
       this.$menuButton = this.querySelector('.slice_menu_button');
       this.$closeButton = this.querySelector('.slice_close_menu');
       this.$menu = this.querySelector('.slice_menu');
+      this.$treeHost = this.querySelector('.slice_menu_tree_host');
       this.$overlay = this.querySelector('.slice_menu_overlay');
 
       this.$menuButton.addEventListener('click', () => {
@@ -25,6 +26,12 @@ export default class MainMenu extends HTMLElement {
    }
 
    init() {
+      const menuButton = this.querySelector('.slice_menu_button');
+      if (menuButton) {
+         document.body.appendChild(menuButton);
+         this._relocatedMenuButton = menuButton;
+      }
+
       const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
       if (canHover) {
          this.addEventListener('mouseleave', () => {
@@ -36,7 +43,37 @@ export default class MainMenu extends HTMLElement {
    }
 
    add(value) {
-      this.$menu.appendChild(value);
+      if (this.$treeHost) {
+         this.$menu.insertBefore(value, this.$treeHost);
+      } else {
+         this.$menu.appendChild(value);
+      }
+   }
+
+   setMenuTree(value) {
+      if (!this.$treeHost) {
+         return;
+      }
+
+      slice.controller.destroyByContainer(this.$treeHost);
+      this.$treeHost.innerHTML = '';
+
+      if (value instanceof Node) {
+         this.$treeHost.appendChild(value);
+      }
+   }
+
+   setEmptyState(message = 'No content found') {
+      if (!this.$treeHost) {
+         return;
+      }
+
+      slice.controller.destroyByContainer(this.$treeHost);
+      this.$treeHost.innerHTML = '';
+      const empty = document.createElement('p');
+      empty.classList.add('slice_menu_empty');
+      empty.textContent = message;
+      this.$treeHost.appendChild(empty);
    }
 
    handleOpenMenu() {
@@ -51,6 +88,10 @@ export default class MainMenu extends HTMLElement {
       if (this.$overlay) {
          this.$overlay.classList.remove('is-visible');
       }
+   }
+
+   beforeDestroy() {
+      this._relocatedMenuButton?.remove();
    }
 }
 
