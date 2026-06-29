@@ -1,3 +1,3 @@
 minimumReleaseAgeExclude:
-  - slicejs-cli@3.7.1
-  - slicejs-web-framework@3.5.1
+  - slicejs-cli
+  - slicejs-web-framework
