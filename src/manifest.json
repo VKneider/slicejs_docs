@@ -1,0 +1,15 @@
+{
+  "name": "Slice.js Documentation",
+  "short_name": "Slice.js Docs",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F4FF",
+  "theme_color": "#F8F4FF",
+  "icons": [
+    {
+      "src": "/images/og-image.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ]
+}
