@@ -1,48 +1,50 @@
 {
-  "name": "slicedocs",
-  "version": "3.8.0",
-  "main": "index.js",
-  "scripts": {
-    "dev": "node ./node_modules/slicejs-cli/client.js dev",
-    "build": "node ./node_modules/slicejs-cli/client.js build",
-    "start": "node ./node_modules/slicejs-cli/client.js start",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "slice:init": "node ./node_modules/slicejs-cli/client.js init",
-    "slice:dev": "node ./node_modules/slicejs-cli/client.js dev",
-    "slice:build": "node ./node_modules/slicejs-cli/client.js build",
-    "slice:start": "node ./node_modules/slicejs-cli/client.js start",
-    "slice:version": "node ./node_modules/slicejs-cli/client.js version",
-    "slice:update": "node ./node_modules/slicejs-cli/client.js update",
-    "slice:get": "node ./node_modules/slicejs-cli/client.js get",
-    "slice:browse": "node ./node_modules/slicejs-cli/client.js browse",
-    "slice:sync": "node ./node_modules/slicejs-cli/client.js sync",
-    "slice:create": "node ./node_modules/slicejs-cli/client.js component create",
-    "slice:list": "node ./node_modules/slicejs-cli/client.js component list",
-    "slice:delete": "node ./node_modules/slicejs-cli/client.js component delete",
-    "component:create": "node ./node_modules/slicejs-cli/client.js component create",
-    "component:list": "node ./node_modules/slicejs-cli/client.js component list",
-    "component:delete": "node ./node_modules/slicejs-cli/client.js component delete",
-    "get": "node ./node_modules/slicejs-cli/client.js get",
-    "browse": "node ./node_modules/slicejs-cli/client.js browse",
-    "sync": "node ./node_modules/slicejs-cli/client.js sync",
-    "run": "node ./node_modules/slicejs-cli/client.js dev",
-    "docs:generate": "node parser/index.js",
-    "docs:llm": "node tools/build-llm.js",
-    "slice:types": "slice types generate",
-    "slice:doctor": "node ./node_modules/slicejs-cli/client.js doctor",
-    "slice:help": "node ./node_modules/slicejs-cli/client.js --help"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "type": "module",
-  "engines": {
-    "node": ">=20.0.0"
-  },
-  "dependencies": {
-    "slicejs-cli": "^3.7.1",
-    "slicejs-web-framework": "^3.5.1",
-    "express": "^4.21.0"
-  }
+    "name":  "slicedocs",
+    "version":  "3.8.0",
+    "main":  "index.js",
+    "scripts":  {
+                    "dev":  "node ./node_modules/slicejs-cli/client.js dev",
+                    "build":  "node ./node_modules/slicejs-cli/client.js build",
+                    "start":  "node ./node_modules/slicejs-cli/client.js start",
+                    "test":  "echo \"Error: no test specified\" \u0026\u0026 exit 1",
+                    "slice:init":  "node ./node_modules/slicejs-cli/client.js init",
+                    "slice:dev":  "node ./node_modules/slicejs-cli/client.js dev",
+                    "slice:build":  "node ./node_modules/slicejs-cli/client.js build",
+                    "slice:start":  "node ./node_modules/slicejs-cli/client.js start",
+                    "slice:version":  "node ./node_modules/slicejs-cli/client.js version",
+                    "slice:update":  "node ./node_modules/slicejs-cli/client.js update",
+                    "slice:get":  "node ./node_modules/slicejs-cli/client.js get",
+                    "slice:browse":  "node ./node_modules/slicejs-cli/client.js browse",
+                    "slice:sync":  "node ./node_modules/slicejs-cli/client.js sync",
+                    "slice:create":  "node ./node_modules/slicejs-cli/client.js component create",
+                    "slice:list":  "node ./node_modules/slicejs-cli/client.js component list",
+                    "slice:delete":  "node ./node_modules/slicejs-cli/client.js component delete",
+                    "component:create":  "node ./node_modules/slicejs-cli/client.js component create",
+                    "component:list":  "node ./node_modules/slicejs-cli/client.js component list",
+                    "component:delete":  "node ./node_modules/slicejs-cli/client.js component delete",
+                    "get":  "node ./node_modules/slicejs-cli/client.js get",
+                    "browse":  "node ./node_modules/slicejs-cli/client.js browse",
+                    "sync":  "node ./node_modules/slicejs-cli/client.js sync",
+                    "run":  "node ./node_modules/slicejs-cli/client.js dev",
+                    "docs:generate":  "node parser/index.js",
+                    "docs:llm":  "node tools/build-llm.js",
+                    "slice:types":  "slice types generate",
+                    "slice:doctor":  "node ./node_modules/slicejs-cli/client.js doctor",
+                    "slice:help":  "node ./node_modules/slicejs-cli/client.js --help"
+                },
+    "keywords":  [
+
+                 ],
+    "author":  "",
+    "license":  "ISC",
+    "description":  "",
+    "type":  "module",
+    "engines":  {
+                    "node":  "\u003e=20.0.0"
+                },
+    "dependencies":  {
+                         "slicejs-cli":  "^3.7.2",
+                         "slicejs-web-framework":  "^3.5.1",
+                         "express":  "^4.21.0"
+                     }
 }
