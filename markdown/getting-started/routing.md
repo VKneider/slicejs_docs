@@ -127,14 +127,38 @@ await slice.router.start();
 ```
 
 ## Route Change Events
-The router emits `router:change` using EventManager when enabled. Otherwise it dispatches a
-`CustomEvent` on `window`.
+The router emits `router:change` **once per navigation**, after the new route has been rendered.
+How you listen depends on whether EventManager is enabled — it's one or the other, **never both**:
 
-```javascript title="router:change via EventManager"
+- **`events.enabled: true`** → it goes through EventManager (`slice.events`).
+- **`events.enabled: false`** → it dispatches a `CustomEvent` of the same name on `window` instead.
+
+Either way the payload is `{ to, from }`, where each is a route object shaped
+`{ path, component, params, query, metadata }`:
+
+```javascript title="Events enabled — EventManager"
 slice.events.subscribe('router:change', ({ to, from }) => {
-  console.log('Route changed:', from.path, '->', to.path);
+  console.log('Route changed:', from?.path, '->', to.path);
 });
 ```
+
+```javascript title="Events disabled — window CustomEvent"
+window.addEventListener('router:change', (e) => {
+  const { to, from } = e.detail; // same { to, from } payload, under event.detail
+  console.log('Route changed:', from?.path, '->', to.path);
+});
+```
+
+When events are enabled, `router:change` is **auto-declared** in the
+[Event Registry](/Documentation/Structural/EventRegistry), so you can subscribe without
+`register()`-ing it first.
+
+:::warning
+Prefer the event's `to` payload over reading `slice.router.activeRoute` inside the handler.
+`activeRoute` does reflect the new route by the time `router:change` fires, but the payload is the
+guaranteed source and keeps your listener decoupled from router internals. If you only need the
+current URL, `window.location.pathname` is always trustworthy the instant the event fires.
+:::
 
 ## Best Practices
 :::tip

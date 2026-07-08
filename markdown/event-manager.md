@@ -58,6 +58,27 @@ Declare your events in the [Event Registry](/Documentation/Structural/EventRegis
 dev-time validation, typed `emit`/`subscribe`, and a documented graph of who emits and listens.
 :::
 
+## Framework-emitted events
+Slice emits a few events itself; subscribe to them like any other:
+
+| Event | Fired by | Payload |
+| --- | --- | --- |
+| `router:change` | Router — once per navigation, after the new route renders | `{ to, from }` route objects — see [Routing](/Documentation/Routing) |
+| `context:<name>` | ContextManager — on every `setState` for that context | the context's new state — see [ContextManager](/Documentation/Structural/ContextManager) |
+
+Both are **auto-declared** in the [Event Registry](/Documentation/Structural/EventRegistry) — you
+don't `register()` them, and subscribing works out of the box.
+
+:::warning
+This table assumes events are enabled. With `events.enabled: false`, `slice.events` is a no-op, so:
+- `router:change` instead dispatches a `CustomEvent` on `window`
+  (`window.addEventListener('router:change', e => e.detail)`) — see
+  [Routing → Route Change Events](/Documentation/Routing).
+- the `context:<name>` signals aren't emitted at all, which means
+  [`slice.context.watch()`/`bind()`](/Documentation/Structural/ContextManager) stop reacting to
+  `setState` — context reactivity depends on EventManager being enabled.
+:::
+
 ## API Reference
 | Method | Signature | Notes |
 | --- | --- | --- |
