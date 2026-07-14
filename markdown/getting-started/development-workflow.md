@@ -85,11 +85,11 @@ project stays lean.
   configured levels and stays quiet in production.
 
 ## Production build, briefly
-`npm run build` analyzes what your routes use, bundles and minifies into `/dist`, and copies your
-`publicFolders`. `npm run start` then serves `/dist`. Production mode disables dev-only features
-(prop validation, debug panels) for performance.
+`npm run build` analyzes what your routes use, bundles and minifies into `/dist`, and copies
+`src/public/` to the build root. `npm run start` then serves `/dist`. Production mode disables
+dev-only runtime features (debug panels) for performance.
 
 :::tip
-Add a folder you import from (for example `/libs`) to `publicFolders` in `sliceConfig.json`, or it
-will work in dev but break in the production build.
+To import a vendored file in production, place it under `src/public/` (for example
+`src/public/libs/x.js`, imported as `/libs/x.js`) — npm packages (`import 'pkg'`) work everywhere.
 :::

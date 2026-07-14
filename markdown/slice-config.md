@@ -61,7 +61,7 @@ Once loaded, Slice.js initializes structural components based on config:
 | `context` | `object` | no | ContextManager toggle. |
 | `production` | `object` | no | Production toggles (if supported). |
 | `server` | `object` | no | Server port/host for dev server. |
-| `publicFolders` | `string[]` | no | Allowlist of public folders served in production. |
+| _(static assets)_ | — | — | Put them under `src/public/` — served at the root URL. No config key; see below. |
 
 ## debugger
 | Field | Type | Default | Notes |
@@ -186,23 +186,15 @@ missing `.html`.
 | --- | --- | --- | --- |
 | `enabled` | `boolean` | `false` | If supported, disables dev-only features. |
 
-## publicFolders
-Use `publicFolders` to declare **public asset folders** that should be served in production.
-This keeps source-only folders private while still exposing the assets your app needs.
+## Static assets — the `public/` folder
+Put static assets under **`src/public/`**; everything there is served at the root URL and copied into the build — no configuration needed. `Themes`, `Styles` and `images` live under `public/`, and their URLs (`/Themes`, `/Styles`, `/images`) match their paths.
 
-Defaults are intended to be sensible for most apps: `/Themes`, `/Styles`, `/assets`.
-
-Import resolution scope tied to `publicFolders`:
-- Supported: relative imports and absolute imports that point into configured `publicFolders`.
-- Unsupported: bare package imports such as `import 'pkg'`.
-- Behavior parity: when an absolute import targets a configured public folder, it is preserved consistently in both development and production.
+Import resolution:
+- **Relative imports** (`./`, `../`) and **bare npm packages** (`import 'pkg'`) are supported — see [External Dependencies](/Documentation/External-Dependencies).
+- **Absolute imports** (`/libs/x.js`) are preserved when the file exists under `src/public/`, in both development and production.
 
 Structural framework components are bundled automatically during `slice build` based on which
 features are enabled in `sliceConfig.json` (e.g. `logger.enabled`, `events.enabled`).
-
-| Field | Type | Default | Notes |
-| --- | --- | --- | --- |
-| `publicFolders` | `string[]` | `[/Themes, /Styles, /assets]` | Public asset folders served in production. |
 
 ## server
 | Field | Type | Default | Notes |
@@ -293,8 +285,6 @@ const publicEnv = slice.getPublicEnv();
   "loading": { "enabled": true },
   "events": { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+e" } },
   "context": { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+c" } }
-  ,
-  "publicFolders": ["/Themes", "/Styles", "/assets"]
 }
 ```
 

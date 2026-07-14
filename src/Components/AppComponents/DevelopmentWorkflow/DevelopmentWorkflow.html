@@ -30,7 +30,7 @@ from <code>components.js</code>. Run <code>npm run component:list</code> to fix 
 <ul><li>Right-click a component (when <code>debugger.enabled</code>) to inspect and live-edit its props.</li><li>Use <code>slice doctor</code> when the project structure or config seems off.</li><li>Prefer <code>slice.logger.info / warn / error</code> over <code>console.log</code> — it respects the</li></ul>
 <p>configured levels and stays quiet in production.</p>
 <h2 id="production-build-briefly">Production build, briefly</h2>
-<p><code>npm run build</code> analyzes what your routes use, bundles and minifies into <code>/dist</code>, and copies your <code>publicFolders</code>. <code>npm run start</code> then serves <code>/dist</code>. Production mode disables dev-only features (prop validation, debug panels) for performance.</p>
-<div class="callout callout-tip">Add a folder you import from (for example <code>/libs</code>) to <code>publicFolders</code> in <code>sliceConfig.json</code>, or it
-will work in dev but break in the production build.</div>
+<p><code>npm run build</code> analyzes what your routes use, bundles and minifies into <code>/dist</code>, and copies <code>src/public/</code> to the build root. <code>npm run start</code> then serves <code>/dist</code>. Production mode disables dev-only runtime features (debug panels) for performance.</p>
+<div class="callout callout-tip">To import a vendored file in production, place it under <code>src/public/</code> (for example
+<code>src/public/libs/x.js</code>, imported as <code>/libs/x.js</code>) — npm packages (<code>import 'pkg'</code>) work everywhere.</div>
 </div>

@@ -65,6 +65,42 @@ SLICE_NO_LOCAL_DELEGATION=1 slice version
 | `slice types generate` | - | Generate TypeScript typings for `slice.build`. |
 | `slice help` | `slice --help` | Show CLI help. |
 
+## `slice build` options
+| Flag | Purpose |
+| --- | --- |
+| `--strict-external` | Fail the build if a `node_modules` dependency cannot be resolved. See [External Dependencies](/Documentation/External-Dependencies). |
+| `--no-validate` | Skip the component prop validation described below. |
+| `--no-minify` | Disable minification (on by default). |
+| `--no-obfuscate` | Disable obfuscation (on by default). |
+| `--sourcemap` | Emit a `.map` next to each minified bundle (off by default so source isn't shipped unless asked). |
+| `--hash-filenames` | Add a content hash to bundle filenames (`slice-bundle.home.a1b2c3d4.js`) for immutable CDN caching. Off by default (stable names). |
+| `--compress` | Precompress `dist/` assets to `.gz` and max-quality `.br` (brotli). Off by default (brotli max is slow — use it for release builds). |
+| `--preview` | Start a preview server after building. |
+
+### Source maps, hashed filenames & precompression
+- **`--sourcemap`** maps each minified bundle back to its readable pre-minified form, so production stack traces are debuggable. Off by default (source isn't shipped unless you opt in).
+- **`--hash-filenames`** names bundles by content hash for `Cache-Control: immutable` CDN caching. The runtime loads every bundle by the filename recorded in the bundle config, so hashing "just works" with no other change.
+- **`--compress`** writes a `.gz` and a brotli `.br` beside every text asset in `dist/`. `slice start` serves the precompressed variant per the client's `Accept-Encoding` (brotli preferred), instead of compressing on every request — a ~900&nbsp;KB bundle ships as ~100&nbsp;KB over the wire.
+
+### Reproducible builds
+Set `SOURCE_DATE_EPOCH` (integer seconds since the Unix epoch) so the timestamps embedded in the bundle metadata/config are deterministic and a clean rebuild is byte-identical:
+
+```bash title="Reproducible build"
+SOURCE_DATE_EPOCH=$(git log -1 --format=%ct) slice build
+```
+
+Unset, the current time is used.
+
+### Prop validation on build
+Before building, Slice validates every component's static props — the same checks as `slice doctor`. **Definition errors block the build** with a message pointing at the offending `Component.prop`:
+
+- an unknown `type`,
+- a `schema` on a non-`object` prop,
+- an `items` on a non-`array` prop,
+- `allowedValues` whose entries don't match the declared `type`.
+
+Style issues (a `type: "any"`, or a `required` prop without a default) are printed as warnings but don't block. Bypass the whole check with `--no-validate` (not recommended). See [Static Props](/Documentation/Static-Props) for the prop schema.
+
 ## Recommended package scripts
 
 Use these scripts inside initialized projects:
@@ -162,9 +198,9 @@ npm run dev
 - Uses `api/index.js` with `--development`.
 
 ### Import support scope
-- Supported: relative imports and absolute imports that resolve into folders listed in `publicFolders`.
-- Unsupported: bare package imports such as `import 'pkg'`.
-- `slice dev` and `slice build` keep the same rule for preserved absolute imports that target configured public folders.
+- Supported: relative imports, bare npm packages (`import 'pkg'`), and absolute imports whose file exists under `src/public/`.
+- `slice dev` and `slice build` keep the same rule for preserved absolute (`public/`) imports.
+- See [External Dependencies](/Documentation/External-Dependencies) for npm packages.
 
 ## start
 Starts the production server and serves from `/dist`.
@@ -179,8 +215,7 @@ npm run start
 | `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |
 
 :::tip
-Production uses `publicFolders` from `sliceConfig.json` to expose public asset folders
-like `/Themes`, `/Styles`, and `/assets`.
+Production serves static assets from `src/public/` (copied into `dist/`) at the root URL — e.g. `/Themes`, `/Styles`, `/images`.
 :::
 
 ## build
@@ -213,9 +248,9 @@ npm run build
 | `slice build info` | Show bundle configuration summary. |
 
 ### Import support scope
-- Supported: relative imports and absolute imports that resolve into folders listed in `publicFolders`.
-- Unsupported: bare package imports such as `import 'pkg'`.
-- Production preserves supported absolute public-folder imports with the same behavior as development.
+- Supported: relative imports, bare npm packages (`import 'pkg'`), and absolute imports whose file exists under `src/public/`.
+- `slice dev` and `slice build` keep the same rule for preserved absolute (`public/`) imports.
+- See [External Dependencies](/Documentation/External-Dependencies) for npm packages.
 
 ## component create
 Creates a new local component and registers it in `components.js`. Runs interactively, or

@@ -13,6 +13,9 @@
 <h2 id="slicebuild-returns-null-when-the-component-isnt-registered"><code>slice.build()</code> returns <code>null</code> when the component isn't registered</h2>
 <p>A missing entry in <code>components.js</code> (or a wrong <code>paths.components</code> path/type) makes <code>build</code> resolve to <code>null</code> — not throw. Always guard, and resync the registry.</p>
 <div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="a-computed-name-in-slicebuild-isnt-bundled">A computed name in <code>slice.build()</code> isn't bundled</h2>
+<p>The bundler links a component into its bundle by reading the name you pass to <code>slice.build</code> <strong>statically</strong>. A string literal, a template with no expressions, or a constant/config value that resolves to one all get bundled. A <strong>truly dynamic</strong> name (<code>slice.build(props.name)</code>) can't be resolved — <code>slice build</code> prints a <code>⚠️ Dynamic slice.build(...)</code> warning and the component still works, but loads individually at runtime (no bundle optimization). Prefer a literal or a resolvable constant.</p>
+<div class="code-block" data-block-id="doc-block-3"></div>
 <h2 id="clearing-innerhtml-does-not-destroy-components">Clearing <code>innerHTML</code> does NOT destroy components</h2>
 <p><code>container.innerHTML = ''</code> removes the DOM but leaves the Slice instances registered — a leak, and their <code>beforeDestroy</code> never runs.</p>
 <div class="callout callout-warning">Destroy through the framework so <code>beforeDestroy</code> runs and the registry is cleaned:
@@ -26,12 +29,12 @@
 <p>It runs synchronously right before destruction. Keep it synchronous or fire-and-forget — do not rely on an <code>await</code> inside it completing.</p>
 <h2 id="setters-can-run-before-init">Setters can run before <code>init()</code></h2>
 <p><code>setComponentProps</code> runs in the <strong>constructor</strong>, before <code>init()</code>. If you cache DOM refs in <code>init()</code>, a setter may fire before they exist — guard with <code>?.</code>.</p>
-<div class="code-block" data-block-id="doc-block-3"></div>
+<div class="code-block" data-block-id="doc-block-4"></div>
 <h2 id="update-is-not-called-on-first-build"><code>update()</code> is not called on first build</h2>
 <p>The framework calls <code>update()</code> only for <strong>refreshes</strong> (cached-route revisits, or when you call it). <code>init()</code> does the first paint. See [LifeCycle Methods](/Documentation/LifeCycle-Methods).</p>
 <h2 id="route-params-are-strings-one-per-segment">Route params are strings, one per segment</h2>
 <p>A <code>${param}</code> captures a <strong>single</strong> URL segment and arrives as a <strong>string</strong>. For multiple values use several segments or query params, and parse types yourself.</p>
-<div class="code-block" data-block-id="doc-block-4"></div>
+<div class="code-block" data-block-id="doc-block-5"></div>
 <h2 id="a-refresh-keeps-the-props-you-dont-pass">A refresh keeps the props you don't pass</h2>
 <p>Refreshing a built component with <code>slice.setComponentProps(comp, { a })</code> updates <code>a</code> and <strong>leaves the rest as-is</strong> — omitted props are not reset to their defaults. To reset one, pass its value explicitly. (Defaults only apply at build.)</p>
 </div>

@@ -169,20 +169,21 @@ if (runMode === 'development') {
   app.use('/Slice/', express.static(path.join(__dirname, '..', 'node_modules', 'slicejs-web-framework', 'Slice')));
 }
 
-// Servir archivos estáticos del proyecto con allowlist
-const publicFolders = Array.isArray(sliceConfig.publicFolders) ? sliceConfig.publicFolders : [];
-const normalizedPublicFolders = publicFolders
-  .filter((entry) => typeof entry === 'string')
-  .map((entry) => entry.trim())
-  .filter((entry) => entry.length > 0)
-  .map((entry) => (entry.startsWith('/') ? entry : `/${entry}`));
+// Resolve a deployed asset preferring the public/ folder (served at the root URL).
+const resolveDeployedFile = (fileName) => {
+  const inPublic = path.join(__dirname, `../${folderDeployed}`, 'public', fileName);
+  return fs.existsSync(inPublic) ? inPublic : path.join(__dirname, `../${folderDeployed}`, fileName);
+};
 
+// Servir archivos estáticos del proyecto: src/public/ se sirve en la raíz.
 if (runMode === 'development') {
+  app.use(express.static(path.join(__dirname, `../${folderDeployed}`, 'public')));
   app.use(express.static(path.join(__dirname, `../${folderDeployed}`)));
 } else {
+  app.use(express.static(path.join(__dirname, `../${folderDeployed}`, 'public')));
   app.use('/App', express.static(path.join(__dirname, `../${folderDeployed}`, 'App')));
   app.get('/manifest.json', (req, res) => {
-    const manifestPath = path.join(__dirname, `../${folderDeployed}`, 'manifest.json');
+    const manifestPath = resolveDeployedFile('manifest.json');
     if (fs.existsSync(manifestPath)) {
       res.setHeader('Content-Type', 'application/json; charset=utf-8');
       return res.send(fs.readFileSync(manifestPath, 'utf8'));
@@ -190,7 +191,7 @@ if (runMode === 'development') {
     return res.status(404).send('manifest.json not found');
   });
   app.get('/service-worker.js', (req, res) => {
-    const workerPath = path.join(__dirname, `../${folderDeployed}`, 'service-worker.js');
+    const workerPath = resolveDeployedFile('service-worker.js');
     if (fs.existsSync(workerPath)) {
       res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
       return res.send(fs.readFileSync(workerPath, 'utf8'));
@@ -213,9 +214,6 @@ if (runMode === 'development') {
     }
     return res.status(404).send('sliceConfig.json not found');
   });
-  for (const folder of normalizedPublicFolders) {
-    app.use(folder, express.static(path.join(__dirname, `../${folderDeployed}`, folder)));
-  }
   app.use('/bundles/', express.static(path.join(__dirname, `../${folderDeployed}`, 'bundles')));
   app.use('/dist/', express.static(path.join(__dirname, '..', 'dist')));
 }

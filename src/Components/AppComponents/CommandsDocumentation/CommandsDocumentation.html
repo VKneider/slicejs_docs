@@ -18,25 +18,37 @@
 <div class="code-block" data-block-id="doc-block-4"></div>
 <h2 id="command-summary">Command Summary</h2>
 <div class="table-block" data-block-id="doc-block-5"></div>
+<h2 id="slice-build-options"><code>slice build</code> options</h2>
+<div class="table-block" data-block-id="doc-block-6"></div>
+<h3 id="source-maps-hashed-filenames-precompression">Source maps, hashed filenames &amp; precompression</h3>
+<ul><li><strong><code>--sourcemap</code></strong> maps each minified bundle back to its readable pre-minified form, so production stack traces are debuggable. Off by default (source isn't shipped unless you opt in).</li><li><strong><code>--hash-filenames</code></strong> names bundles by content hash for <code>Cache-Control: immutable</code> CDN caching. The runtime loads every bundle by the filename recorded in the bundle config, so hashing "just works" with no other change.</li><li><strong><code>--compress</code></strong> writes a <code>.gz</code> and a brotli <code>.br</code> beside every text asset in <code>dist/</code>. <code>slice start</code> serves the precompressed variant per the client's <code>Accept-Encoding</code> (brotli preferred), instead of compressing on every request — a ~900&amp;nbsp;KB bundle ships as ~100&amp;nbsp;KB over the wire.</li></ul>
+<h3 id="reproducible-builds">Reproducible builds</h3>
+<p>Set <code>SOURCE_DATE_EPOCH</code> (integer seconds since the Unix epoch) so the timestamps embedded in the bundle metadata/config are deterministic and a clean rebuild is byte-identical:</p>
+<div class="code-block" data-block-id="doc-block-7"></div>
+<p>Unset, the current time is used.</p>
+<h3 id="prop-validation-on-build">Prop validation on build</h3>
+<p>Before building, Slice validates every component's static props — the same checks as <code>slice doctor</code>. <strong>Definition errors block the build</strong> with a message pointing at the offending <code>Component.prop</code>:</p>
+<ul><li>an unknown <code>type</code>,</li><li>a <code>schema</code> on a non-<code>object</code> prop,</li><li>an <code>items</code> on a non-<code>array</code> prop,</li><li><code>allowedValues</code> whose entries don't match the declared <code>type</code>.</li></ul>
+<p>Style issues (a <code>type: "any"</code>, or a <code>required</code> prop without a default) are printed as warnings but don't block. Bypass the whole check with <code>--no-validate</code> (not recommended). See [Static Props](/Documentation/Static-Props) for the prop schema.</p>
 <h2 id="recommended-package-scripts">Recommended package scripts</h2>
 <p>Use these scripts inside initialized projects:</p>
-<div class="code-block" data-block-id="doc-block-6"></div>
+<div class="code-block" data-block-id="doc-block-8"></div>
 <p>Equivalent npm forms are the same with <code>npm run ...</code>.</p>
 <p>If you prefer direct execution through local devDependencies, use <code>pnpm exec</code>:</p>
-<div class="code-block" data-block-id="doc-block-7"></div>
+<div class="code-block" data-block-id="doc-block-9"></div>
 <p>If the CLI is installed globally, you can run <code>slice ...</code> directly from PATH.</p>
 <h3 id="pnpm-build-approval-note">pnpm build-approval note</h3>
 <p>With pnpm v10+, lifecycle scripts are gated by <code>allowBuilds</code> in <code>pnpm-workspace.yaml</code>. <code>slice init --pm pnpm</code> automatically configures:</p>
-<div class="code-block" data-block-id="doc-block-8"></div>
+<div class="code-block" data-block-id="doc-block-10"></div>
 <p>For existing projects that do not have that setting yet, use:</p>
-<div class="code-block" data-block-id="doc-block-9"></div>
+<div class="code-block" data-block-id="doc-block-11"></div>
 <p>Use direct CLI commands (<code>slice ...</code> or <code>npx slicejs-cli ...</code>) mainly for bootstrapping (<code>init</code>) or when scripts are not yet configured.</p>
 <h2 id="init">init</h2>
 <p>Creates a new project folder and initializes it with the framework structure and the starter components from the official registry. Everything — <code>package.json</code>, <code>node_modules</code>, lockfile, <code>src/</code>, <code>api/</code> — is created <strong>inside</strong> the new folder.</p>
-<div class="code-block" data-block-id="doc-block-10"></div>
-<div class="code-block" data-block-id="doc-block-11"></div>
+<div class="code-block" data-block-id="doc-block-12"></div>
+<div class="code-block" data-block-id="doc-block-13"></div>
 <h3 id="options">Options</h3>
-<div class="table-block" data-block-id="doc-block-12"></div>
+<div class="table-block" data-block-id="doc-block-14"></div>
 <p>What it does:</p>
 <ul><li>Creates the project folder and a <code>package.json</code> inside it (before any install, so</li></ul>
 <p>dependencies always anchor to the project folder).</p>
@@ -47,77 +59,76 @@
 <ul><li>Creates <code>api/</code> and <code>src/</code> structure from the framework base.</li><li>Installs the starter Visual and Service components from the registry.</li><li>Configures package scripts (dev, build, start, get, browse, sync, etc.).</li></ul>
 <h2 id="dev">dev</h2>
 <p>Starts the development server and serves from <code>/src</code>.</p>
-<div class="code-block" data-block-id="doc-block-13"></div>
+<div class="code-block" data-block-id="doc-block-15"></div>
 <h3 id="options-2">Options</h3>
-<div class="table-block" data-block-id="doc-block-14"></div>
+<div class="table-block" data-block-id="doc-block-16"></div>
 <h3 id="behavior">Behavior</h3>
 <ul><li>Ensures <code>src/</code> and <code>api/</code> exist (otherwise suggests <code>slice init</code>).</li><li>Falls back to port+1 if the requested port is busy.</li><li>Uses <code>api/index.js</code> with <code>--development</code>.</li></ul>
 <h3 id="import-support-scope">Import support scope</h3>
-<ul><li>Supported: relative imports and absolute imports that resolve into folders listed in <code>publicFolders</code>.</li><li>Unsupported: bare package imports such as <code>import 'pkg'</code>.</li><li><code>slice dev</code> and <code>slice build</code> keep the same rule for preserved absolute imports that target configured public folders.</li></ul>
+<ul><li>Supported: relative imports, bare npm packages (<code>import 'pkg'</code>), and absolute imports whose file exists under <code>src/public/</code>.</li><li><code>slice dev</code> and <code>slice build</code> keep the same rule for preserved absolute (<code>public/</code>) imports.</li><li>See [External Dependencies](/Documentation/External-Dependencies) for npm packages.</li></ul>
 <h2 id="start">start</h2>
 <p>Starts the production server and serves from <code>/dist</code>.</p>
-<div class="code-block" data-block-id="doc-block-15"></div>
+<div class="code-block" data-block-id="doc-block-17"></div>
 <h3 id="options-3">Options</h3>
-<div class="table-block" data-block-id="doc-block-16"></div>
-<div class="callout callout-tip">Production uses <code>publicFolders</code> from <code>sliceConfig.json</code> to expose public asset folders
-like <code>/Themes</code>, <code>/Styles</code>, and <code>/assets</code>.</div>
+<div class="table-block" data-block-id="doc-block-18"></div>
+<div class="callout callout-tip">Production serves static assets from <code>src/public/</code> (copied into <code>dist/</code>) at the root URL — e.g. <code>/Themes</code>, <code>/Styles</code>, <code>/images</code>.</div>
 <h2 id="build">build</h2>
 <p>Builds production output by analyzing dependencies, generating bundles, and writing files to <code>/dist</code>.</p>
 <div class="callout callout-tip">Production builds include <strong>Structural framework components</strong> in bundles to avoid runtime fetches.
 These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</code> in bundle config.</div>
-<div class="code-block" data-block-id="doc-block-17"></div>
+<div class="code-block" data-block-id="doc-block-19"></div>
 <h3 id="options-4">Options</h3>
-<div class="table-block" data-block-id="doc-block-18"></div>
+<div class="table-block" data-block-id="doc-block-20"></div>
 <h3 id="subcommands">Subcommands</h3>
-<div class="table-block" data-block-id="doc-block-19"></div>
+<div class="table-block" data-block-id="doc-block-21"></div>
 <h3 id="import-support-scope-2">Import support scope</h3>
-<ul><li>Supported: relative imports and absolute imports that resolve into folders listed in <code>publicFolders</code>.</li><li>Unsupported: bare package imports such as <code>import 'pkg'</code>.</li><li>Production preserves supported absolute public-folder imports with the same behavior as development.</li></ul>
+<ul><li>Supported: relative imports, bare npm packages (<code>import 'pkg'</code>), and absolute imports whose file exists under <code>src/public/</code>.</li><li><code>slice dev</code> and <code>slice build</code> keep the same rule for preserved absolute (<code>public/</code>) imports.</li><li>See [External Dependencies](/Documentation/External-Dependencies) for npm packages.</li></ul>
 <h2 id="component-create">component create</h2>
 <p>Creates a new local component and registers it in <code>components.js</code>. Runs interactively, or non-interactively when you pass the name and category on the command line.</p>
-<div class="code-block" data-block-id="doc-block-20"></div>
-<div class="code-block" data-block-id="doc-block-21"></div>
 <div class="code-block" data-block-id="doc-block-22"></div>
-<div class="table-block" data-block-id="doc-block-23"></div>
+<div class="code-block" data-block-id="doc-block-23"></div>
+<div class="code-block" data-block-id="doc-block-24"></div>
+<div class="table-block" data-block-id="doc-block-25"></div>
 <p>Only the missing pieces are prompted, so <code>npm run component:create -- UserCard</code> asks just for the category. Passing both runs with no prompts — useful for scripts and AI agents.</p>
 <p>Rules:</p>
 <ul><li>Name must start with a letter and be alphanumeric.</li><li>Visual components get <code>.js</code>, <code>.html</code>, <code>.css</code>; Service components get <code>.js</code> only.</li><li>An invalid <code>--category</code> fails with a message listing the valid categories.</li></ul>
 <h2 id="component-list">component list</h2>
 <p>Lists all local components by scanning category paths from <code>sliceConfig.json</code> and rewrites <code>src/Components/components.js</code>.</p>
-<div class="code-block" data-block-id="doc-block-24"></div>
+<div class="code-block" data-block-id="doc-block-26"></div>
 <h2 id="component-delete">component delete</h2>
 <p>Deletes a local component and updates <code>components.js</code>. Interactive by default; pass the name, <code>--category</code>, and <code>--yes</code> to delete non-interactively.</p>
-<div class="code-block" data-block-id="doc-block-25"></div>
-<div class="code-block" data-block-id="doc-block-26"></div>
-<div class="table-block" data-block-id="doc-block-27"></div>
+<div class="code-block" data-block-id="doc-block-27"></div>
+<div class="code-block" data-block-id="doc-block-28"></div>
+<div class="table-block" data-block-id="doc-block-29"></div>
 <h2 id="get-registry-get">get / registry get</h2>
 <p>Downloads components from the official registry (Visual or Service) into your project.</p>
-<div class="code-block" data-block-id="doc-block-28"></div>
+<div class="code-block" data-block-id="doc-block-30"></div>
 <h3 id="options-5">Options</h3>
-<div class="table-block" data-block-id="doc-block-29"></div>
+<div class="table-block" data-block-id="doc-block-31"></div>
 <p>Notes:</p>
 <ul><li>If no names are provided, the CLI opens an interactive selector.</li><li>Registry is fetched from the Slice docs repo.</li></ul>
 <h2 id="browse-registry-list">browse / registry list</h2>
 <p>Lists available registry components.</p>
-<div class="code-block" data-block-id="doc-block-30"></div>
+<div class="code-block" data-block-id="doc-block-32"></div>
 <h2 id="sync-registry-sync">sync / registry sync</h2>
 <p>Updates local Visual components to latest registry versions. Service components are detected but not updated automatically.</p>
-<div class="code-block" data-block-id="doc-block-31"></div>
+<div class="code-block" data-block-id="doc-block-33"></div>
 <h3 id="options-6">Options</h3>
-<div class="table-block" data-block-id="doc-block-32"></div>
+<div class="table-block" data-block-id="doc-block-34"></div>
 <h2 id="doctor">doctor</h2>
 <p>Runs project diagnostics (structure, config, dependencies, components, port availability).</p>
-<div class="code-block" data-block-id="doc-block-33"></div>
+<div class="code-block" data-block-id="doc-block-35"></div>
 <h2 id="version">version</h2>
 <p>Shows CLI version info and checks for updates.</p>
-<div class="code-block" data-block-id="doc-block-34"></div>
+<div class="code-block" data-block-id="doc-block-36"></div>
 <h2 id="help">help</h2>
 <p>Shows CLI help output.</p>
-<div class="code-block" data-block-id="doc-block-35"></div>
+<div class="code-block" data-block-id="doc-block-37"></div>
 <h2 id="types-generate">types generate</h2>
 <p>Generates a TypeScript declaration file from your components' <code>static props</code>, so editors can autocomplete and type-check <code>slice.build('Name', { ... })</code> calls.</p>
-<div class="code-block" data-block-id="doc-block-36"></div>
-<div class="code-block" data-block-id="doc-block-37"></div>
-<div class="table-block" data-block-id="doc-block-38"></div>
+<div class="code-block" data-block-id="doc-block-38"></div>
+<div class="code-block" data-block-id="doc-block-39"></div>
+<div class="table-block" data-block-id="doc-block-40"></div>
 <p>Re-run it whenever you add or change component props. The output is generated — don't edit it by hand, and re-generate (or wire it into your build) to keep autocomplete in sync.</p>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Prefer package scripts (<code>pnpm run ...</code> / <code>npm run ...</code>) for project commands.</div>

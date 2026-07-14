@@ -7,39 +7,44 @@
   </h1>
 </div>
 <h2 id="overview">Overview</h2>
-<p>Slice.js currently supports a temporary official pattern for external scripts and libraries using public folders.</p>
-<p>This is the recommended approach until native bare-package imports are available.</p>
-<h2 id="what-is-supported-today">What Is Supported Today</h2>
-<ul><li>Relative imports (<code>./</code>, <code>../</code>) for internal project modules.</li><li>Absolute imports that point to folders listed in <code>sliceConfig.json</code> <code>publicFolders</code>.</li></ul>
-<p>Example:</p>
-<div class="code-block" data-block-id="doc-block-1"></div>
-<h2 id="what-is-not-supported-yet">What Is Not Supported Yet</h2>
-<ul><li>Bare package imports such as:</li></ul>
+<p>Slice.js supports two ways to use third-party code, so you can pick the one that fits the library you have.</p>
+<div class="table-block" data-block-id="doc-block-1"></div>
+<p>Bare imports resolve packages from <code>node_modules</code> — the same mental model as a React or Vite project. The <code>public/</code> folder serves a file you place under <code>src/public/</code>, with no resolution step. Both are covered below.</p>
+<h2 id="bare-imports-from-nodemodules">Bare Imports from <code>node_modules</code></h2>
+<p>Install a package and import it by name — no configuration required:</p>
 <div class="code-block" data-block-id="doc-block-2"></div>
-<ul><li>Automatic browser resolution from <code>node_modules</code>.</li><li>CommonJS package interop for browser runtime.</li></ul>
-<h2 id="configure-publicfolders">Configure <code>publicFolders</code></h2>
-<p>Add one or more public folders in <code>sliceConfig.json</code>.</p>
 <div class="code-block" data-block-id="doc-block-3"></div>
-<h2 id="recommended-project-layout">Recommended Project Layout</h2>
-<p>Place third-party files in one of your configured public folders.</p>
+<p>Slice resolves the package with esbuild — the same resolver in development and in production — so CommonJS and ESM packages behave identically across <code>slice dev</code>, <code>slice build</code>, and <code>slice start</code>.</p>
+<h3 id="how-it-works">How it works</h3>
+<ul><li><strong><code>slice dev</code></strong>: no app bundling. Bare specifiers in your served modules are rewritten to a virtual <code>/@slice-modules/&lt;package&gt;</code> URL, and each package is pre-bundled on demand and cached (on disk under <code>node_modules/.slice-deps</code>, keyed by version). Your components still load as native ES modules.</li><li><strong><code>slice build</code> / <code>slice start</code></strong>: each package is bundled once and registered in the production bundle. A package used by two or more route bundles is extracted into a single shared <code>slice-bundle.vendor-shared.js</code> (no duplication).</li></ul>
+<div class="callout callout-tip">Because dev and build share the same esbuild resolver, a package that works in <code>slice dev</code> works the same way after <code>slice build</code>. There is no separate dev-only shim to keep in sync.</div>
+<h3 id="module-formats-and-assets">Module formats and assets</h3>
+<p>Resolution and interop are handled by esbuild, so the following all work:</p>
+<ul><li><strong>CommonJS, ESM and UMD</strong> packages, including modern <code>exports</code> maps (with <code>browser</code>/<code>import</code> conditions), the legacy <code>browser</code> field, scoped packages (<code>@scope/pkg</code>) and subpath specifiers (<code>pkg/feature</code>).</li><li><strong>Transitive dependencies</strong> — a package's own dependencies are bundled in automatically.</li><li><strong>Static and dynamic imports</strong> — both <code>import gsap from 'gsap'</code> and <code>const g = await import('gsap')</code> resolve to the same bundled package.</li><li><strong>Re-exports</strong> — a package (or a relative helper of yours) can <code>export * from '…'</code> / <code>export { x } from '…'</code>; the bundler wires them.</li><li><strong>Assets a package imports</strong>: CSS is bundled and injected as a <code>&lt;style&gt;</code> at runtime (once per stylesheet); WASM, images and fonts are inlined as data URLs; text assets (<code>.glsl/.vert/.frag/.txt</code>) are inlined as strings. Everything stays self-contained — no sidecar files.</li><li><strong>Browser globals</strong>: static <code>process.env.NODE_ENV</code> and <code>global</code> are substituted at build time, and a small runtime shim provides <code>process</code>/<code>global</code> for dynamic references — so packages that touch them work without a polyfill. This is <strong>not</strong> a full Node polyfill (see Gotchas).</li></ul>
+<h3 id="strict-builds-ci">Strict builds (CI)</h3>
+<p>By default an unresolved package warns, and the component that imported it fails at runtime. In CI, prefer a hard failure so a missing install never ships:</p>
 <div class="code-block" data-block-id="doc-block-4"></div>
-<p>Then import them with an absolute URL path:</p>
+<p><code>slice doctor</code> also lists bare imports that are missing from <code>node_modules</code>, so you can catch a forgotten install before building.</p>
+<h2 id="the-public-folder">The <code>public/</code> folder</h2>
+<p>Use this for files you vendor directly into your project (a pre-built UMD/ESM script, a polyfill, an image, a font — anything you don't install via npm).</p>
+<p>Everything under <strong><code>src/public/</code></strong> is served at the <strong>root URL</strong> and copied verbatim into the build — no configuration required. So <code>src/public/libs/my-widget.min.js</code> is available at <code>/libs/my-widget.min.js</code>:</p>
 <div class="code-block" data-block-id="doc-block-5"></div>
-<h2 id="dev-and-production-behavior">Dev and Production Behavior</h2>
-<ul><li><code>slice dev</code>: absolute public-folder imports are resolved and preserved.</li><li><code>slice build</code>: absolute public-folder imports are preserved with the same rule.</li><li><code>slice start</code>: built output serves public files from <code>dist</code>.</li></ul>
-<h2 id="build-warnings">Build Warnings</h2>
-<p>Slice CLI warns when:</p>
-<ul><li>You use bare imports (<code>import 'pkg'</code>).</li><li>You use absolute imports outside configured <code>publicFolders</code>.</li></ul>
-<p>These warnings help keep behavior predictable between development and production.</p>
-<h2 id="troubleshooting">Troubleshooting</h2>
-<div class="callout callout-warning">If an external script works in dev but fails in production, verify that:
-- the import starts with <code>/</code> (absolute path),
-- the folder is included in <code>publicFolders</code>,
-- the file exists under <code>src/&lt;public-folder&gt;/...</code> before building.</div>
-<h2 id="migration-path">Migration Path</h2>
-<p>This approach is temporary by design.</p>
-<p>When native package imports are released, you will be able to migrate from:</p>
 <div class="code-block" data-block-id="doc-block-6"></div>
-<p>to:</p>
+<p>Your <code>Themes</code>, <code>Styles</code> and <code>images</code> folders live under <code>public/</code> too (<code>src/public/Themes</code>, …); their URLs (<code>/Themes</code>, <code>/Styles</code>, <code>/images</code>) are unchanged.</p>
+<ul><li><code>slice dev</code>: <code>src/public/</code> is served at <code>/</code>.</li><li><code>slice build</code>: <code>src/public/</code> is copied into <code>dist/</code> and served at <code>/</code>.</li><li>Absolute imports (<code>/libs/…</code>) are preserved when the file exists under <code>public/</code>; otherwise the CLI warns and strips them.</li></ul>
+<h2 id="relative-imports">Relative Imports</h2>
+<p>Relative imports (<code>./</code>, <code>../</code>) for your own modules always work and need no configuration:</p>
 <div class="code-block" data-block-id="doc-block-7"></div>
+<p>A relative helper can itself import and <strong>re-export</strong> (<code>export * from './x.js'</code>, <code>export { y } from './x.js'</code>) — the bundler inlines the whole helper graph.</p>
+<p><strong>JSON</strong> imports work too: the default import is the whole document and named imports map to top-level keys.</p>
+<div class="code-block" data-block-id="doc-block-8"></div>
+<h2 id="gotchas">Gotchas</h2>
+<div class="callout callout-warning">Packages must be <strong>browser-compatible</strong>. A package that imports Node built-ins (<code>fs</code>, <code>os</code>, <code>util</code>, real <code>stream</code>, or needs <code>Buffer</code>, …) cannot run in the browser, so the build reports a clear resolution error instead of shipping a broken bundle. Slice provides only a minimal <code>process</code>/<code>global</code> shim — <strong>not</strong> a full Node polyfill layer. Use a browser build of the library, or drop a vendored file into <code>src/public/</code>.</div>
+<div class="callout callout-warning">If a bare import isn't resolved, Slice CLI warns and strips it. Check that the package is installed in <code>node_modules</code> (run your package manager's install). Use <code>slice doctor</code> to list bare imports that are missing.</div>
+<div class="callout callout-warning"><code>public/</code> imports must start with <code>/</code> (absolute path) and the file must exist under <code>src/public/...</code> before building.</div>
+<h2 id="from-a-vendored-file-to-an-npm-package">From a vendored file to an npm package</h2>
+<p>If you vendored a library only because bare imports weren't available, install it from npm and switch the import:</p>
+<div class="code-block" data-block-id="doc-block-9"></div>
+<div class="code-block" data-block-id="doc-block-10"></div>
+<p>Then remove the vendored copy from <code>src/public/</code>.</p>
 </div>

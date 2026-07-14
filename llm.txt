@@ -145,6 +145,42 @@ SLICE_NO_LOCAL_DELEGATION=1 slice version
 | `slice types generate` | - | Generate TypeScript typings for `slice.build`. |
 | `slice help` | `slice --help` | Show CLI help. |
 
+## `slice build` options
+| Flag | Purpose |
+| --- | --- |
+| `--strict-external` | Fail the build if a `node_modules` dependency cannot be resolved. See [External Dependencies](/Documentation/External-Dependencies). |
+| `--no-validate` | Skip the component prop validation described below. |
+| `--no-minify` | Disable minification (on by default). |
+| `--no-obfuscate` | Disable obfuscation (on by default). |
+| `--sourcemap` | Emit a `.map` next to each minified bundle (off by default so source isn't shipped unless asked). |
+| `--hash-filenames` | Add a content hash to bundle filenames (`slice-bundle.home.a1b2c3d4.js`) for immutable CDN caching. Off by default (stable names). |
+| `--compress` | Precompress `dist/` assets to `.gz` and max-quality `.br` (brotli). Off by default (brotli max is slow — use it for release builds). |
+| `--preview` | Start a preview server after building. |
+
+### Source maps, hashed filenames & precompression
+- **`--sourcemap`** maps each minified bundle back to its readable pre-minified form, so production stack traces are debuggable. Off by default (source isn't shipped unless you opt in).
+- **`--hash-filenames`** names bundles by content hash for `Cache-Control: immutable` CDN caching. The runtime loads every bundle by the filename recorded in the bundle config, so hashing "just works" with no other change.
+- **`--compress`** writes a `.gz` and a brotli `.br` beside every text asset in `dist/`. `slice start` serves the precompressed variant per the client's `Accept-Encoding` (brotli preferred), instead of compressing on every request — a ~900&nbsp;KB bundle ships as ~100&nbsp;KB over the wire.
+
+### Reproducible builds
+Set `SOURCE_DATE_EPOCH` (integer seconds since the Unix epoch) so the timestamps embedded in the bundle metadata/config are deterministic and a clean rebuild is byte-identical:
+
+```bash title="Reproducible build"
+SOURCE_DATE_EPOCH=$(git log -1 --format=%ct) slice build
+```
+
+Unset, the current time is used.
+
+### Prop validation on build
+Before building, Slice validates every component's static props — the same checks as `slice doctor`. **Definition errors block the build** with a message pointing at the offending `Component.prop`:
+
+- an unknown `type`,
+- a `schema` on a non-`object` prop,
+- an `items` on a non-`array` prop,
+- `allowedValues` whose entries don't match the declared `type`.
+
+Style issues (a `type: "any"`, or a `required` prop without a default) are printed as warnings but don't block. Bypass the whole check with `--no-validate` (not recommended). See [Static Props](/Documentation/Static-Props) for the prop schema.
+
 ## Recommended package scripts
 
 Use these scripts inside initialized projects:
@@ -242,9 +278,9 @@ npm run dev
 - Uses `api/index.js` with `--development`.
 
 ### Import support scope
-- Supported: relative imports and absolute imports that resolve into folders listed in `publicFolders`.
-- Unsupported: bare package imports such as `import 'pkg'`.
-- `slice dev` and `slice build` keep the same rule for preserved absolute imports that target configured public folders.
+- Supported: relative imports, bare npm packages (`import 'pkg'`), and absolute imports whose file exists under `src/public/`.
+- `slice dev` and `slice build` keep the same rule for preserved absolute (`public/`) imports.
+- See [External Dependencies](/Documentation/External-Dependencies) for npm packages.
 
 ## start
 Starts the production server and serves from `/dist`.
@@ -259,8 +295,7 @@ npm run start
 | `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |
 
 :::tip
-Production uses `publicFolders` from `sliceConfig.json` to expose public asset folders
-like `/Themes`, `/Styles`, and `/assets`.
+Production serves static assets from `src/public/` (copied into `dist/`) at the root URL — e.g. `/Themes`, `/Styles`, `/images`.
 :::
 
 ## build
@@ -293,9 +328,9 @@ npm run build
 | `slice build info` | Show bundle configuration summary. |
 
 ### Import support scope
-- Supported: relative imports and absolute imports that resolve into folders listed in `publicFolders`.
-- Unsupported: bare package imports such as `import 'pkg'`.
-- Production preserves supported absolute public-folder imports with the same behavior as development.
+- Supported: relative imports, bare npm packages (`import 'pkg'`), and absolute imports whose file exists under `src/public/`.
+- `slice dev` and `slice build` keep the same rule for preserved absolute (`public/`) imports.
+- See [External Dependencies](/Documentation/External-Dependencies) for npm packages.
 
 ## component create
 Creates a new local component and registers it in `components.js`. Runs interactively, or
@@ -1437,89 +1472,127 @@ alongside live runtime activity. See [EventManager](/Documentation/Structural/Ev
 # External Dependencies
 
 ## Overview
-Slice.js currently supports a temporary official pattern for external scripts and libraries using public folders.
+Slice.js supports two ways to use third-party code, so you can pick the one that fits the library you have.
 
-This is the recommended approach until native bare-package imports are available.
+| Situation | Reach for |
+|-----------|-----------|
+| An npm package installed in `node_modules` (`dayjs`, `gsap`, `date-fns`, …) | **Bare imports** |
+| A vendored script/file you drop into your project | **The `public/` folder** |
 
-## What Is Supported Today
-- Relative imports (`./`, `../`) for internal project modules.
-- Absolute imports that point to folders listed in `sliceConfig.json` `publicFolders`.
+Bare imports resolve packages from `node_modules` — the same mental model as a React or Vite project. The `public/` folder serves a file you place under `src/public/`, with no resolution step. Both are covered below.
 
-Example:
+## Bare Imports from `node_modules`
+Install a package and import it by name — no configuration required:
 
-```javascript title="Valid absolute import"
-import '/libs/dayjs/dayjs.min.js';
+```bash title="Install"
+pnpm add gsap
 ```
 
-## What Is Not Supported Yet
-- Bare package imports such as:
+```javascript title="HeroBanner.js"
+import gsap from 'gsap';
 
-```javascript title="Not supported yet"
-import dayjs from 'dayjs';
-```
-
-- Automatic browser resolution from `node_modules`.
-- CommonJS package interop for browser runtime.
-
-## Configure `publicFolders`
-Add one or more public folders in `sliceConfig.json`.
-
-```json title="sliceConfig.json"
-{
-  "publicFolders": ["/Themes", "/Styles", "/assets", "/libs"]
+export default class HeroBanner extends HTMLElement {
+  init() {
+    gsap.from(this.querySelector('.title'), { y: 24, opacity: 0, duration: 0.4 });
+  }
 }
 ```
 
-## Recommended Project Layout
-Place third-party files in one of your configured public folders.
+Slice resolves the package with esbuild — the same resolver in development and in production — so CommonJS and ESM packages behave identically across `slice dev`, `slice build`, and `slice start`.
+
+### How it works
+- **`slice dev`**: no app bundling. Bare specifiers in your served modules are rewritten to a virtual `/@slice-modules/<package>` URL, and each package is pre-bundled on demand and cached (on disk under `node_modules/.slice-deps`, keyed by version). Your components still load as native ES modules.
+- **`slice build` / `slice start`**: each package is bundled once and registered in the production bundle. A package used by two or more route bundles is extracted into a single shared `slice-bundle.vendor-shared.js` (no duplication).
+
+:::tip
+Because dev and build share the same esbuild resolver, a package that works in `slice dev` works the same way after `slice build`. There is no separate dev-only shim to keep in sync.
+:::
+
+### Module formats and assets
+Resolution and interop are handled by esbuild, so the following all work:
+
+- **CommonJS, ESM and UMD** packages, including modern `exports` maps (with `browser`/`import` conditions), the legacy `browser` field, scoped packages (`@scope/pkg`) and subpath specifiers (`pkg/feature`).
+- **Transitive dependencies** — a package's own dependencies are bundled in automatically.
+- **Static and dynamic imports** — both `import gsap from 'gsap'` and `const g = await import('gsap')` resolve to the same bundled package.
+- **Re-exports** — a package (or a relative helper of yours) can `export * from '…'` / `export { x } from '…'`; the bundler wires them.
+- **Assets a package imports**: CSS is bundled and injected as a `<style>` at runtime (once per stylesheet); WASM, images and fonts are inlined as data URLs; text assets (`.glsl/.vert/.frag/.txt`) are inlined as strings. Everything stays self-contained — no sidecar files.
+- **Browser globals**: static `process.env.NODE_ENV` and `global` are substituted at build time, and a small runtime shim provides `process`/`global` for dynamic references — so packages that touch them work without a polyfill. This is **not** a full Node polyfill (see Gotchas).
+
+### Strict builds (CI)
+By default an unresolved package warns, and the component that imported it fails at runtime. In CI, prefer a hard failure so a missing install never ships:
+
+```bash title="Fail the build on any unresolved dependency"
+slice build --strict-external
+```
+
+`slice doctor` also lists bare imports that are missing from `node_modules`, so you can catch a forgotten install before building.
+
+## The `public/` folder
+Use this for files you vendor directly into your project (a pre-built UMD/ESM script, a polyfill, an image, a font — anything you don't install via npm).
+
+Everything under **`src/public/`** is served at the **root URL** and copied verbatim into the build — no configuration required. So `src/public/libs/my-widget.min.js` is available at `/libs/my-widget.min.js`:
 
 ```text
 src/
-  libs/
-    dayjs/
-      dayjs.min.js
+  public/
+    libs/
+      my-widget.min.js
+    images/
+      logo.png
 ```
 
-Then import them with an absolute URL path:
-
 ```javascript title="Component usage"
+import '/libs/my-widget.min.js';
+```
+
+Your `Themes`, `Styles` and `images` folders live under `public/` too (`src/public/Themes`, …); their URLs (`/Themes`, `/Styles`, `/images`) are unchanged.
+
+- `slice dev`: `src/public/` is served at `/`.
+- `slice build`: `src/public/` is copied into `dist/` and served at `/`.
+- Absolute imports (`/libs/…`) are preserved when the file exists under `public/`; otherwise the CLI warns and strips them.
+
+## Relative Imports
+Relative imports (`./`, `../`) for your own modules always work and need no configuration:
+
+```javascript title="UserCard.js"
+import { formatName } from './helpers.js';
+```
+
+A relative helper can itself import and **re-export** (`export * from './x.js'`, `export { y } from './x.js'`) — the bundler inlines the whole helper graph.
+
+**JSON** imports work too: the default import is the whole document and named imports map to top-level keys.
+
+```javascript title="Importing JSON"
+import config from './config.json';        // whole document
+import { version } from './package-info.json'; // a top-level key
+```
+
+## Gotchas
+
+:::warning
+Packages must be **browser-compatible**. A package that imports Node built-ins (`fs`, `os`, `util`, real `stream`, or needs `Buffer`, …) cannot run in the browser, so the build reports a clear resolution error instead of shipping a broken bundle. Slice provides only a minimal `process`/`global` shim — **not** a full Node polyfill layer. Use a browser build of the library, or drop a vendored file into `src/public/`.
+:::
+
+:::warning
+If a bare import isn't resolved, Slice CLI warns and strips it. Check that the package is installed in `node_modules` (run your package manager's install). Use `slice doctor` to list bare imports that are missing.
+:::
+
+:::warning
+`public/` imports must start with `/` (absolute path) and the file must exist under `src/public/...` before building.
+:::
+
+## From a vendored file to an npm package
+If you vendored a library only because bare imports weren't available, install it from npm and switch the import:
+
+```javascript title="Before — vendored file"
 import '/libs/dayjs/dayjs.min.js';
 ```
 
-## Dev and Production Behavior
-- `slice dev`: absolute public-folder imports are resolved and preserved.
-- `slice build`: absolute public-folder imports are preserved with the same rule.
-- `slice start`: built output serves public files from `dist`.
-
-## Build Warnings
-Slice CLI warns when:
-- You use bare imports (`import 'pkg'`).
-- You use absolute imports outside configured `publicFolders`.
-
-These warnings help keep behavior predictable between development and production.
-
-## Troubleshooting
-:::warning
-If an external script works in dev but fails in production, verify that:
-- the import starts with `/` (absolute path),
-- the folder is included in `publicFolders`,
-- the file exists under `src/<public-folder>/...` before building.
-:::
-
-## Migration Path
-This approach is temporary by design.
-
-When native package imports are released, you will be able to migrate from:
-
-```javascript
-import '/libs/some-lib/index.js';
+```javascript title="After — npm package"
+import dayjs from 'dayjs';
 ```
 
-to:
-
-```javascript
-import 'some-lib';
-```
+Then remove the vendored copy from `src/public/`.
 
 === markdown/getting-started/before-destroy.md ===
 # beforeDestroy()
@@ -1740,6 +1813,15 @@ to `null` — not throw. Always guard, and resync the registry.
 ```javascript title="Guard the result"
 const node = await slice.build('UserCard', props);
 if (node) container.appendChild(node);   // null = not registered → run `npm run component:list`
+```
+
+## A computed name in `slice.build()` isn't bundled
+The bundler links a component into its bundle by reading the name you pass to `slice.build` **statically**. A string literal, a template with no expressions, or a constant/config value that resolves to one all get bundled. A **truly dynamic** name (`slice.build(props.name)`) can't be resolved — `slice build` prints a `⚠️ Dynamic slice.build(...)` warning and the component still works, but loads individually at runtime (no bundle optimization). Prefer a literal or a resolvable constant.
+
+```javascript title="Bundled vs. not"
+await slice.build('UserCard', props);          // ✅ bundled (literal)
+const NAME = 'UserCard'; await slice.build(NAME); // ✅ bundled (resolvable constant)
+await slice.build(props.componentName, props);  // ⚠️ warned, loads individually
 ```
 
 ## Clearing `innerHTML` does NOT destroy components
@@ -2187,13 +2269,13 @@ project stays lean.
   configured levels and stays quiet in production.
 
 ## Production build, briefly
-`npm run build` analyzes what your routes use, bundles and minifies into `/dist`, and copies your
-`publicFolders`. `npm run start` then serves `/dist`. Production mode disables dev-only features
-(prop validation, debug panels) for performance.
+`npm run build` analyzes what your routes use, bundles and minifies into `/dist`, and copies
+`src/public/` to the build root. `npm run start` then serves `/dist`. Production mode disables
+dev-only runtime features (debug panels) for performance.
 
 :::tip
-Add a folder you import from (for example `/libs`) to `publicFolders` in `sliceConfig.json`, or it
-will work in dev but break in the production build.
+To import a vendored file in production, place it under `src/public/` (for example
+`src/public/libs/x.js`, imported as `/libs/x.js`) — npm packages (`import 'pkg'`) work everywhere.
 :::
 
 === markdown/getting-started/devtools.md ===
@@ -3453,6 +3535,12 @@ const button = await slice.build('Button', {
 });
 ```
 
+## Validation
+Slice validates your `static props` definitions in two places, so a malformed prop is caught before it ships:
+
+- **`slice doctor`** reports every issue (errors and style warnings).
+- **`slice build`** blocks the build on definition errors — an unknown `type`, a `schema` on a non-`object` prop, an `items` on a non-`array` prop, or `allowedValues` that don't match the `type`. Style issues (`type: "any"`, a `required` prop without a default) warn but don't block. See [CLI commands](/Documentation/CLI).
+
 ## Best Practices
 :::tip
 Define only public props in `static props` and use internal fields for private state.
@@ -4548,14 +4636,10 @@ Create `src/manifest.json` (served at `/manifest.json`):
 ```
 
 ## 2. Icons
-Put your icons in a folder that is in `publicFolders` so they are served and
-copied to `dist/`. The starter already exposes `images/`, so `src/images/icon-192.png`
-is served at `/images/icon-192.png`. Provide at least 192×192 and 512×512, plus a
-512×512 `maskable` for Android.
-
-```json title="sliceConfig.json — already includes images by default"
-{ "publicFolders": ["/Themes", "/Styles", "/assets", "/images"] }
-```
+Put your icons under `src/public/` so they are served at the root URL and copied
+to `dist/`. The starter already includes `src/public/images/`, so
+`src/public/images/icon-192.png` is served at `/images/icon-192.png`. Provide at
+least 192×192 and 512×512, plus a 512×512 `maskable` for Android.
 
 ## 3. The service worker
 Create `src/service-worker.js` (served at `/service-worker.js`). A minimal
@@ -4713,7 +4797,7 @@ Once loaded, Slice.js initializes structural components based on config:
 | `context` | `object` | no | ContextManager toggle. |
 | `production` | `object` | no | Production toggles (if supported). |
 | `server` | `object` | no | Server port/host for dev server. |
-| `publicFolders` | `string[]` | no | Allowlist of public folders served in production. |
+| _(static assets)_ | — | — | Put them under `src/public/` — served at the root URL. No config key; see below. |
 
 ## debugger
 | Field | Type | Default | Notes |
@@ -4838,23 +4922,15 @@ missing `.html`.
 | --- | --- | --- | --- |
 | `enabled` | `boolean` | `false` | If supported, disables dev-only features. |
 
-## publicFolders
-Use `publicFolders` to declare **public asset folders** that should be served in production.
-This keeps source-only folders private while still exposing the assets your app needs.
+## Static assets — the `public/` folder
+Put static assets under **`src/public/`**; everything there is served at the root URL and copied into the build — no configuration needed. `Themes`, `Styles` and `images` live under `public/`, and their URLs (`/Themes`, `/Styles`, `/images`) match their paths.
 
-Defaults are intended to be sensible for most apps: `/Themes`, `/Styles`, `/assets`.
-
-Import resolution scope tied to `publicFolders`:
-- Supported: relative imports and absolute imports that point into configured `publicFolders`.
-- Unsupported: bare package imports such as `import 'pkg'`.
-- Behavior parity: when an absolute import targets a configured public folder, it is preserved consistently in both development and production.
+Import resolution:
+- **Relative imports** (`./`, `../`) and **bare npm packages** (`import 'pkg'`) are supported — see [External Dependencies](/Documentation/External-Dependencies).
+- **Absolute imports** (`/libs/x.js`) are preserved when the file exists under `src/public/`, in both development and production.
 
 Structural framework components are bundled automatically during `slice build` based on which
 features are enabled in `sliceConfig.json` (e.g. `logger.enabled`, `events.enabled`).
-
-| Field | Type | Default | Notes |
-| --- | --- | --- | --- |
-| `publicFolders` | `string[]` | `[/Themes, /Styles, /assets]` | Public asset folders served in production. |
 
 ## server
 | Field | Type | Default | Notes |
@@ -4945,8 +5021,6 @@ const publicEnv = slice.getPublicEnv();
   "loading": { "enabled": true },
   "events": { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+e" } },
   "context": { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+c" } }
-  ,
-  "publicFolders": ["/Themes", "/Styles", "/assets"]
 }
 ```
 

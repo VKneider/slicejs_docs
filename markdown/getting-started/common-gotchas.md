@@ -37,6 +37,15 @@ const node = await slice.build('UserCard', props);
 if (node) container.appendChild(node);   // null = not registered → run `npm run component:list`
 ```
 
+## A computed name in `slice.build()` isn't bundled
+The bundler links a component into its bundle by reading the name you pass to `slice.build` **statically**. A string literal, a template with no expressions, or a constant/config value that resolves to one all get bundled. A **truly dynamic** name (`slice.build(props.name)`) can't be resolved — `slice build` prints a `⚠️ Dynamic slice.build(...)` warning and the component still works, but loads individually at runtime (no bundle optimization). Prefer a literal or a resolvable constant.
+
+```javascript title="Bundled vs. not"
+await slice.build('UserCard', props);          // ✅ bundled (literal)
+const NAME = 'UserCard'; await slice.build(NAME); // ✅ bundled (resolvable constant)
+await slice.build(props.componentName, props);  // ⚠️ warned, loads individually
+```
+
 ## Clearing `innerHTML` does NOT destroy components
 `container.innerHTML = ''` removes the DOM but leaves the Slice instances registered — a leak, and
 their `beforeDestroy` never runs.

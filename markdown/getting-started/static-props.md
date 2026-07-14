@@ -154,6 +154,12 @@ const button = await slice.build('Button', {
 });
 ```
 
+## Validation
+Slice validates your `static props` definitions in two places, so a malformed prop is caught before it ships:
+
+- **`slice doctor`** reports every issue (errors and style warnings).
+- **`slice build`** blocks the build on definition errors — an unknown `type`, a `schema` on a non-`object` prop, an `items` on a non-`array` prop, or `allowedValues` that don't match the `type`. Style issues (`type: "any"`, a `required` prop without a default) warn but don't block. See [CLI commands](/Documentation/CLI).
+
 ## Best Practices
 :::tip
 Define only public props in `static props` and use internal fields for private state.

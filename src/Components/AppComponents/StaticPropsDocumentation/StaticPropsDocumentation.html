@@ -36,6 +36,9 @@
 <div class="code-block" data-block-id="doc-block-9"></div>
 <div class="code-block" data-block-id="doc-block-10"></div>
 <div class="code-block" data-block-id="doc-block-11"></div>
+<h2 id="validation">Validation</h2>
+<p>Slice validates your <code>static props</code> definitions in two places, so a malformed prop is caught before it ships:</p>
+<ul><li><strong><code>slice doctor</code></strong> reports every issue (errors and style warnings).</li><li><strong><code>slice build</code></strong> blocks the build on definition errors — an unknown <code>type</code>, a <code>schema</code> on a non-<code>object</code> prop, an <code>items</code> on a non-<code>array</code> prop, or <code>allowedValues</code> that don't match the <code>type</code>. Style issues (<code>type: "any"</code>, a <code>required</code> prop without a default) warn but don't block. See [CLI commands](/Documentation/CLI).</li></ul>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Define only public props in <code>static props</code> and use internal fields for private state.</div>
 <div class="callout callout-tip">Use defaults to keep components predictable and reduce boilerplate.</div>

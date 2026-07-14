@@ -53,14 +53,10 @@ Create `src/manifest.json` (served at `/manifest.json`):
 ```
 
 ## 2. Icons
-Put your icons in a folder that is in `publicFolders` so they are served and
-copied to `dist/`. The starter already exposes `images/`, so `src/images/icon-192.png`
-is served at `/images/icon-192.png`. Provide at least 192×192 and 512×512, plus a
-512×512 `maskable` for Android.
-
-```json title="sliceConfig.json — already includes images by default"
-{ "publicFolders": ["/Themes", "/Styles", "/assets", "/images"] }
-```
+Put your icons under `src/public/` so they are served at the root URL and copied
+to `dist/`. The starter already includes `src/public/images/`, so
+`src/public/images/icon-192.png` is served at `/images/icon-192.png`. Provide at
+least 192×192 and 512×512, plus a 512×512 `maskable` for Android.
 
 ## 3. The service worker
 Create `src/service-worker.js` (served at `/service-worker.js`). A minimal
