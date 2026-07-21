@@ -1,0 +1,21 @@
+{
+  "name": "slice-js-developer",
+  "version": "1.10.0",
+  "targets": "slicejs-web-framework ^4.0.x",
+  "installPath": ".claude/skills/slice-js-developer",
+  "files": [
+    "SKILL.md",
+    "VERSION",
+    "assets/routes.js",
+    "assets/service-component/Service.js",
+    "assets/sliceConfig.json",
+    "assets/visual-component/Component.css",
+    "assets/visual-component/Component.html",
+    "assets/visual-component/Component.js",
+    "references/config-theming-cli.md",
+    "references/core-model.md",
+    "references/gotchas-and-diagnostics.md",
+    "references/state-and-routing.md",
+    "references/visual-catalog.md"
+  ]
+}
