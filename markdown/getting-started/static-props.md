@@ -125,7 +125,7 @@ npx -p typescript tsc --noEmit -p jsconfig.json
 
 The generated types include:
 
-- union types from homogeneous `allowedValues` (`'a' | 'b'`, `1 | 2`)
+- union types from homogeneous `allowedValues` (for example `'a'` or `'b'`, or `1` or `2`) — **but only when the array is written literally in the prop definition.** The generator reads the AST of your component and does not resolve variables, so `allowedValues: SIZE_VALUES` is not seen at all and the prop silently degrades to plain `string`. Write the list inline, and read it back from `this.constructor.props.<prop>` in the setter rather than keeping a second copy of it.
 - nested object/array types from `schema/items`
 - component prop map support for `slice.build(...)`
 
