@@ -47,6 +47,16 @@ npx @vkneider/slicejs-mcp
 | `search_docs` | Searches across all documentation using keywords or phrases. |
 | `get_doc_content` | Fetches the full content of specific documentation page(s). |
 | `get_llm_full_context` | Fetches the complete documentation bundle (~2000 lines). |
+| `slice_framework_*` | Namespace-aware access to framework documentation. |
+| `slice_components_*` | Namespace-aware access to Slice.js Components documentation. |
+
+The MCP exposes two catalogs:
+
+- `framework` — `slicejs_docs`, covering the framework, CLI, lifecycle, routing, and architecture.
+- `components` — Slice.js Components, covering Visual and Service APIs and examples.
+
+The Components catalog is backed by the published Markdown manifest from the legacy
+`slice.js_visual_library` repository. The public product name is **Slice.js Components**.
 
 ## list_docs
 Returns a list of all available documentation sections and categories.
@@ -78,9 +88,31 @@ Fetches the complete documentation bundle (~2000 lines) for comprehensive LLM co
 
 **Note:** This consumes considerable tokens but provides all documentation in one request.
 
+## Namespace-aware catalog tools
+
+Use the framework namespace for framework questions:
+
+```text
+slice_framework_list_docs()
+slice_framework_search_docs(query)
+slice_framework_get_doc(doc_id)
+```
+
+Use the Components namespace for Visual and Service component questions:
+
+```text
+slice_components_list_docs()
+slice_components_search_docs(query)
+slice_components_get_doc(doc_id)
+```
+
+`slice_components_get_doc` returns the authored Markdown and metadata such as the component,
+catalog version, source path, and revision. The MCP does not execute `:::script` examples.
+
 ## Architecture
 
-- **Source**: Documentation fetched from https://github.com/VKneider/slicejs_docs
+- **Framework source**: Documentation fetched from https://github.com/VKneider/slicejs_docs
+- **Components source**: Markdown and manifest fetched from https://github.com/VKneider/slice.js_visual_library
 - **Caching**: Infinite session cache to minimize API requests and improve performance
 - **Initialization**: Lazy loading of document structure on first tool use
 - **Rate Limiting**: Optimized to stay within GitHub API limits (60 req/hour)

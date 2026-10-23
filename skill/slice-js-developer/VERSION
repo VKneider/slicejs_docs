@@ -1,9 +1,15 @@
 slice-js-developer
-version: 1.10.0
+version: 1.11.0
 targets: slicejs-web-framework ^4.0.x
 
 CHANGELOG
 =========
+
+1.11.0
+  Added the dual documentation-catalog workflow:
+  - Framework and Slice.js Components docs are separate catalogs for MCP and CLI access.
+  - Agents can use namespaced Components MCP tools for Visual and Service examples.
+  - `slice docs` is the CLI fallback when MCP is unavailable.
 
 1.10.0
   Staleness guard + drift-trim of references:

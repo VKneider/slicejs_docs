@@ -12,9 +12,9 @@ Slice.js is a component-based frontend framework built on native Web Components.
 Read this SKILL.md fully — it carries the **complete mental model** and decision rules, so most tasks need nothing else. Two depth layers sit behind it:
 
 - **`references/` — the distilled offline layer.** Source-verified notes that carry the *mistake-preventing* detail (traps, decision rules, canonical snippets). **Not a mirror of the docs** — deliberately thin. Enough to work common tasks with no network.
-- **`slicejs-mcp` — the live, authoritative docs.** The full Slice.js documentation (42 pages), always current. **Your primary tool for depth** when it's configured — especially anything version-specific (full prop lists, every CLI flag, config fields, complete guides). Don't reproduce it here; query it.
+- **`slicejs-mcp` — the live, authoritative docs.** It exposes both the Slice.js framework catalog and the Slice.js Components catalog when configured. **Your primary tool for depth** when it's configured — especially anything version-specific (full prop lists, every CLI flag, config fields, complete guides, and component examples). Don't reproduce it here; query it.
 
-Rule of thumb: reach for a **reference** at the *decision / trap* level; query the **MCP** at the *exhaustive / authoritative* level. Never answer a version-specific detail from memory — confirm it via the MCP (or the offline fallbacks). See "Developing with the MCP" below.
+Rule of thumb: reach for a **reference** at the *decision / trap* level; query the **MCP** at the *exhaustive / authoritative* level. Never answer a version-specific detail from memory — confirm it via the MCP (or the offline fallbacks). Use the framework catalog for framework behavior and the Components catalog for Visual/Service APIs and examples. See "Developing with the MCP" below.
 
 Common tasks: create a Visual/Service component · add routes/guards/pages · wire inter-component communication (Events vs Context) · configure themes/persistence/debug panels · diagnose a non-rendering/leaking/stale component · set up a new project · integrate an external library.
 
@@ -77,28 +77,36 @@ Lifecycle at a glance: constructor (sync) → `await init()` (once) → live (se
 
 ## Developing with the MCP (`slicejs-mcp`)
 
-The MCP is a live mirror of the **full Slice.js documentation** — all 42 pages, always current — exposed as four tools. It is the **authoritative source for depth**: when a reference is too thin, or the fact is version-specific (a full prop list, every CLI flag, a config field, a complete guide), **query the MCP instead of guessing or reproducing docs here.** This keeps the skill thin and always correct.
+The MCP provides live access to two documentation catalogs. It is the **authoritative source for depth**: when a reference is too thin, or the fact is version-specific (a full prop list, every CLI flag, a config field, a complete guide, or a component example), **query the MCP instead of guessing or reproducing docs here.**
 
-**The tools:**
-- `list_docs()` — the whole doc map (`{id, title, path}[]`). Cheap. **Run this first** on any Slice task with the MCP available (see the orientation protocol below).
-- `search_docs(query, max_results?, snippets_per_doc?)` — ranked search across every page → documents ordered by relevance, each with `{doc_id, title, path, relevance_score, matched_terms, snippets[]}` (every snippet carries its `line` and the `section` heading it falls under). Ranking favors title/heading matches and term coverage. Search by **API symbol**, **concept**, or **error string**; then read the top `doc_id`.
-- `get_doc_content(doc_id | [doc_ids], include_metadata?)` — the **full** page(s). This is where the authoritative detail lives. Pass an **array** to pull related pages in one call, e.g. `["getting-started/routing", "getting-started/routing-guards"]`.
-- `get_llm_full_context()` — the entire corpus in one dump (~2500 lines, **costly**). **Ask the user before calling it.** Worth it to bootstrap a large brand-new project; never for a targeted question.
+**Framework catalog tools:**
+- `slice_framework_list_docs()` — lists framework and CLI documentation.
+- `slice_framework_search_docs(query, max_results?, snippets_per_doc?)` — searches framework docs by API symbol, concept, or error string.
+- `slice_framework_get_doc(doc_id | [doc_ids], include_metadata?)` — retrieves authored framework Markdown with provenance.
 
-**The development loop:** `search_docs("<symbol / concept / error text>")` → pick the top `doc_id` → `get_doc_content(doc_id)` → apply. Results are cached in-session, so repeated reads are cheap.
+**Slice.js Components catalog tools:**
+- `slice_components_list_docs()` — lists Visual and Service component documentation.
+- `slice_components_search_docs(query, max_results?, snippets_per_doc?)` — searches component docs and examples.
+- `slice_components_get_doc(doc_id | [doc_ids], include_metadata?)` — retrieves authored component Markdown with version and revision metadata.
+
+**Compatibility tools:**
+- `list_docs()`, `search_docs()`, and `get_doc_content()` remain available for the framework catalog.
+- `get_llm_full_context()` returns the framework corpus and is expensive. **Ask the user before calling it.**
+
+**The development loop:** select the catalog → `*_search_docs("<symbol / concept / error text>")` → pick the top `doc_id` → `*_get_doc(doc_id)` → apply. Results are cached in-session, so repeated reads are cheap.
 
 ### Orientation protocol — first thing on a Slice task (when the MCP is available)
 
 Don't jump straight to a blind `search_docs`. Orient first, so recommendations fit *this* project:
 
-1. **`list_docs()`** — get the full map of what exists. Cheap, and it prevents guessing doc ids.
+1. **List the relevant catalog** — use `slice_framework_list_docs()` for framework questions and `slice_components_list_docs()` for Visual/Service questions. This prevents guessing doc ids.
 2. **Read the project** to know what's relevant and what to recommend — the installed source is ground truth:
    - `sliceConfig.json` → which managers are on (`events`/`context`/`themeManager`/`debugger`/`logger`), the `defaultTheme`, the component **categories** (`paths.components`), the server/port. This tells you what's enabled before you suggest using it.
    - `src/Components/components.js` → which components already exist (reuse before building).
    - `src/routes.js` → the app's routing shape (App Shell + MultiRoute vs Single-View).
    - `package.json` / `node_modules/slicejs-web-framework` → the framework version (so version-specific advice matches).
 3. **Offer the full docs for big/unfamiliar work.** If the task is large or the user is new to Slice, *ask*: "Want me to pull the full Slice.js docs into context (`get_llm_full_context`, ~2500 lines) for this, or stay targeted?" Only call it on a yes. For focused tasks, skip it and use the search→read loop.
-4. **Then** the targeted `search_docs → get_doc_content` loop for each specific question.
+4. **Then** use the targeted search → get loop for each specific question.
 
 Tailor advice to what you found: don't suggest `slice.context.watch` if `context.enabled` is false — flag that it must be enabled first (and that `context` needs `events`); recommend the existing theme/components rather than inventing new ones.
 
@@ -106,10 +114,11 @@ Tailor advice to what you found: don't suggest `slice.context.watch` if `context
 
 **When to use which layer:**
 - **Reference** (`references/*.md`) → the decision, the trap, the canonical snippet. Fastest, offline, mistake-focused.
-- **MCP** → the exhaustive/authoritative version, and **anything version-specific** (prop lists, flags, config fields drift between versions — never trust memory). Prefer it over your own recall.
+- **MCP** → the exhaustive/authoritative version, and **anything version-specific** (prop lists, flags, config fields, and component examples drift between versions — never trust memory). Choose the framework or Components catalog explicitly.
+- **CLI docs fallback** → `slice docs search ... --source framework|components` and `slice docs get ... --source framework|components` when MCP is unavailable.
 - **Live project / offline fallbacks** → the ground truth for *this* project: `slice --help`, `sliceConfig.schema.json`, `slice browse`, and reading a component's source under `src/Components/Visual/<Name>/`. The installed source outranks any doc for the project in front of you.
 
-**Graceful degradation (MCP not configured):** WebFetch the same page — `WebFetch("https://raw.githubusercontent.com/VKneider/slicejs_docs/master/markdown/<doc_id>.md", "<targeted question>")`; the prompt returns just the relevant slice. Then the local reference, then the offline fallbacks. So the order of preference for depth is **MCP → WebFetch → reference → offline fallbacks**, and for *this project's* specifics the live source always wins.
+**Graceful degradation (MCP not configured):** use the CLI docs commands first: `slice docs search "<query>" --source framework|components` and `slice docs get <id> --source framework|components --stdout`. If the CLI is unavailable, WebFetch the corresponding raw Markdown URL. Then use the local reference and offline fallbacks. For *this project's* specifics the live source always wins.
 
 ### Where each topic lives (references + doc_id map)
 
@@ -122,7 +131,7 @@ Tailor advice to what you found: don't suggest `slice.context.watch` if `context
 | Events, Context, routing, guards, Route/MultiRoute, architecture patterns | `references/state-and-routing.md` | `event-manager`, `event-registry`, `context-manager`, `getting-started/routing`, `getting-started/routing-guards`, `project-architecture/*` |
 | `sliceConfig.json`, theming, CLI, external libs, env vars | `references/config-theming-cli.md` | `slice-config`, `themes`, `cli-commands`, `external-dependencies`, `getting-started/environment-variables` |
 | Best practices, anti-patterns, Logger, Debugger, debug panels, leak inspector, troubleshooting | `references/gotchas-and-diagnostics.md` | `logger`, `getting-started/devtools`, `getting-started/leak-inspector` |
-| Which official Visual/Service components exist | `references/visual-catalog.md` | `getting-started/visual-components` |
+| Which official Visual/Service components exist | `references/visual-catalog.md` | `slice_components_search_docs` / `slice_components_get_doc` |
 | The MCP itself (tools, usage) | — | `slicejs-mcp` |
 
 When a reference contradicts your prior knowledge of "how component frameworks work", **trust the reference** — it's verified against the source. When the user says "but framework X does it like this", clarify Slice has its own conventions.
@@ -131,7 +140,7 @@ When a reference contradicts your prior knowledge of "how component frameworks w
 
 ## Workflows
 
-**Orient first (MCP available):** before any workflow below, run the **Orientation protocol** above — `list_docs()` + read `sliceConfig.json` / `components.js` / `routes.js` / the framework version — so every choice fits the actual project (enabled managers, existing components, routing style).
+**Orient first (MCP available):** before any workflow below, run the **Orientation protocol** above — list the relevant catalog and read `sliceConfig.json` / `components.js` / `routes.js` / the framework version — so every choice fits the actual project (enabled managers, existing components, routing style).
 
 **Component creation:** (1) decide category; (2) check `references/visual-catalog.md` — reuse if it exists; (3) read `references/core-model.md` (+ `state-and-routing.md` if it needs events/routing/context, `config-theming-cli.md` if it needs an external lib); (4) scaffold the files non-interactively — `slice component create <Name> --category <Visual|Service|AppComponents>` (this also registers it in `components.js`); fill the logic using `assets/` as the content reference (don't write boilerplate from memory); (5) if you created files by hand instead, register them with `slice component list` (or edit `components.js` within one conversation); (6) walk the lifecycle/construction-order checklist in `core-model.md`.
 

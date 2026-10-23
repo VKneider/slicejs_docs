@@ -59,6 +59,7 @@ SLICE_NO_LOCAL_DELEGATION=1 slice version
 | `slice get` | `slice registry get` | Install components from registry. |
 | `slice browse` | `slice registry list` | List official registry components. |
 | `slice sync` | `slice registry sync` | Sync local Visual components from registry. |
+| `slice docs` | - | Search and retrieve framework or Slice.js Components Markdown. |
 | `slice list` | - | Shortcut for `slice component list`. |
 | `slice version` | `slice v` | Show CLI version. |
 | `slice doctor` | `slice diagnose` | Run project diagnostics. |
@@ -128,6 +129,34 @@ pnpm exec slice get Button
 ```
 
 If the CLI is installed globally, you can run `slice ...` directly from PATH.
+
+## docs
+
+`slice docs` provides a read-only documentation interface for both documentation catalogs:
+
+- `framework` — framework, CLI, lifecycle, routing, and architecture documentation from `slicejs_docs`.
+- `components` — Visual and Service APIs and examples from Slice.js Components.
+
+```bash title="Search either catalog"
+slice docs search "service lifecycle" --source framework
+slice docs search "modal confirmation" --source components
+slice docs search "pagination" --source all
+```
+
+```bash title="Retrieve authored Markdown"
+slice docs get getting-started/services --source framework --stdout
+slice docs get Button --source components --stdout
+```
+
+Use `--json` for scripts and agents:
+
+```bash
+slice --no-version-check docs search "table pagination" --source components --json
+slice --no-version-check docs get Button --source components --json
+```
+
+`slice docs get` reads documentation only. It does not install component source files; use
+`slice get <Name>` when the component itself should be added to the project.
 
 ### pnpm build-approval note
 With pnpm v10+, lifecycle scripts are gated by `allowBuilds` in `pnpm-workspace.yaml`.

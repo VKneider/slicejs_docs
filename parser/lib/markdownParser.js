@@ -1,5 +1,7 @@
 import fs from 'fs';
 
+import { buildStaticPropsSectionForFrontMatter } from './staticPropsDocs.js';
+
 const FRONT_MATTER_REGEX = /^---\r?\n([\s\S]*?)\r?\n---\r?\n/;
 
 const parseFrontMatter = (content) => {
@@ -122,9 +124,21 @@ const parseBlocks = (body) => {
       continue;
     }
 
-    if (line.includes('|') && i + 1 < lines.length && /^\s*\|?\s*-/.test(lines[i + 1])) {
+   // A table row must START with "|". Matching includes("|") instead turned
+   // any list item containing a union into a table, because the NEXT list
+   // item starts with "-" and so matched the delimiter-row test. An API
+   // list like
+   //
+   //     - `variant` (`neutral` | `accent` | `success`, default `neutral`)
+   //     - `label` (string) -- the text
+   //
+   // became a one-row table, and every item after it vanished behind a
+   // "No data". Every real table row in src/markdown starts with "|"
+   // (173 of 173), so requiring it costs nothing and fixes all four of the
+   // affected pages at once.
+    if (/^\s*\|/.test(line) && i + 1 < lines.length && /^\s*\|?\s*-/.test(lines[i + 1])) {
       const tableLines = [];
-      while (i < lines.length && lines[i].includes('|')) {
+      while (i < lines.length && /^\s*\|/.test(lines[i])) {
         tableLines.push(lines[i]);
         i++;
       }
@@ -140,23 +154,10 @@ const parseBlocks = (body) => {
       continue;
     }
 
-    if (line.startsWith('- ') || line.startsWith('* ')) {
-      const items = [];
-      while (i < lines.length && (lines[i].startsWith('- ') || lines[i].startsWith('* '))) {
-        items.push(lines[i].slice(2).trim());
-        i++;
-      }
-      blocks.push({ type: 'ul', items });
-      continue;
-    }
-
-    if (/^\d+\.\s/.test(line)) {
-      const items = [];
-      while (i < lines.length && /^\d+\.\s/.test(lines[i])) {
-        items.push(lines[i].replace(/^\d+\.\s/, '').trim());
-        i++;
-      }
-      blocks.push({ type: 'ol', items });
+    if (line.startsWith('- ') || line.startsWith('* ') || /^\d+\.\s/.test(line)) {
+      const { block, next } = parseList(lines, i);
+      blocks.push(block);
+      i = next;
       continue;
     }
 
@@ -183,6 +184,56 @@ const parseBlocks = (body) => {
   }
 
   return blocks;
+};
+
+// A list, with nested lists by indentation:
+//
+//     - `variant`:
+//       - `'filled'` (default)
+//       - `'surface'`
+//     - `size`
+//
+// Each item is { text, children }, where children are the nested lists under
+// it. A deeper-indented line opens a list under the item above it; a
+// shallower one closes it. Bullets and numbers can nest in each other. Without
+// this, an indented "  - " line ended the list and printed as a paragraph of
+// dashes.
+const LIST_ITEM = /^(\s*)([-*]|\d+\.)\s+(.*)$/;
+
+const parseList = (lines, start) => {
+  const first = lines[start].match(LIST_ITEM);
+  const indent = first[1].length;
+  const ordered = /\d/.test(first[2]);
+  const items = [];
+  let i = start;
+  while (i < lines.length) {
+    const match = lines[i].match(LIST_ITEM);
+    if (!match) break;
+    const depth = match[1].length;
+    if (depth < indent) break;
+    if (depth > indent) {
+      const { block, next } = parseList(lines, i);
+      if (!items.length) items.push({ text: '', children: [] });
+      items[items.length - 1].children.push(block);
+      i = next;
+      continue;
+    }
+    if (/\d/.test(match[2]) !== ordered) break;
+    items.push({ text: match[3].trim(), children: [] });
+    i++;
+  }
+  return { block: { type: ordered ? 'ol' : 'ul', items }, next: i };
+};
+
+const renderList = (block) => {
+  const tag = block.type === 'ol' ? 'ol' : 'ul';
+  const items = block.items.map((item) => {
+    // Older callers may still hand in plain strings.
+    if (typeof item === 'string') return `<li>${inlineMarkdown(item)}</li>`;
+    const nested = (item.children || []).map(renderList).join('');
+    return `<li>${inlineMarkdown(item.text)}${nested}</li>`;
+  }).join('');
+  return `<${tag}>${items}</${tag}>`;
 };
 
 const renderBlocks = (blocks) => {
@@ -226,14 +277,12 @@ const renderBlocks = (blocks) => {
     }
 
     if (block.type === 'ul') {
-      const items = block.items.map((item) => `<li>${inlineMarkdown(item)}</li>`).join('');
-      htmlParts.push(`<ul>${items}</ul>`);
+      htmlParts.push(renderList(block));
       continue;
     }
 
     if (block.type === 'ol') {
-      const items = block.items.map((item) => `<li>${inlineMarkdown(item)}</li>`).join('');
-      htmlParts.push(`<ol>${items}</ol>`);
+      htmlParts.push(renderList(block));
       continue;
     }
 
@@ -289,8 +338,12 @@ const renderBlocks = (blocks) => {
       }
 
       if (name === 'script') {
+        const id = nextId();
+        htmlParts.push(`<div class="script-block" data-block-id="${id}"></div>`);
         jsBlocks.push({
           type: 'script',
+          id,
+          attrs: block.attrs,
           content: block.content
         });
         continue;
@@ -306,10 +359,25 @@ const renderBlocks = (blocks) => {
   return { html: htmlParts.join('\n'), jsBlocks };
 };
 
-const parseMarkdownFile = (filePath) => {
-  const content = fs.readFileSync(filePath, 'utf8');
+const parseMarkdownFile = (filePath, options = {}) => {
+  const projectRoot = options.projectRoot;
+  // Strip a UTF-8 BOM: Windows editors can save one, and it sits before the
+  // opening `---`, so the front matter would not be found at all.
+  const content = fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, '');
   const { data, body } = parseFrontMatter(content);
-  const blocks = parseBlocks(body);
+
+  let enrichedBody = body;
+  if (data && projectRoot) {
+    const staticPropsSection = buildStaticPropsSectionForFrontMatter({
+      projectRoot,
+      frontMatter: data
+    });
+    if (staticPropsSection) {
+      enrichedBody = `${body.trimEnd()}\n\n${staticPropsSection}\n`;
+    }
+  }
+
+  const blocks = parseBlocks(enrichedBody);
   const { html, jsBlocks } = renderBlocks(blocks);
   if (data) {
     data.markdownSource = content;
