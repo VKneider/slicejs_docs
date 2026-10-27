@@ -26,10 +26,13 @@
 <p>Set <code>SOURCE_DATE_EPOCH</code> (integer seconds since the Unix epoch) so the timestamps embedded in the bundle metadata/config are deterministic and a clean rebuild is byte-identical:</p>
 <div class="code-block" data-block-id="doc-block-7"></div>
 <p>Unset, the current time is used.</p>
-<h3 id="prop-validation-on-build">Prop validation on build</h3>
-<p>Before building, Slice validates every component's static props — the same checks as <code>slice doctor</code>. <strong>Definition errors block the build</strong> with a message pointing at the offending <code>Component.prop</code>:</p>
-<ul><li>an unknown <code>type</code>,</li><li>a <code>schema</code> on a non-<code>object</code> prop,</li><li>an <code>items</code> on a non-<code>array</code> prop,</li><li><code>allowedValues</code> whose entries don't match the declared <code>type</code>.</li></ul>
-<p>Style issues (a <code>type: "any"</code>, or a <code>required</code> prop without a default) are printed as warnings but don't block. Bypass the whole check with <code>--no-validate</code> (not recommended). See [Static Props](/Documentation/Static-Props) for the prop schema.</p>
+<h3 id="validation-on-build">Validation on build</h3>
+<p>Before bundling, <code>slice build</code> runs one validation pass over the project and <strong>blocks</strong> on anything that would ship a broken bundle:</p>
+<ul><li><code>sliceConfig</code> combinations that build but misbehave (for example <code>context.enabled</code> with <code>events.enabled</code> off: ContextManager reactivity runs through EventManager, which is not bundled).</li><li>Component files that cannot be bundled: a syntax error, no <code>default export</code> while registered as a component, or an unresolved relative import.</li><li>Static props with an unknown <code>type</code>, a <code>schema</code> on a non-<code>object</code> prop, an <code>items</code> on a non-<code>array</code> prop, or <code>allowedValues</code> that don't match the declared <code>type</code>.</li></ul>
+<p>Advisories are printed but do not block: a <code>type: "any"</code>, a <code>required</code> prop without a default, a <code>slice.build()</code> of a name that is not registered, or a component folder without its <code>&lt;Name&gt;.js</code>.</p>
+<p><code>slice doctor</code> reports the exact same classification in its <strong>Configuration</strong> and <strong>Components</strong> rows, because both commands use the same validator and the same helper to decide what is blocking. Skip the component pass with <code>--no-validate</code> (not recommended); the <code>sliceConfig</code> rules always run. See [Static Props](/Documentation/Static-Props) for the prop schema.</p>
+<h3 id="exit-codes">Exit codes</h3>
+<p><code>slice build</code> exits 1 on a blocked build. <code>slice doctor</code> exits 1 when any row is a failure (it exits 0 when there are only warnings), so it can be used as a pre-deploy check: <code>slice doctor &amp;&amp; slice build</code>.</p>
 <h2 id="recommended-package-scripts">Recommended package scripts</h2>
 <p>Use these scripts inside initialized projects:</p>
 <div class="code-block" data-block-id="doc-block-8"></div>
@@ -124,7 +127,8 @@ These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</co
 <h3 id="options-6">Options</h3>
 <div class="table-block" data-block-id="doc-block-37"></div>
 <h2 id="doctor">doctor</h2>
-<p>Runs project diagnostics (structure, config, dependencies, components, port availability).</p>
+<p>Runs project diagnostics (structure, config, SEO, dependencies, components, external imports, port availability) and exits 1 when any row is a failure, so it works as a gate. Rows marked as warnings are advisory and exit 0.</p>
+<p>The <strong>Configuration</strong> and <strong>Components</strong> rows use the same rules as <code>slice build</code>: if the build would be blocked, doctor fails too, with the same message.</p>
 <div class="code-block" data-block-id="doc-block-38"></div>
 <h2 id="seo">seo</h2>
 <h3 id="seo-sitemap">seo sitemap</h3>

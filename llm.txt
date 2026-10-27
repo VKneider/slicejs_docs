@@ -172,15 +172,19 @@ SOURCE_DATE_EPOCH=$(git log -1 --format=%ct) slice build
 
 Unset, the current time is used.
 
-### Prop validation on build
-Before building, Slice validates every component's static props — the same checks as `slice doctor`. **Definition errors block the build** with a message pointing at the offending `Component.prop`:
+### Validation on build
+Before bundling, `slice build` runs one validation pass over the project and **blocks** on anything that would ship a broken bundle:
 
-- an unknown `type`,
-- a `schema` on a non-`object` prop,
-- an `items` on a non-`array` prop,
-- `allowedValues` whose entries don't match the declared `type`.
+- `sliceConfig` combinations that build but misbehave (for example `context.enabled` with `events.enabled` off: ContextManager reactivity runs through EventManager, which is not bundled).
+- Component files that cannot be bundled: a syntax error, no `default export` while registered as a component, or an unresolved relative import.
+- Static props with an unknown `type`, a `schema` on a non-`object` prop, an `items` on a non-`array` prop, or `allowedValues` that don't match the declared `type`.
 
-Style issues (a `type: "any"`, or a `required` prop without a default) are printed as warnings but don't block. Bypass the whole check with `--no-validate` (not recommended). See [Static Props](/Documentation/Static-Props) for the prop schema.
+Advisories are printed but do not block: a `type: "any"`, a `required` prop without a default, a `slice.build()` of a name that is not registered, or a component folder without its `<Name>.js`.
+
+`slice doctor` reports the exact same classification in its **Configuration** and **Components** rows, because both commands use the same validator and the same helper to decide what is blocking. Skip the component pass with `--no-validate` (not recommended); the `sliceConfig` rules always run. See [Static Props](/Documentation/Static-Props) for the prop schema.
+
+### Exit codes
+`slice build` exits 1 on a blocked build. `slice doctor` exits 1 when any row is a failure (it exits 0 when there are only warnings), so it can be used as a pre-deploy check: `slice doctor && slice build`.
 
 ## Recommended package scripts
 
@@ -455,7 +459,12 @@ npm run sync
 | `-f, --force` | `boolean` | `false` | Skip confirmation and force update. |
 
 ## doctor
-Runs project diagnostics (structure, config, dependencies, components, port availability).
+Runs project diagnostics (structure, config, SEO, dependencies, components, external imports, port
+availability) and exits 1 when any row is a failure, so it works as a gate. Rows marked as warnings are
+advisory and exit 0.
+
+The **Configuration** and **Components** rows use the same rules as `slice build`: if the build would
+be blocked, doctor fails too, with the same message.
 
 ```bash title="Run diagnostics"
 npm run slice:doctor

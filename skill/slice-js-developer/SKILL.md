@@ -173,6 +173,9 @@ Rules that bite:
 - **`slice doctor` has an SEO row** (`checkSeoConfiguration`): not configured is a warning because
   SEO is opt-in, malformed input fails, and the verdicts come from the same validator as
   `slice seo check`, so the two cannot disagree.
+- **Build and doctor share one validation pass.** `slice doctor`'s Configuration and Components rows
+  classify with the same helper as `slice build` (config rules, source errors and prop errors block
+  both), and doctor exits 1 when a row fails — so `slice doctor && slice build` is a real gate.
 - **Router titles come from the `metadata` field on `routes.js`**, on by default. It writes only what
   the route declares, never `canonical`/`robots` (crawlers do not run JavaScript), a `router:change`
   listener still wins, and a disagreement between `routes.js` and `seo.json` is a `slice doctor` /

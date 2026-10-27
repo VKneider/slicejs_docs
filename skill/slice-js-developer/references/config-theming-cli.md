@@ -129,7 +129,20 @@ Absolute imports are kept only when the file exists under `src/public/`; otherwi
 
 ## Build validation
 
-`slice build` validates every component's `static props` (the same checks as `slice doctor`) **before** building and **blocks** on definition errors — unknown `type`, `schema` on a non-`object` prop, `items` on a non-`array` prop, or `allowedValues` that don't match the `type`. Style issues (`type: "any"`, a `required` prop without a default) warn but don't block. Bypass with `slice build --no-validate` (not recommended).
+`slice build` runs **one validation pass** before bundling, and `slice doctor` reports the same pass
+(same validator, same classifier, so they cannot disagree):
+
+- **Blocks** `sliceConfig` combinations that build but misbehave (`context.enabled` with
+  `events.enabled: false` — ContextManager reactivity needs EventManager), component files that cannot
+  be bundled (syntax error, no default export while registered, unresolved relative import), and prop
+  definition errors (unknown `type`, `schema` on a non-`object` prop, `items` on a non-`array` prop,
+  `allowedValues` that don't match the `type`).
+- **Warns only:** `type: "any"`, a `required` prop without a default, a `slice.build('X')` of an
+  unregistered name, a component folder without `<Name>.js`.
+
+`slice doctor` exits 1 when any row fails (0 with only warnings), so `slice doctor && slice build` is a
+usable pre-deploy gate. `slice build --no-validate` skips the component pass; the `sliceConfig` rules
+always run.
 
 ## Reproducible builds
 

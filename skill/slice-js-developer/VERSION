@@ -1,9 +1,18 @@
 slice-js-developer
-version: 1.14.0
+version: 1.15.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.15.0
+  Build and doctor run the same validation pass.
+  - The Configuration and Components rows classify with the same helper as `slice build`:
+    config rules, unparseable/unloadable component files and prop definition errors block both.
+    Advisories (`type: "any"`, unknown `slice.build()` name, a folder without its .js) only warn.
+  - `slice doctor` exits 1 when a row fails, so `slice doctor && slice build` gates a deploy.
+  - The two component rows are now one; the folder-without-.js rule moved into the shared validator.
+  Files touched: SKILL.md, VERSION, references/config-theming-cli.md, ../manifest.json.
 
 1.14.0
   SEO commands: slice seo images + the doctor row.
