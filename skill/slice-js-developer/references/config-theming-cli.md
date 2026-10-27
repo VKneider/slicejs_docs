@@ -144,9 +144,14 @@ Absolute imports are kept only when the file exists under `src/public/`; otherwi
 - **Warns only:** `type: "any"`, a `required` prop without a default, a `slice.build('X')` of an
   unregistered name, a component folder without `<Name>.js`, a route whose `component` is not
   registered (it throws only when that route is visited), a route written `:id` instead of `${id}`
-  (never matches), a declared framework range that rejects the installed version, and prop metadata
-  written as an expression (`type: TYPE`, `allowedValues: SIZES`, `schema: SHARED`): `slice types
-  generate` reads the AST, so the prop degrades to `any`.
+  (never matches), a declared framework range that rejects the installed version, prop metadata
+  written as an expression (`type: TYPE`, `allowedValues: SIZES`, `schema: SHARED`): the type
+  generator reads the AST, so the prop degrades to `any`; an `async beforeDestroy` (the framework
+  does not await it), a `destroy()`/`dispose()`/`teardown()` the controller never calls, and a
+  `window`/`document` listener with no `removeEventListener` in the same file.
+- **Doctor only:** component CSS selectors not scoped under the component tag. The CSS is global, so
+  a bare selector leaks; `:host` and tag-scoped selectors pass, and `/* slice:unscoped */` opts a
+  portaled widget out. Kept out of the build because it never blocks and can be dozens of files.
 
 `slice doctor` exits 1 when any row fails (0 with only warnings), so `slice doctor && slice build` is a
 usable pre-deploy gate. `slice build --no-validate` skips the component pass; the `sliceConfig` and

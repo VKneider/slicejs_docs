@@ -34,6 +34,16 @@ whatever the component registers with `customElements.define('slice-...')`.
 slice-my-card .card-title { font-size: 1.25rem; }
 ```
 
+
+`slice doctor` reports every component whose `.css` has top-level selectors that are not scoped
+under its tag. It is an advisory, never a build error. When a widget deliberately portals its nodes
+to `<body>` (a toast container, a tooltip bubble), opt the file out explicitly:
+
+```css title="Toast.css"
+/* slice:unscoped - this widget appends its nodes to <body> */
+.toast-container { position: fixed; }
+```
+
 Generic names (`.container`, `.item`, `.title`, `.header`) are the ones that bite — two
 components each defining a bare `.title` will silently overwrite each other. Prefixing
 with the tag makes collisions impossible.

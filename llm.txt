@@ -1764,6 +1764,12 @@ cleanup: timers, listeners, subscriptions, and pending async work.
 
 The controller does not await this method, so keep it synchronous or fire-and-forget.
 
+Two shapes look like cleanup but never run, and `slice doctor` reports both: a method named
+`destroy()`, `dispose()` or `teardown()` (the controller only calls `beforeDestroy()`), and a
+`window`/`document` listener added without a matching `removeEventListener` in the same file unless it
+uses `{ once: true }` or `{ signal }`.
+
+
 ## API
 | Method | Signature | Returns | Notes |
 | --- | --- | --- | --- |
@@ -4330,6 +4336,16 @@ whatever the component registers with `customElements.define('slice-...')`.
 
 /* ✅ encapsulated: only inside <slice-my-card> */
 slice-my-card .card-title { font-size: 1.25rem; }
+```
+
+
+`slice doctor` reports every component whose `.css` has top-level selectors that are not scoped
+under its tag. It is an advisory, never a build error. When a widget deliberately portals its nodes
+to `<body>` (a toast container, a tooltip bubble), opt the file out explicitly:
+
+```css title="Toast.css"
+/* slice:unscoped - this widget appends its nodes to <body> */
+.toast-container { position: fixed; }
 ```
 
 Generic names (`.container`, `.item`, `.title`, `.header`) are the ones that bite — two

@@ -203,6 +203,8 @@ build compiles, bundles and emits `dist/`.
 | Declared `slicejs-web-framework` range rejects the installed version (or the CLI requires another) | warns | — |
 | Route `component` not in `components.js` | warns | warns |
 | Route written `:id` instead of `${id}` (never matches) | warns | warns |
+| Component CSS selectors not scoped under the component tag (CSS is global; `/* slice:unscoped */` opts out) | warns | — |
+| `destroy()`/`dispose()`/`teardown()` never called, global listener without `removeEventListener`, `async beforeDestroy` | warns | warns |
 | `type: "any"`, `required` without default, `slice.build()` of an unregistered name, folder without `<Name>.js` | warns | warns |
 | Prop metadata written as an expression (`type: TYPE_STRING`, `allowedValues: SIZES`, `static props = SHARED`): `types generate` falls back to `any` | warns | warns |
 | Installed npm packages, structure, port, lockfiles, SEO, package manager | reports | — |

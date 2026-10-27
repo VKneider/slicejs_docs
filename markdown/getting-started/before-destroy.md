@@ -18,6 +18,12 @@ cleanup: timers, listeners, subscriptions, and pending async work.
 
 The controller does not await this method, so keep it synchronous or fire-and-forget.
 
+Two shapes look like cleanup but never run, and `slice doctor` reports both: a method named
+`destroy()`, `dispose()` or `teardown()` (the controller only calls `beforeDestroy()`), and a
+`window`/`document` listener added without a matching `removeEventListener` in the same file unless it
+uses `{ once: true }` or `{ signal }`.
+
+
 ## API
 | Method | Signature | Returns | Notes |
 | --- | --- | --- | --- |

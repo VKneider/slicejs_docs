@@ -9,6 +9,7 @@
 <h2 id="overview">Overview</h2>
 <p><code>beforeDestroy()</code> runs right before a component is destroyed by the controller. Use it for cleanup: timers, listeners, subscriptions, and pending async work.</p>
 <p>The controller does not await this method, so keep it synchronous or fire-and-forget.</p>
+<p>Two shapes look like cleanup but never run, and <code>slice doctor</code> reports both: a method named <code>destroy()</code>, <code>dispose()</code> or <code>teardown()</code> (the controller only calls <code>beforeDestroy()</code>), and a <code>window</code>/<code>document</code> listener added without a matching <code>removeEventListener</code> in the same file unless it uses <code>{ once: true }</code> or <code>{ signal }</code>.</p>
 <h2 id="api">API</h2>
 <div class="table-block" data-block-id="doc-block-1"></div>
 <h2 id="ideal-use-cases">Ideal Use Cases</h2>

@@ -1,9 +1,18 @@
 slice-js-developer
-version: 1.21.0
+version: 1.22.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.22.0
+  CSS scope and three lifecycle advisories.
+  - Doctor reports component CSS selectors not scoped under the component tag (CSS is global;
+    `:host` passes, `/* slice:unscoped */` opts out). Doctor-only: it never blocks a build.
+  - Doctor and build warn on `destroy()`/`dispose()`/`teardown()` (the controller only calls
+    `beforeDestroy()`), a `window`/`document` listener without `removeEventListener`, and an
+    `async beforeDestroy` (the framework does not await it).
+  Files touched: SKILL.md, VERSION, references/config-theming-cli.md, ../manifest.json.
 
 1.21.0
   Prop metadata must be literal, or the generated types silently become any.
