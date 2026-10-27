@@ -163,5 +163,6 @@ manifest's (including the `| Acme` suffix), or let the manifest own the title an
 
 - **The page body is still rendered in the browser.** A crawler that does not execute JavaScript sees
   the correct head and an empty `#app`. Pre-rendering the article content is a separate problem.
-- **Generating the social image** is not part of the runtime. The manifest accepts `image`; producing
-  the file (a screenshot, a designed card, a designer's export) is your build step.
+- **Generating the social image** is not part of the runtime. The manifest accepts `image`, and
+  `slice seo images` produces the files from the real pages (it writes `public/og/manifest.json`,
+  which you pass as `seo.images`). See [CLI commands](/Documentation/CLI#seo-images).

@@ -480,6 +480,32 @@ An existing file that would change asks first (default answer: no). A non-intera
 with a message naming `--yes` instead of waiting for input, and a file whose content is unchanged is
 never rewritten.
 
+### seo images
+Renders the 1200×630 card each indexable route advertises, from the real page. It boots the app's
+`api/index.js` in development on a free port unless you pass `--base-url`.
+
+```bash title="Generate the cards"
+npm exec slice seo images
+npm exec slice seo images --only=/pricing
+npm exec slice seo images --check
+```
+
+| Option | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `--only <routes>` | `string` | every indexable route | Comma-separated paths. |
+| `--base-url <url>` | `string` | boots the app | Use a running server instead. |
+| `--selector <css>` | `string` | the viewport | The element to capture (a component demo, a card…). |
+| `--out <dir>` | `string` | `src/public/og` | Where the images and the manifest go. |
+| `--check` | `boolean` | `false` | Validate dimensions and weight, no browser. |
+| `--dry-run` | `boolean` | `false` | Capture and compose, write nothing. |
+| `--runner <file>` | `string` | — | Module exporting `prepare(page, route)` / `capture`, for pages behind auth. |
+| `--storage-state <file>` | `string` | — | Playwright storage state for a logged-in capture. |
+
+It needs Playwright in the project (`npm i -D playwright && npx playwright install chromium`). The
+command writes `<outDir>/manifest.json`, which you pass as `seo.images` so the server merges the cards;
+`seo.json` itself is never edited (it is generated). Defaults for the card — `theme`, `selector`,
+`template`, `outDir`, `budgetKB` — live in the `images` block of `seo.json`.
+
 ### seo check
 Validates `seo.json`, cross-checks it against `routes.js`, and compares the committed sitemap with
 what the manifest would produce. Exits non-zero on any problem, so it belongs in CI.
@@ -4639,8 +4665,9 @@ manifest's (including the `| Acme` suffix), or let the manifest own the title an
 
 - **The page body is still rendered in the browser.** A crawler that does not execute JavaScript sees
   the correct head and an empty `#app`. Pre-rendering the article content is a separate problem.
-- **Generating the social image** is not part of the runtime. The manifest accepts `image`; producing
-  the file (a screenshot, a designed card, a designer's export) is your build step.
+- **Generating the social image** is not part of the runtime. The manifest accepts `image`, and
+  `slice seo images` produces the files from the real pages (it writes `public/og/manifest.json`,
+  which you pass as `seo.images`). See [CLI commands](/Documentation/CLI#seo-images).
 
 === markdown/project-architecture/server-entrypoint.md ===
 # Server Entrypoint

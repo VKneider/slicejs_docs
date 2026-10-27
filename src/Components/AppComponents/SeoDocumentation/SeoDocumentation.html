@@ -43,6 +43,6 @@ manifest's (including the <code>| Acme</code> suffix), or let the manifest own t
 <h2 id="what-this-does-not-solve">What this does not solve</h2>
 <ul><li><strong>The page body is still rendered in the browser.</strong> A crawler that does not execute JavaScript sees</li></ul>
 <p>the correct head and an empty <code>#app</code>. Pre-rendering the article content is a separate problem.</p>
-<ul><li><strong>Generating the social image</strong> is not part of the runtime. The manifest accepts <code>image</code>; producing</li></ul>
-<p>the file (a screenshot, a designed card, a designer's export) is your build step.</p>
+<ul><li><strong>Generating the social image</strong> is not part of the runtime. The manifest accepts <code>image</code>, and</li></ul>
+<p><code>slice seo images</code> produces the files from the real pages (it writes <code>public/og/manifest.json</code>,   which you pass as <code>seo.images</code>). See [CLI commands](/Documentation/CLI#seo-images).</p>
 </div>
