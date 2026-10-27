@@ -177,11 +177,14 @@ Before bundling, `slice build` runs one validation pass over the project and **b
 
 - `sliceConfig` combinations that build but misbehave (for example `context.enabled` with `events.enabled` off: ContextManager reactivity runs through EventManager, which is not bundled).
 - Component files that cannot be bundled: a syntax error, no `default export` while registered as a component, or an unresolved relative import.
+- `src/routes.js` with a syntax error or an unresolved relative import. That file is served as-is and loaded by the browser (it is not bundled), so a broken import stops the router from loading even though the bundle builds.
 - Static props with an unknown `type`, a `schema` on a non-`object` prop, an `items` on a non-`array` prop, or `allowedValues` that don't match the declared `type`.
 
-Advisories are printed but do not block: a `type: "any"`, a `required` prop without a default, a `slice.build()` of a name that is not registered, or a component folder without its `<Name>.js`.
+Advisories are printed but do not block: a `type: "any"`, a `required` prop without a default, a `slice.build()` of a name that is not registered, a component folder without its `<Name>.js`, or a route whose `component` is not in `components.js` (it throws only when that route is visited).
 
-`slice doctor` reports the exact same classification in its **Configuration** and **Components** rows, because both commands use the same validator and the same helper to decide what is blocking. Skip the component pass with `--no-validate` (not recommended); the `sliceConfig` rules always run. See [Static Props](/Documentation/Static-Props) for the prop schema.
+`slice doctor` reports the exact same classification in its **Configuration** and **Components & Routes** rows, because both commands run the same pass and the same helper decides what is blocking. Skip the component checks with `--no-validate` (not recommended); the `sliceConfig` and `routes.js` rules always run. See [Static Props](/Documentation/Static-Props) for the prop schema.
+
+Doctor does not compile and does not boot the app: it cannot prove that esbuild resolves the whole graph, that `dist/` is complete, or that the server starts. Use it as a fast first gate, then `slice build`, then run the app.
 
 ### Exit codes
 `slice build` exits 1 on a blocked build. `slice doctor` exits 1 when any row is a failure (it exits 0 when there are only warnings), so it can be used as a pre-deploy check: `slice doctor && slice build`.
