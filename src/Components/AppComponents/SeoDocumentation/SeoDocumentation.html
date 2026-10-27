@@ -8,7 +8,7 @@
 </div>
 <p>A Slice app is a SPA: the browser gets one <code>App/index.html</code> and the router swaps the view. Left alone that means one <code>&lt;title&gt;</code> for every route, no canonical, a <code>200</code> for URLs that do not exist, and a link preview that looks the same everywhere. The framework fixes the mechanics; you provide the content.</p>
 <h2 id="the-manifest-seojson">The manifest: <code>seo.json</code></h2>
-<p>One file at the project root, with one entry per page:</p>
+<p>One file, with one entry per page. It can live at the project root (hand-written) or inside <code>public/</code> — <code>src/public/seo.json</code>, which is what a generated pipeline writes. The server and the <code>slice seo</code> commands check the root first, then <code>public/</code>:</p>
 <div class="code-block" data-block-id="doc-block-1"></div>
 <p><code>defaults</code> are inherited by every route, so a title suffix or a site-wide card is written once.</p>
 <div class="table-block" data-block-id="doc-block-2"></div>

@@ -4494,7 +4494,9 @@ preview that looks the same everywhere. The framework fixes the mechanics; you p
 
 ## The manifest: `seo.json`
 
-One file at the project root, with one entry per page:
+One file, with one entry per page. It can live at the project root (hand-written) or inside
+`public/` — `src/public/seo.json`, which is what a generated pipeline writes. The server and the
+`slice seo` commands check the root first, then `public/`:
 
 ```json
 {
