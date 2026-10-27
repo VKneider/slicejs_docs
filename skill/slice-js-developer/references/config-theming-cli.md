@@ -151,6 +151,27 @@ usable pre-deploy gate. `slice build --no-validate` skips the component pass; th
 `routes.js` rules always run. Neither command executes `api/index.js` or proves framework behavior —
 that needs a boot of a real app.
 
+## Linting
+
+`slice lint` runs the project's ESLint. The shared flat config ships with the CLI:
+
+```js
+// eslint.config.js (app)
+import slice from 'slicejs-cli/eslint-config.js';
+export default [...slice, { languageOptions: { globals: { ToastProvider: 'writable' } } }];
+```
+
+```js
+// eslint.config.js (tooling that runs in Node)
+import { nodeConfig } from 'slicejs-cli/eslint-config.js';
+export default nodeConfig;
+```
+
+It brings the browser environment plus `slice`/`Slice` globals, `js.configs.recommended`, a set of
+advisory rules, generated-output ignores, and a Node/browser override for specs. Rules that decide
+whether a project ships are **not** in lint: they are `slice build`/`slice doctor` and live in exactly
+one place.
+
 ## Reproducible builds
 
 Set the `SOURCE_DATE_EPOCH` env var (integer seconds since the Unix epoch — the reproducible-builds convention) so the timestamps embedded in the bundle metadata/config are deterministic and a clean rebuild is byte-identical: `SOURCE_DATE_EPOCH=$(git log -1 --format=%ct) slice build`. Unset, the current time is used.
@@ -178,7 +199,8 @@ Node ≥ 20. Use `npx slicejs-cli <cmd>` or the `npm run` scripts `slice init` s
 | `slice browse` | List registry components (Visual/Service) |
 | `slice sync` | Update local Visual components from registry (`-f`). Services NOT updated — use `slice get <Name> --service --force` |
 | `slice skill add` | Install the Slice.js Claude Code skill into `.claude/skills/` (also `update` / `status`) |
-| `slice doctor` (`diagnose`) | Project diagnostics (structure, config, SEO, deps, components + `static props`, missing npm imports, port) |
+| `slice doctor` (`diagnose`) | Project diagnostics (structure, config + schema, SEO, deps + version skew, components/routes/server entry, missing npm imports, port) |
+| `slice lint` | Runs the project's ESLint; the shared config is `slicejs-cli/eslint-config.js` |
 | `slice seo sitemap` / `seo check` | Write / validate the committed `public/sitemap.xml` from `seo.json` |
 | `slice seo images` (`og`) | Render each route's 1200×630 social card into `public/og/` + its `manifest.json` (needs Playwright) |
 | `slice version` / `slice update` | Versions / update CLI+framework |

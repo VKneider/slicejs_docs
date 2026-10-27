@@ -197,7 +197,7 @@ build compiles, bundles and emits `dist/`.
 | `sliceConfig` against the published JSON Schema (types, required) | blocks | — |
 | Component file: syntax error, missing `default export`, unresolved relative import, registered name with no file | blocks | blocks |
 | Component registered under a category with no `paths.components` entry, or in a missing category folder | blocks | blocks |
-| Component prop definitions (`type`, `schema`, `items`, `allowedValues`) | blocks | blocks |
+| Component prop definitions (`type`, `schema`, `items`, `allowedValues`), including `id`/`sliceId`/`singleton` declared as a prop | blocks | blocks |
 | `api/index.js` syntax | blocks | blocks |
 | `src/routes.js`: syntax error, unresolved relative import | blocks | blocks |
 | Declared `slicejs-web-framework` range rejects the installed version (or the CLI requires another) | warns | — |

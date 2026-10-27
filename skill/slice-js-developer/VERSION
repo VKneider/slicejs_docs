@@ -1,9 +1,17 @@
 slice-js-developer
-version: 1.18.0
+version: 1.19.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.19.0
+  Linting ships with the CLI; reserved build directives block the build.
+  - `slice lint` runs the project ESLint. The shared flat config is `slicejs-cli/eslint-config.js`
+    (default = app/browser, `nodeConfig` = tooling); it does not duplicate build/doctor rules.
+  - Build and doctor block `id`/`sliceId`/`singleton` declared in `static props`: the runtime
+    strips them, so the prop is a silent no-op.
+  Files touched: SKILL.md, VERSION, references/config-theming-cli.md, ../manifest.json.
 
 1.18.0
   The static checks grew to cover the deploy surface.
