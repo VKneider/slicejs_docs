@@ -28,7 +28,6 @@ const components = {
   "InputDocumentation": "AppComponents",
   "InputSearchDocs": "AppComponents",
   "Installation": "AppComponents",
-  "InstallationBackup": "AppComponents",
   "LandingMenu": "AppComponents",
   "LandingPage": "AppComponents",
   "LayoutDocumentation": "AppComponents",

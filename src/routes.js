@@ -69,7 +69,7 @@ const routes = [
          },
          {
             path: '/Slice-MCP',
-            component: 'SliceMCP',
+            component: 'SliceMCPDocumentation',
          },
          {
             path: '/Routing',
