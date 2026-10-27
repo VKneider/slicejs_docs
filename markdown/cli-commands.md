@@ -98,6 +98,7 @@ Before bundling, `slice build` runs one validation pass over the project and **b
 - `sliceConfig` combinations that build but misbehave (for example `context.enabled` with `events.enabled` off: ContextManager reactivity runs through EventManager, which is not bundled).
 - Component files that cannot be bundled: a syntax error, no `default export` while registered as a component, or an unresolved relative import.
 - A component registered in `components.js` whose file does not exist, or that points at a category with no `paths.components` entry, or whose category folder is missing. The runtime resolves `<Category>/<Name>/<Name>.js`, so none of those can load.
+- A reserved build directive (`id`, `sliceId`, `singleton`) declared in `static props`. The runtime strips it before setters run, so it is a silent no-op: pass it to `slice.build(name, { id })` instead.
 - `api/index.js` with a syntax error. The server entry is not part of the bundle, but the deploy fails on it all the same.
 - `src/routes.js` with a syntax error or an unresolved relative import. That file is served as-is and loaded by the browser (it is not bundled), so a broken import stops the router from loading even though the bundle builds.
 - Static props with an unknown `type`, a `schema` on a non-`object` prop, an `items` on a non-`array` prop, or `allowedValues` that don't match the declared `type`.
@@ -405,6 +406,42 @@ build would be blocked, doctor fails too, with the same message.
 ```bash title="Run diagnostics"
 npm run slice:doctor
 ```
+
+## lint
+Runs the project's ESLint with the config it declares. The CLI does not bundle ESLint: install it in
+the project (`npm i -D eslint`). `slice lint` is a thin wrapper so scripts and CI do not need to know the binary name.
+
+```bash title="Lint"
+npm exec slice lint
+npm exec slice lint --fix
+npm exec slice lint src/Components
+```
+
+The shared flat config ships with the CLI, so a project's config is one import:
+
+```js title="eslint.config.js"
+import slice from 'slicejs-cli/eslint-config.js';
+
+export default [
+  ...slice,
+  // App-specific globals go last, by design.
+  { languageOptions: { globals: { ToastProvider: 'writable' } } },
+];
+```
+
+It provides the browser environment plus the `slice`/`Slice` globals, `js.configs.recommended`, a set
+of rules that warn rather than block, ignores for generated output (`dist/`, `components.js`,
+`*.generated.js`) and a Node/browser override for `*.spec.js` and `tests/`. Tooling that runs in Node
+imports `nodeConfig` instead:
+
+```js title="eslint.config.js (tooling)"
+import { nodeConfig } from 'slicejs-cli/eslint-config.js';
+export default nodeConfig;
+```
+
+Lint is for style and environment mistakes. Framework invariants — a component that cannot load, a
+broken route, a reserved prop, a prop the build rejects — are `slice build` / `slice doctor` rules and
+are not duplicated here, so the two can never drift.
 
 ## seo
 

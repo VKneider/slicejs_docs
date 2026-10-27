@@ -28,7 +28,7 @@
 <p>Unset, the current time is used.</p>
 <h3 id="validation-on-build">Validation on build</h3>
 <p>Before bundling, <code>slice build</code> runs one validation pass over the project and <strong>blocks</strong> on anything that would ship a broken bundle:</p>
-<ul><li><code>sliceConfig</code> combinations that build but misbehave (for example <code>context.enabled</code> with <code>events.enabled</code> off: ContextManager reactivity runs through EventManager, which is not bundled).</li><li>Component files that cannot be bundled: a syntax error, no <code>default export</code> while registered as a component, or an unresolved relative import.</li><li>A component registered in <code>components.js</code> whose file does not exist, or that points at a category with no <code>paths.components</code> entry, or whose category folder is missing. The runtime resolves <code>&lt;Category&gt;/&lt;Name&gt;/&lt;Name&gt;.js</code>, so none of those can load.</li><li><code>api/index.js</code> with a syntax error. The server entry is not part of the bundle, but the deploy fails on it all the same.</li><li><code>src/routes.js</code> with a syntax error or an unresolved relative import. That file is served as-is and loaded by the browser (it is not bundled), so a broken import stops the router from loading even though the bundle builds.</li><li>Static props with an unknown <code>type</code>, a <code>schema</code> on a non-<code>object</code> prop, an <code>items</code> on a non-<code>array</code> prop, or <code>allowedValues</code> that don't match the declared <code>type</code>.</li></ul>
+<ul><li><code>sliceConfig</code> combinations that build but misbehave (for example <code>context.enabled</code> with <code>events.enabled</code> off: ContextManager reactivity runs through EventManager, which is not bundled).</li><li>Component files that cannot be bundled: a syntax error, no <code>default export</code> while registered as a component, or an unresolved relative import.</li><li>A component registered in <code>components.js</code> whose file does not exist, or that points at a category with no <code>paths.components</code> entry, or whose category folder is missing. The runtime resolves <code>&lt;Category&gt;/&lt;Name&gt;/&lt;Name&gt;.js</code>, so none of those can load.</li><li>A reserved build directive (<code>id</code>, <code>sliceId</code>, <code>singleton</code>) declared in <code>static props</code>. The runtime strips it before setters run, so it is a silent no-op: pass it to <code>slice.build(name, { id })</code> instead.</li><li><code>api/index.js</code> with a syntax error. The server entry is not part of the bundle, but the deploy fails on it all the same.</li><li><code>src/routes.js</code> with a syntax error or an unresolved relative import. That file is served as-is and loaded by the browser (it is not bundled), so a broken import stops the router from loading even though the bundle builds.</li><li>Static props with an unknown <code>type</code>, a <code>schema</code> on a non-<code>object</code> prop, an <code>items</code> on a non-<code>array</code> prop, or <code>allowedValues</code> that don't match the declared <code>type</code>.</li></ul>
 <p>Advisories are printed but do not block: a <code>type: "any"</code>, a <code>required</code> prop without a default, a <code>slice.build()</code> of a name that is not registered, a component folder without its <code>&lt;Name&gt;.js</code>, a route whose <code>component</code> is not in <code>components.js</code> (it throws only when that route is visited), or a route written as <code>:id</code> instead of <code>${id}</code> (Slice only compiles <code>${…}</code> patterns, so a <code>:param</code> route is treated as a literal and never matches).</p>
 <p><code>slice doctor</code> reports the exact same classification in its <strong>Configuration</strong> and <strong>Components &amp; Routes</strong> rows, because both commands run the same pass and the same helper decides what is blocking. Skip the component checks with <code>--no-validate</code> (not recommended); the <code>sliceConfig</code> and <code>routes.js</code> rules always run. See [Static Props](/Documentation/Static-Props) for the prop schema.</p>
 <p>Doctor does not compile and does not boot the app: it cannot prove that esbuild resolves the whole graph, that <code>dist/</code> is complete, or that the server starts. Use it as a fast first gate, then <code>slice build</code>, then run the app.</p>
@@ -138,32 +138,40 @@ These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</co
 <p>reach production as a 500.</p>
 <p>The <strong>Configuration</strong> and <strong>Components &amp; Routes</strong> rows use the same rules as <code>slice build</code>: if the build would be blocked, doctor fails too, with the same message.</p>
 <div class="code-block" data-block-id="doc-block-38"></div>
+<h2 id="lint">lint</h2>
+<p>Runs the project's ESLint with the config it declares. The CLI does not bundle ESLint: install it in the project (<code>npm i -D eslint</code>). <code>slice lint</code> is a thin wrapper so scripts and CI do not need to know the binary name.</p>
+<div class="code-block" data-block-id="doc-block-39"></div>
+<p>The shared flat config ships with the CLI, so a project's config is one import:</p>
+<div class="code-block" data-block-id="doc-block-40"></div>
+<p>It provides the browser environment plus the <code>slice</code>/<code>Slice</code> globals, <code>js.configs.recommended</code>, a set of rules that warn rather than block, ignores for generated output (<code>dist/</code>, <code>components.js</code>, <code>*.generated.js</code>) and a Node/browser override for <code>*.spec.js</code> and <code>tests/</code>. Tooling that runs in Node imports <code>nodeConfig</code> instead:</p>
+<div class="code-block" data-block-id="doc-block-41"></div>
+<p>Lint is for style and environment mistakes. Framework invariants — a component that cannot load, a broken route, a reserved prop, a prop the build rejects — are <code>slice build</code> / <code>slice doctor</code> rules and are not duplicated here, so the two can never drift.</p>
 <h2 id="seo">seo</h2>
 <h3 id="seo-sitemap">seo sitemap</h3>
 <p>Writes <code>src/public/sitemap.xml</code> from <code>seo.json</code>, and <code>robots.txt</code> when the manifest has a <code>robotsTxt</code> block. Only indexable routes are listed; a <code>${param}</code> route cannot be enumerated and never appears.</p>
-<div class="code-block" data-block-id="doc-block-39"></div>
-<div class="table-block" data-block-id="doc-block-40"></div>
+<div class="code-block" data-block-id="doc-block-42"></div>
+<div class="table-block" data-block-id="doc-block-43"></div>
 <p>An existing file that would change asks first (default answer: no). A non-interactive run (CI) fails with a message naming <code>--yes</code> instead of waiting for input, and a file whose content is unchanged is never rewritten.</p>
 <h3 id="seo-images">seo images</h3>
 <p>Renders the 1200×630 card each indexable route advertises, from the real page. It boots the app's <code>api/index.js</code> in development on a free port unless you pass <code>--base-url</code>.</p>
-<div class="code-block" data-block-id="doc-block-41"></div>
-<div class="table-block" data-block-id="doc-block-42"></div>
+<div class="code-block" data-block-id="doc-block-44"></div>
+<div class="table-block" data-block-id="doc-block-45"></div>
 <p>It needs Playwright in the project (<code>npm i -D playwright &amp;&amp; npx playwright install chromium</code>). The command writes <code>&lt;outDir&gt;/manifest.json</code>, which you pass as <code>seo.images</code> so the server merges the cards; <code>seo.json</code> itself is never edited (it is generated). Defaults for the card — <code>theme</code>, <code>selector</code>, <code>template</code>, <code>outDir</code>, <code>budgetKB</code> — live in the <code>images</code> block of <code>seo.json</code>.</p>
 <h3 id="seo-check">seo check</h3>
 <p>Validates <code>seo.json</code>, cross-checks it against <code>routes.js</code>, and compares the committed sitemap with what the manifest would produce. Exits non-zero on any problem, so it belongs in CI.</p>
-<div class="code-block" data-block-id="doc-block-43"></div>
+<div class="code-block" data-block-id="doc-block-46"></div>
 <p>See [SEO and Share Cards](/Documentation/Architecture/SEO) for the manifest fields and the origin rules.</p>
 <h2 id="version">version</h2>
 <p>Shows CLI version info and checks for updates.</p>
-<div class="code-block" data-block-id="doc-block-44"></div>
+<div class="code-block" data-block-id="doc-block-47"></div>
 <h2 id="help">help</h2>
 <p>Shows CLI help output.</p>
-<div class="code-block" data-block-id="doc-block-45"></div>
+<div class="code-block" data-block-id="doc-block-48"></div>
 <h2 id="types-generate">types generate</h2>
 <p>Generates a TypeScript declaration file from your components' <code>static props</code>, so editors can autocomplete and type-check <code>slice.build('Name', { ... })</code> calls.</p>
-<div class="code-block" data-block-id="doc-block-46"></div>
-<div class="code-block" data-block-id="doc-block-47"></div>
-<div class="table-block" data-block-id="doc-block-48"></div>
+<div class="code-block" data-block-id="doc-block-49"></div>
+<div class="code-block" data-block-id="doc-block-50"></div>
+<div class="table-block" data-block-id="doc-block-51"></div>
 <p>Re-run it whenever you add or change component props. The output is generated — don't edit it by hand, and re-generate (or wire it into your build) to keep autocomplete in sync.</p>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Prefer package scripts (<code>pnpm run ...</code> / <code>npm run ...</code>) for project commands.</div>
