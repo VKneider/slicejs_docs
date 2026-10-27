@@ -1,9 +1,19 @@
 slice-js-developer
-version: 1.13.0
+version: 1.14.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.14.0
+  SEO commands: slice seo images + the doctor row.
+  - `slice seo images` renders the 1200x630 card each indexable route advertises
+    from the real page (Playwright must be in the project). It writes
+    `public/og/manifest.json`, which the server merges via `seo.images`; it never
+    edits `seo.json` because that file is generated.
+  - `slice doctor` gains an SEO row: not configured warns (SEO is opt-in),
+    malformed input fails, and it uses the same validator as `slice seo check`.
+  Files touched: SKILL.md, VERSION, references/config-theming-cli.md, ../manifest.json.
 
 1.13.0
   Server entrypoint + native SEO (slicejs-web-framework 4.1):
@@ -16,7 +26,7 @@ CHANGELOG
     canonical, og/twitter, jsonLd, robots, image), resolves origin once at startup and
     prerenders every route. The sitemap is a committed file (slice seo sitemap) guarded
     by slice seo check. Router titles come from routes.js metadata, on by default.
-  Files touched: SKILL.md, VERSION, ../manifest.json.
+  Files touched: SKILL.md, VERSION, references/config-theming-cli.md, ../manifest.json.
 
 1.12.0
   Components repository rename:

@@ -158,7 +158,9 @@ Node ≥ 20. Use `npx slicejs-cli <cmd>` or the `npm run` scripts `slice init` s
 | `slice browse` | List registry components (Visual/Service) |
 | `slice sync` | Update local Visual components from registry (`-f`). Services NOT updated — use `slice get <Name> --service --force` |
 | `slice skill add` | Install the Slice.js Claude Code skill into `.claude/skills/` (also `update` / `status`) |
-| `slice doctor` (`diagnose`) | Project diagnostics (structure, config, deps, components + `static props`, missing npm imports, port) |
+| `slice doctor` (`diagnose`) | Project diagnostics (structure, config, SEO, deps, components + `static props`, missing npm imports, port) |
+| `slice seo sitemap` / `seo check` | Write / validate the committed `public/sitemap.xml` from `seo.json` |
+| `slice seo images` (`og`) | Render each route's 1200×630 social card into `public/og/` + its `manifest.json` (needs Playwright) |
 | `slice version` / `slice update` | Versions / update CLI+framework |
 | `slice types generate` | Generate a `.d.ts` from `static props` for `slice.build` autocomplete (`-o <path>`) |
 
