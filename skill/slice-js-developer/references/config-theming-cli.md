@@ -134,7 +134,8 @@ Absolute imports are kept only when the file exists under `src/public/`; otherwi
 
 - **Blocks** `sliceConfig` combinations that build but misbehave (`context.enabled` with
   `events.enabled: false` — ContextManager reactivity needs EventManager), component files that cannot
-  be bundled (syntax error, no default export while registered, unresolved relative import),
+  be bundled (syntax error, no default export while registered, unresolved relative import), a
+  component registered in `components.js` whose file is missing,
   `src/routes.js` with a syntax error or an unresolved relative import (it is served as-is, so the
   router breaks at load), and prop definition errors (unknown `type`, `schema` on a non-`object` prop,
   `items` on a non-`array` prop, `allowedValues` that don't match the `type`).

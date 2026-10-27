@@ -1,9 +1,16 @@
 slice-js-developer
-version: 1.16.0
+version: 1.17.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.17.0
+  A registered component with no file is a blocking finding.
+  - `components.js` is the source of truth for `slice.build(name)`; the runtime resolves
+    `<Category>/<Name>/<Name>.js`. A name registered without that file could never load and the
+    validator skipped it in silence. Both build and doctor report it now.
+  Files touched: SKILL.md, VERSION, references/config-theming-cli.md, ../manifest.json.
 
 1.16.0
   routes.js is validated, and the skill says what doctor and build each prove.

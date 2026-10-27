@@ -194,7 +194,7 @@ build compiles, bundles and emits `dist/`.
 | Check | `slice doctor` | `slice build` |
 |---|---|---|
 | `sliceConfig` rules (`context.enabled` needs `events.enabled`) | blocks | blocks |
-| Component file: syntax error, missing `default export`, unresolved relative import | blocks | blocks |
+| Component file: syntax error, missing `default export`, unresolved relative import, registered name with no file | blocks | blocks |
 | Component prop definitions (`type`, `schema`, `items`, `allowedValues`) | blocks | blocks |
 | `src/routes.js`: syntax error, unresolved relative import | blocks | blocks |
 | Route `component` not in `components.js` | warns | warns |

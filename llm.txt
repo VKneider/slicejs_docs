@@ -177,6 +177,7 @@ Before bundling, `slice build` runs one validation pass over the project and **b
 
 - `sliceConfig` combinations that build but misbehave (for example `context.enabled` with `events.enabled` off: ContextManager reactivity runs through EventManager, which is not bundled).
 - Component files that cannot be bundled: a syntax error, no `default export` while registered as a component, or an unresolved relative import.
+- A component registered in `components.js` whose file does not exist. The runtime resolves `<Category>/<Name>/<Name>.js`, so the name can never load.
 - `src/routes.js` with a syntax error or an unresolved relative import. That file is served as-is and loaded by the browser (it is not bundled), so a broken import stops the router from loading even though the bundle builds.
 - Static props with an unknown `type`, a `schema` on a non-`object` prop, an `items` on a non-`array` prop, or `allowedValues` that don't match the declared `type`.
 
