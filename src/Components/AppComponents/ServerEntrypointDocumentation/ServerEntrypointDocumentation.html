@@ -1,0 +1,34 @@
+<div class="documentation-content serverentrypointdocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="server-entrypoint">
+    <span class="doc-title-text">Server Entrypoint</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<p><code>api/index.js</code> is your server. It is a normal ES module that the CLI runs for both <code>slice dev</code> and <code>slice start</code>:</p>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<p><code>createSliceServer()</code> builds an Express app with everything the framework needs — security, compression, the environment endpoint, static assets, bundles, the PWA endpoints — and hands it back <strong>without listening and without a catch-all</strong>. Nothing is final until you call <code>start()</code>.</p>
+<h2 id="adding-your-own-middleware">Adding your own middleware</h2>
+<p>Anything you add between the factory and <code>start()</code> runs <strong>before</strong> the SPA fallback, which is the only thing that must be last:</p>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<div class="callout callout-warning">Middleware added <strong>after</strong> <code>start()</code> never runs. <code>start()</code> mounts the terminal fallback and then
+listens, so anything registered later is past the piece that answers every page request. Keep
+<code>await start()</code> as the last line.</div>
+<h2 id="start-and-the-terminal-fallback"><code>start()</code> and the terminal fallback</h2>
+<p><code>start({ port, host, signals })</code>:</p>
+<ul><li>resolves the port as <code>options.port</code> → <code>PORT</code> → <code>sliceConfig.server.port</code> → <code>3001</code>,</li><li>mounts <code>sliceFallback()</code> (and the error handler) unless you already mounted one,</li><li>installs <code>SIGINT</code>/<code>SIGTERM</code> once and closes the server gracefully (<code>signals: false</code> opts out),</li><li>throws if called twice,</li><li>returns the <code>http.Server</code> (it is async because the SEO context is prepared before listening).</li></ul>
+<p>The fallback is where "nobody answered" is decided:</p>
+<div class="table-block" data-block-id="doc-block-3"></div>
+<h2 id="running-without-start">Running without <code>start()</code></h2>
+<p>For a serverless adapter or a test harness, close the chain by hand:</p>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<p>Both take the same options as the factory (<code>projectRoot</code>, <code>mode</code>, <code>seo</code>). The error handler has to be mounted after the fallback because Express only routes an error to middleware registered later in the stack.</p>
+<h2 id="seo-is-an-option-not-a-second-server">SEO is an option, not a second server</h2>
+<p>Per-route <code>&lt;title&gt;</code>, canonical, Open Graph and real 404s are wired by passing <code>seo</code> to the factory:</p>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<p>The manifest, the origin rules and the sitemap command live in [SEO and Share Cards](/Documentation/Architecture/SEO). Without that option the fallback keeps the behaviour of a plain SPA: every path answers the shell with <code>200</code>.</p>
+<h2 id="where-the-pieces-live">Where the pieces live</h2>
+<div class="code-block" data-block-id="doc-block-6"></div>
+<p>Do not copy the framework server into your project: the factory already exposes every seam you need, and a copy stops receiving fixes.</p>
+</div>

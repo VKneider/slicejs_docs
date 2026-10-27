@@ -1,9 +1,22 @@
 slice-js-developer
-version: 1.12.0
-targets: slicejs-web-framework ^4.0.x
+version: 1.13.0
+targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.13.0
+  Server entrypoint + native SEO (slicejs-web-framework 4.1):
+  - api/index.js is composed: createSliceServer() returns the app WITHOUT listening,
+    middleware goes before start(), and start() mounts the terminal fallback and listens.
+    Middleware added after start() never runs. Never copy the framework server.
+  - The SPA fallback owns the 200-vs-404 decision, the /api JSON 404, and the dev
+    .html/.css carve-outs that keep JS-only components buildable.
+  - api/framework/seo.js consumes a seo.json manifest (per-route title, description,
+    canonical, og/twitter, jsonLd, robots, image), resolves origin once at startup and
+    prerenders every route. The sitemap is a committed file (slice seo sitemap) guarded
+    by slice seo check. Router titles come from routes.js metadata, on by default.
+  Files touched: SKILL.md, VERSION, ../manifest.json.
 
 1.12.0
   Components repository rename:

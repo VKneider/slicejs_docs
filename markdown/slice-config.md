@@ -151,6 +151,7 @@ missing `.html`.
 | Field | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `defaultRoute` | `string` | `/` | Default route path. |
+| `updateTitles` | `boolean` | `true` | The router writes `document.title` and the description from each route's `metadata` on navigation. `false` leaves them alone. |
 
 ## loading
 | Field | Type | Default | Notes |

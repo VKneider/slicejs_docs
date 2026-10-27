@@ -51,6 +51,8 @@ const components = {
   "RoutingDataDocumentation": "AppComponents",
   "RoutingDocumentation": "AppComponents",
   "SelectDocumentation": "AppComponents",
+  "SeoDocumentation": "AppComponents",
+  "ServerEntrypointDocumentation": "AppComponents",
   "ServiceDocumentation": "AppComponents",
   "ServicePatternsDocumentation": "AppComponents",
   "SingleViewSpaDocumentation": "AppComponents",

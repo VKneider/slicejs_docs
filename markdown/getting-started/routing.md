@@ -53,7 +53,23 @@ export default routes;
 | `path` | `string` | yes | Supports dynamic params using `${param}`. |
 | `component` | `string` | yes | Component name from `components.js`. |
 | `children` | `Array<Route>` | no | Nested routes inherit parent path. |
-| `metadata` | `object` | no | Arbitrary data for guards and UI. |
+| `metadata` | `object` | no | Arbitrary data for guards and UI. `title` and `description` are read by the router (see below). |
+
+### Route metadata and the document title
+`metadata` is free-form. The router reads two fields from it on every navigation, including the first
+one:
+
+| Field | Effect |
+| --- | --- |
+| `title` | `document.title` (and `metadata.titleTemplate` with `%s`, if present) |
+| `description` | the `meta[name="description"]` content |
+
+It only writes what the route declares: a route without `title` keeps whatever the server sent, so a
+prerendered page is never downgraded. `canonical` and `robots` are never written from the client —
+crawlers do not run JavaScript. A `router:change` listener still wins, because the metadata is applied
+before the event. Opt out with `router.updateTitles: false` in `sliceConfig.json`.
+
+See [SEO and Share Cards](/Documentation/Architecture/SEO) for the server half of the same metadata.
 
 ## Route Info Object
 Guards and route events receive `to` and `from` objects created by the router.

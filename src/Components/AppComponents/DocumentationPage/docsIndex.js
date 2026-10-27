@@ -350,6 +350,26 @@ const docsIndex = [
     tags: ['api', 'reference']
   },
   {
+    title: 'Server Entrypoint',
+    route: '/Documentation/Architecture/Server-Entrypoint',
+    description: 'What api/index.js is, why the framework returns the app instead of listening, where your middleware goes, and the one rule that decides whether it runs at all.',
+    section: 'Project Architecture',
+    group: 'Runtime and Deployment',
+    order: 1,
+    navLabel: 'Server Entrypoint',
+    tags: ['server', 'api', 'middleware', 'express', 'deployment', 'fallback']
+  },
+  {
+    title: 'SEO and Share Cards',
+    route: '/Documentation/Architecture/SEO',
+    description: 'Per-route title, description, canonical, Open Graph and JSON-LD, real 404s, a committed sitemap, and titles that survive client-side navigation.',
+    section: 'Project Architecture',
+    group: 'Runtime and Deployment',
+    order: 2,
+    navLabel: 'SEO and Share Cards',
+    tags: ['seo', 'meta', 'canonical', 'open-graph', 'sitemap', '404', 'router']
+  },
+  {
     title: 'Choosing a Project Style',
     route: '/Documentation/Architecture',
     description: 'Decide whether your Slice app should use App Shell + MultiRoute or a Single-View SPA.',

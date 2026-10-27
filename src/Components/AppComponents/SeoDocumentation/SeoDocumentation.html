@@ -1,0 +1,48 @@
+<div class="documentation-content seodocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="seo-and-share-cards">
+    <span class="doc-title-text">SEO and Share Cards</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<p>A Slice app is a SPA: the browser gets one <code>App/index.html</code> and the router swaps the view. Left alone that means one <code>&lt;title&gt;</code> for every route, no canonical, a <code>200</code> for URLs that do not exist, and a link preview that looks the same everywhere. The framework fixes the mechanics; you provide the content.</p>
+<h2 id="the-manifest-seojson">The manifest: <code>seo.json</code></h2>
+<p>One file at the project root, with one entry per page:</p>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<p><code>defaults</code> are inherited by every route, so a title suffix or a site-wide card is written once.</p>
+<div class="table-block" data-block-id="doc-block-2"></div>
+<h3 id="routes-with-parameters">Routes with parameters</h3>
+<p>Use the router's syntax. A pattern provides the metadata for every instance, and the canonical is always the real path:</p>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<p><code>/producto/42</code> gets that title and <code>origin + /producto/42</code> as its canonical. A pattern cannot be enumerated, so it never enters the sitemap. A title built from the parameter needs the route's own metadata in <code>routes.js</code> and is not part of this version.</p>
+<h2 id="enabling-it">Enabling it</h2>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<p>At startup the server reads the manifest, imports <code>routes.js</code> to know which paths are pages, renders each one once (head injected into the shell, gzip + brotli + ETag precomputed) and keeps them in memory. A request is a lookup and a write.</p>
+<div class="table-block" data-block-id="doc-block-5"></div>
+<h3 id="the-origin-and-why-it-is-not-read-from-the-request">The origin, and why it is not read from the request</h3>
+<p>The head is prerendered once, so the origin has to be known at startup. It is resolved in this order:</p>
+<ol><li><code>SLICE_ORIGIN</code> (environment),</li><li><code>createSliceServer({ seo: { origin } })</code>,</li><li><code>origin</code> in <code>seo.json</code>,</li><li>in development only: <code>http://localhost:&lt;port&gt;</code>,</li><li>otherwise the server <strong>fails at startup</strong>.</li></ol>
+<p>Reading it from <code>req.headers.host</code> would produce one cached page per host and the wrong scheme behind a TLS proxy. In development the <code>localhost</code> fallback keeps the metadata inspectable; set <code>SLICE_ORIGIN</code> on a preview deploy so its canonical and its card point at the preview.</p>
+<h2 id="the-sitemap-is-a-committed-file">The sitemap is a committed file</h2>
+<div class="code-block" data-block-id="doc-block-6"></div>
+<p><code>slice seo sitemap</code> writes <code>src/public/sitemap.xml</code> (and <code>robots.txt</code> only when the manifest has a <code>robotsTxt</code> block), from the indexable routes only. It never overwrites silently: an existing file that would change asks first, <code>--yes</code> skips the question, and a non-interactive run fails instead of waiting for input. An unchanged file is not rewritten.</p>
+<p>Commit the result. <code>slice seo check</code> compares the committed file against the manifest and exits non-zero when they drifted, so the sitemap cannot rot between deploys.</p>
+<h2 id="titles-survive-client-side-navigation">Titles survive client-side navigation</h2>
+<p>Route entries accept <code>metadata</code>, and the router applies it on every navigation — including the first one — so the tab title does not stay on the landing page:</p>
+<div class="code-block" data-block-id="doc-block-7"></div>
+<div class="code-block" data-block-id="doc-block-8"></div>
+<p>What it does and does not do:</p>
+<ul><li>only the fields the route declares; a route without <code>metadata.title</code> keeps the server's title,</li><li><code>canonical</code> and <code>robots</code> are <strong>never</strong> written from the client: crawlers do not run your JavaScript,</li></ul>
+<p>so changing them there would only desync the SPA from the HTML that was served,</p>
+<ul><li>a <code>router:change</code> listener still wins, because the metadata is applied before the event fires,</li><li><code>slice doctor</code> and <code>slice seo check</code> warn when <code>routes.js</code> and <code>seo.json</code> disagree on a title for the</li></ul>
+<p>same path — that disagreement is what would make the tab title change after hydration.</p>
+<div class="callout callout-tip">Put the canonical title in one place. If a route declares <code>metadata.title</code>, keep it identical to the
+manifest's (including the <code>| Acme</code> suffix), or let the manifest own the title and leave
+<code>metadata.title</code> out.</div>
+<h2 id="what-this-does-not-solve">What this does not solve</h2>
+<ul><li><strong>The page body is still rendered in the browser.</strong> A crawler that does not execute JavaScript sees</li></ul>
+<p>the correct head and an empty <code>#app</code>. Pre-rendering the article content is a separate problem.</p>
+<ul><li><strong>Generating the social image</strong> is not part of the runtime. The manifest accepts <code>image</code>; producing</li></ul>
+<p>the file (a screenshot, a designed card, a designer's export) is your build step.</p>
+</div>

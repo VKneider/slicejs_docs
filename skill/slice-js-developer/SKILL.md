@@ -132,9 +132,47 @@ Tailor advice to what you found: don't suggest `slice.context.watch` if `context
 | `sliceConfig.json`, theming, CLI, external libs, env vars | `references/config-theming-cli.md` | `slice-config`, `themes`, `cli-commands`, `external-dependencies`, `getting-started/environment-variables` |
 | Best practices, anti-patterns, Logger, Debugger, debug panels, leak inspector, troubleshooting | `references/gotchas-and-diagnostics.md` | `logger`, `getting-started/devtools`, `getting-started/leak-inspector` |
 | Which official Visual/Service components exist | `references/visual-catalog.md` | `slice_components_search_docs` / `slice_components_get_doc` |
+| Server entrypoint, middleware order, SPA fallback, 404s | — | `project-architecture/server-entrypoint` |
+| SEO manifest, per-route head, sitemap, client titles | — | `project-architecture/seo`, `slice-config` (`router.updateTitles`) |
 | The MCP itself (tools, usage) | — | `slicejs-mcp` |
 
 When a reference contradicts your prior knowledge of "how component frameworks work", **trust the reference** — it's verified against the source. When the user says "but framework X does it like this", clarify Slice has its own conventions.
+
+---
+
+## Server and SEO — what the framework owns
+
+`api/index.js` is the app's server, and the framework does not listen on its own: it returns the app
+so you can add middleware before the terminal fallback.
+
+```javascript title="api/index.js — the shape"
+import { createSliceServer } from 'slicejs-web-framework/api/framework/server.js';
+
+const { app, start } = createSliceServer({ seo: { manifest: './seo.json' } });
+
+app.use('/api/hooks', hooks);   // ordinary Express middleware
+await start();                  // mounts the terminal fallback, then listens
+```
+
+Rules that bite:
+
+- **Middleware added after `start()` never runs.** `start()` mounts the only catch-all, so it must be
+  the last line. If you have no `start()` (serverless, supertest), mount `sliceFallback()` and then
+  `sliceErrorHandler()` yourself.
+- **Never copy the framework server into the app.** A copy stops receiving fixes; a 700-line fork in
+  `slicejs-components` had to be migrated back for exactly that reason.
+- **`api/framework/seo.js` is the whole SEO surface.** It reads a `seo.json` manifest, resolves the
+  origin once (`SLICE_ORIGIN` → option → manifest → `http://localhost:<port>` in development → hard
+  error in production), prerenders each route, and answers `200` / `404` / `noindex`. Without it every
+  path answers the shell with `200` (a soft 404).
+- **The sitemap is a committed file.** `slice seo sitemap` writes it from the manifest and never
+  overwrites silently; `slice seo check` fails CI when it drifts.
+- **Router titles come from the `metadata` field on `routes.js`**, on by default. It writes only what
+  the route declares, never `canonical`/`robots` (crawlers do not run JavaScript), a `router:change`
+  listener still wins, and a disagreement between `routes.js` and `seo.json` is a `slice doctor` /
+  `slice seo check` warning.
+- **Crawlers still do not see the body.** The head, the status code and the sitemap are server-side;
+  the article itself is client-rendered.
 
 ---
 

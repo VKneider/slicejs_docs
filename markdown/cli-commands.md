@@ -381,6 +381,36 @@ Runs project diagnostics (structure, config, dependencies, components, port avai
 npm run slice:doctor
 ```
 
+## seo
+
+### seo sitemap
+Writes `src/public/sitemap.xml` from `seo.json`, and `robots.txt` when the manifest has a `robotsTxt`
+block. Only indexable routes are listed; a `${param}` route cannot be enumerated and never appears.
+
+```bash title="Generate the sitemap"
+npm exec slice seo sitemap
+```
+
+| Option | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `--dry-run` | `boolean` | `false` | Reports what would change, writes nothing. |
+| `--yes` | `boolean` | `false` | Overwrites an existing file without asking. |
+
+An existing file that would change asks first (default answer: no). A non-interactive run (CI) fails
+with a message naming `--yes` instead of waiting for input, and a file whose content is unchanged is
+never rewritten.
+
+### seo check
+Validates `seo.json`, cross-checks it against `routes.js`, and compares the committed sitemap with
+what the manifest would produce. Exits non-zero on any problem, so it belongs in CI.
+
+```bash title="Validate before deploying"
+npm exec slice seo check
+```
+
+See [SEO and Share Cards](/Documentation/Architecture/SEO) for the manifest fields and the origin
+rules.
+
 ## version
 Shows CLI version info and checks for updates.
 
