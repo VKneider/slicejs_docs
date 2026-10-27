@@ -135,13 +135,16 @@ Absolute imports are kept only when the file exists under `src/public/`; otherwi
 - **Blocks** `sliceConfig` combinations that build but misbehave (`context.enabled` with
   `events.enabled: false` — ContextManager reactivity needs EventManager), component files that cannot
   be bundled (syntax error, no default export while registered, unresolved relative import), a
-  component registered in `components.js` whose file is missing,
+  component registered in `components.js` whose file is missing or whose category has no
+  `paths.components` entry (or no folder), a syntax error in `api/index.js` (the deploy entrypoint is
+  never executed by the build),
   `src/routes.js` with a syntax error or an unresolved relative import (it is served as-is, so the
   router breaks at load), and prop definition errors (unknown `type`, `schema` on a non-`object` prop,
   `items` on a non-`array` prop, `allowedValues` that don't match the `type`).
 - **Warns only:** `type: "any"`, a `required` prop without a default, a `slice.build('X')` of an
   unregistered name, a component folder without `<Name>.js`, a route whose `component` is not
-  registered (it throws only when that route is visited).
+  registered (it throws only when that route is visited), a route written `:id` instead of `${id}`
+  (never matches), and a declared framework range that rejects the installed version.
 
 `slice doctor` exits 1 when any row fails (0 with only warnings), so `slice doctor && slice build` is a
 usable pre-deploy gate. `slice build --no-validate` skips the component pass; the `sliceConfig` and

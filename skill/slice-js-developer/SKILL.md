@@ -194,14 +194,19 @@ build compiles, bundles and emits `dist/`.
 | Check | `slice doctor` | `slice build` |
 |---|---|---|
 | `sliceConfig` rules (`context.enabled` needs `events.enabled`) | blocks | blocks |
+| `sliceConfig` against the published JSON Schema (types, required) | blocks | — |
 | Component file: syntax error, missing `default export`, unresolved relative import, registered name with no file | blocks | blocks |
+| Component registered under a category with no `paths.components` entry, or in a missing category folder | blocks | blocks |
 | Component prop definitions (`type`, `schema`, `items`, `allowedValues`) | blocks | blocks |
+| `api/index.js` syntax | blocks | blocks |
 | `src/routes.js`: syntax error, unresolved relative import | blocks | blocks |
+| Declared `slicejs-web-framework` range rejects the installed version (or the CLI requires another) | warns | — |
 | Route `component` not in `components.js` | warns | warns |
+| Route written `:id` instead of `${id}` (never matches) | warns | warns |
 | `type: "any"`, `required` without default, `slice.build()` of an unregistered name, folder without `<Name>.js` | warns | warns |
 | Installed npm packages, structure, port, lockfiles, SEO, package manager | reports | — |
 | **esbuild resolves the whole graph; bundles are valid; `dist/` is complete** | — | **only build** |
-| **`api/index.js` boots** | — | — (neither; see below) |
+| **`api/index.js` runs correctly** | — | — (neither; see below) |
 | **Framework behavior (router, lifecycle, server, SEO)** | — | — (neither) |
 
 Rules that follow from it:

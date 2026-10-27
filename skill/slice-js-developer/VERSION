@@ -1,9 +1,18 @@
 slice-js-developer
-version: 1.17.0
+version: 1.18.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.18.0
+  The static checks grew to cover the deploy surface.
+  - Blocking: a component registered under a category with no paths.components entry or whose
+    folder is missing, and a syntax error in api/index.js (the build never runs the server).
+  - Warns: a route written ":id" instead of "${id}" (never matches), and a declared framework
+    range that rejects the installed version (or a CLI that requires another).
+  - doctor validates sliceConfig.json against the published schema, and has a Server entry row.
+  Files touched: SKILL.md, VERSION, references/config-theming-cli.md, ../manifest.json.
 
 1.17.0
   A registered component with no file is a blocking finding.
