@@ -23,8 +23,8 @@ export default class WhatIsSlice extends HTMLElement {
         ]
       },
       {
-        name: 'slice.js_visual_library',
-        subtitle: 'Visual Library',
+        name: 'slicejs-components',
+        subtitle: 'Components',
         description: 'Reusable visual components designed for real Slice applications.',
         links: [
           { label: 'Open Library', href: 'https://components.slicejs.com/' }

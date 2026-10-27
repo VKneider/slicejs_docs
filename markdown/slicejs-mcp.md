@@ -55,8 +55,8 @@ The MCP exposes two catalogs:
 - `framework` — `slicejs_docs`, covering the framework, CLI, lifecycle, routing, and architecture.
 - `components` — Slice.js Components, covering Visual and Service APIs and examples.
 
-The Components catalog is backed by the published Markdown manifest from the legacy
-`slice.js_visual_library` repository. The public product name is **Slice.js Components**.
+The Components catalog is backed by the published Markdown manifest from the
+`slicejs-components` repository. The public product name is **Slice.js Components**.
 
 ## list_docs
 Returns a list of all available documentation sections and categories.
@@ -112,7 +112,7 @@ catalog version, source path, and revision. The MCP does not execute `:::script`
 ## Architecture
 
 - **Framework source**: Documentation fetched from https://github.com/VKneider/slicejs_docs
-- **Components source**: Markdown and manifest fetched from https://github.com/VKneider/slice.js_visual_library
+- **Components source**: Markdown and manifest fetched from https://github.com/VKneider/slicejs-components
 - **Caching**: Infinite session cache to minimize API requests and improve performance
 - **Initialization**: Lazy loading of document structure on first tool use
 - **Rate Limiting**: Optimized to stay within GitHub API limits (60 req/hour)

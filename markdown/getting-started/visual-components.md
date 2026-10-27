@@ -15,7 +15,7 @@ generate: false
 
 ## Overview
 Visual component API, interfaces, examples, and generated props metadata now live in the
-official `slice.js_visual_library` documentation site.
+official `slicejs-components` documentation site.
 
 ## Why this page exists
 - Keep framework docs in `sliceDocs` and component reference docs in one place.

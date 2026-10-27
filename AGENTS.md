@@ -2,7 +2,7 @@
 
 This repo is the **Slice.js documentation site** — itself a Slice app (`src/`, `api/`) whose pages are
 **generated from Markdown**. (It is separate from the visual library's component docs, which live in
-`slice.js_visual_library/src/markdown/`.)
+`slicejs-components/src/markdown/`.)
 
 ## ⚠️ Edit the Markdown source, not the generated pages
 - **Source of truth:** `markdown/**/*.md` (folders: `getting-started/`, `project-architecture/`,

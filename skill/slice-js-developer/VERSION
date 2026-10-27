@@ -1,9 +1,15 @@
 slice-js-developer
-version: 1.11.0
+version: 1.12.0
 targets: slicejs-web-framework ^4.0.x
 
 CHANGELOG
 =========
+
+1.12.0
+  Components repository rename:
+  - Documentation and catalog references now use `slicejs-components` (Slice.js Components).
+  - The legacy `slice.js_visual_library` name is compatibility-only.
+  - No framework behavior guidance changed; this is a naming/URL sync.
 
 1.11.0
   Added the dual documentation-catalog workflow:

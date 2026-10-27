@@ -14,7 +14,7 @@ generate: false
 
 ## Overview
 Visual component API, interfaces, and examples are documented in the official
-`slice.js_visual_library` docs site.
+`slicejs-components` docs site.
 
 ## Source of truth
 - Component docs now live in one place to avoid drift and duplicate maintenance.
