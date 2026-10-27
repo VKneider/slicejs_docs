@@ -177,11 +177,12 @@ Before bundling, `slice build` runs one validation pass over the project and **b
 
 - `sliceConfig` combinations that build but misbehave (for example `context.enabled` with `events.enabled` off: ContextManager reactivity runs through EventManager, which is not bundled).
 - Component files that cannot be bundled: a syntax error, no `default export` while registered as a component, or an unresolved relative import.
-- A component registered in `components.js` whose file does not exist. The runtime resolves `<Category>/<Name>/<Name>.js`, so the name can never load.
+- A component registered in `components.js` whose file does not exist, or that points at a category with no `paths.components` entry, or whose category folder is missing. The runtime resolves `<Category>/<Name>/<Name>.js`, so none of those can load.
+- `api/index.js` with a syntax error. The server entry is not part of the bundle, but the deploy fails on it all the same.
 - `src/routes.js` with a syntax error or an unresolved relative import. That file is served as-is and loaded by the browser (it is not bundled), so a broken import stops the router from loading even though the bundle builds.
 - Static props with an unknown `type`, a `schema` on a non-`object` prop, an `items` on a non-`array` prop, or `allowedValues` that don't match the declared `type`.
 
-Advisories are printed but do not block: a `type: "any"`, a `required` prop without a default, a `slice.build()` of a name that is not registered, a component folder without its `<Name>.js`, or a route whose `component` is not in `components.js` (it throws only when that route is visited).
+Advisories are printed but do not block: a `type: "any"`, a `required` prop without a default, a `slice.build()` of a name that is not registered, a component folder without its `<Name>.js`, a route whose `component` is not in `components.js` (it throws only when that route is visited), or a route written as `:id` instead of `${id}` (Slice only compiles `${…}` patterns, so a `:param` route is treated as a literal and never matches).
 
 `slice doctor` reports the exact same classification in its **Configuration** and **Components & Routes** rows, because both commands run the same pass and the same helper decides what is blocking. Skip the component checks with `--no-validate` (not recommended); the `sliceConfig` and `routes.js` rules always run. See [Static Props](/Documentation/Static-Props) for the prop schema.
 
@@ -463,12 +464,23 @@ npm run sync
 | `-f, --force` | `boolean` | `false` | Skip confirmation and force update. |
 
 ## doctor
-Runs project diagnostics (structure, config, SEO, dependencies, components, external imports, port
-availability) and exits 1 when any row is a failure, so it works as a gate. Rows marked as warnings are
-advisory and exit 0.
+Runs project diagnostics (structure, config, SEO, dependencies, components and routes, the server
+entry, external imports, port availability) and exits 1 when any row is a failure, so it works as a
+gate. Rows marked as warnings are advisory and exit 0.
 
-The **Configuration** and **Components** rows use the same rules as `slice build`: if the build would
-be blocked, doctor fails too, with the same message.
+Three rows cover what only a static check can see before a deploy:
+
+- **Configuration** validates `sliceConfig.json` against the framework's published
+  `sliceConfig.schema.json` (a string `port` is a pipe for `listen()`, a string `"false"` is truthy),
+  and applies the same combination rules as the build.
+- **Dependencies** warns when the declared `slicejs-web-framework` range rejects the installed
+  version, or when the installed CLI requires a different one — the `^3.5.0`-with-4.x case that
+  shipped a broken install.
+- **Server entry** parses `api/index.js`; the build never executes it, so a syntax error there used to
+  reach production as a 500.
+
+The **Configuration** and **Components & Routes** rows use the same rules as `slice build`: if the
+build would be blocked, doctor fails too, with the same message.
 
 ```bash title="Run diagnostics"
 npm run slice:doctor
