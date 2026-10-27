@@ -444,6 +444,19 @@ Lint is for style and environment mistakes. Framework invariants — a component
 broken route, a reserved prop, a prop the build rejects — are `slice build` / `slice doctor` rules and
 are not duplicated here, so the two can never drift.
 
+### Setting it up in an existing project
+`slice setup lint` installs `eslint` and `slicejs-cli` as devDependencies when they are missing,
+writes `eslint.config.js` if the project has none, and adds `lint` / `lint:fix` scripts. It never
+overwrites a config or a script you already have, and `--dry-run` prints the plan without touching
+anything.
+
+```bash
+npm exec slice setup lint
+npm exec slice setup lint --dry-run
+```
+
+`slice init` does not install ESLint: the linter is a choice, and choosing it later is one command.
+
 ## seo
 
 ### seo sitemap

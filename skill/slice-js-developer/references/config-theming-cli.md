@@ -153,7 +153,9 @@ that needs a boot of a real app.
 
 ## Linting
 
-`slice lint` runs the project's ESLint. The shared flat config ships with the CLI:
+`slice lint` runs the project's ESLint. The shared flat config ships with the CLI. For an existing
+project, `slice setup lint` installs the tools, writes the config (only if missing) and adds the
+scripts; it never overwrites what you already have.
 
 ```js
 // eslint.config.js (app)
@@ -202,6 +204,7 @@ Node ≥ 20. Use `npx slicejs-cli <cmd>` or the `npm run` scripts `slice init` s
 | `slice skill add` | Install the Slice.js Claude Code skill into `.claude/skills/` (also `update` / `status`) |
 | `slice doctor` (`diagnose`) | Project diagnostics (structure, config + schema, SEO, deps + version skew, components/routes/server entry, missing npm imports, port) |
 | `slice lint` | Runs the project's ESLint; the shared config is `slicejs-cli/eslint-config.js` |
+| `slice setup lint` | Adds ESLint + the shared config + `lint` scripts to an existing project (`--dry-run`) |
 | `slice seo sitemap` / `seo check` | Write / validate the committed `public/sitemap.xml` from `seo.json` |
 | `slice seo images` (`og`) | Render each route's 1200×630 social card into `public/og/` + its `manifest.json` (needs Playwright) |
 | `slice version` / `slice update` | Versions / update CLI+framework |

@@ -146,32 +146,36 @@ These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</co
 <p>It provides the browser environment plus the <code>slice</code>/<code>Slice</code> globals for <code>src/</code>, Node globals for <code>api/</code>, <code>scripts/</code> and <code>*.config.js</code>, <code>js.configs.recommended</code>, a set of rules that warn rather than block, ignores for generated and vendored output (<code>dist/</code>, <code>components.js</code>, <code>*.generated.js</code>, <code>.agents/</code>, <code>.claude/</code>), and a Node/browser override for <code>*.spec.js</code> and <code>tests/</code>. Tooling that runs in Node imports <code>nodeConfig</code> instead:</p>
 <div class="code-block" data-block-id="doc-block-41"></div>
 <p>Lint is for style and environment mistakes. Framework invariants — a component that cannot load, a broken route, a reserved prop, a prop the build rejects — are <code>slice build</code> / <code>slice doctor</code> rules and are not duplicated here, so the two can never drift.</p>
+<h3 id="setting-it-up-in-an-existing-project">Setting it up in an existing project</h3>
+<p><code>slice setup lint</code> installs <code>eslint</code> and <code>slicejs-cli</code> as devDependencies when they are missing, writes <code>eslint.config.js</code> if the project has none, and adds <code>lint</code> / <code>lint:fix</code> scripts. It never overwrites a config or a script you already have, and <code>--dry-run</code> prints the plan without touching anything.</p>
+<div class="code-block" data-block-id="doc-block-42"></div>
+<p><code>slice init</code> does not install ESLint: the linter is a choice, and choosing it later is one command.</p>
 <h2 id="seo">seo</h2>
 <h3 id="seo-sitemap">seo sitemap</h3>
 <p>Writes <code>src/public/sitemap.xml</code> from <code>seo.json</code>, and <code>robots.txt</code> when the manifest has a <code>robotsTxt</code> block. Only indexable routes are listed; a <code>${param}</code> route cannot be enumerated and never appears.</p>
-<div class="code-block" data-block-id="doc-block-42"></div>
-<div class="table-block" data-block-id="doc-block-43"></div>
+<div class="code-block" data-block-id="doc-block-43"></div>
+<div class="table-block" data-block-id="doc-block-44"></div>
 <p>An existing file that would change asks first (default answer: no). A non-interactive run (CI) fails with a message naming <code>--yes</code> instead of waiting for input, and a file whose content is unchanged is never rewritten.</p>
 <h3 id="seo-images">seo images</h3>
 <p>Renders the 1200×630 card each indexable route advertises, from the real page. It boots the app's <code>api/index.js</code> in development on a free port unless you pass <code>--base-url</code>.</p>
-<div class="code-block" data-block-id="doc-block-44"></div>
-<div class="table-block" data-block-id="doc-block-45"></div>
+<div class="code-block" data-block-id="doc-block-45"></div>
+<div class="table-block" data-block-id="doc-block-46"></div>
 <p>It needs Playwright in the project (<code>npm i -D playwright &amp;&amp; npx playwright install chromium</code>). The command writes <code>&lt;outDir&gt;/manifest.json</code>, which you pass as <code>seo.images</code> so the server merges the cards; <code>seo.json</code> itself is never edited (it is generated). Defaults for the card — <code>theme</code>, <code>selector</code>, <code>template</code>, <code>outDir</code>, <code>budgetKB</code> — live in the <code>images</code> block of <code>seo.json</code>.</p>
 <h3 id="seo-check">seo check</h3>
 <p>Validates <code>seo.json</code>, cross-checks it against <code>routes.js</code>, and compares the committed sitemap with what the manifest would produce. Exits non-zero on any problem, so it belongs in CI.</p>
-<div class="code-block" data-block-id="doc-block-46"></div>
+<div class="code-block" data-block-id="doc-block-47"></div>
 <p>See [SEO and Share Cards](/Documentation/Architecture/SEO) for the manifest fields and the origin rules.</p>
 <h2 id="version">version</h2>
 <p>Shows CLI version info and checks for updates.</p>
-<div class="code-block" data-block-id="doc-block-47"></div>
+<div class="code-block" data-block-id="doc-block-48"></div>
 <h2 id="help">help</h2>
 <p>Shows CLI help output.</p>
-<div class="code-block" data-block-id="doc-block-48"></div>
+<div class="code-block" data-block-id="doc-block-49"></div>
 <h2 id="types-generate">types generate</h2>
 <p>Generates a TypeScript declaration file from your components' <code>static props</code>, so editors can autocomplete and type-check <code>slice.build('Name', { ... })</code> calls.</p>
-<div class="code-block" data-block-id="doc-block-49"></div>
 <div class="code-block" data-block-id="doc-block-50"></div>
-<div class="table-block" data-block-id="doc-block-51"></div>
+<div class="code-block" data-block-id="doc-block-51"></div>
+<div class="table-block" data-block-id="doc-block-52"></div>
 <p>Re-run it whenever you add or change component props. The output is generated — don't edit it by hand, and re-generate (or wire it into your build) to keep autocomplete in sync.</p>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Prefer package scripts (<code>pnpm run ...</code> / <code>npm run ...</code>) for project commands.</div>

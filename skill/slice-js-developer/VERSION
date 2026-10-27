@@ -1,9 +1,16 @@
 slice-js-developer
-version: 1.19.0
+version: 1.20.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.20.0
+  `slice setup lint` adds linting to an existing project.
+  - Installs eslint + slicejs-cli when missing, writes eslint.config.js only if there is none, and
+    adds lint/lint:fix scripts. Idempotent, --dry-run, never overwrites a config or a script.
+  - slice init prints it as a next step instead of installing ESLint for every project.
+  Files touched: VERSION, references/config-theming-cli.md, ../manifest.json.
 
 1.19.0
   Linting ships with the CLI; reserved build directives block the build.
