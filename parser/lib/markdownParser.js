@@ -362,8 +362,13 @@ const renderBlocks = (blocks) => {
 const parseMarkdownFile = (filePath, options = {}) => {
   const projectRoot = options.projectRoot;
   // Strip a UTF-8 BOM: Windows editors can save one, and it sits before the
-  // opening `---`, so the front matter would not be found at all.
-  const content = fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, '');
+  // opening `---`, so the front matter would not be found at all. Normalize
+  // CRLF/lone CR to LF as well: the block parser treats `\r` as a line
+  // terminator, which made list items at the end of CRLF files fail to match.
+  const content = fs
+    .readFileSync(filePath, 'utf8')
+    .replace(/^\uFEFF/, '')
+    .replace(/\r\n?/g, '\n');
   const { data, body } = parseFrontMatter(content);
 
   let enrichedBody = body;

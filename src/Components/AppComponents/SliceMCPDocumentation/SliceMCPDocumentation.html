@@ -20,6 +20,9 @@
 <div class="code-block" data-block-id="doc-block-3"></div>
 <h2 id="tool-summary">Tool Summary</h2>
 <div class="table-block" data-block-id="doc-block-4"></div>
+<p>The MCP exposes two catalogs:</p>
+<ul><li><code>framework</code> — <code>slicejs_docs</code>, covering the framework, CLI, lifecycle, routing, and architecture.</li><li><code>components</code> — Slice.js Components, covering Visual and Service APIs and examples.</li></ul>
+<p>The Components catalog is backed by the published Markdown manifest from the legacy <code>slice.js_visual_library</code> repository. The public product name is <strong>Slice.js Components</strong>.</p>
 <h2 id="listdocs">list_docs</h2>
 <p>Returns a list of all available documentation sections and categories.</p>
 <p><strong>Parameters:</strong> None</p>
@@ -35,8 +38,14 @@
 <p>Fetches the complete documentation bundle (~2000 lines) for comprehensive LLM context.</p>
 <p><strong>Parameters:</strong> None</p>
 <p><strong>Note:</strong> This consumes considerable tokens but provides all documentation in one request.</p>
+<h2 id="namespace-aware-catalog-tools">Namespace-aware catalog tools</h2>
+<p>Use the framework namespace for framework questions:</p>
+<div class="code-block" data-block-id="doc-block-7"></div>
+<p>Use the Components namespace for Visual and Service component questions:</p>
+<div class="code-block" data-block-id="doc-block-8"></div>
+<p><code>slice_components_get_doc</code> returns the authored Markdown and metadata such as the component, catalog version, source path, and revision. The MCP does not execute <code>:::script</code> examples.</p>
 <h2 id="architecture">Architecture</h2>
-<ul><li><strong>Source</strong>: Documentation fetched from https://github.com/VKneider/slicejs_docs</li><li><strong>Caching</strong>: Infinite session cache to minimize API requests and improve performance</li><li><strong>Initialization</strong>: Lazy loading of document structure on first tool use</li><li><strong>Rate Limiting</strong>: Optimized to stay within GitHub API limits (60 req/hour)</li></ul>
+<ul><li><strong>Framework source</strong>: Documentation fetched from https://github.com/VKneider/slicejs_docs</li><li><strong>Components source</strong>: Markdown and manifest fetched from https://github.com/VKneider/slice.js_visual_library</li><li><strong>Caching</strong>: Infinite session cache to minimize API requests and improve performance</li><li><strong>Initialization</strong>: Lazy loading of document structure on first tool use</li><li><strong>Rate Limiting</strong>: Optimized to stay within GitHub API limits (60 req/hour)</li></ul>
 <h2 id="integration-with-ai-assistants">Integration with AI Assistants</h2>
 <p>The MCP server can be integrated with MCP-compatible clients to provide real-time access to Slice.js documentation during development.</p>
 <h2 id="best-practices">Best Practices</h2>
