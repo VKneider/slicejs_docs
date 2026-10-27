@@ -129,6 +129,8 @@ The generated types include:
 - nested object/array types from `schema/items`
 - component prop map support for `slice.build(...)`
 
+The same literal rule applies to the whole metadata: `type`, `allowedValues`, `schema`, `items` are read from the AST, so a constant (`type: TYPE_STRING`, `schema: SHARED_SCHEMA`, or `static props = SHARED`) is invisible and the prop falls back to `any`. `slice types generate` now warns when it finds one, and `slice build` / `slice doctor` report it as an advisory naming the property.
+
 ## Usage Patterns
 ```javascript title="Building with props"
 const card = await slice.build('Card', {

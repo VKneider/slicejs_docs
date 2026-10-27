@@ -204,6 +204,7 @@ build compiles, bundles and emits `dist/`.
 | Route `component` not in `components.js` | warns | warns |
 | Route written `:id` instead of `${id}` (never matches) | warns | warns |
 | `type: "any"`, `required` without default, `slice.build()` of an unregistered name, folder without `<Name>.js` | warns | warns |
+| Prop metadata written as an expression (`type: TYPE_STRING`, `allowedValues: SIZES`, `static props = SHARED`): `types generate` falls back to `any` | warns | warns |
 | Installed npm packages, structure, port, lockfiles, SEO, package manager | reports | — |
 | **esbuild resolves the whole graph; bundles are valid; `dist/` is complete** | — | **only build** |
 | **`api/index.js` runs correctly** | — | — (neither; see below) |

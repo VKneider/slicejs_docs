@@ -1,9 +1,16 @@
 slice-js-developer
-version: 1.20.0
+version: 1.21.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.21.0
+  Prop metadata must be literal, or the generated types silently become any.
+  - `slice types generate` reads `static props` from the AST. `type: TYPE_STRING`,
+    `allowedValues: SIZES`, `schema: SHARED` or a whole `static props = SHARED` are invisible to it:
+    the prop degrades to `any`. It now warns, and build/doctor report the same finding.
+  Files touched: SKILL.md, VERSION, references/config-theming-cli.md, ../manifest.json.
 
 1.20.0
   `slice setup lint` adds linting to an existing project.

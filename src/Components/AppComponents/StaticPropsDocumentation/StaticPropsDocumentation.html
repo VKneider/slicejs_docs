@@ -31,6 +31,7 @@
 <div class="code-block" data-block-id="doc-block-7"></div>
 <p>The generated types include:</p>
 <ul><li>union types from homogeneous <code>allowedValues</code> (for example <code>'a'</code> or <code>'b'</code>, or <code>1</code> or <code>2</code>) — <strong>but only when the array is written literally in the prop definition.</strong> The generator reads the AST of your component and does not resolve variables, so <code>allowedValues: SIZE_VALUES</code> is not seen at all and the prop silently degrades to plain <code>string</code>. Write the list inline, and read it back from <code>this.constructor.props.&lt;prop&gt;</code> in the setter rather than keeping a second copy of it.</li><li>nested object/array types from <code>schema/items</code></li><li>component prop map support for <code>slice.build(...)</code></li></ul>
+<p>The same literal rule applies to the whole metadata: <code>type</code>, <code>allowedValues</code>, <code>schema</code>, <code>items</code> are read from the AST, so a constant (<code>type: TYPE_STRING</code>, <code>schema: SHARED_SCHEMA</code>, or <code>static props = SHARED</code>) is invisible and the prop falls back to <code>any</code>. <code>slice types generate</code> now warns when it finds one, and <code>slice build</code> / <code>slice doctor</code> report it as an advisory naming the property.</p>
 <h2 id="usage-patterns">Usage Patterns</h2>
 <div class="code-block" data-block-id="doc-block-8"></div>
 <div class="code-block" data-block-id="doc-block-9"></div>

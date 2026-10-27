@@ -144,7 +144,9 @@ Absolute imports are kept only when the file exists under `src/public/`; otherwi
 - **Warns only:** `type: "any"`, a `required` prop without a default, a `slice.build('X')` of an
   unregistered name, a component folder without `<Name>.js`, a route whose `component` is not
   registered (it throws only when that route is visited), a route written `:id` instead of `${id}`
-  (never matches), and a declared framework range that rejects the installed version.
+  (never matches), a declared framework range that rejects the installed version, and prop metadata
+  written as an expression (`type: TYPE`, `allowedValues: SIZES`, `schema: SHARED`): `slice types
+  generate` reads the AST, so the prop degrades to `any`.
 
 `slice doctor` exits 1 when any row fails (0 with only warnings), so `slice doctor && slice build` is a
 usable pre-deploy gate. `slice build --no-validate` skips the component pass; the `sliceConfig` and
