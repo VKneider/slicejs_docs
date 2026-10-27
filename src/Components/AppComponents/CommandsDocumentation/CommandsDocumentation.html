@@ -143,7 +143,7 @@ These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</co
 <div class="code-block" data-block-id="doc-block-39"></div>
 <p>The shared flat config ships with the CLI, so a project's config is one import:</p>
 <div class="code-block" data-block-id="doc-block-40"></div>
-<p>It provides the browser environment plus the <code>slice</code>/<code>Slice</code> globals, <code>js.configs.recommended</code>, a set of rules that warn rather than block, ignores for generated output (<code>dist/</code>, <code>components.js</code>, <code>*.generated.js</code>) and a Node/browser override for <code>*.spec.js</code> and <code>tests/</code>. Tooling that runs in Node imports <code>nodeConfig</code> instead:</p>
+<p>It provides the browser environment plus the <code>slice</code>/<code>Slice</code> globals for <code>src/</code>, Node globals for <code>api/</code>, <code>scripts/</code> and <code>*.config.js</code>, <code>js.configs.recommended</code>, a set of rules that warn rather than block, ignores for generated and vendored output (<code>dist/</code>, <code>components.js</code>, <code>*.generated.js</code>, <code>.agents/</code>, <code>.claude/</code>), and a Node/browser override for <code>*.spec.js</code> and <code>tests/</code>. Tooling that runs in Node imports <code>nodeConfig</code> instead:</p>
 <div class="code-block" data-block-id="doc-block-41"></div>
 <p>Lint is for style and environment mistakes. Framework invariants — a component that cannot load, a broken route, a reserved prop, a prop the build rejects — are <code>slice build</code> / <code>slice doctor</code> rules and are not duplicated here, so the two can never drift.</p>
 <h2 id="seo">seo</h2>

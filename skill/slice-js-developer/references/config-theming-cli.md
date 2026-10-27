@@ -167,8 +167,9 @@ import { nodeConfig } from 'slicejs-cli/eslint-config.js';
 export default nodeConfig;
 ```
 
-It brings the browser environment plus `slice`/`Slice` globals, `js.configs.recommended`, a set of
-advisory rules, generated-output ignores, and a Node/browser override for specs. Rules that decide
+It brings the browser environment plus `slice`/`Slice` globals for `src/`, Node globals for `api/`,
+`scripts/` and config files, `js.configs.recommended`, a set of advisory rules, ignores for generated
+and vendored output, and a Node/browser override for specs. Rules that decide
 whether a project ships are **not** in lint: they are `slice build`/`slice doctor` and live in exactly
 one place.
 

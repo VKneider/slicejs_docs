@@ -429,9 +429,10 @@ export default [
 ];
 ```
 
-It provides the browser environment plus the `slice`/`Slice` globals, `js.configs.recommended`, a set
-of rules that warn rather than block, ignores for generated output (`dist/`, `components.js`,
-`*.generated.js`) and a Node/browser override for `*.spec.js` and `tests/`. Tooling that runs in Node
+It provides the browser environment plus the `slice`/`Slice` globals for `src/`, Node globals for
+`api/`, `scripts/` and `*.config.js`, `js.configs.recommended`, a set of rules that warn rather
+than block, ignores for generated and vendored output (`dist/`, `components.js`, `*.generated.js`,
+`.agents/`, `.claude/`), and a Node/browser override for `*.spec.js` and `tests/`. Tooling that runs in Node
 imports `nodeConfig` instead:
 
 ```js title="eslint.config.js (tooling)"
