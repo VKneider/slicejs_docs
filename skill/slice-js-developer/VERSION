@@ -1,9 +1,18 @@
 slice-js-developer
-version: 1.15.0
+version: 1.16.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.16.0
+  routes.js is validated, and the skill says what doctor and build each prove.
+  - The shared pass now reads src/routes.js: a syntax error or an unresolved relative import
+    blocks both commands (the file is served as-is, so the router breaks at load even though the
+    bundle builds); a route whose component is not in components.js only warns.
+  - New "Doctor vs build" section: a table of what each command validates, what only build
+    proves (esbuild graph, dist) and what neither proves (the server boots, framework behavior).
+  Files touched: SKILL.md, VERSION, references/config-theming-cli.md, ../manifest.json.
 
 1.15.0
   Build and doctor run the same validation pass.

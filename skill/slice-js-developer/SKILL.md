@@ -173,15 +173,47 @@ Rules that bite:
 - **`slice doctor` has an SEO row** (`checkSeoConfiguration`): not configured is a warning because
   SEO is opt-in, malformed input fails, and the verdicts come from the same validator as
   `slice seo check`, so the two cannot disagree.
-- **Build and doctor share one validation pass.** `slice doctor`'s Configuration and Components rows
-  classify with the same helper as `slice build` (config rules, source errors and prop errors block
-  both), and doctor exits 1 when a row fails — so `slice doctor && slice build` is a real gate.
+- **Build and doctor share one validation pass.** `slice doctor`'s Configuration and Components &
+  Routes rows classify with the same helper as `slice build`, and doctor exits 1 when a row fails —
+  so `slice doctor && slice build` is a real gate. See the table below for what each one actually
+  proves.
 - **Router titles come from the `metadata` field on `routes.js`**, on by default. It writes only what
   the route declares, never `canonical`/`robots` (crawlers do not run JavaScript), a `router:change`
   listener still wins, and a disagreement between `routes.js` and `seo.json` is a `slice doctor` /
   `slice seo check` warning.
 - **Crawlers still do not see the body.** The head, the status code and the sitemap are server-side;
   the article itself is client-rendered.
+
+---
+
+## Doctor vs build — what each one proves
+
+Never use `slice doctor` as a substitute for `slice build`. Doctor is a fast static check (≈1 s);
+build compiles, bundles and emits `dist/`.
+
+| Check | `slice doctor` | `slice build` |
+|---|---|---|
+| `sliceConfig` rules (`context.enabled` needs `events.enabled`) | blocks | blocks |
+| Component file: syntax error, missing `default export`, unresolved relative import | blocks | blocks |
+| Component prop definitions (`type`, `schema`, `items`, `allowedValues`) | blocks | blocks |
+| `src/routes.js`: syntax error, unresolved relative import | blocks | blocks |
+| Route `component` not in `components.js` | warns | warns |
+| `type: "any"`, `required` without default, `slice.build()` of an unregistered name, folder without `<Name>.js` | warns | warns |
+| Installed npm packages, structure, port, lockfiles, SEO, package manager | reports | — |
+| **esbuild resolves the whole graph; bundles are valid; `dist/` is complete** | — | **only build** |
+| **`api/index.js` boots** | — | — (neither; see below) |
+| **Framework behavior (router, lifecycle, server, SEO)** | — | — (neither) |
+
+Rules that follow from it:
+
+- `routes.js` is **served as-is**, not bundled (the router imports it in the browser). An unresolved
+  import there breaks navigation even though the bundle builds — that is why it is checked statically
+  by both commands.
+- `api/index.js` is not a build artifact and neither command executes it. If the server is the suspect,
+  boot the app: `slice dev`, or the workspace `pnpm verify:conclave` / `node scripts/verify-app.mjs`.
+- "Nothing is broken at framework level" cannot be proven statically. That claim needs a boot of a
+  real app, which is what the framework CI job (Conclave build + boot) does.
+- Correct order in CI: `slice doctor && slice build`, then a runtime smoke test.
 
 ---
 
