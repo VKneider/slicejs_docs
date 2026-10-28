@@ -36,8 +36,13 @@ my-app/
 │   │   ├── Visual/              # Registry UI components installed for the starter
 │   │   ├── Service/             # Built-in services (FetchManager, storage helpers)
 │   │   └── components.js        # Registry of local components (auto-generated)
-│   ├── Themes/                  # Slice.css, Light.css, Dark.css (CSS variables)
-│   ├── Styles/                  # Shared stylesheets
+│   ├── public/                  # Served from the site root, copied to dist/ as-is
+│   │   ├── Themes/              #   Slice.css, Light.css, Dark.css (CSS variables)
+│   │   ├── Styles/              #   Shared stylesheets
+│   │   ├── images/              #   favicon and other static images
+│   │   ├── manifest.json        #   PWA manifest
+│   │   ├── robots.txt           #   Crawler rules
+│   │   └── sitemap.xml          #   Sitemap
 │   ├── routes.js                # Route table (path -> component)
 │   └── sliceConfig.json         # Framework configuration
 ├── node_modules/                # Dependencies (framework + local CLI) — inside the project
@@ -70,7 +75,8 @@ The starter installs only the Visual components it uses. Add more on demand with
 | `src/Components/components.js` | Name → category map used to load components. | No — auto-generated |
 | `src/Components/Visual/*` | Installed registry components. | No — managed by `npm run get -- <Name>` / `npm run sync` |
 | `src/Components/Service/*` | Built-in services you can use or extend. | Optional |
-| `src/Themes/*` | Theme files defining CSS variables. | Optional |
+| `src/public/*` | Public files served from the site root (`/Themes/...`, `/images/...`) and copied to `dist/` by the build. | Yes |
+| `src/public/Themes/*` | Theme files defining CSS variables. | Optional |
 | `.gitignore` | Keeps `node_modules/` and the `dist/` build output out of git. | Rarely |
 | `api/` | The server. Zero-config; serves `/src` in dev and `/dist` in production. | No |
 
