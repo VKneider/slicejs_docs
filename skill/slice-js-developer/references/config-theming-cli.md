@@ -178,14 +178,24 @@ import { nodeConfig } from 'slicejs-cli/eslint-config.js';
 export default nodeConfig;
 ```
 
-It brings the browser environment plus `slice`/`Slice` globals for `src/`, Node globals for `api/`,
-`scripts/` and config files, `js.configs.recommended`, a set of advisory rules, ignores for generated
-and vendored output, and a Node/browser override for specs.
+It brings the browser environment plus `slice`/`Slice` globals **only for `src/`**, Node globals for
+`api/`, `scripts/` and config files, `js.configs.recommended`, a set of advisory rules, ignores for
+generated and vendored output, and a Node/browser override for specs. The browser globals are scoped,
+not additive: `document` in `api/` is a real `no-undef`. A folder that mixes both (a build script that
+drives a headless browser, docs templates that are browser components) opts in explicitly:
+
+```js
+import slice, { nodeGlobals, sliceGlobals } from 'slicejs-cli/eslint-config.js';
+export default [
+  ...slice,
+  { files: ['scripts/og/**'], languageOptions: { globals: { ...nodeGlobals, ...sliceGlobals } } },
+];
+```
 
 `slice lint` also refreshes `src/slice-build.generated.d.ts` (and the event manifest) before running
 ESLint when the project has a `slice:types` script or that file, so the editor never reads stale
-declarations; `--no-types` skips it. ESLint itself does not type-check (no tsconfig): that is still
-`tsc --noEmit` if a project wants a compiler.
+declarations; `--no-types` skips it. ESLint itself does not type-check (no tsconfig): that is the
+separate `slice typecheck` step below.
 
 `slice typecheck` is that compiler step: it refreshes the declarations first (the registry changes with
 every `slice get`; a stale map makes installed components look unregistered), then runs the project's
@@ -194,7 +204,23 @@ every `slice get`; a stale map makes installed components look unregistered), th
 `typecheck` scripts, and generates the first declarations + jsconfig. Keep it separate from lint: type
 checking is much slower.
 
+The generated jsconfig includes `src/Components/**/*.js`, `src/App/**/*.js`, `src/routes.js` and the
+declarations, and the generator writes a small `slice-runtime.generated.d.ts` so the app entry's
+`import Slice from '/Slice/Slice.js'` resolves without tsc following the framework source. Registered
+events are typed: after `slice.events.register({ 'toast:show': { payload: { message: 'string' } } })`,
+`emit`/`subscribe` reject a wrong payload, while unregistered names stay `unknown`. Lint never does
+this comparison; it only refreshes the declarations.
+
 Rules that decide whether a project ships are **not** in lint: they are `slice build`/`slice doctor` and live in exactly one place.
+
+## Bundles are build output
+
+`slice build` writes bundles, the route manifest and `bundle.config.json` to `dist/bundles` — never
+into `src/`. Nothing in a project's source tree should reference or commit them; `dist/` is ignored
+by the `.gitignore` `slice init` writes. `slice build clean` removes the generated files (including
+the `.br`/`.gz` siblings of a compressed build) and `slice build info` summarizes the current config.
+The server serves bundles with `no-store`: they are unversioned, so caching them is how a deploy
+serves yesterday's app.
 
 ## Reproducible builds
 

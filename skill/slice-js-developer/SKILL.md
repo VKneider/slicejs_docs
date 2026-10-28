@@ -175,8 +175,8 @@ Rules that bite:
   `slice seo check`, so the two cannot disagree.
 - **Build and doctor share one validation pass.** `slice doctor`'s Configuration and Components &
   Routes rows classify with the same helper as `slice build`, and doctor exits 1 when a row fails —
-  so `slice doctor && slice build` is a real gate. See the table below for what each one actually
-  proves.
+  so `slice doctor && slice lint && slice typecheck && slice build` is a real gate. See the table
+  below for what each one actually proves.
 - **Router titles come from the `metadata` field on `routes.js`**, on by default. It writes only what
   the route declares, never `canonical`/`robots` (crawlers do not run JavaScript), a `router:change`
   listener still wins, and a disagreement between `routes.js` and `seo.json` is a `slice doctor` /
@@ -221,7 +221,9 @@ Rules that follow from it:
   boot the app: `slice dev`, or the workspace `pnpm verify:conclave` / `node scripts/verify-app.mjs`.
 - "Nothing is broken at framework level" cannot be proven statically. That claim needs a boot of a
   real app, which is what the framework CI job (Conclave build + boot) does.
-- Correct order in CI: `slice doctor && slice build`, then a runtime smoke test.
+- Correct order in CI: `slice doctor && slice lint && slice typecheck && slice build`, then a runtime
+  smoke test. Lint is the fast environment check, typecheck is the compiler step (components against
+  the generated declarations), and build blocks anything that would ship a broken bundle.
 
 ---
 

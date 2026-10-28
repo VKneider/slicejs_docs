@@ -1,9 +1,24 @@
 slice-js-developer
-version: 1.26.0
+version: 1.27.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.27.0
+  Lint scopes its globals; bundles live in dist.
+  - The app preset's browser/framework globals apply only to src/. api/ and scripts/ are Node-only:
+    document in a server file is no-undef. A folder that mixes both opts in with the exported
+    nodeGlobals/sliceGlobals.
+  - slice build writes bundles to dist/bundles (never src/); clean removes the compressed siblings,
+    info reads the real config, and the server keeps bundle responses no-store, including
+    precompressed builds and the /dist mirror.
+  - typecheck now covers src/App and src/routes.js, so event payloads are checked where apps emit
+    them, not only inside components. The generator writes slice-runtime.generated.d.ts so the
+    /Slice/Slice.js import resolves without checking the framework source. Lint still does not
+    type-check; it only refreshes declarations.
+  - CI order is doctor + lint + typecheck + build.
+  Files touched: SKILL.md, VERSION, references/config-theming-cli.md, ../manifest.json.
 
 1.26.0
   typecheck checks the declarations it just refreshed.
