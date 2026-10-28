@@ -69,6 +69,11 @@ export const documentationRoutes = {
             component: 'SliceConfigDocumentation'
          },
          {
+            title: 'Translator',
+            path: '/Documentation/Translator',
+            component: 'TranslatorDocumentation'
+         },
+         {
             title: 'External Dependencies',
             path: '/Documentation/External-Dependencies',
             component: 'ExternalDependenciesDocumentation'
