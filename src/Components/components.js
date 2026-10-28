@@ -34,6 +34,7 @@ const components = {
   "LeakInspectorDocumentation": "AppComponents",
   "LifeCycleMethods": "AppComponents",
   "LifeCycleMethodsDocumentation": "AppComponents",
+  "LintingDocumentation": "AppComponents",
   "LoadingDocumentation": "AppComponents",
   "LoggerDocumentation": "AppComponents",
   "MainMenu": "AppComponents",
