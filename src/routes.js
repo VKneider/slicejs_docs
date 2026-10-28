@@ -32,8 +32,7 @@ const routes = [
          {
             path: '/Configuration/PWA',
             component: 'PwaDocumentation',
-         },
-
+         },
          {
             path: '/Visual',
             component: 'VisualDocumentation',
@@ -61,8 +60,7 @@ const routes = [
          {
             path: '/Structural/Logger',
             component: 'LoggerDocumentation',
-         },
-
+         },
          {
             path: '/Themes',
             component: 'ThemesDocumentation',
@@ -70,6 +68,10 @@ const routes = [
          {
             path: '/Slice-MCP',
             component: 'SliceMCPDocumentation',
+         },
+         {
+            path: '/Linting',
+            component: 'LintingDocumentation',
          },
          {
             path: '/Routing',
@@ -184,13 +186,10 @@ const routes = [
    {
       path: '/Docum/${category}/${id}',
       component: 'LandingPage',
-   },
-
+   },
    {
       path: '/about',
       component: 'TheSliceTeam',
-   },
-
-];
-
+   },
+];
 export default routes;

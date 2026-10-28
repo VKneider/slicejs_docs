@@ -190,6 +190,16 @@ const docsIndex = [
     tags: ['diagnostics', 'leaks', 'cleanup', 'lifecycle', 'devtools']
   },
   {
+    title: 'Linting',
+    route: '/Documentation/Linting',
+    description: 'Set up ESLint with the shared Slice config, and know what it does not check.',
+    section: 'Getting Started',
+    group: 'Diagnostics',
+    order: 44,
+    navLabel: 'Linting',
+    tags: ['linting', 'eslint', 'tooling']
+  },
+  {
     title: 'EventManager',
     route: '/Documentation/Structural/EventManager',
     description: 'Lightweight pub/sub for component and app events.',

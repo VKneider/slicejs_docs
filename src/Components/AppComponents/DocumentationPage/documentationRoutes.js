@@ -54,6 +54,16 @@ export const documentationRoutes = {
             ]
          },
          {
+            title: 'Tooling',
+            items: [
+               {
+                  title: 'Linting',
+                  path: '/Documentation/Linting',
+                  component: 'LintingDocumentation'
+               }
+            ]
+         },
+         {
             title: 'SliceConfig.json',
             path: '/Documentation/Configuration/sliceConfig',
             component: 'SliceConfigDocumentation'
@@ -145,8 +155,7 @@ export const documentationRoutes = {
                   title: 'Route Guards',
                   path: '/Documentation/Routing/Guards',
                   component: 'RouterGuardsDocumentation'
-               },
-
+               },
             ]
          },
          {
@@ -250,29 +259,24 @@ export const documentationRoutes = {
       path: '/Documentation',
       component: 'Documentation'
    }
-};
-
+};
 // Función para extraer todas las rutas para MultiRoute
 export const getAllRoutes = (routesObj) => {
-   const allRoutes = [];
-
+   const allRoutes = [];
    const processItems = (items) => {
-      if (!items) return;
-
+      if (!items) return;
       items.forEach(item => {
          if (item.path && item.component) {
             allRoutes.push({
                path: item.path,
                component: item.component
             });
-         }
-
+         }
          if (item.items) {
             processItems(item.items);
          }
       });
-   };
-
+   };
    // Procesar cada sección principal
    Object.values(routesObj).forEach(section => {
       if (section.path && section.component) {
@@ -280,37 +284,31 @@ export const getAllRoutes = (routesObj) => {
             path: section.path,
             component: section.component
          });
-      }
-
+      }
       if (section.items) {
          processItems(section.items);
       }
-   });
-
+   });
    return allRoutes;
-};
-
+};
 // Función para convertir el config de rutas al formato del TreeView
 export const createTreeViewItems = (routesConfig) => {
    const buildTreeItems = (items) => {
-      if (!items) return [];
-
+      if (!items) return [];
       return items.map(item => {
          if (item.items) {
             return {
                value: item.title,
                items: buildTreeItems(item.items)
             };
-         }
-
+         }
          return {
             value: item.title,
             path: item.path,
             component: item.component
          };
       });
-   };
-
+   };
    return [
       {
          value: routesConfig.introduction.title,
