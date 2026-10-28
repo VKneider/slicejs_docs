@@ -19,6 +19,7 @@
 <h2 id="run-it">Run it</h2>
 <div class="code-block" data-block-id="doc-block-4"></div>
 <p><code>slice lint</code> runs the ESLint installed in your project — the CLI does not bundle it. If ESLint is missing, the command says so and tells you how to install it. Any editor with ESLint support picks up <code>eslint.config.js</code> on its own; no extra configuration.</p>
+<p>In a monorepo, the project is the app directory, not the workspace root: <code>npm run lint</code> inside the app and <code>pnpm --filter my-app lint</code> from the root both lint that app.</p>
 <h2 id="what-the-shared-config-provides">What the shared config provides</h2>
 <p>The default export is the <strong>app preset</strong>:</p>
 <ul><li><code>@eslint/js</code> recommended, as errors.</li><li>Browser globals plus <code>slice</code> and <code>Slice</code> for <code>src/</code>.</li><li>Node globals for <code>api/<strong></code>, <code>scripts/</strong></code> and <code>*.config.js</code> — the server side is Node, not browser.</li><li>Node + browser globals (and Playwright's <code>page</code>/<code>browser</code>) for <code>*.spec.js</code>, <code>tests/**</code> and</li></ul>

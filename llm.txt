@@ -3165,6 +3165,9 @@ npm exec slice lint src/Components   # a single path
 missing, the command says so and tells you how to install it. Any editor with ESLint support picks up
 `eslint.config.js` on its own; no extra configuration.
 
+In a monorepo, the project is the app directory, not the workspace root: `npm run lint` inside the app
+and `pnpm --filter my-app lint` from the root both lint that app.
+
 ## What the shared config provides
 
 The default export is the **app preset**:
