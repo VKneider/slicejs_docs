@@ -1,9 +1,19 @@
 slice-js-developer
-version: 1.23.0
+version: 1.24.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.24.0
+  Type checking is its own command, and the generated jsconfig can run it.
+  - `slice typecheck` runs the project tsc --noEmit with jsconfig.json (needs typescript);
+    `slice setup lint --with-types` installs it and adds the script.
+  - `slice types generate` now writes ES2022 target/lib, noEmit, skipLibCheck, excludes specs and
+    drops the old maxNodeModuleJsDepth. Without that, tsc assumed ES5 and reported hundreds of
+    false errors.
+  - Event payload fields are optional, so `emit(name, { ... })` with a subset compiles.
+  Files touched: references/config-theming-cli.md, VERSION, ../manifest.json.
 
 1.23.0
   slice lint refreshes the generated types.

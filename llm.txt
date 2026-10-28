@@ -3206,9 +3206,8 @@ declarations (and the event manifest) when the project uses them — a `slice:ty
 existing `src/slice-build.generated.d.ts`. If the props changed, the file is updated and the command
 says so, so a commit carries the current types. `--no-types` skips the phase.
 
-That keeps it to one command, but it is still not a type *check*: ESLint never compares your code
-against the declarations. If you want a compiler to do that, add `tsc --noEmit` to CI — a job for
-TypeScript, not for the linter.
+That keeps the declarations current, but it is still not a type *check*: ESLint never compares your
+code against them. A compiler does that, and it is one command away.
 
 
 | Question | Tool |
@@ -3216,7 +3215,7 @@ TypeScript, not for the linter.
 | Style, unused code, environment mistakes | `slice lint` |
 | Contract of `static props`, component/route/config invariants | `slice build` / `slice doctor` |
 | Are the generated declarations current? | `slice lint` (regenerates them) |
-| Do the declarations type-check against my code? | `tsc --noEmit`, if you want a compiler |
+| Do the declarations type-check against my code? | `slice typecheck` |
 | Does the app actually run? | `slice dev`, or a deployed preview |
 
 Remember that the type generator reads the AST: `type`, `allowedValues`, `schema` and `items` must be
@@ -3224,11 +3223,40 @@ written literally. A constant is invisible to it and the prop falls back to `any
 [Static Props](/Documentation/Static-Props)). `slice types generate` warns when it finds one, and so do
 `slice build` and `slice doctor`.
 
+
+## Type checking
+
+`slice typecheck` runs your own TypeScript over the project with the `jsconfig.json` that
+`slice types generate` maintains (`allowJs` + `checkJs`, modern target and libs, specs excluded).
+
+```bash
+npm i -D typescript
+npm exec slice typecheck
+```
+
+Or let the setup do both:
+
+```bash
+npm exec slice setup lint --with-types
+```
+
+It installs TypeScript, writes the ESLint config as usual, and adds a `typecheck` script. If the
+project already has a `jsconfig.json`/`tsconfig.json`, `slice typecheck` uses it (`-p` overrides).
+
+What it catches: a `slice.build('X', { … })` whose props do not match `X`'s `static props`, an event
+payload with the wrong shape, a property that does not exist. The generated declarations are what make
+the framework API typed; the rest of your code is checked as JavaScript, with `strict` off by default
+so a JS app does not need annotations to pass.
+
+It is slower than lint and needs a compiler installed, so it is a separate command: lint stays fast
+for the editor, `typecheck` runs in CI.
+
 ## In CI
 
 ```bash title="A complete static gate"
 npm exec slice doctor
 npm exec slice lint
+npm exec slice typecheck
 npm exec slice build
 ```
 

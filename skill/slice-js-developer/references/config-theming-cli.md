@@ -185,6 +185,10 @@ ESLint when the project has a `slice:types` script or that file, so the editor n
 declarations; `--no-types` skips it. ESLint itself does not type-check (no tsconfig): that is still
 `tsc --noEmit` if a project wants a compiler.
 
+`slice typecheck` is that compiler step: it runs the project's `tsc --noEmit` with `jsconfig.json`
+(`-p` overrides). It needs `typescript` in the project; `slice setup lint --with-types` installs it and
+adds the `typecheck` script. Keep it separate from lint: type checking is much slower.
+
 Rules that decide whether a project ships are **not** in lint: they are `slice build`/`slice doctor` and live in exactly one place.
 
 ## Reproducible builds
@@ -216,6 +220,7 @@ Node ≥ 20. Use `npx slicejs-cli <cmd>` or the `npm run` scripts `slice init` s
 | `slice skill add` | Install the Slice.js Claude Code skill into `.claude/skills/` (also `update` / `status`) |
 | `slice doctor` (`diagnose`) | Project diagnostics (structure, config + schema, SEO, deps + version skew, components/routes/server entry, missing npm imports, port) |
 | `slice lint` | Runs the project's ESLint; refreshes `src/slice-build.generated.d.ts` first when the project uses types (`--no-types` opts out); the shared config is `slicejs-cli/eslint-config.js` |
+| `slice typecheck` | Runs the project's `tsc --noEmit` over `jsconfig.json` (needs `typescript`); `slice setup lint --with-types` installs it |
 | `slice setup lint` | Adds ESLint + the shared config + `lint` scripts to an existing project (`--dry-run`) |
 | `slice seo sitemap` / `seo check` | Write / validate the committed `public/sitemap.xml` from `seo.json` |
 | `slice seo images` (`og`) | Render each route's 1200×630 social card into `public/og/` + its `manifest.json` (needs Playwright) |
