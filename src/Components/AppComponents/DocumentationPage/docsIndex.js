@@ -130,6 +130,16 @@ const docsIndex = [
     tags: ['themes', 'styles', 'configuration']
   },
   {
+    title: 'Translating an app',
+    route: '/Documentation/Translator',
+    description: 'slice.translator — dictionaries, data-t in templates, key() props, locale-aware URLs and formatting.',
+    section: 'Getting Started',
+    group: 'Configuration',
+    order: 8,
+    navLabel: 'Translator',
+    tags: ['translator', 'i18n', 'locales', 'routing']
+  },
+  {
     title: 'sliceConfig.json',
     route: '/Documentation/Configuration/sliceConfig',
     description: 'How Slice.js loads and uses sliceConfig.json.',

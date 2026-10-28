@@ -50,6 +50,18 @@ Destroying runs `beforeDestroy()` and cleans the registry — see [Common Gotcha
 Route params use `${param}` (not `:param`); each captures **one** segment and arrives as a string.
 See [Routing](/Documentation/Routing) and [Route Guards](/Documentation/Routing/Guards).
 
+## Translator
+| Method | Signature | Purpose |
+| --- | --- | --- |
+| `slice.t` | `t(key, params?) → string` | Translate a key (shortcut of `slice.translator.t`). |
+| `slice.translator.setLocale` | `setLocale(locale) → Promise<string>` | Load and switch; updates `<html lang\|dir>`, `data-t`, marker props and route metadata. |
+| `slice.translator.key` | `key(key, params?) → TranslationKey` | Pass a key as a prop; the framework resolves it and re-assigns it on a locale change. |
+| `slice.translator.watch` | `watch(component, cb) → () => void` | Run `cb(locale, previous)` on every change, for text outside the DOM. |
+| `slice.translator.add` | `add(locale, messages, { defaults }) → void` | Merge messages at runtime; `defaults` never overrides the app's dictionaries. |
+| `slice.translator.format.*` | `number / currency / percent / date / time / relative / list` | Locale-aware `Intl` formatting. |
+
+See [Translating an app](/Documentation/Translator).
+
 ## Context (shared state)
 | Method | Signature | Purpose |
 | --- | --- | --- |

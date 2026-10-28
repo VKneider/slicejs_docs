@@ -12,7 +12,7 @@ export default class RoutingDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
          if (container) {
-            const lines = ["| Method | Signature | Returns | Notes |","| --- | --- | --- | --- |","| `start` | `() => Promise<void>` | `Promise<void>` | Starts routing immediately. Recommended when using guards. |","| `navigate` | `(path, _redirectChain?, _options?)` | `Promise<void>` | Programmatic navigation. `_options.replace` uses history replace. |","| `beforeEach` | `(guard)` | `void` | Registers a guard `(to, from, next)`. |","| `afterEach` | `(guard)` | `void` | Registers a guard `(to, from)` after navigation. |"];
+            const lines = ["| Method | Signature | Returns | Notes |","| --- | --- | --- | --- |","| `start` | `() => Promise<void>` | `Promise<void>` | Starts routing immediately. Recommended when using guards. |","| `navigate` | `(path, options?)` | `Promise<void>` | Programmatic navigation. `options.replace` uses history replace; `options.locale` switches language when the translator puts the locale in the URL. |","| `href` | `(path, { locale? }?) => string` | `string` | URL for an `<a>`: carries the locale with `translator.routing`, the path otherwise. |","| `path` | getter | `string` | The app path without locale or query. Use it instead of `window.location.pathname`. |","| `beforeEach` | `(guard)` | `void` | Registers a guard `(to, from, next)`. |","| `afterEach` | `(guard)` | `void` | Registers a guard `(to, from)` after navigation. |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {
@@ -148,7 +148,7 @@ export default class RoutingDocumentation extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-4"]');
          if (container) {
-            const lines = ["| Field | Type | Notes |","| --- | --- | --- |","| `path` | `string` | Requested path or resolved full path. |","| `component` | `string` | Component for the route (parent if nested). |","| `params` | `object` | Dynamic params from `${param}` patterns. |","| `query` | `object` | Parsed query string values. |","| `metadata` | `object` | Route metadata from config. |"];
+            const lines = ["| Field | Type | Notes |","| --- | --- | --- |","| `path` | `string` | The app path without a locale prefix: `/pricing`. |","| `component` | `string` | Component for the route (parent if nested). |","| `params` | `object` | Dynamic params from `${param}` patterns. |","| `query` | `object` | Parsed query string values. |","| `metadata` | `object` | Route metadata from config. |","| `locale` | `string \\| null` | Locale of this navigation when `translator.routing` is on. |","| `url` | `string` | What the address bar shows (`/en/pricing` with routing). |"];
             const clean = (line) => {
                let value = line.trim();
                if (value.startsWith('|')) {

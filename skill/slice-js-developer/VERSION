@@ -1,9 +1,21 @@
 slice-js-developer
-version: 1.27.0
+version: 1.28.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.28.0
+  slice.translator: mark text, don't write it.
+  - New guidance + references/translator.md: data-t in templates (attributes are key.attribute,
+    params are data-t-*, slots with data-t-slot), key() markers for props, slice.t() for text read at
+    use, watch() only for what lives outside the DOM. No localeChanged() hook.
+  - Locale in the URL is opt-in (translator.routing); the router is the only URL reader — use
+    slice.router.path and href(). Library components that still read window.location.pathname are
+    listed, so routing is not enabled before they migrate.
+  - Dictionaries live in src/locales (copied into dist/ by the build and mounted by the server); a
+    missing key is shown as the key on purpose.
+  Files touched: SKILL.md, VERSION, references/translator.md, ../manifest.json.
 
 1.27.0
   Lint scopes its globals; bundles live in dist.

@@ -1,0 +1,100 @@
+<div class="documentation-content translatordocumentation">
+
+<div class="doc-title-bar">
+  <h1 id="translating-an-app">
+    <span class="doc-title-text">Translating an app</span>
+    <span class="copy-md-slot" data-copy-md></span>
+  </h1>
+</div>
+<p><code>slice.translator</code> is a <strong>structural</strong> part of Slice, next to <code>slice.router</code> and <code>slice.context</code>. It owns the dictionaries, the active locale, the translations in the DOM and in component props, and the locale in the URL. <code>slice.t()</code> is the shortcut for <code>slice.translator.t()</code>.</p>
+<p>It always exists. With <code>"enabled": false</code> it loads nothing, <code>t()</code> returns the key, <code>data-t</code> is left alone and <code>format.*</code> uses the browser's language — so code written against it runs in any app.</p>
+<h2 id="enable-it">Enable it</h2>
+<div class="code-block" data-block-id="doc-block-1"></div>
+<div class="table-block" data-block-id="doc-block-2"></div>
+<p><strong>Which locale starts:</strong> with <code>routing</code>, the URL decides — its prefix, or, with <code>"prefix-except-default"</code>, the default locale when there is none. Otherwise: the saved choice → the browser's language → <code>defaultLocale</code>.</p>
+<p>The starting locale is applied before the first route renders. <code>slice init</code> projects can add the block by hand; <code>slice doctor</code> validates it against the schema.</p>
+<h2 id="dictionaries">Dictionaries</h2>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<p>Keys are hierarchical, values are plain text (never HTML):</p>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<p>A namespace file is merged under its own name (<code>orders.json</code> → the <code>orders</code> branch), so <code>load('orders')</code> only downloads when a screen needs it.</p>
+<p>The lookup order is: <strong>app dictionaries</strong> for the active locale → the <strong>defaults layer</strong> for the active locale → both again for <code>fallbackLocale</code> → <strong>the key itself</strong>. A missing key is not a crash: it is shown as <code>orders.title</code> and reported once in development.</p>
+<p><code>slice.translator.add(locale, messages)</code> merges at runtime. <code>add(locale, messages, { defaults: true })</code> writes to the lower layer that never overrides the app's dictionaries — that is how a component library ships its own texts without taking control of the dictionary.</p>
+<h2 id="messages">Messages</h2>
+<div class="table-block" data-block-id="doc-block-5"></div>
+<p>Plural categories come from <code>Intl.PluralRules</code> for the current locale; <code>other</code> is required. A number passed as a parameter is formatted with the locale. There is no ICU MessageFormat in this version.</p>
+<h2 id="javascript-api">JavaScript API</h2>
+<div class="table-block" data-block-id="doc-block-6"></div>
+<div class="code-block" data-block-id="doc-block-7"></div>
+<h2 id="templates-mark-the-text-dont-write-it">Templates: mark the text, don't write it</h2>
+<div class="code-block" data-block-id="doc-block-8"></div>
+<p>For <code>data-t="key"</code>:</p>
+<ul><li>the element's <strong>text</strong> is <code>key</code> — unless the element has translatable attributes, in which case only</li></ul>
+<p>those are filled. Add <code>data-t-text</code> to fill both.</p>
+<ul><li>every <strong>translatable attribute present</strong> (even empty) is <code>key.&lt;attribute&gt;</code> in camelCase: <code>placeholder</code>,</li></ul>
+<p><code>title</code>, <code>alt</code>, <code>aria-label</code> → <code>key.ariaLabel</code>, <code>aria-description</code>, <code>aria-placeholder</code>,   <code>aria-roledescription</code>, <code>aria-valuetext</code>, <code>label</code> on <code>&lt;option&gt;</code>/<code>&lt;optgroup&gt;</code>/<code>&lt;track&gt;</code>, and <code>value</code> on   <code>input[type=button|submit|reset]</code>.</p>
+<ul><li><strong>slots</strong>: a message such as <code>"Acepto los {link}."</code> is rebuilt around the element marked</li></ul>
+<p><code>data-t-slot="link"</code>, which keeps its attributes and its listeners. Dictionaries never contain HTML.</p>
+<p><strong>Marked, not written.</strong> Any element with <code>data-t</code> — in a component template, in <code>App/index.html</code>, or created later from JavaScript — is translated when it enters the document and again on every locale change. One <code>MutationObserver</code> does it, so nothing is copied into JavaScript and no hook has to repaint it:</p>
+<div class="code-block" data-block-id="doc-block-9"></div>
+<p>Parameters come from <code>data-t-*</code> attributes (<code>data-t-user-name</code> → <code>{ userName }</code>); numeric strings become numbers. <code>data-t-text</code> and <code>data-t-slot</code> are directives, not parameters. Templates are translated inside <code>attachTemplate</code> while the component is still detached, so <code>init()</code> reads translated text and the first paint has no keys.</p>
+<p>Text computed at the moment it is used (<code>slice.t()</code> in a toast, in a confirm) needs nothing at all.</p>
+<h2 id="props-key-references">Props: key references</h2>
+<div class="code-block" data-block-id="doc-block-10"></div>
+<ul><li><code>key()</code> returns a frozen marker. <strong>The component only ever receives the translated string</strong>, through</li></ul>
+<p>its normal setter, so components need no changes.</p>
+<ul><li>Markers nested in arrays or plain objects are resolved, and the whole prop is assigned again on a</li></ul>
+<p>locale change.</p>
+<ul><li>Every prop passed through <code>setComponentProps</code> is refreshed. The setters of <code>static props</code> are also</li></ul>
+<p>wrapped once per class, so a later direct assignment (<code>this.$badge.label = key(…)</code>) works too;   assigning a plain string afterwards stops refreshing that prop.</p>
+<ul><li>Prop validation (<code>allowedValues</code>, unknown props) sees the translated strings, not the markers.</li><li><code>String(marker)</code> returns the key and warns in development: a marker used as text is a mistake.</li></ul>
+<div class="callout callout-warning"><code>key()</code> resolves to the key when the translator is off. When a component must keep showing readable
+text on an app without dictionaries, guard the marker:
+
+``<code>javascript
+const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.translator.key(key) : fallback;
+</code>``</div>
+<p>Choose between the two mechanisms by where the text lives: <strong><code>data-t</code> for text in a template</strong>, <strong><code>key()</code> for a value passed as a prop</strong>. <code>slice.t()</code> is for text read at the moment of use.</p>
+<h2 id="changing-the-locale">Changing the locale</h2>
+<p><code>await slice.translator.setLocale('en')</code> runs, in order:</p>
+<ol><li>load what the locale needs (its main file, the namespaces already loaded, the fallback's). On failure</li></ol>
+<p>the locale does not change and the promise rejects;</p>
+<ol><li>set the locale, <code>&lt;html lang&gt;</code> and <code>&lt;html dir&gt;</code> (<code>rtl</code> for <code>ar</code>, <code>he</code>, <code>fa</code>, <code>ur</code>), save the choice</li></ol>
+<p>when <code>saveLocally</code>, and rewrite the URL when <code>routing</code> is on;</p>
+<ol><li>re-translate every <code>data-t</code> in the document;</li><li>re-assign every prop that came from a marker, parents before children;</li><li>re-apply the active route's <code>metadata</code> (translated titles work, see [Routing](/Documentation/Routing));</li><li>call <code>watch()</code> callbacks and emit <code>translator:change</code> (<code>{ locale, previous }</code>).</li></ol>
+<p>There is no <code>localeChanged()</code> lifecycle hook: what lives in the DOM is marked, props are markers, and only what lives outside the DOM uses <code>watch()</code>:</p>
+<div class="code-block" data-block-id="doc-block-11"></div>
+<p>Two overlapping <code>setLocale()</code> calls: the last one wins. A locale that is not in <code>locales</code> throws.</p>
+<h2 id="urls-and-the-router">URLs and the router</h2>
+<p>Independently of <code>routing</code>, the router is the only reader of the URL:</p>
+<div class="code-block" data-block-id="doc-block-12"></div>
+<p>Component code should use these instead of <code>window.location.pathname</code>, and build anchors with <code>href(path)</code>, so the same component works whether or not the locale is in the URL.</p>
+<p>With <code>"routing": "prefix"</code> every URL carries the locale (<code>/es/pricing</code>, <code>/en/pricing</code>); with <code>"prefix-except-default"</code> the default locale has no prefix (<code>/pricing</code>, <code>/en/pricing</code>).</p>
+<ul><li>Routes are declared <strong>once</strong>, without a locale. <code>matchRoute</code> strips a known prefix and sets the</li></ul>
+<p>locale.</p>
+<ul><li><code>navigate('/pricing')</code> adds the active locale. <code>navigate('/pricing', { locale: 'en' })</code> goes to</li></ul>
+<p>another language: its dictionaries load <strong>before</strong> the URL changes, so the page never paints keys,   and a failed load leaves the user where they were.</p>
+<ul><li><code>navigate('/en/pricing')</code> means “that path in that locale”. A guard redirect stays in the target</li></ul>
+<p>locale.</p>
+<ul><li>Back and forward follow the locale of the URL.</li><li>Under <code>"prefix-except-default"</code>, a default-locale prefix (<code>/es/pricing</code>) is canonicalized to</li></ul>
+<p><code>/pricing</code> with <code>replaceState</code>.</p>
+<ul><li>Guards and <code>router:change</code> receive <code>to.path === '/pricing'</code>, <code>to.locale === 'en'</code> and</li></ul>
+<p><code>to.url === '/en/pricing'</code>.</p>
+<ul><li>An unknown prefix (<code>/fr/…</code>) is not a locale: it is an ordinary path (a 404 when no route matches).</li></ul>
+<div class="callout callout-warning">A raw <code>&lt;a href="/x"&gt;</code> does not carry the locale when <code>routing</code> is on. Use <code>slice.router.href()</code> (or the
+<code>Link</code> component) inside translated apps.</div>
+<h2 id="formatting">Formatting</h2>
+<p><code>slice.translator.format.*</code> uses the active locale and caches the <code>Intl</code> formatter per locale and options: <code>number</code>, <code>currency</code>, <code>percent</code>, <code>date</code>, <code>time</code>, <code>relative</code>, <code>list</code>. A component that owns a fixed format (a table of prices in USD, say) can keep its own <code>Intl</code> call.</p>
+<h2 id="current-limits">Current limits</h2>
+<ul><li><strong>Native SEO is single-language for now.</strong> With <code>seo.json</code> configured, the server still prerenders</li></ul>
+<p>one page per route, so <code>/en/...</code> is answered like an unknown path until the multilingual SEO phase   (framework feature 0003, phase 5) ships. Apps <strong>without</strong> native SEO get the shell and work.</p>
+<ul><li><strong>Some library components still read <code>window.location.pathname</code></strong> (<code>Route</code>, <code>MultiRoute</code>, <code>Navbar</code>,</li></ul>
+<p><code>BottomNav</code>, <code>SideMenu</code>, <code>Breadcrumbs</code>, <code>TreeView</code>). Until the library migrates to   <code>slice.router.path</code> (slicejs-components feature 0007), do not enable <code>routing</code> in an app whose   active-route UI depends on them; the translator itself works fine without <code>routing</code>.</p>
+<ul><li>Translated slugs (<code>/es/precios</code>) are out of scope.</li></ul>
+<h2 id="gotchas">Gotchas</h2>
+<ul><li><code>enabled: true</code> without <code>defaultLocale</code> stays disabled, silently by design. Set both.</li><li>A missing key is shown as the key on purpose — that is how you find it. Check the development warnings.</li><li>The observer watches every attribute (parameters are open-ended), and discards anything that does not</li></ul>
+<p>start with <code>data-t</code>, so unrelated animation/style churn does not re-translate.</p>
+<ul><li>Changing only an element's text content by hand under a <code>data-t</code> element lasts until the next locale</li></ul>
+<p>change or dictionary merge, which re-applies the key.</p>
+<ul><li>The <code>aria-label</code> of a marked element needs its own entry: <code>{"home": {"search": {"ariaLabel": "Buscar"}}}</code>.</li></ul>
+</div>

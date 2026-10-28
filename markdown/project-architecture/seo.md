@@ -166,3 +166,7 @@ manifest's (including the `| Acme` suffix), or let the manifest own the title an
 - **Generating the social image** is not part of the runtime. The manifest accepts `image`, and
   `slice seo images` produces the files from the real pages (it writes `public/og/manifest.json`,
   which you pass as `seo.images`). See [CLI commands](/Documentation/CLI#seo-images).
+- **One language per route, for now.** The manifest has no per-locale entries yet: with
+  [`translator.routing`](/Documentation/Translator) on, `/en/...` is still answered like an unknown
+  path until the multilingual SEO phase ships. Apps without native SEO get the shell and translate in
+  the browser.

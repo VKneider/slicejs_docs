@@ -19,6 +19,7 @@ under `slice.*`. You do not build them directly.
 ## Key Components
 - `slice.controller` for component lifecycle and lookup
 - `slice.router` for navigation and route rendering
+- `slice.translator` for translations, locale and formatting (optional to enable)
 - `slice.stylesManager` for styles and themes
 - `slice.events` for pub/sub (optional)
 - `slice.context` for shared state (optional)
@@ -28,6 +29,7 @@ under `slice.*`. You do not build them directly.
 | --- | --- | --- |
 | Build / look up / destroy components | `slice.controller` | Lifecycle and the component registry. |
 | Navigate, guards, route params | `slice.router` | Client-side routing. |
+| Translate text and format dates/numbers | `slice.translator` | `slice.t()`, `data-t`, `key()` props. |
 | Shared state many components read | `slice.context` | Holds state; watchers + selectors. |
 | Announce "something happened" | `slice.events` | Fire-and-forget pub/sub. |
 | Themes and styles | `slice.stylesManager` | `slice.setTheme(name)`. |
@@ -51,7 +53,9 @@ container.innerHTML = '';
 ## Router API
 | Method | Signature | Notes |
 | --- | --- | --- |
-| `navigate` | `(path, options?)` | Programmatic navigation. `{ replace: true }` replaces history. |
+| `path` | `string` (getter) | The app path, without locale or query: `/pricing`. |
+| `href` | `(path, { locale }?) → string` | The URL for an `<a>`, with the locale when `routing` is on. |
+| `navigate` | `(path, options?)` | Programmatic navigation. `{ replace: true }` replaces history; `{ locale: 'en' }` switches language. |
 | `beforeEach` | `(to, from, next)` | Register a guard before navigation. |
 | `afterEach` | `(to, from)` | Run logic after navigation. |
 | `start` | `()` | Start routing immediately. |

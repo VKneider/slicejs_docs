@@ -176,6 +176,10 @@ const routes = [
           {
              path: '/API-Reference',
              component: 'ApiReferenceDocumentation',
+          },
+          {
+             path: '/Translator',
+             component: 'TranslatorDocumentation',
           }
        ]
     },

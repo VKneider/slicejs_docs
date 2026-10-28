@@ -67,6 +67,7 @@ const components = {
   "ThemeCreator": "AppComponents",
   "ThemesDocumentation": "AppComponents",
   "TheSliceTeam": "AppComponents",
+  "TranslatorDocumentation": "AppComponents",
   "TreeViewDocumentation": "AppComponents",
   "UpdateDocumentation": "AppComponents",
   "UpdateMethodDocumentation": "AppComponents",

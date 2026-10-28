@@ -1,0 +1,371 @@
+export default class TranslatorDocumentation extends HTMLElement {
+  constructor(props) {
+    super();
+    slice.attachTemplate(this);
+    slice.controller.setComponentProps(this, props);
+    this.debuggerProps = [];
+  }
+
+  async init() {
+    this.markdownPath = "translator.md";
+    this.markdownContent = "---\ntitle: Translating an app\nroute: /Documentation/Translator\nnavLabel: Translator\nsection: Getting Started\ngroup: Configuration\norder: 8\ndescription: slice.translator — dictionaries, data-t in templates, key() props, locale-aware URLs and formatting.\ncomponent: TranslatorDocumentation\ntags: [translator, i18n, locales, routing]\n---\n\n# Translating an app\n\n`slice.translator` is a **structural** part of Slice, next to `slice.router` and `slice.context`. It\nowns the dictionaries, the active locale, the translations in the DOM and in component props, and the\nlocale in the URL. `slice.t()` is the shortcut for `slice.translator.t()`.\n\nIt always exists. With `\"enabled\": false` it loads nothing, `t()` returns the key, `data-t` is left\nalone and `format.*` uses the browser's language — so code written against it runs in any app.\n\n## Enable it\n\n```json title=\"src/sliceConfig.json\"\n\"translator\": {\n  \"enabled\": true,\n  \"defaultLocale\": \"es\",\n  \"fallbackLocale\": \"en\",\n  \"locales\": [\"es\", \"en\"],\n  \"path\": \"/locales\",\n  \"saveLocally\": true,\n  \"useBrowserLocale\": true,\n  \"routing\": false\n}\n```\n\n| Field | Type | Default | Notes |\n| --- | --- | --- | --- |\n| `enabled` | `boolean` | `false` | Off: nothing is loaded or observed and `t()` returns the key. |\n| `defaultLocale` | `string` | — | Required when enabled. The locale an unprefixed URL means. |\n| `fallbackLocale` | `string \\| null` | `null` | Asked when the active locale has no entry for a key. |\n| `locales` | `string[]` | `[defaultLocale]` | The locales the app has. `setLocale()` refuses anything else. |\n| `path` | `string` | `/locales` | Where the dictionaries are served from. |\n| `saveLocally` | `boolean` | `false` | Remember the choice in `localStorage` (`slice:locale`). |\n| `useBrowserLocale` | `boolean` | `false` | On a first visit, use the browser's language when it is supported (`es-VE` → `es`). |\n| `routing` | `false \\| \"prefix\" \\| \"prefix-except-default\"` | `false` | Whether the locale lives in the URL. See [URLs](#urls-and-the-router). |\n\n**Which locale starts:** with `routing`, the URL decides — its prefix, or, with\n`\"prefix-except-default\"`, the default locale when there is none. Otherwise: the saved choice → the\nbrowser's language → `defaultLocale`.\n\nThe starting locale is applied before the first route renders. `slice init` projects can add the\nblock by hand; `slice doctor` validates it against the schema.\n\n## Dictionaries\n\n```\nsrc/locales/es.json          loaded at start, together with the fallback's\nsrc/locales/en.json\nsrc/locales/es/orders.json   a namespace: loaded by slice.translator.load('orders')\n```\n\nKeys are hierarchical, values are plain text (never HTML):\n\n```json title=\"src/locales/es.json\"\n{\n  \"orders\": {\n    \"greeting\": \"Hola, {name}\",\n    \"count\": { \"one\": \"{count} pedido\", \"other\": \"{count} pedidos\", \"zero\": \"Sin pedidos\" },\n    \"title\": \"Pedidos\"\n  }\n}\n```\n\nA namespace file is merged under its own name (`orders.json` → the `orders` branch), so\n`load('orders')` only downloads when a screen needs it.\n\nThe lookup order is: **app dictionaries** for the active locale → the **defaults layer** for the\nactive locale → both again for `fallbackLocale` → **the key itself**. A missing key is not a crash: it\nis shown as `orders.title` and reported once in development.\n\n`slice.translator.add(locale, messages)` merges at runtime. `add(locale, messages, { defaults: true })`\nwrites to the lower layer that never overrides the app's dictionaries — that is how a component\nlibrary ships its own texts without taking control of the dictionary.\n\n:::note\n`slice build` copies `src/locales` into `dist/locales`, and the server serves the folder at\n`translator.path` in development and in production. If you move the dictionaries, change `path`; do not\nput them under `public/`.\n:::\n\n## Messages\n\n| Feature | Dictionary | Call | Result (`es`) |\n| --- | --- | --- | --- |\n| Interpolation | `\"greeting\": \"Hola, {name}\"` | `slice.t('orders.greeting', { name: 'Ana' })` | `Hola, Ana` |\n| Plural | `\"count\": { \"one\": \"{count} pedido\", \"other\": \"{count} pedidos\" }` | `slice.t('orders.count', { count: 3 })` | `3 pedidos` |\n| Exact zero | `\"zero\": \"Sin pedidos\"` | `slice.t('orders.count', { count: 0 })` | `Sin pedidos` |\n| Numbers | `\"{count} pedidos\"` | `{ count: 1234 }` | `1.234 pedidos` |\n| Literal brace | `\"{{\"` / `\"}}\"` | — | `{` / `}` |\n\nPlural categories come from `Intl.PluralRules` for the current locale; `other` is required. A number\npassed as a parameter is formatted with the locale. There is no ICU MessageFormat in this version.\n\n## JavaScript API\n\n| API | Signature | Notes |\n| --- | --- | --- |\n| `slice.t` | `t(key, params?) → string` | Shortcut of `slice.translator.t`. |\n| `slice.translator.t` | `t(key, params?) → string` | Lookup + plural + interpolation. |\n| `slice.translator.locale` | `string` | Active locale. |\n| `slice.translator.locales` | `readonly string[]` | Configured locales. |\n| `slice.translator.has` | `has(key, locale?) → boolean` | Is it a message? Does not consult the fallback. |\n| `slice.translator.setLocale` | `setLocale(locale) → Promise<string>` | Loads first, then switches. See below. |\n| `slice.translator.preload` | `preload(locale) → Promise<string>` | Load without switching. |\n| `slice.translator.load` | `load(namespace) → Promise<void>` | Load a namespace for the active and fallback locale. |\n| `slice.translator.add` | `add(locale, messages, { defaults }) → void` | Merge messages at runtime. |\n| `slice.translator.key` | `key(key, params?) → TranslationKey` | A prop reference. See [Props](#props-key-references). |\n| `slice.translator.watch` | `watch(component, callback) → () => void` | `callback(locale, previous)` until the component is destroyed. |\n| `slice.translator.apply` | `apply(root?) → number` | Translate `data-t` under `root` now (default: the document). |\n| `slice.translator.format` | `number / currency / percent / date / time / relative / list` | `Intl` wrappers cached per locale and options. |\n\n```javascript\nslice.t('orders.count', { count: itemCount });\nslice.t('prices.total', { amount: slice.translator.format.currency(1299, 'EUR') });\nslice.translator.format.date(new Date(), { dateStyle: 'long' });\n```\n\n## Templates: mark the text, don't write it\n\n```html\n<h1 data-t=\"home.title\"></h1>\n<input data-t=\"home.search\" placeholder aria-label />\n<p data-t=\"signup.terms\">\n  <a href=\"/terms\" data-t-slot=\"link\" data-t=\"signup.termsLink\"></a>\n</p>\n```\n\nFor `data-t=\"key\"`:\n\n- the element's **text** is `key` — unless the element has translatable attributes, in which case only\n  those are filled. Add `data-t-text` to fill both.\n- every **translatable attribute present** (even empty) is `key.<attribute>` in camelCase: `placeholder`,\n  `title`, `alt`, `aria-label` → `key.ariaLabel`, `aria-description`, `aria-placeholder`,\n  `aria-roledescription`, `aria-valuetext`, `label` on `<option>`/`<optgroup>`/`<track>`, and `value` on\n  `input[type=button|submit|reset]`.\n- **slots**: a message such as `\"Acepto los {link}.\"` is rebuilt around the element marked\n  `data-t-slot=\"link\"`, which keeps its attributes and its listeners. Dictionaries never contain HTML.\n\n**Marked, not written.** Any element with `data-t` — in a component template, in `App/index.html`, or\ncreated later from JavaScript — is translated when it enters the document and again on every locale\nchange. One `MutationObserver` does it, so nothing is copied into JavaScript and no hook has to repaint\nit:\n\n```javascript\nthis.$count.dataset.tCount = items.length;         // re-translates \"cart.items\" with { count }\nthis.$status.dataset.t = `orders.status.${state}`; // a different key: re-translated too\nel.innerHTML = '<p data-t=\"about.description\"></p>'; // HTML built from JavaScript works the same\n```\n\nParameters come from `data-t-*` attributes (`data-t-user-name` → `{ userName }`); numeric strings become\nnumbers. `data-t-text` and `data-t-slot` are directives, not parameters. Templates are translated inside\n`attachTemplate` while the component is still detached, so `init()` reads translated text and the first\npaint has no keys.\n\nText computed at the moment it is used (`slice.t()` in a toast, in a confirm) needs nothing at all.\n\n## Props: key references\n\n```javascript\nawait slice.build('Button', { value: slice.translator.key('orders.save') });\nthis.$count.label = slice.translator.key('cart.items', { count });\nawait slice.build('DropDown', {\n  items: [{ label: slice.translator.key('menu.home'), path: '/' }]\n});\n```\n\n- `key()` returns a frozen marker. **The component only ever receives the translated string**, through\n  its normal setter, so components need no changes.\n- Markers nested in arrays or plain objects are resolved, and the whole prop is assigned again on a\n  locale change.\n- Every prop passed through `setComponentProps` is refreshed. The setters of `static props` are also\n  wrapped once per class, so a later direct assignment (`this.$badge.label = key(…)`) works too;\n  assigning a plain string afterwards stops refreshing that prop.\n- Prop validation (`allowedValues`, unknown props) sees the translated strings, not the markers.\n- `String(marker)` returns the key and warns in development: a marker used as text is a mistake.\n\n:::warning\n`key()` resolves to the key when the translator is off. When a component must keep showing readable\ntext on an app without dictionaries, guard the marker:\n\n```javascript\nconst tr = (key, fallback) => slice.translator?.enabled ? slice.translator.key(key) : fallback;\n```\n:::\n\nChoose between the two mechanisms by where the text lives: **`data-t` for text in a template**,\n**`key()` for a value passed as a prop**. `slice.t()` is for text read at the moment of use.\n\n## Changing the locale\n\n`await slice.translator.setLocale('en')` runs, in order:\n\n1. load what the locale needs (its main file, the namespaces already loaded, the fallback's). On failure\n   the locale does not change and the promise rejects;\n2. set the locale, `<html lang>` and `<html dir>` (`rtl` for `ar`, `he`, `fa`, `ur`), save the choice\n   when `saveLocally`, and rewrite the URL when `routing` is on;\n3. re-translate every `data-t` in the document;\n4. re-assign every prop that came from a marker, parents before children;\n5. re-apply the active route's `metadata` (translated titles work, see [Routing](/Documentation/Routing));\n6. call `watch()` callbacks and emit `translator:change` (`{ locale, previous }`).\n\nThere is no `localeChanged()` lifecycle hook: what lives in the DOM is marked, props are markers, and\nonly what lives outside the DOM uses `watch()`:\n\n```javascript\nslice.translator.watch(this, () => this._drawCanvasLabel());\n```\n\nTwo overlapping `setLocale()` calls: the last one wins. A locale that is not in `locales` throws.\n\n## URLs and the router\n\nIndependently of `routing`, the router is the only reader of the URL:\n\n```javascript\nslice.router.path             // the app path: '/pricing' (no locale, no query)\nslice.router.href('/pricing') // the href to render: '/pricing' or '/en/pricing'\n```\n\nComponent code should use these instead of `window.location.pathname`, and build anchors with\n`href(path)`, so the same component works whether or not the locale is in the URL.\n\nWith `\"routing\": \"prefix\"` every URL carries the locale (`/es/pricing`, `/en/pricing`); with\n`\"prefix-except-default\"` the default locale has no prefix (`/pricing`, `/en/pricing`).\n\n- Routes are declared **once**, without a locale. `matchRoute` strips a known prefix and sets the\n  locale.\n- `navigate('/pricing')` adds the active locale. `navigate('/pricing', { locale: 'en' })` goes to\n  another language: its dictionaries load **before** the URL changes, so the page never paints keys,\n  and a failed load leaves the user where they were.\n- `navigate('/en/pricing')` means “that path in that locale”. A guard redirect stays in the target\n  locale.\n- Back and forward follow the locale of the URL.\n- Under `\"prefix-except-default\"`, a default-locale prefix (`/es/pricing`) is canonicalized to\n  `/pricing` with `replaceState`.\n- Guards and `router:change` receive `to.path === '/pricing'`, `to.locale === 'en'` and\n  `to.url === '/en/pricing'`.\n- An unknown prefix (`/fr/…`) is not a locale: it is an ordinary path (a 404 when no route matches).\n\n:::warning\nA raw `<a href=\"/x\">` does not carry the locale when `routing` is on. Use `slice.router.href()` (or the\n`Link` component) inside translated apps.\n:::\n\n## Formatting\n\n`slice.translator.format.*` uses the active locale and caches the `Intl` formatter per locale and\noptions: `number`, `currency`, `percent`, `date`, `time`, `relative`, `list`. A component that owns a\nfixed format (a table of prices in USD, say) can keep its own `Intl` call.\n\n## Current limits\n\n- **Native SEO is single-language for now.** With `seo.json` configured, the server still prerenders\n  one page per route, so `/en/...` is answered like an unknown path until the multilingual SEO phase\n  (framework feature 0003, phase 5) ships. Apps **without** native SEO get the shell and work.\n- **Some library components still read `window.location.pathname`** (`Route`, `MultiRoute`, `Navbar`,\n  `BottomNav`, `SideMenu`, `Breadcrumbs`, `TreeView`). Until the library migrates to\n  `slice.router.path` (slicejs-components feature 0007), do not enable `routing` in an app whose\n  active-route UI depends on them; the translator itself works fine without `routing`.\n- Translated slugs (`/es/precios`) are out of scope.\n\n## Gotchas\n\n- `enabled: true` without `defaultLocale` stays disabled, silently by design. Set both.\n- A missing key is shown as the key on purpose — that is how you find it. Check the development warnings.\n- The observer watches every attribute (parameters are open-ended), and discards anything that does not\n  start with `data-t`, so unrelated animation/style churn does not re-translate.\n- Changing only an element's text content by hand under a `data-t` element lasts until the next locale\n  change or dictionary merge, which re-applies the key.\n- The `aria-label` of a marked element needs its own entry: `{\"home\": {\"search\": {\"ariaLabel\": \"Buscar\"}}}`.\n";
+    if (true) {
+      this.setupCopyButton();
+    }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-1"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "\"translator\": {\n  \"enabled\": true,\n  \"defaultLocale\": \"es\",\n  \"fallbackLocale\": \"en\",\n  \"locales\": [\"es\", \"en\"],\n  \"path\": \"/locales\",\n  \"saveLocally\": true,\n  \"useBrowserLocale\": true,\n  \"routing\": false\n}",
+               language: "json"
+            });
+            if ("src/sliceConfig.json") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "src/sliceConfig.json";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-2"]');
+         if (container) {
+            const lines = ["| Field | Type | Default | Notes |","| --- | --- | --- | --- |","| `enabled` | `boolean` | `false` | Off: nothing is loaded or observed and `t()` returns the key. |","| `defaultLocale` | `string` | — | Required when enabled. The locale an unprefixed URL means. |","| `fallbackLocale` | `string \\| null` | `null` | Asked when the active locale has no entry for a key. |","| `locales` | `string[]` | `[defaultLocale]` | The locales the app has. `setLocale()` refuses anything else. |","| `path` | `string` | `/locales` | Where the dictionaries are served from. |","| `saveLocally` | `boolean` | `false` | Remember the choice in `localStorage` (`slice:locale`). |","| `useBrowserLocale` | `boolean` | `false` | On a first visit, use the browser's language when it is supported (`es-VE` → `es`). |","| `routing` | `false \\| \"prefix\" \\| \"prefix-except-default\"` | `false` | Whether the locale lives in the URL. See [URLs](#urls-and-the-router). |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            // Cells carry trusted inline markup (code/bold) from the parser, so
+            // they use Table's explicit { html } opt-in (Table escapes plain strings).
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => ({ html: formatCell(cell) })));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-3"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "src/locales/es.json          loaded at start, together with the fallback's\nsrc/locales/en.json\nsrc/locales/es/orders.json   a namespace: loaded by slice.translator.load('orders')",
+               language: "text"
+            });
+            if (null) {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = null;
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-4"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "{\n  \"orders\": {\n    \"greeting\": \"Hola, {name}\",\n    \"count\": { \"one\": \"{count} pedido\", \"other\": \"{count} pedidos\", \"zero\": \"Sin pedidos\" },\n    \"title\": \"Pedidos\"\n  }\n}",
+               language: "json"
+            });
+            if ("src/locales/es.json") {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = "src/locales/es.json";
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-5"]');
+         if (container) {
+            const lines = ["| Feature | Dictionary | Call | Result (`es`) |","| --- | --- | --- | --- |","| Interpolation | `\"greeting\": \"Hola, {name}\"` | `slice.t('orders.greeting', { name: 'Ana' })` | `Hola, Ana` |","| Plural | `\"count\": { \"one\": \"{count} pedido\", \"other\": \"{count} pedidos\" }` | `slice.t('orders.count', { count: 3 })` | `3 pedidos` |","| Exact zero | `\"zero\": \"Sin pedidos\"` | `slice.t('orders.count', { count: 0 })` | `Sin pedidos` |","| Numbers | `\"{count} pedidos\"` | `{ count: 1234 }` | `1.234 pedidos` |","| Literal brace | `\"{{\"` / `\"}}\"` | — | `{` / `}` |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            // Cells carry trusted inline markup (code/bold) from the parser, so
+            // they use Table's explicit { html } opt-in (Table escapes plain strings).
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => ({ html: formatCell(cell) })));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-6"]');
+         if (container) {
+            const lines = ["| API | Signature | Notes |","| --- | --- | --- |","| `slice.t` | `t(key, params?) → string` | Shortcut of `slice.translator.t`. |","| `slice.translator.t` | `t(key, params?) → string` | Lookup + plural + interpolation. |","| `slice.translator.locale` | `string` | Active locale. |","| `slice.translator.locales` | `readonly string[]` | Configured locales. |","| `slice.translator.has` | `has(key, locale?) → boolean` | Is it a message? Does not consult the fallback. |","| `slice.translator.setLocale` | `setLocale(locale) → Promise<string>` | Loads first, then switches. See below. |","| `slice.translator.preload` | `preload(locale) → Promise<string>` | Load without switching. |","| `slice.translator.load` | `load(namespace) → Promise<void>` | Load a namespace for the active and fallback locale. |","| `slice.translator.add` | `add(locale, messages, { defaults }) → void` | Merge messages at runtime. |","| `slice.translator.key` | `key(key, params?) → TranslationKey` | A prop reference. See [Props](#props-key-references). |","| `slice.translator.watch` | `watch(component, callback) → () => void` | `callback(locale, previous)` until the component is destroyed. |","| `slice.translator.apply` | `apply(root?) → number` | Translate `data-t` under `root` now (default: the document). |","| `slice.translator.format` | `number / currency / percent / date / time / relative / list` | `Intl` wrappers cached per locale and options. |"];
+            const clean = (line) => {
+               let value = line.trim();
+               if (value.startsWith('|')) {
+                  value = value.slice(1);
+               }
+               if (value.endsWith('|')) {
+                  value = value.slice(0, -1);
+               }
+               return value.split('|').map((cell) => cell.trim());
+            };
+
+            const formatCell = (text) => {
+               let output = text
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;');
+
+               const applyBold = (input) => {
+                  let result = '';
+                  let index = 0;
+                  while (index < input.length) {
+                     const start = input.indexOf('**', index);
+                     if (start === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     const end = input.indexOf('**', start + 2);
+                     if (end === -1) {
+                        result += input.slice(index);
+                        break;
+                     }
+                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
+                     index = end + 2;
+                  }
+                  return result;
+               };
+
+               const applyInlineCode = (input) => {
+                  const parts = input.split(String.fromCharCode(96));
+                  if (parts.length === 1) return input;
+                  return parts
+                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
+                     .join('');
+               };
+
+               output = applyBold(output);
+               output = applyInlineCode(output);
+               return output;
+            };
+
+            const headers = lines.length > 0 ? clean(lines[0]) : [];
+            // Cells carry trusted inline markup (code/bold) from the parser, so
+            // they use Table's explicit { html } opt-in (Table escapes plain strings).
+            const rows = lines.slice(2).map((line) => clean(line).map((cell) => ({ html: formatCell(cell) })));
+            const table = await slice.build('Table', { headers, rows });
+            container.appendChild(table);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-7"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "slice.t('orders.count', { count: itemCount });\nslice.t('prices.total', { amount: slice.translator.format.currency(1299, 'EUR') });\nslice.translator.format.date(new Date(), { dateStyle: 'long' });",
+               language: "javascript"
+            });
+            if (null) {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = null;
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-8"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "<h1 data-t=\"home.title\"></h1>\n<input data-t=\"home.search\" placeholder aria-label />\n<p data-t=\"signup.terms\">\n  <a href=\"/terms\" data-t-slot=\"link\" data-t=\"signup.termsLink\"></a>\n</p>",
+               language: "html"
+            });
+            if (null) {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = null;
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-9"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "this.$count.dataset.tCount = items.length;         // re-translates \"cart.items\" with { count }\nthis.$status.dataset.t = `orders.status.${state}`; // a different key: re-translated too\nel.innerHTML = '<p data-t=\"about.description\"></p>'; // HTML built from JavaScript works the same",
+               language: "javascript"
+            });
+            if (null) {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = null;
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-10"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "await slice.build('Button', { value: slice.translator.key('orders.save') });\nthis.$count.label = slice.translator.key('cart.items', { count });\nawait slice.build('DropDown', {\n  items: [{ label: slice.translator.key('menu.home'), path: '/' }]\n});",
+               language: "javascript"
+            });
+            if (null) {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = null;
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-11"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "slice.translator.watch(this, () => this._drawCanvasLabel());",
+               language: "javascript"
+            });
+            if (null) {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = null;
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-12"]');
+         if (container) {
+            const code = await slice.build('CodeVisualizer', {
+               value: "slice.router.path             // the app path: '/pricing' (no locale, no query)\nslice.router.href('/pricing') // the href to render: '/pricing' or '/en/pricing'",
+               language: "javascript"
+            });
+            if (null) {
+               const label = document.createElement('div');
+               label.classList.add('code-block-title');
+               label.textContent = null;
+               container.appendChild(label);
+            }
+            container.appendChild(code);
+         }
+      }
+  }
+
+  async update() {
+    // Refresh dynamic content here if needed
+  }
+
+  beforeDestroy() {
+    // Cleanup timers, listeners, or pending work here
+  }
+
+  async setupCopyButton() {
+    const container = this.querySelector('[data-copy-md]');
+    if (!container) return;
+
+    const copyMenu = await slice.build('CopyMarkdownMenu', {
+      markdownPath: this.markdownPath,
+      markdownContent: this.markdownContent,
+      label: '❐'
+    });
+
+    container.appendChild(copyMenu);
+  }
+
+  async copyMarkdown() {}
+}
+
+customElements.define('slice-translatordocumentation', TranslatorDocumentation);

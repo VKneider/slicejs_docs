@@ -147,6 +147,20 @@ If a category's `path` or `type` is wrong, `slice.build()` returns `null` with a
 missing `.html`.
 :::
 
+## translator
+| Field | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `enabled` | `boolean` | `false` | Creates dictionaries, `data-t` and `key()` support at `slice.translator`. Off: `slice.t()` returns the key. |
+| `defaultLocale` | `string` | — | Required when enabled. The locale an unprefixed URL means. |
+| `fallbackLocale` | `string \| null` | `null` | Consulted when the active locale has no key. |
+| `locales` | `string[]` | `[defaultLocale]` | Locales the app has; `setLocale()` refuses others. |
+| `path` | `string` | `/locales` | Where `<path>/<locale>.json` is served from (copied into `dist/` by the build). |
+| `saveLocally` | `boolean` | `false` | Remember the choice in `localStorage`. |
+| `useBrowserLocale` | `boolean` | `false` | First visit: use the browser's language when supported. |
+| `routing` | `false \| "prefix" \| "prefix-except-default"` | `false` | Put the locale in the URL (`/es/pricing`; the default locale without a prefix in the second mode). |
+
+Full guide: [Translating an app](/Documentation/Translator).
+
 ## router
 | Field | Type | Default | Notes |
 | --- | --- | --- | --- |

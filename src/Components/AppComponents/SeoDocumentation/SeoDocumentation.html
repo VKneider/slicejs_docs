@@ -45,4 +45,6 @@ manifest's (including the <code>| Acme</code> suffix), or let the manifest own t
 <p>the correct head and an empty <code>#app</code>. Pre-rendering the article content is a separate problem.</p>
 <ul><li><strong>Generating the social image</strong> is not part of the runtime. The manifest accepts <code>image</code>, and</li></ul>
 <p><code>slice seo images</code> produces the files from the real pages (it writes <code>public/og/manifest.json</code>,   which you pass as <code>seo.images</code>). See [CLI commands](/Documentation/CLI#seo-images).</p>
+<ul><li><strong>One language per route, for now.</strong> The manifest has no per-locale entries yet: with</li></ul>
+<p>[<code>translator.routing</code>](/Documentation/Translator) on, <code>/en/...</code> is still answered like an unknown   path until the multilingual SEO phase ships. Apps without native SEO get the shell and translate in   the browser.</p>
 </div>
