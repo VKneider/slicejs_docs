@@ -1,9 +1,17 @@
 slice-js-developer
-version: 1.22.0
+version: 1.23.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.23.0
+  slice lint refreshes the generated types.
+  - Before running ESLint it regenerates src/slice-build.generated.d.ts and the event manifest when
+    the project has a slice:types script or that file, so the editor never reads stale declarations.
+    --no-types opts out. It skips repos without a component registry.
+  - ESLint still does not type-check (no tsconfig): tsc --noEmit remains the compiler step if wanted.
+  Files touched: references/config-theming-cli.md, VERSION, ../manifest.json.
 
 1.22.0
   CSS scope and three lifecycle advisories.

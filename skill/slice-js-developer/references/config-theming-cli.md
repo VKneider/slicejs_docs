@@ -178,9 +178,14 @@ export default nodeConfig;
 
 It brings the browser environment plus `slice`/`Slice` globals for `src/`, Node globals for `api/`,
 `scripts/` and config files, `js.configs.recommended`, a set of advisory rules, ignores for generated
-and vendored output, and a Node/browser override for specs. Rules that decide
-whether a project ships are **not** in lint: they are `slice build`/`slice doctor` and live in exactly
-one place.
+and vendored output, and a Node/browser override for specs.
+
+`slice lint` also refreshes `src/slice-build.generated.d.ts` (and the event manifest) before running
+ESLint when the project has a `slice:types` script or that file, so the editor never reads stale
+declarations; `--no-types` skips it. ESLint itself does not type-check (no tsconfig): that is still
+`tsc --noEmit` if a project wants a compiler.
+
+Rules that decide whether a project ships are **not** in lint: they are `slice build`/`slice doctor` and live in exactly one place.
 
 ## Reproducible builds
 
@@ -210,7 +215,7 @@ Node ≥ 20. Use `npx slicejs-cli <cmd>` or the `npm run` scripts `slice init` s
 | `slice sync` | Update local Visual components from registry (`-f`). Services NOT updated — use `slice get <Name> --service --force` |
 | `slice skill add` | Install the Slice.js Claude Code skill into `.claude/skills/` (also `update` / `status`) |
 | `slice doctor` (`diagnose`) | Project diagnostics (structure, config + schema, SEO, deps + version skew, components/routes/server entry, missing npm imports, port) |
-| `slice lint` | Runs the project's ESLint; the shared config is `slicejs-cli/eslint-config.js` |
+| `slice lint` | Runs the project's ESLint; refreshes `src/slice-build.generated.d.ts` first when the project uses types (`--no-types` opts out); the shared config is `slicejs-cli/eslint-config.js` |
 | `slice setup lint` | Adds ESLint + the shared config + `lint` scripts to an existing project (`--dry-run`) |
 | `slice seo sitemap` / `seo check` | Write / validate the committed `public/sitemap.xml` from `seo.json` |
 | `slice seo images` (`og`) | Render each route's 1200×630 social card into `public/og/` + its `manifest.json` (needs Playwright) |
