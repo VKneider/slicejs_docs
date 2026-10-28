@@ -1,9 +1,17 @@
 slice-js-developer
-version: 1.24.0
+version: 1.25.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.25.0
+  One setup command leaves lint and type checking ready.
+  - `slice setup lint --with-types` installs ESLint + TypeScript, writes the config and scripts, and
+    generates the declarations + jsconfig.json.
+  - `slice lint` creates the jsconfig when missing (it used to refresh only the .d.ts, leaving
+    `slice typecheck` with nothing to point tsc at).
+  Files touched: references/config-theming-cli.md, VERSION, ../manifest.json.
 
 1.24.0
   Type checking is its own command, and the generated jsconfig can run it.

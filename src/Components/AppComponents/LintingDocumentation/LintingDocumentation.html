@@ -14,6 +14,7 @@
 <div class="code-block" data-block-id="doc-block-2"></div>
 <div class="code-block" data-block-id="doc-block-3"></div>
 <p><code>slice setup lint --dry-run</code> prints the plan without touching anything. It never overwrites a config or a script you already have, so running it twice is safe.</p>
+<p>If you also want the compiler step, <code>slice setup lint --with-types</code> adds TypeScript, the <code>typecheck</code> script and the generated declarations in the same pass.</p>
 <p><code>slice init</code> does not install ESLint: the linter is a choice, and choosing it later is one command.</p>
 <h2 id="run-it">Run it</h2>
 <div class="code-block" data-block-id="doc-block-4"></div>
@@ -41,7 +42,7 @@
 <div class="code-block" data-block-id="doc-block-8"></div>
 <p>Or let the setup do both:</p>
 <div class="code-block" data-block-id="doc-block-9"></div>
-<p>It installs TypeScript, writes the ESLint config as usual, and adds a <code>typecheck</code> script. If the project already has a <code>jsconfig.json</code>/<code>tsconfig.json</code>, <code>slice typecheck</code> uses it (<code>-p</code> overrides).</p>
+<p>It installs TypeScript, writes the ESLint config as usual, adds a <code>typecheck</code> script, and generates the first declarations plus the <code>jsconfig.json</code> they belong to. One command leaves the project ready for <code>slice lint</code> and <code>slice typecheck</code>. If the project already has a <code>jsconfig.json</code>/<code>tsconfig.json</code>, <code>slice typecheck</code> uses it (<code>-p</code> overrides).</p>
 <p>What it catches: a <code>slice.build('X', { … })</code> whose props do not match <code>X</code>'s <code>static props</code>, an event payload with the wrong shape, a property that does not exist. The generated declarations are what make the framework API typed; the rest of your code is checked as JavaScript, with <code>strict</code> off by default so a JS app does not need annotations to pass.</p>
 <p>It is slower than lint and needs a compiler installed, so it is a separate command: lint stays fast for the editor, <code>typecheck</code> runs in CI.</p>
 <h2 id="in-ci">In CI</h2>

@@ -3143,6 +3143,9 @@ export default [...slice];
 `slice setup lint --dry-run` prints the plan without touching anything. It never overwrites a config
 or a script you already have, so running it twice is safe.
 
+If you also want the compiler step, `slice setup lint --with-types` adds TypeScript, the `typecheck`
+script and the generated declarations in the same pass.
+
 `slice init` does not install ESLint: the linter is a choice, and choosing it later is one command.
 
 :::note
@@ -3240,8 +3243,10 @@ Or let the setup do both:
 npm exec slice setup lint --with-types
 ```
 
-It installs TypeScript, writes the ESLint config as usual, and adds a `typecheck` script. If the
-project already has a `jsconfig.json`/`tsconfig.json`, `slice typecheck` uses it (`-p` overrides).
+It installs TypeScript, writes the ESLint config as usual, adds a `typecheck` script, and generates
+the first declarations plus the `jsconfig.json` they belong to. One command leaves the project ready
+for `slice lint` and `slice typecheck`. If the project already has a `jsconfig.json`/`tsconfig.json`,
+`slice typecheck` uses it (`-p` overrides).
 
 What it catches: a `slice.build('X', { … })` whose props do not match `X`'s `static props`, an event
 payload with the wrong shape, a property that does not exist. The generated declarations are what make
