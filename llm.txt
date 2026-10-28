@@ -3243,18 +3243,20 @@ Or let the setup do both:
 npm exec slice setup lint --with-types
 ```
 
-It installs TypeScript, writes the ESLint config as usual, adds a `typecheck` script, and generates
-the first declarations plus the `jsconfig.json` they belong to. One command leaves the project ready
-for `slice lint` and `slice typecheck`. If the project already has a `jsconfig.json`/`tsconfig.json`,
-`slice typecheck` uses it (`-p` overrides).
+It installs TypeScript, writes the ESLint config as usual, adds the `slice:types` and `typecheck`
+scripts, and generates the first declarations plus the `jsconfig.json` they belong to. One command
+leaves the project ready for `slice lint` and `slice typecheck`. If the project already has a
+`jsconfig.json`/`tsconfig.json`, `slice typecheck` uses it (`-p` overrides).
 
 What it catches: a `slice.build('X', { … })` whose props do not match `X`'s `static props`, an event
 payload with the wrong shape, a property that does not exist. The generated declarations are what make
 the framework API typed; the rest of your code is checked as JavaScript, with `strict` off by default
 so a JS app does not need annotations to pass.
 
-It is slower than lint and needs a compiler installed, so it is a separate command: lint stays fast
-for the editor, `typecheck` runs in CI.
+Like `lint`, it refreshes the generated declarations first (the registry changes every time you
+install a component), so it never checks a stale map; `--no-types` skips that. It is slower than lint
+and needs a compiler installed, so it is a separate command: lint stays fast for the editor,
+`typecheck` runs in CI.
 
 ## In CI
 

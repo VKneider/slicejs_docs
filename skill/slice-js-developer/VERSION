@@ -1,9 +1,16 @@
 slice-js-developer
-version: 1.25.0
+version: 1.26.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.26.0
+  typecheck checks the declarations it just refreshed.
+  - After `slice get` the generated map is stale, so installed components looked unregistered to
+    tsc. `slice typecheck` now refreshes first (`--no-types` opts out).
+  - `slice setup lint --with-types` also writes the `slice:types` script.
+  Files touched: references/config-theming-cli.md, VERSION, ../manifest.json.
 
 1.25.0
   One setup command leaves lint and type checking ready.
