@@ -63,6 +63,9 @@ SLICE_NO_LOCAL_DELEGATION=1 slice version
 | `slice list` | - | Shortcut for `slice component list`. |
 | `slice version` | `slice v` | Show CLI version. |
 | `slice doctor` | `slice diagnose` | Run project diagnostics. |
+| `slice lint` | - | Run the project's ESLint (refreshes generated declarations first). |
+| `slice typecheck` | - | Type-check with the project's TypeScript (jsconfig.json). |
+| `slice setup lint` | - | Add ESLint + the shared config (and optionally TypeScript) to a project. |
 | `slice types generate` | - | Generate TypeScript typings for `slice.build`. |
 | `slice help` | `slice --help` | Show CLI help. |
 
@@ -415,7 +418,12 @@ the project (`npm i -D eslint`). `slice lint` is a thin wrapper so scripts and C
 npm exec slice lint
 npm exec slice lint --fix
 npm exec slice lint src/Components
+npm exec slice lint --no-types        # skip the declaration refresh
 ```
+
+Before ESLint runs, `slice lint` regenerates the generated declarations (and `jsconfig.json`) when the
+project uses them, so the editor and `slice typecheck` never read a stale `.d.ts`. `--no-types` skips
+that phase. The command propagates ESLint's exit status.
 
 The shared flat config ships with the CLI, so a project's config is one import:
 
@@ -429,7 +437,7 @@ export default [
 ];
 ```
 
-It provides the browser environment plus the `slice`/`Slice` globals for `src/`, Node globals for
+It provides the browser environment plus the `slice`/`Slice` globals **only for `src/`**, Node globals for
 `api/`, `scripts/` and `*.config.js`, `js.configs.recommended`, a set of rules that warn rather
 than block, ignores for generated and vendored output (`dist/`, `components.js`, `*.generated.js`,
 `.agents/`, `.claude/`), and a Node/browser override for `*.spec.js` and `tests/`. Tooling that runs in Node
@@ -440,6 +448,18 @@ import { nodeConfig } from 'slicejs-cli/eslint-config.js';
 export default nodeConfig;
 ```
 
+A folder that deliberately mixes both worlds (a build script driving a headless browser, docs templates
+that are browser components) opts into the other globals with the exported presets:
+
+```js title="eslint.config.js (mixed folder)"
+import slice, { nodeGlobals, sliceGlobals } from 'slicejs-cli/eslint-config.js';
+
+export default [
+  ...slice,
+  { files: ['scripts/og/**'], languageOptions: { globals: { ...nodeGlobals, ...sliceGlobals } } },
+];
+```
+
 Lint is for style and environment mistakes. Framework invariants — a component that cannot load, a
 broken route, a reserved prop, a prop the build rejects — are `slice build` / `slice doctor` rules and
 are not duplicated here, so the two can never drift.
@@ -448,14 +468,37 @@ are not duplicated here, so the two can never drift.
 `slice setup lint` installs `eslint` and `slicejs-cli` as devDependencies when they are missing,
 writes `eslint.config.js` if the project has none, and adds `lint` / `lint:fix` scripts. It never
 overwrites a config or a script you already have, and `--dry-run` prints the plan without touching
-anything.
+anything. `--with-types` also installs `typescript`, adds a `typecheck` script, generates the
+declarations and writes `jsconfig.json`.
 
 ```bash
 npm exec slice setup lint
 npm exec slice setup lint --dry-run
+npm exec slice setup lint --with-types
 ```
 
 `slice init` does not install ESLint: the linter is a choice, and choosing it later is one command.
+
+## typecheck
+Runs the project's own TypeScript over the JS components with `tsc --noEmit`, using the `jsconfig.json`
+that `slice types generate` maintains (`allowJs` + `checkJs`). It refreshes the generated declarations
+first (unless `--no-types`), then compares the code against them.
+
+```bash title="Type check"
+npm exec slice typecheck
+npm exec slice typecheck --no-types
+npm exec slice typecheck -p tsconfig.json
+```
+
+The scope is the generated declarations plus the components and app entry that use them
+(`src/Components/**/*.js`, `src/App/**/*.js`, `src/routes.js` and `src/**/*.d.ts`, minus the
+public/vendored folders) — not every file in the project. That keeps `tsc` fast; broad `src/**/*.js`
+or `api/**/*.js` includes are dropped from `jsconfig.json` when it is maintained. Registered events
+are typed, so `slice.events.emit`/`subscribe` reject a payload that does not match the catalog.
+The exit code is `tsc`'s.
+
+The two commands split the job: `slice lint` is the fast check editors run on save; `slice typecheck`
+is the compiler step for CI. Run it before `slice build`.
 
 ## seo
 
@@ -545,6 +588,10 @@ npm run slice:types -- --output types/slice-build.d.ts
 
 Re-run it whenever you add or change component props. The output is generated — don't edit it by
 hand, and re-generate (or wire it into your build) to keep autocomplete in sync.
+
+It also writes the event manifest (`src/slice-events.generated.js`), creates `jsconfig.json` when the
+project has none, and keeps that config pointed at the generated declarations. `slice lint` and
+`slice typecheck` run this refresh for you before they work.
 
 ## Best Practices
 :::tip

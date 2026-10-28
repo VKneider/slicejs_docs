@@ -50,7 +50,7 @@ script and the generated declarations in the same pass.
 
 `slice init` does not install ESLint: the linter is a choice, and choosing it later is one command.
 
-:::note
+:::warning
 This requires a `slicejs-cli` that ships `eslint-config.js` (4.4 or newer). On an older CLI the import
 fails; update the CLI first.
 :::
@@ -61,6 +61,7 @@ fails; update the CLI first.
 npm run lint              # the whole project
 npm run lint:fix          # apply automatic fixes
 npm exec slice lint src/Components   # a single path
+npm exec slice lint --no-types       # skip the declaration refresh
 ```
 
 `slice lint` runs the ESLint installed in your project — the CLI does not bundle it. If ESLint is
@@ -75,14 +76,16 @@ and `pnpm --filter my-app lint` from the root both lint that app.
 The default export is the **app preset**:
 
 - `@eslint/js` recommended, as errors.
-- Browser globals plus `slice` and `Slice` for `src/`.
-- Node globals for `api/**`, `scripts/**` and `*.config.js` — the server side is Node, not browser.
+- Browser globals plus `slice` and `Slice` **only for `src/`**.
+- Node globals for `api/`, `scripts/` and `*.config.js` — the server side is Node, not browser, and the
+  browser globals are scoped out so `document` in a route handler is a real error.
 - Node + browser globals (and Playwright's `page`/`browser`) for `*.spec.js`, `tests/**` and
   `playwright/**`.
 - A small set of rules as **warnings**, so a long-green project does not turn red overnight
   (`no-unused-vars` with the `_` convention, `no-duplicate-imports`, `no-template-curly-in-string`, …).
-- Ignores for `dist/`, `node_modules/`, `src/libs/`, `*.generated.js`, `src/Components/components.js`
-  and the agent folders (`.agents/`, `.claude/`, `.opencode/`).
+- Ignores for `dist/`, `node_modules/`, `coverage/`, `playwright-report/`, `test-results/`, `.tmp/`,
+  `src/libs/`, `*.generated.js`, `src/Components/components.js` and the agent folders (`.agents/`,
+  `.claude/`, `.opencode/`).
 
 Tooling that runs in Node (a CLI, a build script) imports the other preset:
 
@@ -103,6 +106,18 @@ export default [
 ];
 ```
 
+A folder that deliberately mixes Node with browser code can opt into the other presets, which the
+package also exports (`nodeGlobals`, `sliceGlobals`):
+
+```js title="eslint.config.js (mixed folder)"
+import slice, { nodeGlobals, sliceGlobals } from 'slicejs-cli/eslint-config.js';
+
+export default [
+  ...slice,
+  { files: ['scripts/og/**'], languageOptions: { globals: { ...nodeGlobals, ...sliceGlobals } } },
+];
+```
+
 ## What lint does not do
 
 Lint parses JavaScript. It has **no type information**: the shared config does not enable
@@ -113,6 +128,11 @@ What `slice lint` does do is keep that `.d.ts` honest: before running ESLint it 
 declarations (and the event manifest) when the project uses them — a `slice:types` script or an
 existing `src/slice-build.generated.d.ts`. If the props changed, the file is updated and the command
 says so, so a commit carries the current types. `--no-types` skips the phase.
+
+It also maintains the `jsconfig.json` the compiler reads: it creates it when missing, adds the
+generated declarations and the public-folder excludes, and reports when it had to rewrite one that was
+invalid. Broad `src/**/*.js`, `api/**/*.js` and `tests/**/*.js` includes are dropped so `tsc` does not
+check the whole app on every run; the config stays focused on the components.
 
 That keeps the declarations current, but it is still not a type *check*: ESLint never compares your
 code against them. A compiler does that, and it is one command away.
@@ -134,8 +154,18 @@ written literally. A constant is invisible to it and the prop falls back to `any
 
 ## Type checking
 
-`slice typecheck` runs your own TypeScript over the project with the `jsconfig.json` that
-`slice types generate` maintains (`allowJs` + `checkJs`, modern target and libs, specs excluded).
+`slice typecheck` runs your own TypeScript over the components with the `jsconfig.json` that
+`slice types generate` maintains (`allowJs` + `checkJs`, modern target and libs, specs and public
+folders excluded). The included files are `src/Components/**/*.js`, `src/App/**/*.js`,
+`src/routes.js` and the generated declarations — the app surface where `slice.build` and
+`slice.events` are used — not every file in the project, so `tsc` stays fast.
+
+Events are typed too. When the app registers a catalog with `slice.events.register({ 'toast:show': {
+payload: { message: 'string' } } })`, the generated declarations give `slice.events.emit` and
+`subscribe` the declared payload, so a wrong shape is a compile error. Events that are not registered
+stay permissive (`unknown`), which keeps `context:*`, framework and dynamic names working.
+`slice lint` does not type-check — ESLint has no type information — it only refreshes those
+declarations; `slice typecheck` is the command that compares code against them.
 
 ```bash
 npm i -D typescript
@@ -155,8 +185,9 @@ leaves the project ready for `slice lint` and `slice typecheck`. If the project 
 
 What it catches: a `slice.build('X', { … })` whose props do not match `X`'s `static props`, an event
 payload with the wrong shape, a property that does not exist. The generated declarations are what make
-the framework API typed; the rest of your code is checked as JavaScript, with `strict` off by default
-so a JS app does not need annotations to pass.
+the framework API typed; the included component modules are checked as JavaScript, with `strict` off
+by default so a JS app does not need annotations to pass. Add files to the `include`/`exclude` of the
+`jsconfig.json` if you want a wider net.
 
 Like `lint`, it refreshes the generated declarations first (the registry changes every time you
 install a component), so it never checks a stale map; `--no-types` skips that. It is slower than lint
@@ -172,7 +203,8 @@ npm exec slice typecheck
 npm exec slice build
 ```
 
-`slice doctor` and `slice lint` exit 1 on failures; `doctor` rows marked as warnings (unscoped CSS, a
+`slice doctor` exits 1 on failures and `slice lint` propagates ESLint's own exit status (0 when only
+warnings remain); `typecheck` propagates `tsc`'s. `doctor` rows marked as warnings (unscoped CSS, a
 `destroy()` the framework never calls, an unregistered name in `slice.build`) exit 0. `slice build`
 blocks on anything that would ship a broken bundle — see
 [CLI](/Documentation/CLI#validation-on-build) for the exact split between lint, doctor and build.

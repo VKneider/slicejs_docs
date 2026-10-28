@@ -143,6 +143,9 @@ SLICE_NO_LOCAL_DELEGATION=1 slice version
 | `slice list` | - | Shortcut for `slice component list`. |
 | `slice version` | `slice v` | Show CLI version. |
 | `slice doctor` | `slice diagnose` | Run project diagnostics. |
+| `slice lint` | - | Run the project's ESLint (refreshes generated declarations first). |
+| `slice typecheck` | - | Type-check with the project's TypeScript (jsconfig.json). |
+| `slice setup lint` | - | Add ESLint + the shared config (and optionally TypeScript) to a project. |
 | `slice types generate` | - | Generate TypeScript typings for `slice.build`. |
 | `slice help` | `slice --help` | Show CLI help. |
 
@@ -495,7 +498,12 @@ the project (`npm i -D eslint`). `slice lint` is a thin wrapper so scripts and C
 npm exec slice lint
 npm exec slice lint --fix
 npm exec slice lint src/Components
+npm exec slice lint --no-types        # skip the declaration refresh
 ```
+
+Before ESLint runs, `slice lint` regenerates the generated declarations (and `jsconfig.json`) when the
+project uses them, so the editor and `slice typecheck` never read a stale `.d.ts`. `--no-types` skips
+that phase. The command propagates ESLint's exit status.
 
 The shared flat config ships with the CLI, so a project's config is one import:
 
@@ -509,7 +517,7 @@ export default [
 ];
 ```
 
-It provides the browser environment plus the `slice`/`Slice` globals for `src/`, Node globals for
+It provides the browser environment plus the `slice`/`Slice` globals **only for `src/`**, Node globals for
 `api/`, `scripts/` and `*.config.js`, `js.configs.recommended`, a set of rules that warn rather
 than block, ignores for generated and vendored output (`dist/`, `components.js`, `*.generated.js`,
 `.agents/`, `.claude/`), and a Node/browser override for `*.spec.js` and `tests/`. Tooling that runs in Node
@@ -520,6 +528,18 @@ import { nodeConfig } from 'slicejs-cli/eslint-config.js';
 export default nodeConfig;
 ```
 
+A folder that deliberately mixes both worlds (a build script driving a headless browser, docs templates
+that are browser components) opts into the other globals with the exported presets:
+
+```js title="eslint.config.js (mixed folder)"
+import slice, { nodeGlobals, sliceGlobals } from 'slicejs-cli/eslint-config.js';
+
+export default [
+  ...slice,
+  { files: ['scripts/og/**'], languageOptions: { globals: { ...nodeGlobals, ...sliceGlobals } } },
+];
+```
+
 Lint is for style and environment mistakes. Framework invariants — a component that cannot load, a
 broken route, a reserved prop, a prop the build rejects — are `slice build` / `slice doctor` rules and
 are not duplicated here, so the two can never drift.
@@ -528,14 +548,37 @@ are not duplicated here, so the two can never drift.
 `slice setup lint` installs `eslint` and `slicejs-cli` as devDependencies when they are missing,
 writes `eslint.config.js` if the project has none, and adds `lint` / `lint:fix` scripts. It never
 overwrites a config or a script you already have, and `--dry-run` prints the plan without touching
-anything.
+anything. `--with-types` also installs `typescript`, adds a `typecheck` script, generates the
+declarations and writes `jsconfig.json`.
 
 ```bash
 npm exec slice setup lint
 npm exec slice setup lint --dry-run
+npm exec slice setup lint --with-types
 ```
 
 `slice init` does not install ESLint: the linter is a choice, and choosing it later is one command.
+
+## typecheck
+Runs the project's own TypeScript over the JS components with `tsc --noEmit`, using the `jsconfig.json`
+that `slice types generate` maintains (`allowJs` + `checkJs`). It refreshes the generated declarations
+first (unless `--no-types`), then compares the code against them.
+
+```bash title="Type check"
+npm exec slice typecheck
+npm exec slice typecheck --no-types
+npm exec slice typecheck -p tsconfig.json
+```
+
+The scope is the generated declarations plus the components and app entry that use them
+(`src/Components/**/*.js`, `src/App/**/*.js`, `src/routes.js` and `src/**/*.d.ts`, minus the
+public/vendored folders) — not every file in the project. That keeps `tsc` fast; broad `src/**/*.js`
+or `api/**/*.js` includes are dropped from `jsconfig.json` when it is maintained. Registered events
+are typed, so `slice.events.emit`/`subscribe` reject a payload that does not match the catalog.
+The exit code is `tsc`'s.
+
+The two commands split the job: `slice lint` is the fast check editors run on save; `slice typecheck`
+is the compiler step for CI. Run it before `slice build`.
 
 ## seo
 
@@ -625,6 +668,10 @@ npm run slice:types -- --output types/slice-build.d.ts
 
 Re-run it whenever you add or change component props. The output is generated — don't edit it by
 hand, and re-generate (or wire it into your build) to keep autocomplete in sync.
+
+It also writes the event manifest (`src/slice-events.generated.js`), creates `jsconfig.json` when the
+project has none, and keeps that config pointed at the generated declarations. `slice lint` and
+`slice typecheck` run this refresh for you before they work.
 
 ## Best Practices
 :::tip
@@ -2437,9 +2484,9 @@ project stays lean.
 
 ## Production build, briefly
 `npm run build` analyzes what your routes use, bundles and minifies into `/dist`, and copies
-`src/public/` to the build root. The bundles, their route manifest and `bundle.config.json` live in
-`/dist/bundles`; the build never writes into `src/`. `npm run start` then serves `/dist`. Production
-mode disables dev-only runtime features (debug panels) for performance.
+`src/public/` to `dist/public` (the server serves it from the site root). The bundles, their route manifest
+and `bundle.config.json` live in `/dist/bundles`; the build never writes into `src/`. `npm run start`
+then serves `/dist`. Production mode disables dev-only runtime features (debug panels) for performance.
 
 :::tip
 To import a vendored file in production, place it under `src/public/` (for example
@@ -3149,7 +3196,7 @@ script and the generated declarations in the same pass.
 
 `slice init` does not install ESLint: the linter is a choice, and choosing it later is one command.
 
-:::note
+:::warning
 This requires a `slicejs-cli` that ships `eslint-config.js` (4.4 or newer). On an older CLI the import
 fails; update the CLI first.
 :::
@@ -3160,6 +3207,7 @@ fails; update the CLI first.
 npm run lint              # the whole project
 npm run lint:fix          # apply automatic fixes
 npm exec slice lint src/Components   # a single path
+npm exec slice lint --no-types       # skip the declaration refresh
 ```
 
 `slice lint` runs the ESLint installed in your project — the CLI does not bundle it. If ESLint is
@@ -3174,14 +3222,16 @@ and `pnpm --filter my-app lint` from the root both lint that app.
 The default export is the **app preset**:
 
 - `@eslint/js` recommended, as errors.
-- Browser globals plus `slice` and `Slice` for `src/`.
-- Node globals for `api/**`, `scripts/**` and `*.config.js` — the server side is Node, not browser.
+- Browser globals plus `slice` and `Slice` **only for `src/`**.
+- Node globals for `api/`, `scripts/` and `*.config.js` — the server side is Node, not browser, and the
+  browser globals are scoped out so `document` in a route handler is a real error.
 - Node + browser globals (and Playwright's `page`/`browser`) for `*.spec.js`, `tests/**` and
   `playwright/**`.
 - A small set of rules as **warnings**, so a long-green project does not turn red overnight
   (`no-unused-vars` with the `_` convention, `no-duplicate-imports`, `no-template-curly-in-string`, …).
-- Ignores for `dist/`, `node_modules/`, `src/libs/`, `*.generated.js`, `src/Components/components.js`
-  and the agent folders (`.agents/`, `.claude/`, `.opencode/`).
+- Ignores for `dist/`, `node_modules/`, `coverage/`, `playwright-report/`, `test-results/`, `.tmp/`,
+  `src/libs/`, `*.generated.js`, `src/Components/components.js` and the agent folders (`.agents/`,
+  `.claude/`, `.opencode/`).
 
 Tooling that runs in Node (a CLI, a build script) imports the other preset:
 
@@ -3202,6 +3252,18 @@ export default [
 ];
 ```
 
+A folder that deliberately mixes Node with browser code can opt into the other presets, which the
+package also exports (`nodeGlobals`, `sliceGlobals`):
+
+```js title="eslint.config.js (mixed folder)"
+import slice, { nodeGlobals, sliceGlobals } from 'slicejs-cli/eslint-config.js';
+
+export default [
+  ...slice,
+  { files: ['scripts/og/**'], languageOptions: { globals: { ...nodeGlobals, ...sliceGlobals } } },
+];
+```
+
 ## What lint does not do
 
 Lint parses JavaScript. It has **no type information**: the shared config does not enable
@@ -3212,6 +3274,11 @@ What `slice lint` does do is keep that `.d.ts` honest: before running ESLint it 
 declarations (and the event manifest) when the project uses them — a `slice:types` script or an
 existing `src/slice-build.generated.d.ts`. If the props changed, the file is updated and the command
 says so, so a commit carries the current types. `--no-types` skips the phase.
+
+It also maintains the `jsconfig.json` the compiler reads: it creates it when missing, adds the
+generated declarations and the public-folder excludes, and reports when it had to rewrite one that was
+invalid. Broad `src/**/*.js`, `api/**/*.js` and `tests/**/*.js` includes are dropped so `tsc` does not
+check the whole app on every run; the config stays focused on the components.
 
 That keeps the declarations current, but it is still not a type *check*: ESLint never compares your
 code against them. A compiler does that, and it is one command away.
@@ -3233,8 +3300,18 @@ written literally. A constant is invisible to it and the prop falls back to `any
 
 ## Type checking
 
-`slice typecheck` runs your own TypeScript over the project with the `jsconfig.json` that
-`slice types generate` maintains (`allowJs` + `checkJs`, modern target and libs, specs excluded).
+`slice typecheck` runs your own TypeScript over the components with the `jsconfig.json` that
+`slice types generate` maintains (`allowJs` + `checkJs`, modern target and libs, specs and public
+folders excluded). The included files are `src/Components/**/*.js`, `src/App/**/*.js`,
+`src/routes.js` and the generated declarations — the app surface where `slice.build` and
+`slice.events` are used — not every file in the project, so `tsc` stays fast.
+
+Events are typed too. When the app registers a catalog with `slice.events.register({ 'toast:show': {
+payload: { message: 'string' } } })`, the generated declarations give `slice.events.emit` and
+`subscribe` the declared payload, so a wrong shape is a compile error. Events that are not registered
+stay permissive (`unknown`), which keeps `context:*`, framework and dynamic names working.
+`slice lint` does not type-check — ESLint has no type information — it only refreshes those
+declarations; `slice typecheck` is the command that compares code against them.
 
 ```bash
 npm i -D typescript
@@ -3254,8 +3331,9 @@ leaves the project ready for `slice lint` and `slice typecheck`. If the project 
 
 What it catches: a `slice.build('X', { … })` whose props do not match `X`'s `static props`, an event
 payload with the wrong shape, a property that does not exist. The generated declarations are what make
-the framework API typed; the rest of your code is checked as JavaScript, with `strict` off by default
-so a JS app does not need annotations to pass.
+the framework API typed; the included component modules are checked as JavaScript, with `strict` off
+by default so a JS app does not need annotations to pass. Add files to the `include`/`exclude` of the
+`jsconfig.json` if you want a wider net.
 
 Like `lint`, it refreshes the generated declarations first (the registry changes every time you
 install a component), so it never checks a stale map; `--no-types` skips that. It is slower than lint
@@ -3271,7 +3349,8 @@ npm exec slice typecheck
 npm exec slice build
 ```
 
-`slice doctor` and `slice lint` exit 1 on failures; `doctor` rows marked as warnings (unscoped CSS, a
+`slice doctor` exits 1 on failures and `slice lint` propagates ESLint's own exit status (0 when only
+warnings remain); `typecheck` propagates `tsc`'s. `doctor` rows marked as warnings (unscoped CSS, a
 `destroy()` the framework never calls, an unregistered name in `slice.build`) exit 0. `slice build`
 blocks on anything that would ship a broken bundle — see
 [CLI](/Documentation/CLI#validation-on-build) for the exact split between lint, doctor and build.
@@ -3313,7 +3392,7 @@ my-app/
 │   ├── routes.js                # Route table (path -> component)
 │   └── sliceConfig.json         # Framework configuration
 ├── node_modules/                # Dependencies (framework + local CLI) — inside the project
-├── .gitignore                   # Ignores node_modules/ and dist/
+├── .gitignore                   # Ignores node_modules/, dist/ and local .env files
 ├── package.json                 # Scripts, packageManager field, dependencies
 └── pnpm-lock.yaml               # Lockfile of your package manager (or package-lock.json)
 ```
@@ -3344,7 +3423,7 @@ The starter installs only the Visual components it uses. Add more on demand with
 | `src/Components/Service/*` | Built-in services you can use or extend. | Optional |
 | `src/public/*` | Public files served from the site root (`/Themes/...`, `/images/...`) and copied to `dist/` by the build. | Yes |
 | `src/public/Themes/*` | Theme files defining CSS variables. | Optional |
-| `.gitignore` | Keeps `node_modules/` and the `dist/` build output out of git. | Rarely |
+| `.gitignore` | Keeps `node_modules/`, the `dist/` build output and local `.env` files out of git. | Rarely |
 | `api/` | The server. Zero-config; serves `/src` in dev and `/dist` in production. | No |
 
 ## How a page reaches the screen
@@ -3861,7 +3940,7 @@ npm run slice:types
 Then validate in JS projects with:
 
 ```bash title="Validate generated types"
-npx -p typescript tsc --noEmit -p jsconfig.json
+npm exec slice typecheck
 ```
 
 The generated types include:
@@ -5840,7 +5919,7 @@ Slice.js themes are CSS-variable driven. A theme is a plain CSS file that define
 
 ## Theme Structure
 
-Themes live in `src/Themes/` as one CSS file per theme (`LIGHT.css`, `DARK.css`). Each file exports its tokens under `:root`. The theme name used in code matches the CSS file name (without extension).
+Themes live in `src/public/Themes/` as one CSS file per theme (`Light.css`, `Dark.css`). Each file exports its tokens under `:root`. The theme name used in code matches the CSS file name (without extension).
 
 ## Required Theme Variables
 
@@ -5870,9 +5949,9 @@ Optional but recommended extras include `--primary-color-rgb`, `--secondary-colo
 
 ## LIGHT Theme
 
-The default light theme. Values below come from `src/Themes/LIGHT.css`.
+The default light theme. Values below come from `src/public/Themes/Light.css`.
 
-```css title="src/Themes/LIGHT.css"
+```css title="src/public/Themes/Light.css"
 :root {
   /* Typography */
   --font-primary-color: #1A0B2E;
@@ -5914,9 +5993,9 @@ The default light theme. Values below come from `src/Themes/LIGHT.css`.
 
 ## DARK Theme
 
-The default dark theme. Values below come from `src/Themes/DARK.css`.
+The default dark theme. Values below come from `src/public/Themes/Dark.css`.
 
-```css title="src/Themes/DARK.css"
+```css title="src/public/Themes/Dark.css"
 :root {
   /* Typography */
   --font-primary-color: #f1e7ff;
@@ -5958,14 +6037,14 @@ The default dark theme. Values below come from `src/Themes/DARK.css`.
 
 ## Switching Themes
 
-Slice.js applies themes through the StylesManager. Pass the theme name (matching the CSS file name in `src/Themes/`):
+Slice.js applies themes through the StylesManager. Pass the theme name (matching the CSS file name in `src/public/Themes/`):
 
 ```javascript title="Switching a theme"
-await slice.setTheme('DARK');
+await slice.setTheme('Dark');
 ```
 
 ```javascript title="Back to light"
-await slice.setTheme('LIGHT');
+await slice.setTheme('Light');
 ```
 
 ## Per-Theme CSS Marker
@@ -5974,12 +6053,12 @@ When a theme is applied, the StylesManager sets a `data-slice-theme` attribute o
 
 ```css title="Vary something per theme"
 /* A white logo SVG that must flip on the light theme */
-[data-slice-theme="LIGHT"] .brand-logo { filter: invert(1); }
-[data-slice-theme="DARK"]  .brand-logo { filter: none; }
+[data-slice-theme="Light"] .brand-logo { filter: invert(1); }
+[data-slice-theme="Dark"]  .brand-logo { filter: none; }
 ```
 
 ```javascript title="Read it in JS too"
-document.documentElement.getAttribute('data-slice-theme'); // 'DARK'
+document.documentElement.getAttribute('data-slice-theme'); // 'Dark'
 slice.theme;                                                // same value
 ```
 

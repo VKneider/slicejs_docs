@@ -86,9 +86,9 @@ project stays lean.
 
 ## Production build, briefly
 `npm run build` analyzes what your routes use, bundles and minifies into `/dist`, and copies
-`src/public/` to the build root. The bundles, their route manifest and `bundle.config.json` live in
-`/dist/bundles`; the build never writes into `src/`. `npm run start` then serves `/dist`. Production
-mode disables dev-only runtime features (debug panels) for performance.
+`src/public/` to `dist/public` (the server serves it from the site root). The bundles, their route manifest
+and `bundle.config.json` live in `/dist/bundles`; the build never writes into `src/`. `npm run start`
+then serves `/dist`. Production mode disables dev-only runtime features (debug panels) for performance.
 
 :::tip
 To import a vendored file in production, place it under `src/public/` (for example

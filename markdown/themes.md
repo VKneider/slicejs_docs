@@ -23,7 +23,7 @@ Slice.js themes are CSS-variable driven. A theme is a plain CSS file that define
 
 ## Theme Structure
 
-Themes live in `src/Themes/` as one CSS file per theme (`LIGHT.css`, `DARK.css`). Each file exports its tokens under `:root`. The theme name used in code matches the CSS file name (without extension).
+Themes live in `src/public/Themes/` as one CSS file per theme (`Light.css`, `Dark.css`). Each file exports its tokens under `:root`. The theme name used in code matches the CSS file name (without extension).
 
 ## Required Theme Variables
 
@@ -53,9 +53,9 @@ Optional but recommended extras include `--primary-color-rgb`, `--secondary-colo
 
 ## LIGHT Theme
 
-The default light theme. Values below come from `src/Themes/LIGHT.css`.
+The default light theme. Values below come from `src/public/Themes/Light.css`.
 
-```css title="src/Themes/LIGHT.css"
+```css title="src/public/Themes/Light.css"
 :root {
   /* Typography */
   --font-primary-color: #1A0B2E;
@@ -97,9 +97,9 @@ The default light theme. Values below come from `src/Themes/LIGHT.css`.
 
 ## DARK Theme
 
-The default dark theme. Values below come from `src/Themes/DARK.css`.
+The default dark theme. Values below come from `src/public/Themes/Dark.css`.
 
-```css title="src/Themes/DARK.css"
+```css title="src/public/Themes/Dark.css"
 :root {
   /* Typography */
   --font-primary-color: #f1e7ff;
@@ -141,14 +141,14 @@ The default dark theme. Values below come from `src/Themes/DARK.css`.
 
 ## Switching Themes
 
-Slice.js applies themes through the StylesManager. Pass the theme name (matching the CSS file name in `src/Themes/`):
+Slice.js applies themes through the StylesManager. Pass the theme name (matching the CSS file name in `src/public/Themes/`):
 
 ```javascript title="Switching a theme"
-await slice.setTheme('DARK');
+await slice.setTheme('Dark');
 ```
 
 ```javascript title="Back to light"
-await slice.setTheme('LIGHT');
+await slice.setTheme('Light');
 ```
 
 ## Per-Theme CSS Marker
@@ -157,12 +157,12 @@ When a theme is applied, the StylesManager sets a `data-slice-theme` attribute o
 
 ```css title="Vary something per theme"
 /* A white logo SVG that must flip on the light theme */
-[data-slice-theme="LIGHT"] .brand-logo { filter: invert(1); }
-[data-slice-theme="DARK"]  .brand-logo { filter: none; }
+[data-slice-theme="Light"] .brand-logo { filter: invert(1); }
+[data-slice-theme="Dark"]  .brand-logo { filter: none; }
 ```
 
 ```javascript title="Read it in JS too"
-document.documentElement.getAttribute('data-slice-theme'); // 'DARK'
+document.documentElement.getAttribute('data-slice-theme'); // 'Dark'
 slice.theme;                                                // same value
 ```
 

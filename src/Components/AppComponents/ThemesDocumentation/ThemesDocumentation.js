@@ -25,7 +25,7 @@ export default class ThemesDocumentation extends HTMLElement {
       const themeApplyExample = await slice.build("CodeVisualizer", {
          language: "javascript",
          value: `// Change to a specific theme
-await slice.setTheme("DARK");
+await slice.setTheme("Dark");
 
 // Get current theme
 const currentTheme = slice.theme; // Returns theme name, e.g. "DARK"
@@ -35,9 +35,9 @@ const themeToggleButton = await slice.build("Button", {
    value: "Change Theme",
    onClickCallback: async () => {
       if (slice.theme === "LIGHT") {
-         await slice.setTheme("DARK");
+         await slice.setTheme("Dark");
       } else {
-         await slice.setTheme("LIGHT");
+         await slice.setTheme("Light");
       }
    }
 });`
@@ -78,7 +78,7 @@ const themeToggleButton = await slice.build("Button", {
 
       const customThemeExample = await slice.build("CodeVisualizer", {
          language: "css",
-         value: `/* src/Themes/MyCustomTheme.css */
+         value: `/* src/public/Themes/MyCustomTheme.css */
 :root {
   /* Slice branded light variation */
   --primary-color: #9333ea;

@@ -46,7 +46,7 @@ my-app/
 │   ├── routes.js                # Route table (path -> component)
 │   └── sliceConfig.json         # Framework configuration
 ├── node_modules/                # Dependencies (framework + local CLI) — inside the project
-├── .gitignore                   # Ignores node_modules/ and dist/
+├── .gitignore                   # Ignores node_modules/, dist/ and local .env files
 ├── package.json                 # Scripts, packageManager field, dependencies
 └── pnpm-lock.yaml               # Lockfile of your package manager (or package-lock.json)
 ```
@@ -77,7 +77,7 @@ The starter installs only the Visual components it uses. Add more on demand with
 | `src/Components/Service/*` | Built-in services you can use or extend. | Optional |
 | `src/public/*` | Public files served from the site root (`/Themes/...`, `/images/...`) and copied to `dist/` by the build. | Yes |
 | `src/public/Themes/*` | Theme files defining CSS variables. | Optional |
-| `.gitignore` | Keeps `node_modules/` and the `dist/` build output out of git. | Rarely |
+| `.gitignore` | Keeps `node_modules/`, the `dist/` build output and local `.env` files out of git. | Rarely |
 | `api/` | The server. Zero-config; serves `/src` in dev and `/dist` in production. | No |
 
 ## How a page reaches the screen

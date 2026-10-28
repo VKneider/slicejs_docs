@@ -117,8 +117,7 @@ slicejs_docs/
 │   └── lib/            # markdownParser, generator, docsIndex, report
 ├── src/                # Site source code
 │   ├── App/            # Application configuration
-│   ├── Components/     # Visual and documentation components
-│   └── bundles/        # Bundle configuration
+│   └── Components/     # Visual and documentation components
 └── api/                # API server
 ```
 

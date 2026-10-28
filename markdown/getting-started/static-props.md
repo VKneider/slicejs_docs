@@ -120,7 +120,7 @@ npm run slice:types
 Then validate in JS projects with:
 
 ```bash title="Validate generated types"
-npx -p typescript tsc --noEmit -p jsconfig.json
+npm exec slice typecheck
 ```
 
 The generated types include:
