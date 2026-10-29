@@ -29,11 +29,37 @@
 <h2 id="messages">Messages</h2>
 <div class="table-block" data-block-id="doc-block-7"></div>
 <p>Plural categories come from <code>Intl.PluralRules</code> for the current locale; <code>other</code> is required. A number passed as a parameter is formatted with the locale. There is no ICU MessageFormat in this version.</p>
-<h2 id="javascript-api">JavaScript API</h2>
-<div class="table-block" data-block-id="doc-block-8"></div>
+<h2 id="lists">Lists</h2>
+<p>A dictionary value can be an array. <code>slice.t.list(key, params?)</code> returns it for the active locale:</p>
+<div class="code-block" data-block-id="doc-block-8"></div>
 <div class="code-block" data-block-id="doc-block-9"></div>
-<h2 id="templates-mark-the-text-dont-write-it">Templates: mark the text, don't write it</h2>
+<ul><li>String and plural items are formatted like <code>t()</code>; objects are returned as-is (a list of records, for</li></ul>
+<p>example).</p>
+<ul><li>Missing key or a non-array: <code>[]</code> and one development warning. With <code>showKeys</code>, string items render as</li></ul>
+<p><code>key.0</code>, <code>key.1</code>…</p>
+<ul><li>For a prop, <code>slice.t.ref.list('roles')</code> is the list marker: the component receives the array and a</li></ul>
+<p>fresh one on every locale change. The component's setter must rebuild, not append.</p>
+<ul><li><code>t.list()</code> returns a copy of the array: sorting or splicing it does not mutate the dictionary.</li></ul>
+<p>Content arrays inside a content document do not need <code>t.list()</code>: they are data, and <code>t.content()</code> resolves them.</p>
+<h2 id="content-documents">Content documents</h2>
+<p>Some text is not UI copy but records: experience, projects, courses. A content document keeps the structure once and the prose once per locale, in <code>&lt;translator.path&gt;/content/&lt;name&gt;.json</code> (<code>src/locales/content/…</code> by default):</p>
 <div class="code-block" data-block-id="doc-block-10"></div>
+<div class="code-block" data-block-id="doc-block-11"></div>
+<ul><li><code>copy</code> is resolved with <code>slice.t.localized(value)</code> and merged over the node's fields; <code>copy</code> itself</li></ul>
+<p>disappears from the result. Nested nodes (course → unit → topic) work the same way: every node can   carry its own <code>copy</code>.</p>
+<ul><li>The document is fetched once and resolved per locale; <code>setLocale()</code> does not re-download it.</li><li>A missing document returns <code>null</code> (and warns). A missing branch falls back to <code>fallbackLocale</code> →</li></ul>
+<p><code>defaultLocale</code> and warns in development.</p>
+<ul><li><code>slice.t.localized({ en, es })</code> is the primitive, for a one-off value that is not a document.</li><li>Content is data, not messages: it does not appear in the debugger key panel, and `slice translator</li></ul>
+<p>check` validates its shape instead of looking for keys.</p>
+<ul><li>The server reads the same file with <code>readContent()</code> / <code>resolveContentFor()</code> from</li></ul>
+<p><code>slicejs-web-framework/api/framework/content.js</code>.</p>
+<h3 id="per-locale-files-instead-of-copy">Per-locale files instead of <code>copy</code></h3>
+<p>If an app prefers one file per language, keep full records in <code>src/locales/&lt;locale&gt;/&lt;section&gt;.json</code> and read them with <code>slice.translator.load('section')</code> + <code>slice.t.list('section.records')</code>. That layout duplicates structure; the <code>copy</code> document does not. Both are supported; pick one per section.</p>
+<h2 id="javascript-api">JavaScript API</h2>
+<div class="table-block" data-block-id="doc-block-12"></div>
+<div class="code-block" data-block-id="doc-block-13"></div>
+<h2 id="templates-mark-the-text-dont-write-it">Templates: mark the text, don't write it</h2>
+<div class="code-block" data-block-id="doc-block-14"></div>
 <p>For <code>data-t="key"</code>:</p>
 <ul><li>the element's <strong>text</strong> is <code>key</code> — unless the element has translatable attributes, in which case only</li></ul>
 <p>those are filled. Add <code>data-t-text</code> to fill both.</p>
@@ -42,16 +68,16 @@
 <ul><li><strong>slots</strong>: a message such as <code>"Acepto los {link}."</code> is rebuilt around the element marked</li></ul>
 <p><code>data-t-slot="link"</code>, which keeps its attributes and its listeners. Dictionaries never contain HTML.</p>
 <p><strong>Marked, not written.</strong> Any element with <code>data-t</code> — in a component template, in <code>App/index.html</code>, or created later from JavaScript — is translated when it enters the document and again on every locale change. One <code>MutationObserver</code> does it, so nothing is copied into JavaScript and no hook has to repaint it:</p>
-<div class="code-block" data-block-id="doc-block-11"></div>
+<div class="code-block" data-block-id="doc-block-15"></div>
 <p>Parameters come from <code>data-t-*</code> attributes (<code>data-t-user-name</code> → <code>{ userName }</code>); numeric strings become numbers. <code>data-t-text</code> and <code>data-t-slot</code> are directives, not parameters. Templates are translated inside <code>attachTemplate</code> while the component is still detached, so <code>init()</code> reads translated text and the first paint has no keys.</p>
 <p>Text computed at the moment it is used (<code>slice.t()</code> in a toast, in a confirm) needs nothing at all.</p>
 <h2 id="one-entry-point-t">One entry point: <code>t</code></h2>
 <p><code>t</code> is the method you use everywhere. The only exception is a value that must live in a component prop and survive a locale change without rebuilding the component; for that, <code>t</code> has a namespaced reference:</p>
-<div class="code-block" data-block-id="doc-block-12"></div>
-<div class="table-block" data-block-id="doc-block-13"></div>
+<div class="code-block" data-block-id="doc-block-16"></div>
+<div class="table-block" data-block-id="doc-block-17"></div>
 <p>Why the reference exists: <code>t()</code> returns a <code>string</code>, and a string in a prop is frozen. The reference is an object the framework resolves before the component sees it and re-assigns on every locale change. <code>data-t</code> cannot cover props (they are not DOM nodes), and <code>watch()</code> alone does not translate.</p>
 <h2 id="props-the-one-exception">Props: the one exception</h2>
-<div class="code-block" data-block-id="doc-block-14"></div>
+<div class="code-block" data-block-id="doc-block-18"></div>
 <ul><li><code>t.ref()</code> returns a frozen reference. <strong>The component only ever receives the translated string</strong>,</li></ul>
 <p>through its normal setter, so components need no changes.</p>
 <ul><li>References nested in arrays or plain objects are resolved, and the whole prop is assigned again on a</li></ul>
@@ -74,11 +100,11 @@ const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.t.ref(key) : 
 <p>when <code>saveLocally</code>, and rewrite the URL when <code>localePrefix</code> is on;</p>
 <ol><li>re-translate every <code>data-t</code> in the document;</li><li>re-assign every prop that came from a marker, parents before children;</li><li>re-apply the active route's <code>metadata</code> (translated titles work, see [Routing](/Documentation/Routing));</li><li>call <code>watch()</code> callbacks and emit <code>translator:change</code> (<code>{ locale, previous }</code>).</li></ol>
 <p>There is no <code>localeChanged()</code> lifecycle hook: what lives in the DOM is marked, props are markers, and only what lives outside the DOM uses <code>watch()</code>:</p>
-<div class="code-block" data-block-id="doc-block-15"></div>
+<div class="code-block" data-block-id="doc-block-19"></div>
 <p>Two overlapping <code>setLocale()</code> calls: the last one wins. A locale that is not in <code>locales</code> throws.</p>
 <h2 id="urls-and-the-router">URLs and the router</h2>
 <p>Independently of <code>localePrefix</code>, the router is the only reader of the URL:</p>
-<div class="code-block" data-block-id="doc-block-16"></div>
+<div class="code-block" data-block-id="doc-block-20"></div>
 <p><code>slice.router.path</code> and <code>slice.router.href()</code> are also exposed as <code>slice.path</code> and <code>slice.href()</code>. Components use the shortcuts: no shared helper, no <code>window.location</code>.</p>
 <p>Component code should use these instead of <code>window.location.pathname</code>, and build anchors with <code>href(path)</code>, so the same component works whether or not the locale is in the URL.</p>
 <p>With <code>"localePrefix": "always"</code> every URL carries the locale (<code>/es/pricing</code>, <code>/en/pricing</code>); with <code>"except-default"</code> the default locale has no prefix (<code>/pricing</code>, <code>/en/pricing</code>).</p>
@@ -120,9 +146,9 @@ const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.t.ref(key) : 
 <ul><li><strong>Debugger panel.</strong> Enable it with <code>"translator": { "ui": { "enabled": true, "shortcut": "alt+shift+t" } }</code>.</li></ul>
 <p>It shows the active locale and a switcher, the keys on this page that are missing in the active   locale (and the ones answered by the fallback), and a <strong>keys</strong> switch that shows keys instead of   texts everywhere (<code>setShowKeys</code>) — the fastest way to see what is translated and what is hardcoded.</p>
 <ul><li><strong>CLI.</strong> <code>slice translator init</code> adds the <code>translator</code> block and creates <code>src/locales/&lt;locale&gt;.json</code></li></ul>
-<p>(never overwrites them). <code>slice translator check</code> scans templates, <code>data-t-*</code> params and   <code>slice.t()</code>/<code>t.ref()</code>/<code>tr()</code>/<code>translate()</code>/<code>$t()</code> calls (plus namespace files), and fails when a key   is missing in a locale. <code>--unused</code> also lists dictionary keys nothing reads.</p>
-<ul><li><strong>Doctor.</strong> <code>slice doctor</code> has a <strong>Translator</strong> row using the same scan, so CI can gate on it.</li><li>Development warnings (outside production, once each): missing key per locale, missing parameter, a</li></ul>
-<p>key that is a group, a marker used as a string, <code>data-t</code> with nothing to fill.</p>
+<p>(never overwrites them). <code>slice translator check</code> scans templates, <code>data-t-*</code> params and   <code>slice.t()</code>/<code>t.ref()</code>/<code>t.list()</code>/<code>t.ref.list()</code>/<code>tr()</code>/<code>translate()</code>/<code>$t()</code> calls (plus namespace   files), and fails when a key is missing in a locale or a list key is not an array. It also checks   every <code>slice.t.content('name')</code> against <code>locales/content/name.json</code> and validates each <code>copy</code>: every   locale present, same shape, no empty strings. <code>--unused</code> also lists dictionary keys nothing reads.</p>
+<ul><li><strong>Doctor.</strong> <code>slice doctor</code> has a <strong>Translator</strong> row using the same scan, so CI can gate on it.</li><li>Development warnings (outside production, once each): missing key per locale, missing list or content</li></ul>
+<p>document, a <code>copy</code> without the active locale, missing parameter, a key that is a group, a marker used   as a string, <code>data-t</code> with nothing to fill.</p>
 <h2 id="current-limits">Current limits</h2>
 <ul><li><strong>Locale-aware routing.</strong> Route, MultiRoute, Navbar, BottomNav, Breadcrumbs, SideMenu, TreeView,</li></ul>
 <p>Link, Card, DataList, DescriptionList and Pagination read <code>slice.path</code> / <code>slice.href()</code>; every visual   component ships en/es defaults for its built-in texts (component feature 0007). The docs site still   needs its own dictionaries for its page content.</p>
@@ -131,5 +157,8 @@ const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.t.ref(key) : 
 <h2 id="gotchas">Gotchas</h2>
 <ul><li><code>enabled: true</code> without <code>defaultLocale</code> stays disabled and logs an error. Set both.</li><li>A missing key is shown as the key on purpose — that is how you find it. Check the development warnings.</li><li>The observer watches attributes but only reacts to <code>data-t</code> / <code>data-t-*</code> (not <code>data-theme</code>, <code>data-tab</code>…), so unrelated animation/style churn does not re-translate.</li><li>Changing only an element's text content by hand under a <code>data-t</code> element lasts until the next locale</li></ul>
 <p>change or dictionary merge, which re-applies the key.</p>
-<ul><li>The <code>aria-label</code> of a marked element needs its own entry: <code>{"home": {"search": {"ariaLabel": "Buscar"}}}</code>.</li></ul>
+<ul><li>The <code>aria-label</code> of a marked element needs its own entry: <code>{"home": {"search": {"ariaLabel": "Buscar"}}}</code>.</li><li>Content documents are reads, not marks: a section that renders records must re-render on a locale</li></ul>
+<p>change (<code>watch()</code>), and preserve its own state (active tab, search, page). <code>data-t</code> refreshes text,   not a record list.</p>
+<ul><li>A <code>copy</code> next to structural fields must be an object (<code>{ "title": "…" }</code>). A scalar/array <code>copy</code> only</li></ul>
+<p>works on a node that has nothing else; otherwise there is no field name for the text.</p>
 </div>

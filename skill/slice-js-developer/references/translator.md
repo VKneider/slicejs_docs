@@ -77,6 +77,35 @@ missing key showing up on screen is the designed signal; development warns once 
 - `{name}` interpolates; a number is formatted for the locale; `{{` and `}}` are literal braces.
   No ICU MessageFormat in this version.
 
+## Lists
+
+A dictionary value may be an array. `slice.t.list(key, params?)` returns it for the active locale;
+string/plural items are formatted, objects are returned as-is. `slice.t.ref.list(key, params?)` is
+the prop marker (the whole prop is re-assigned on a locale change; the setter must rebuild, not
+append). Missing or non-array → `[]` + one warning. `showKeys` renders string items as
+`key.<index>`. `t.list()` returns a copy; sorting it does not mutate the dictionary.
+
+## Content documents
+
+Records (experience, projects, courses) live in `<translator.path>/content/<name>.json`
+(`src/locales/content/…`), structure once and prose per locale:
+
+```json
+{
+  "records": [
+    { "id": 1, "logo": "/x.png", "startYear": 2024,
+      "copy": { "en": { "position": "Professor" }, "es": { "position": "Profesor" } } }
+  ]
+}
+```
+
+`const doc = await slice.t.content('experience')` fetches once, resolves `copy` for the active locale
+and flattens nested nodes (`copy` disappears; fields merge over the structure). Missing document →
+`null`; missing branch → fallback → default + warning. `slice.t.localized(value)` is the primitive for
+a one-off `{ en, es }`. Content sections must re-render on a locale change (`watch()`), because content
+is data, not `data-t`. Per-locale files remain an option: `load('section')` + `t.list('section.records')`,
+at the cost of duplicating structure.
+
 ## Switching locale
 
 `await slice.translator.setLocale('en')` loads first (rejects and keeps the old locale on failure),
@@ -158,10 +187,14 @@ unused-key reporting is opt-in.
 
 1. `translator` block in `sliceConfig.json` (`enabled`, `defaultLocale`, `locales`, `path`,
    `localePrefix`, and `useBrowserLocale`/`saveLocally` if the app should remember or detect).
-2. Dictionaries under `src/locales/<locale>.json` (+ namespaces for heavy screens).
+2. Dictionaries under `src/locales/<locale>.json` (+ namespaces for heavy screens; content documents
+   under `src/locales/content/`).
 3. Template text uses `data-t`; attributes need their `key.<attribute>` entry.
-4. Text passed as a prop uses `slice.t.ref()`; guard markers when the app may run with the translator off:
-   `slice.translator?.enabled ? slice.t.ref(...) : fallback`.
-5. `<html lang|dir>` is updated by the framework — do not set it by hand.
-6. Test the switch: `setLocale()` must leave no key on screen, props must be re-assigned, and a
-   reload must keep the choice when `saveLocally` is on.
+4. Text passed as a prop uses `slice.t.ref()`; lists use `t.ref.list()`; guard markers when the app may
+   run with the translator off: `slice.translator?.enabled ? slice.t.ref(...) : fallback`.
+5. Records use `copy` + `await t.content(name)`; every `copy` has all locales and the same shape
+   (`slice translator check` validates it).
+6. `<html lang|dir>` is updated by the framework — do not set it by hand.
+7. Test the switch: `setLocale()` must leave no key on screen, props must be re-assigned, content
+   sections must re-render (state preserved), and a reload must keep the choice when `saveLocally` is
+   on.

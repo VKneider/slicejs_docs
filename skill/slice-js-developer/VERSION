@@ -1,9 +1,22 @@
 slice-js-developer
-version: 1.31.3
+version: 1.32.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.32.0
+  Lists and content documents.
+  - t.list(key, params?) reads an array from the dictionary (string items formatted, records
+    as-is); t.ref.list(key, params?) is the prop marker; [] + one warning when the list is
+    missing or is not an array. showKeys renders string items as key.<index>.
+  - t.content(name) loads <translator.path>/content/<name>.json once and resolves every
+    copy: { en, es } branch for the active locale, flattening nested nodes; t.localized(value)
+    is the primitive. Missing document -> null; missing branch -> fallback -> default + warning.
+  - Per-locale files remain supported with load() + t.list(); content documents avoid
+    duplicating structure. CLI check validates list keys, content document names and copy shape;
+    the server serves locales/content and exposes readContent()/resolveContentFor().
+  Files touched: SKILL.md, VERSION, references/translator.md, ../manifest.json.
 
 1.31.3
   translator.localePrefix replaces translator.routing.

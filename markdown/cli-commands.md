@@ -576,12 +576,18 @@ npm exec slice translator init --locales es,en --default es
 ### translator check
 Scans `src/Components/**` (`.html` and `.js`), `src/App/index.html`, `src/App/index.js` and
 `src/routes.js`, reusing the framework's `data-t` rules (text, `key.ariaLabel`-style attributes,
-`data-t-*` params) plus `slice.t()`, `slice.t.ref()`, `slice.translator.ref()` and `tr()`/`translate()`/
-`$t()` calls. Fails when a key is missing in a locale, when a plural has no `other`, and reports
-parameter drift and raw `href="/…"` links when `localePrefix` is on.
+`data-t-*` params) plus `slice.t()`, `slice.t.ref()`, `slice.t.list()`, `slice.t.ref.list()`,
+`slice.translator.ref()` and `tr()`/`translate()`/`$t()` calls. Fails when a key is missing in a
+locale, when a list key is not an array, when a plural has no `other`, and reports parameter drift and
+raw `href="/…"` links when `localePrefix` is on.
 
-`data-t` written from JS (`el.innerHTML = '<p data-t="home.x"></p>'`) is not scanned; declare those keys
-in a template or use `slice.t()` so the check can see them.
+It also checks `slice.t.content('name')` calls: the document must exist in
+`src/locales/content/name.json`, and every `copy` in it must have a branch for each locale, the same
+shape across branches, and no empty strings.
+
+`data-t` written from JS (`el.innerHTML = '<p data-t="home.x"></p>'`) and keys built dynamically
+(``slice.t(`orders.${state}`)``) are not scanned; declare those keys in a template or with a literal
+call so the check can see them.
 
 ```bash title="Gate a translated app"
 npm exec slice translator check

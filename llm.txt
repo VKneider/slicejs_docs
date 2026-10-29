@@ -676,12 +676,18 @@ npm exec slice translator init --locales es,en --default es
 ### translator check
 Scans `src/Components/**` (`.html` and `.js`), `src/App/index.html`, `src/App/index.js` and
 `src/routes.js`, reusing the framework's `data-t` rules (text, `key.ariaLabel`-style attributes,
-`data-t-*` params) plus `slice.t()`, `slice.t.ref()`, `slice.translator.ref()` and `tr()`/`translate()`/
-`$t()` calls. Fails when a key is missing in a locale, when a plural has no `other`, and reports
-parameter drift and raw `href="/…"` links when `localePrefix` is on.
+`data-t-*` params) plus `slice.t()`, `slice.t.ref()`, `slice.t.list()`, `slice.t.ref.list()`,
+`slice.translator.ref()` and `tr()`/`translate()`/`$t()` calls. Fails when a key is missing in a
+locale, when a list key is not an array, when a plural has no `other`, and reports parameter drift and
+raw `href="/…"` links when `localePrefix` is on.
 
-`data-t` written from JS (`el.innerHTML = '<p data-t="home.x"></p>'`) is not scanned; declare those keys
-in a template or use `slice.t()` so the check can see them.
+It also checks `slice.t.content('name')` calls: the document must exist in
+`src/locales/content/name.json`, and every `copy` in it must have a branch for each locale, the same
+shape across branches, and no empty strings.
+
+`data-t` written from JS (`el.innerHTML = '<p data-t="home.x"></p>'`) and keys built dynamically
+(``slice.t(`orders.${state}`)``) are not scanned; declare those keys in a template or with a literal
+call so the check can see them.
 
 ```bash title="Gate a translated app"
 npm exec slice translator check
@@ -6370,14 +6376,96 @@ and an app dictionary always wins over both.
 Plural categories come from `Intl.PluralRules` for the current locale; `other` is required. A number
 passed as a parameter is formatted with the locale. There is no ICU MessageFormat in this version.
 
+## Lists
+
+A dictionary value can be an array. `slice.t.list(key, params?)` returns it for the active locale:
+
+```json
+{
+  "roles": ["Professor", "Engineer"],
+  "greetings": ["Hello, {name}", "Welcome, {name}"]
+}
+```
+
+```javascript
+slice.t.list('roles');                       // ['Professor', 'Engineer']
+slice.t.list('greetings', { name: 'Ana' });  // ['Hello, Ana', 'Welcome, Ana']
+```
+
+- String and plural items are formatted like `t()`; objects are returned as-is (a list of records, for
+  example).
+- Missing key or a non-array: `[]` and one development warning. With `showKeys`, string items render as
+  `key.0`, `key.1`…
+- For a prop, `slice.t.ref.list('roles')` is the list marker: the component receives the array and a
+  fresh one on every locale change. The component's setter must rebuild, not append.
+- `t.list()` returns a copy of the array: sorting or splicing it does not mutate the dictionary.
+
+Content arrays inside a content document do not need `t.list()`: they are data, and `t.content()`
+resolves them.
+
+## Content documents
+
+Some text is not UI copy but records: experience, projects, courses. A content document keeps the
+structure once and the prose once per locale, in `<translator.path>/content/<name>.json`
+(`src/locales/content/…` by default):
+
+```json
+{
+  "records": [
+    {
+      "id": 1,
+      "logo": "/images/uru.png",
+      "startYear": 2024,
+      "technologies": ["JavaScript"],
+      "copy": {
+        "en": { "position": "Professor", "responsibilities": ["Teach", "Build"] },
+        "es": { "position": "Profesor", "responsibilities": ["Enseñar", "Construir"] }
+      }
+    }
+  ]
+}
+```
+
+```javascript
+const document = await slice.t.content('experience');
+document.records[0].position;          // "Profesor"
+document.records[0].responsibilities;  // ["Enseñar", "Construir"]
+document.records[0].logo;              // structure, written once
+```
+
+- `copy` is resolved with `slice.t.localized(value)` and merged over the node's fields; `copy` itself
+  disappears from the result. Nested nodes (course → unit → topic) work the same way: every node can
+  carry its own `copy`.
+- The document is fetched once and resolved per locale; `setLocale()` does not re-download it.
+- A missing document returns `null` (and warns). A missing branch falls back to `fallbackLocale` →
+  `defaultLocale` and warns in development.
+- `slice.t.localized({ en, es })` is the primitive, for a one-off value that is not a document.
+- Content is data, not messages: it does not appear in the debugger key panel, and `slice translator
+  check` validates its shape instead of looking for keys.
+- The server reads the same file with `readContent()` / `resolveContentFor()` from
+  `slicejs-web-framework/api/framework/content.js`.
+
+### Per-locale files instead of `copy`
+
+If an app prefers one file per language, keep full records in `src/locales/<locale>/<section>.json`
+and read them with `slice.translator.load('section')` + `slice.t.list('section.records')`. That layout
+duplicates structure; the `copy` document does not. Both are supported; pick one per section.
+
 ## JavaScript API
 
 | API | Signature | Notes |
 | --- | --- | --- |
 | `slice.t` | `t(key, params?) → string` | Shortcut of `slice.translator.t`. |
 | `slice.t.ref` | `t.ref(key, params?) → TranslationRef` | A prop reference. See [Props](#props-the-one-exception). |
+| `slice.t.list` | `t.list(key, params?) → any[]` | A list from the dictionary, or `[]`. See [Lists](#lists). |
+| `slice.t.ref.list` | `t.ref.list(key, params?) → TranslationListRef` | A list prop reference. |
+| `slice.t.localized` | `t.localized(value) → any` | Resolve `{ en, es }` for the active locale. |
+| `slice.t.content` | `t.content(name) → Promise<object\|null>` | Load and resolve a content document. |
 | `slice.locale` | `string` | Active locale shortcut. |
 | `slice.translator.t` | `t(key, params?) → string` | Lookup + plural + interpolation. |
+| `slice.translator.list` | `list(key, params?) → any[]` | A list of messages or records. |
+| `slice.translator.localized` | `localized(value) → any` | Resolve a localized content value. |
+| `slice.translator.content` | `content(name) → Promise<object\|null>` | Load/resolve `<path>/content/<name>.json`. |
 | `slice.translator.locale` | `string` | Active locale. |
 | `slice.translator.locales` | `readonly string[]` | Configured locales. |
 | `slice.translator.has` | `has(key, locale?) → boolean` | Is it a message? Does not consult the fallback. |
@@ -6386,6 +6474,7 @@ passed as a parameter is formatted with the locale. There is no ICU MessageForma
 | `slice.translator.load` | `load(namespace) → Promise<void>` | Load a namespace for the active and fallback locale. |
 | `slice.translator.add` | `add(locale, messages, { defaults }) → void` | Merge messages at runtime. |
 | `slice.translator.ref` | `ref(key, params?) → TranslationRef` | A prop reference. See [Props](#props-the-one-exception). |
+| `slice.translator.refList` | `refList(key, params?) → TranslationListRef` | A list prop reference. |
 | `slice.translator.watch` | `watch(component, callback) → () => void` | `callback(locale, previous)` until the component is destroyed. |
 | `slice.translator.apply` | `apply(root?) → number` | Translate `data-t` under `root` now (default: the document). |
 | `slice.translator.setShowKeys` | `setShowKeys(enabled) → boolean` | Debugger switch: `t()` returns keys instead of texts and the document re-renders. |
@@ -6452,6 +6541,9 @@ slice.t.ref('orders.save')    // a reference for a prop
 | In a template (`.html`) | `data-t` — nothing else |
 | Created from JS (`textContent`, `innerHTML`) | `data-t` / `dataset.t` (+ `data-t-*` params) |
 | Passed as a component prop, must follow the locale | `slice.t.ref()` |
+| Passed as a list prop, must follow the locale | `slice.t.ref.list()` |
+| A dictionary list (`["a", "b"]`) | `slice.t.list()` |
+| A content record (`copy: { en, es }`) | `slice.t.content()` |
 | Computed by your component from data | `slice.t()` + `update()`/`watch()` |
 | Outside the DOM (canvas, third-party widget) | `watch()` + `slice.t()` when drawing |
 | Read at the moment of use (toast, confirm) | `slice.t()` |
@@ -6600,11 +6692,14 @@ translator off shows the key and logs one warning per key, so an untranslated pa
   texts everywhere (`setShowKeys`) — the fastest way to see what is translated and what is hardcoded.
 - **CLI.** `slice translator init` adds the `translator` block and creates `src/locales/<locale>.json`
   (never overwrites them). `slice translator check` scans templates, `data-t-*` params and
-  `slice.t()`/`t.ref()`/`tr()`/`translate()`/`$t()` calls (plus namespace files), and fails when a key
-  is missing in a locale. `--unused` also lists dictionary keys nothing reads.
+  `slice.t()`/`t.ref()`/`t.list()`/`t.ref.list()`/`tr()`/`translate()`/`$t()` calls (plus namespace
+  files), and fails when a key is missing in a locale or a list key is not an array. It also checks
+  every `slice.t.content('name')` against `locales/content/name.json` and validates each `copy`: every
+  locale present, same shape, no empty strings. `--unused` also lists dictionary keys nothing reads.
 - **Doctor.** `slice doctor` has a **Translator** row using the same scan, so CI can gate on it.
-- Development warnings (outside production, once each): missing key per locale, missing parameter, a
-  key that is a group, a marker used as a string, `data-t` with nothing to fill.
+- Development warnings (outside production, once each): missing key per locale, missing list or content
+  document, a `copy` without the active locale, missing parameter, a key that is a group, a marker used
+  as a string, `data-t` with nothing to fill.
 
 ## Current limits
 
@@ -6624,6 +6719,11 @@ translator off shows the key and logs one warning per key, so an untranslated pa
 - Changing only an element's text content by hand under a `data-t` element lasts until the next locale
   change or dictionary merge, which re-applies the key.
 - The `aria-label` of a marked element needs its own entry: `{"home": {"search": {"ariaLabel": "Buscar"}}}`.
+- Content documents are reads, not marks: a section that renders records must re-render on a locale
+  change (`watch()`), and preserve its own state (active tab, search, page). `data-t` refreshes text,
+  not a record list.
+- A `copy` next to structural fields must be an object (`{ "title": "…" }`). A scalar/array `copy` only
+  works on a node that has nothing else; otherwise there is no field name for the text.
 
 === markdown/what-is-slice.md ===
 # What is Slice.js?
