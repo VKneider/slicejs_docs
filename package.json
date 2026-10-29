@@ -43,8 +43,8 @@
                     "node":  "\u003e=20.0.0"
                 },
     "dependencies":  {
-                         "slicejs-cli":  "^3.7.2",
-                         "slicejs-web-framework":  "^3.5.1",
+                         "slicejs-cli":  "^4.5.0",
+                         "slicejs-web-framework":  "^4.2.0",
                          "express":  "^4.21.0"
                      }
 }
