@@ -13,9 +13,10 @@ tags: [devtools, debugger, events, context, diagnostics]
 # DevTools
 
 ## Overview
-Slice ships three runtime panels for inspecting a live app — a **component inspector**, an
-**events** panel, and a **context** panel. They are built with Slice's own primitives (custom
-elements, the lifecycle, and setters), so they double as a reference for what the framework can do.
+Slice ships four runtime panels for inspecting a live app — a **component inspector**, an
+**events** panel, a **context** panel, and a **translator** panel. They are built with Slice's own
+primitives (custom elements, the lifecycle, and setters), so they double as a reference for what the
+framework can do.
 
 ## The component inspector
 Enable it in `sliceConfig.json`, then click a component (right-click by default) to open the panel:
@@ -48,6 +49,18 @@ Enable them (and their keyboard shortcuts) in `sliceConfig.json`:
 "events":  { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+e" } },
 "context": { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+c" } }
 ```
+
+## Translator panel
+With `slice.translator` enabled, the same pattern opens a panel for translations:
+
+```json title="sliceConfig.json"
+"translator": { "enabled": true, "defaultLocale": "es", "ui": { "enabled": true, "shortcut": "alt+shift+t" } }
+```
+
+It shows the active locale, a switcher, the **keys on this page that are missing** in the active
+locale (and those answered by the fallback), and a **keys** switch that calls
+`slice.translator.setShowKeys(true)` — every mark on the page shows its key instead of its text. Use
+it to find hardcoded strings and keys that never made it to a dictionary.
 
 - **Events** (`alt+shift+e`) — three tabs: **Subscribers** (every event with live subscriber details,
   an emit counter ⚡, and the emitters that fired it), **Registry** (the declared catalog grouped by

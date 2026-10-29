@@ -556,6 +556,37 @@ npm exec slice seo check
 See [SEO and Share Cards](/Documentation/Architecture/SEO) for the manifest fields and the origin
 rules.
 
+## translator
+
+### translator init
+Adds the `translator` block to `src/sliceConfig.json` and creates `src/locales/<locale>.json`. It
+never overwrites an existing dictionary or an existing value, so it is safe to re-run.
+
+```bash title="Start a translated app"
+npm exec slice translator init --locales es,en --default es
+```
+
+| Option | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `--locales <list>` | `string` | `en` | Comma-separated locales; the default locale is added. |
+| `--default <locale>` | `string` | the first locale | Locale an unprefixed URL means. |
+| `--path <path>` | `string` | `/locales` | Where `<path>/<locale>.json` is served from. |
+| `--dry-run` | `boolean` | `false` | Reports what would change, writes nothing. |
+
+### translator check
+Scans every `.html` and `.js` under `src/`, reusing the framework's `data-t` rules (text,
+`key.ariaLabel`-style attributes, `data-t-*` params) plus `slice.t()`, `slice.translator.key()` and
+`tr()` calls. Fails when a key is missing in a locale, when a plural has no `other`, and reports
+parameter drift and raw `href="/…"` links under `routing`.
+
+```bash title="Gate a translated app"
+npm exec slice translator check
+npm exec slice translator check --unused
+```
+
+`slice doctor` has a **Translator** row that runs the same scan. See
+[Translating an app](/Documentation/Translator).
+
 ## version
 Shows CLI version info and checks for updates.
 

@@ -47,6 +47,7 @@ See [Routing](/Documentation/Routing) and [Route Guards](/Documentation/Routing/
 | `slice.translator.key` | `key(key, params?) → TranslationKey` | Pass a key as a prop; the framework resolves it and re-assigns it on a locale change. |
 | `slice.translator.watch` | `watch(component, cb) → () => void` | Run `cb(locale, previous)` on every change, for text outside the DOM. |
 | `slice.translator.add` | `add(locale, messages, { defaults }) → void` | Merge messages at runtime; `defaults` never overrides the app's dictionaries. |
+| `slice.translator.setShowKeys` | `setShowKeys(enabled) → boolean` | Debugger: `t()` returns keys instead of texts and the document re-renders. |
 | `slice.translator.format.*` | `number / currency / percent / date / time / relative / list` | Locale-aware `Intl` formatting. |
 
 See [Translating an app](/Documentation/Translator).
@@ -647,6 +648,37 @@ npm exec slice seo check
 
 See [SEO and Share Cards](/Documentation/Architecture/SEO) for the manifest fields and the origin
 rules.
+
+## translator
+
+### translator init
+Adds the `translator` block to `src/sliceConfig.json` and creates `src/locales/<locale>.json`. It
+never overwrites an existing dictionary or an existing value, so it is safe to re-run.
+
+```bash title="Start a translated app"
+npm exec slice translator init --locales es,en --default es
+```
+
+| Option | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `--locales <list>` | `string` | `en` | Comma-separated locales; the default locale is added. |
+| `--default <locale>` | `string` | the first locale | Locale an unprefixed URL means. |
+| `--path <path>` | `string` | `/locales` | Where `<path>/<locale>.json` is served from. |
+| `--dry-run` | `boolean` | `false` | Reports what would change, writes nothing. |
+
+### translator check
+Scans every `.html` and `.js` under `src/`, reusing the framework's `data-t` rules (text,
+`key.ariaLabel`-style attributes, `data-t-*` params) plus `slice.t()`, `slice.translator.key()` and
+`tr()` calls. Fails when a key is missing in a locale, when a plural has no `other`, and reports
+parameter drift and raw `href="/…"` links under `routing`.
+
+```bash title="Gate a translated app"
+npm exec slice translator check
+npm exec slice translator check --unused
+```
+
+`slice doctor` has a **Translator** row that runs the same scan. See
+[Translating an app](/Documentation/Translator).
 
 ## version
 Shows CLI version info and checks for updates.
@@ -2509,9 +2541,10 @@ To import a vendored file in production, place it under `src/public/` (for examp
 # DevTools
 
 ## Overview
-Slice ships three runtime panels for inspecting a live app — a **component inspector**, an
-**events** panel, and a **context** panel. They are built with Slice's own primitives (custom
-elements, the lifecycle, and setters), so they double as a reference for what the framework can do.
+Slice ships four runtime panels for inspecting a live app — a **component inspector**, an
+**events** panel, a **context** panel, and a **translator** panel. They are built with Slice's own
+primitives (custom elements, the lifecycle, and setters), so they double as a reference for what the
+framework can do.
 
 ## The component inspector
 Enable it in `sliceConfig.json`, then click a component (right-click by default) to open the panel:
@@ -2544,6 +2577,18 @@ Enable them (and their keyboard shortcuts) in `sliceConfig.json`:
 "events":  { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+e" } },
 "context": { "enabled": true, "ui": { "enabled": true, "shortcut": "alt+shift+c" } }
 ```
+
+## Translator panel
+With `slice.translator` enabled, the same pattern opens a panel for translations:
+
+```json title="sliceConfig.json"
+"translator": { "enabled": true, "defaultLocale": "es", "ui": { "enabled": true, "shortcut": "alt+shift+t" } }
+```
+
+It shows the active locale, a switcher, the **keys on this page that are missing** in the active
+locale (and those answered by the fallback), and a **keys** switch that calls
+`slice.translator.setShowKeys(true)` — every mark on the page shows its key instead of its text. Use
+it to find hardcoded strings and keys that never made it to a dictionary.
 
 - **Events** (`alt+shift+e`) — three tabs: **Subscribers** (every event with live subscriber details,
   an emit counter ⚡, and the emitters that fired it), **Registry** (the declared catalog grouped by
@@ -5040,10 +5085,34 @@ manifest's (including the `| Acme` suffix), or let the manifest own the title an
 - **Generating the social image** is not part of the runtime. The manifest accepts `image`, and
   `slice seo images` produces the files from the real pages (it writes `public/og/manifest.json`,
   which you pass as `seo.images`). See [CLI commands](/Documentation/CLI#seo-images).
-- **One language per route, for now.** The manifest has no per-locale entries yet: with
-  [`translator.routing`](/Documentation/Translator) on, `/en/...` is still answered like an unknown
-  path until the multilingual SEO phase ships. Apps without native SEO get the shell and translate in
-  the browser.
+
+## Several languages
+
+With `slice.translator` configured, the same manifest drives **one page per route and locale**. The
+text fields accept `{ "t": "key", "params": { … } }`, and the server resolves them with the app's
+dictionaries:
+
+```json title="seo.json"
+{
+  "defaults": { "titleTemplate": { "t": "seo.titleTemplate" } },
+  "routes": {
+    "/pricing": { "title": { "t": "pricing.title" }, "description": { "t": "pricing.description" } }
+  },
+  "locales": { "en": { "ogLocale": "en_US" } }
+}
+```
+
+- Every literal route is prerendered once per locale (`/pricing`, `/en/pricing`), each with its own
+  `<html lang>`, canonical, translated `<head>` and `og:locale`.
+- Each page carries `<link rel="alternate" hreflang="…">` for its locales plus `x-default`.
+- Under `"prefix"`, `/` answers `302` to the default locale; under `"prefix-except-default"`, a
+  default-locale prefix (`/es/pricing`) answers `301` to `/pricing`.
+- A prefix that is not a configured locale is not a locale: it falls through to a real `404`.
+- `slice seo sitemap` writes one `<url>` per route and locale with the same alternates; a `{ t }` key
+  missing in one locale fails `slice seo check`, because that page would advertise the key as title.
+- `${param}` routes are rendered per request, per locale.
+
+See [Translating an app](/Documentation/Translator) for the client half.
 
 === markdown/project-architecture/server-entrypoint.md ===
 # Server Entrypoint
@@ -5647,6 +5716,7 @@ missing `.html`.
 | `saveLocally` | `boolean` | `false` | Remember the choice in `localStorage`. |
 | `useBrowserLocale` | `boolean` | `false` | First visit: use the browser's language when supported. |
 | `routing` | `false \| "prefix" \| "prefix-except-default"` | `false` | Put the locale in the URL (`/es/pricing`; the default locale without a prefix in the second mode). |
+| `ui` | `object` | none | `{ "enabled": true, "shortcut": "alt+shift+t" }` opens the translator panel. |
 
 Full guide: [Translating an app](/Documentation/Translator).
 
@@ -6170,6 +6240,7 @@ alone and `format.*` uses the browser's language — so code written against it 
 | `saveLocally` | `boolean` | `false` | Remember the choice in `localStorage` (`slice:locale`). |
 | `useBrowserLocale` | `boolean` | `false` | On a first visit, use the browser's language when it is supported (`es-VE` → `es`). |
 | `routing` | `false \| "prefix" \| "prefix-except-default"` | `false` | Whether the locale lives in the URL. See [URLs](#urls-and-the-router). |
+| `ui` | `object` | none | `{ enabled, shortcut }`: the translator debugger panel. |
 
 **Which locale starts:** with `routing`, the URL decides — its prefix, or, with
 `"prefix-except-default"`, the default locale when there is none. Otherwise: the saved choice → the
@@ -6244,6 +6315,7 @@ passed as a parameter is formatted with the locale. There is no ICU MessageForma
 | `slice.translator.key` | `key(key, params?) → TranslationKey` | A prop reference. See [Props](#props-key-references). |
 | `slice.translator.watch` | `watch(component, callback) → () => void` | `callback(locale, previous)` until the component is destroyed. |
 | `slice.translator.apply` | `apply(root?) → number` | Translate `data-t` under `root` now (default: the document). |
+| `slice.translator.setShowKeys` | `setShowKeys(enabled) → boolean` | Debugger switch: `t()` returns keys instead of texts and the document re-renders. |
 | `slice.translator.format` | `number / currency / percent / date / time / relative / list` | `Intl` wrappers cached per locale and options. |
 
 ```javascript
@@ -6385,16 +6457,55 @@ A raw `<a href="/x">` does not carry the locale when `routing` is on. Use `slice
 options: `number`, `currency`, `percent`, `date`, `time`, `relative`, `list`. A component that owns a
 fixed format (a table of prices in USD, say) can keep its own `Intl` call.
 
+## Multilingual SEO
+
+Native SEO reads the same translator: the server builds **one page per route and locale**.
+
+- **Texts by key.** `title`, `titleTemplate`, `description`, `imageAlt` and the `openGraph`/`twitter`
+  title and description in `seo.json` (defaults, routes and `routes.js` `metadata`) accept
+  `{ "t": "key", "params": { … } }`. The server resolves them at startup with the same
+  `src/locales/*.json` the client downloads; a plain string stays the same in every locale.
+- **Per-locale pages.** With `routing`, `/pricing` and `/en/pricing` are prerendered separately, each
+  with its own `<html lang>`, `dir`, `og:locale`, canonical and translated `<head>`.
+- **Alternates.** Every page carries `<link rel="alternate" hreflang="…">` for its locales plus
+  `x-default` (the default locale URL).
+- **URLs.** `/` under `"prefix"` answers `302` to the default locale. Under
+  `"prefix-except-default"`, a default-locale prefix (`/es/pricing`) answers `301` to `/pricing`.
+  A prefix that is not a configured locale (`/fr/…`) is a normal path, so it is a `404`.
+- **Sitemap.** `slice seo sitemap` writes one `<url>` per route and locale with the same
+  `xhtml:link` alternates and `x-default`.
+- **`og:locale`.** The locale as-is, with `-` → `_` (`pt-BR` → `pt_BR`), unless
+  `seo.json` maps it: `"locales": { "en": { "ogLocale": "en_US" } }`.
+- **Validation.** A `{ t }` key missing in one locale is an error in `slice seo check` and in the
+  SEO row of `slice doctor`, because the page would advertise the key as its title. `slice translator
+  check` validates the keys used by templates and code against the same dictionaries.
+
+Route metadata in `routes.js` is resolved on the client too (the router re-applies it after a locale
+change), so the tab title follows the language without a reload.
+
+## Development tools
+
+- **Debugger panel.** Enable it with `"translator": { "ui": { "enabled": true, "shortcut": "alt+shift+t" } }`.
+  It shows the active locale and a switcher, the keys on this page that are missing in the active
+  locale (and the ones answered by the fallback), and a **keys** switch that shows keys instead of
+  texts everywhere (`setShowKeys`) — the fastest way to see what is translated and what is hardcoded.
+- **CLI.** `slice translator init` adds the `translator` block and creates `src/locales/<locale>.json`
+  (never overwrites them). `slice translator check` scans templates, `data-t-*` params and
+  `slice.t()`/`key()`/`tr()` calls, and fails when a key is missing in a locale. `--unused` also
+  lists dictionary keys nothing reads.
+- **Doctor.** `slice doctor` has a **Translator** row using the same scan, so CI can gate on it.
+- Development warnings (outside production, once each): missing key per locale, missing parameter, a
+  key that is a group, a marker used as a string, `data-t` with nothing to fill.
+
 ## Current limits
 
-- **Native SEO is single-language for now.** With `seo.json` configured, the server still prerenders
-  one page per route, so `/en/...` is answered like an unknown path until the multilingual SEO phase
-  (framework feature 0003, phase 5) ships. Apps **without** native SEO get the shell and work.
 - **Some library components still read `window.location.pathname`** (`Route`, `MultiRoute`, `Navbar`,
   `BottomNav`, `SideMenu`, `Breadcrumbs`, `TreeView`). Until the library migrates to
   `slice.router.path` (slicejs-components feature 0007), do not enable `routing` in an app whose
   active-route UI depends on them; the translator itself works fine without `routing`.
 - Translated slugs (`/es/precios`) are out of scope.
+- Keys used only through an app helper (`tr(key)`, a lookup table) are invisible to
+  `slice translator check`; that is why unused-key reporting is opt-in.
 
 ## Gotchas
 

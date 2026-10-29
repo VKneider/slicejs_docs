@@ -99,14 +99,37 @@ Traps:
   SideMenu, Breadcrumbs, TreeView) do not see the active route under `/en/...` until they migrate to
   `slice.router.path` (slicejs-components 0007). Do not turn on `routing` before that migration.
 
-## Server side
+## Server side and SEO
 
 `slice build` copies `src/locales` to `dist/locales`; `api/framework/server.js` mounts the folder at
 `translator.path` in both modes. If dictionaries 404 in production, check that mount and the
 configured `path` — not `public/`.
 
-Native SEO is still single-language: with `seo.json`, a prefixed URL is answered like an unknown path
-until the multilingual SEO phase ships. Apps without native SEO work.
+With `routing`, native SEO prerenders **one page per route and locale**:
+
+- `title`, `titleTemplate`, `description`, `imageAlt` and the `openGraph`/`twitter` title and
+  description in `seo.json` (and `routes.js` metadata) accept `{ t: 'key', params? }`.
+- Each page gets its own `<html lang|dir>`, canonical, `og:locale` and
+  `<link rel="alternate" hreflang>` (plus `x-default`).
+- `/` under `prefix` → 302 to the default locale; `/es/x` under `prefix-except-default` → 301 to
+  `/x`; an unknown prefix (`/fr/…`) is a normal 404.
+- `slice seo sitemap` emits one `<url>` per route and locale with the same alternates; a `{ t }` key
+  missing in a locale fails `slice seo check` and `slice translator check`.
+- `og:locale` is the locale with `-` → `_`, unless `seo.json` maps it via
+  `locales.<locale>.ogLocale`.
+
+## CLI and the debugger
+
+- `slice translator init [--locales es,en] [--default es]` adds the config block and creates the
+  dictionaries (never overwrites).
+- `slice translator check [--unused]` scans templates + `data-t-*` + `slice.t()`/`key()`/`tr()` calls
+  and fails on a key missing in a locale. `slice doctor` runs the same scan in its Translator row.
+- `translator.ui.enabled` + `shortcut` (e.g. `alt+shift+t`) opens a panel with the locale switcher, the
+  missing keys on the page, and a **keys** switch (`slice.translator.setShowKeys(true)`) that renders
+  every mark as its key.
+
+Keys reached only through an app helper (`tr(key)`, a lookup table) are invisible to the scan, so
+unused-key reporting is opt-in.
 
 ## Checklist for a translated screen
 

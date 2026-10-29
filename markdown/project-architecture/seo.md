@@ -166,7 +166,31 @@ manifest's (including the `| Acme` suffix), or let the manifest own the title an
 - **Generating the social image** is not part of the runtime. The manifest accepts `image`, and
   `slice seo images` produces the files from the real pages (it writes `public/og/manifest.json`,
   which you pass as `seo.images`). See [CLI commands](/Documentation/CLI#seo-images).
-- **One language per route, for now.** The manifest has no per-locale entries yet: with
-  [`translator.routing`](/Documentation/Translator) on, `/en/...` is still answered like an unknown
-  path until the multilingual SEO phase ships. Apps without native SEO get the shell and translate in
-  the browser.
+
+## Several languages
+
+With `slice.translator` configured, the same manifest drives **one page per route and locale**. The
+text fields accept `{ "t": "key", "params": { … } }`, and the server resolves them with the app's
+dictionaries:
+
+```json title="seo.json"
+{
+  "defaults": { "titleTemplate": { "t": "seo.titleTemplate" } },
+  "routes": {
+    "/pricing": { "title": { "t": "pricing.title" }, "description": { "t": "pricing.description" } }
+  },
+  "locales": { "en": { "ogLocale": "en_US" } }
+}
+```
+
+- Every literal route is prerendered once per locale (`/pricing`, `/en/pricing`), each with its own
+  `<html lang>`, canonical, translated `<head>` and `og:locale`.
+- Each page carries `<link rel="alternate" hreflang="…">` for its locales plus `x-default`.
+- Under `"prefix"`, `/` answers `302` to the default locale; under `"prefix-except-default"`, a
+  default-locale prefix (`/es/pricing`) answers `301` to `/pricing`.
+- A prefix that is not a configured locale is not a locale: it falls through to a real `404`.
+- `slice seo sitemap` writes one `<url>` per route and locale with the same alternates; a `{ t }` key
+  missing in one locale fails `slice seo check`, because that page would advertise the key as title.
+- `${param}` routes are rendered per request, per locale.
+
+See [Translating an app](/Documentation/Translator) for the client half.

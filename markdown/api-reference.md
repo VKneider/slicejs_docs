@@ -58,6 +58,7 @@ See [Routing](/Documentation/Routing) and [Route Guards](/Documentation/Routing/
 | `slice.translator.key` | `key(key, params?) → TranslationKey` | Pass a key as a prop; the framework resolves it and re-assigns it on a locale change. |
 | `slice.translator.watch` | `watch(component, cb) → () => void` | Run `cb(locale, previous)` on every change, for text outside the DOM. |
 | `slice.translator.add` | `add(locale, messages, { defaults }) → void` | Merge messages at runtime; `defaults` never overrides the app's dictionaries. |
+| `slice.translator.setShowKeys` | `setShowKeys(enabled) → boolean` | Debugger: `t()` returns keys instead of texts and the document re-renders. |
 | `slice.translator.format.*` | `number / currency / percent / date / time / relative / list` | Locale-aware `Intl` formatting. |
 
 See [Translating an app](/Documentation/Translator).

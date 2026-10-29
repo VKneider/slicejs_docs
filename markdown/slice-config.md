@@ -158,6 +158,7 @@ missing `.html`.
 | `saveLocally` | `boolean` | `false` | Remember the choice in `localStorage`. |
 | `useBrowserLocale` | `boolean` | `false` | First visit: use the browser's language when supported. |
 | `routing` | `false \| "prefix" \| "prefix-except-default"` | `false` | Put the locale in the URL (`/es/pricing`; the default locale without a prefix in the second mode). |
+| `ui` | `object` | none | `{ "enabled": true, "shortcut": "alt+shift+t" }` opens the translator panel. |
 
 Full guide: [Translating an app](/Documentation/Translator).
 
