@@ -1,9 +1,19 @@
 slice-js-developer
-version: 1.31.2
+version: 1.31.3
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.31.3
+  translator.localePrefix replaces translator.routing.
+  - Values are explicit: false (no prefix), "always" (/es/pricing), "except-default" (default
+    unprefixed). No deprecated aliases (nothing published).
+  - useBrowserLocale applies on a first visit even under "except-default"; explicit URL prefixes
+    still win.
+  - Removed the stale "do not enable routing before the components migration" warning: the migration
+    is done.
+  Files touched: VERSION, SKILL.md, references/translator.md, ../manifest.json.
 
 1.31.2
   Localized route titles and descriptions.

@@ -50,7 +50,7 @@ manifest's (including the <code>| Acme</code> suffix), or let the manifest own t
 <div class="code-block" data-block-id="doc-block-9"></div>
 <ul><li>Every literal route is prerendered once per locale (<code>/pricing</code>, <code>/en/pricing</code>), each with its own</li></ul>
 <p><code>&lt;html lang&gt;</code>, canonical, translated <code>&lt;head&gt;</code> and <code>og:locale</code>.</p>
-<ul><li>Each page carries <code>&lt;link rel="alternate" hreflang="…"&gt;</code> for its locales plus <code>x-default</code>.</li><li>Under <code>"prefix"</code>, <code>/</code> answers <code>302</code> to the default locale; under <code>"prefix-except-default"</code>, a</li></ul>
+<ul><li>Each page carries <code>&lt;link rel="alternate" hreflang="…"&gt;</code> for its locales plus <code>x-default</code>.</li><li>Under <code>"prefix"</code>, <code>/</code> answers <code>302</code> to the default locale; under <code>"except-default"</code>, a</li></ul>
 <p>default-locale prefix (<code>/es/pricing</code>) answers <code>301</code> to <code>/pricing</code>.</p>
 <ul><li>A prefix that is not a configured locale is not a locale: it falls through to a real <code>404</code>.</li><li><code>slice seo sitemap</code> writes one <code>&lt;url&gt;</code> per route and locale with the same alternates; a <code>{ t }</code> key</li></ul>
 <p>missing in one locale fails <code>slice seo check</code>, because that page would advertise the key as title.</p>

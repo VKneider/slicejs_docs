@@ -11,7 +11,7 @@
 <h2 id="enable-it">Enable it</h2>
 <div class="code-block" data-block-id="doc-block-1"></div>
 <div class="table-block" data-block-id="doc-block-2"></div>
-<p><strong>Which locale starts:</strong> with <code>routing</code>, the URL decides — its prefix, or, with <code>"prefix-except-default"</code>, the default locale when there is none. Otherwise: the saved choice → the browser's language → <code>defaultLocale</code>.</p>
+<p><strong>Which locale starts:</strong> an explicit URL prefix always wins. Without one, the saved choice -&gt; the browser language (<code>useBrowserLocale</code>) -&gt; <code>defaultLocale</code>. Under <code>"except-default"</code> an unprefixed URL means "no explicit choice yet", so <code>useBrowserLocale</code> still works on the first visit; once the user picks a language, <code>saveLocally</code> keeps it.</p>
 <p>The starting locale is applied before the first route renders. <code>slice init</code> projects can add the block by hand; <code>slice doctor</code> validates it against the schema.</p>
 <h2 id="dictionaries">Dictionaries</h2>
 <div class="code-block" data-block-id="doc-block-3"></div>
@@ -71,29 +71,29 @@ const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.t.ref(key) : 
 <ol><li>load what the locale needs (its main file, the namespaces already loaded, the fallback's). On failure</li></ol>
 <p>the locale does not change and the promise rejects;</p>
 <ol><li>set the locale, <code>&lt;html lang&gt;</code> and <code>&lt;html dir&gt;</code> (<code>rtl</code> for <code>ar</code>, <code>he</code>, <code>fa</code>, <code>ur</code>), save the choice</li></ol>
-<p>when <code>saveLocally</code>, and rewrite the URL when <code>routing</code> is on;</p>
+<p>when <code>saveLocally</code>, and rewrite the URL when <code>localePrefix</code> is on;</p>
 <ol><li>re-translate every <code>data-t</code> in the document;</li><li>re-assign every prop that came from a marker, parents before children;</li><li>re-apply the active route's <code>metadata</code> (translated titles work, see [Routing](/Documentation/Routing));</li><li>call <code>watch()</code> callbacks and emit <code>translator:change</code> (<code>{ locale, previous }</code>).</li></ol>
 <p>There is no <code>localeChanged()</code> lifecycle hook: what lives in the DOM is marked, props are markers, and only what lives outside the DOM uses <code>watch()</code>:</p>
 <div class="code-block" data-block-id="doc-block-15"></div>
 <p>Two overlapping <code>setLocale()</code> calls: the last one wins. A locale that is not in <code>locales</code> throws.</p>
 <h2 id="urls-and-the-router">URLs and the router</h2>
-<p>Independently of <code>routing</code>, the router is the only reader of the URL:</p>
+<p>Independently of <code>localePrefix</code>, the router is the only reader of the URL:</p>
 <div class="code-block" data-block-id="doc-block-16"></div>
 <p><code>slice.router.path</code> and <code>slice.router.href()</code> are also exposed as <code>slice.path</code> and <code>slice.href()</code>. Components use the shortcuts: no shared helper, no <code>window.location</code>.</p>
 <p>Component code should use these instead of <code>window.location.pathname</code>, and build anchors with <code>href(path)</code>, so the same component works whether or not the locale is in the URL.</p>
-<p>With <code>"routing": "prefix"</code> every URL carries the locale (<code>/es/pricing</code>, <code>/en/pricing</code>); with <code>"prefix-except-default"</code> the default locale has no prefix (<code>/pricing</code>, <code>/en/pricing</code>).</p>
+<p>With <code>"localePrefix": "always"</code> every URL carries the locale (<code>/es/pricing</code>, <code>/en/pricing</code>); with <code>"except-default"</code> the default locale has no prefix (<code>/pricing</code>, <code>/en/pricing</code>).</p>
 <ul><li>Routes are declared <strong>once</strong>, without a locale. <code>matchRoute</code> strips a known prefix and sets the</li></ul>
 <p>locale.</p>
 <ul><li><code>navigate('/pricing')</code> adds the active locale. <code>navigate('/pricing', { locale: 'en' })</code> goes to</li></ul>
 <p>another language: its dictionaries load <strong>before</strong> the URL changes, so the page never paints keys,   and a failed load leaves the user where they were.</p>
 <ul><li><code>navigate('/en/pricing')</code> means “that path in that locale”. A guard redirect stays in the target</li></ul>
 <p>locale.</p>
-<ul><li>Back and forward follow the locale of the URL.</li><li>Under <code>"prefix-except-default"</code>, a default-locale prefix (<code>/es/pricing</code>) is canonicalized to</li></ul>
+<ul><li>Back and forward follow the locale of the URL.</li><li>Under <code>"except-default"</code>, a default-locale prefix (<code>/es/pricing</code>) is canonicalized to</li></ul>
 <p><code>/pricing</code> with <code>replaceState</code>.</p>
 <ul><li>Guards and <code>router:change</code> receive <code>to.path === '/pricing'</code>, <code>to.locale === 'en'</code> and</li></ul>
 <p><code>to.url === '/en/pricing'</code>.</p>
 <ul><li>An unknown prefix (<code>/fr/…</code>) is not a locale: it is an ordinary path (a 404 when no route matches).</li></ul>
-<div class="callout callout-warning">A raw <code>&lt;a href="/x"&gt;</code> does not carry the locale when <code>routing</code> is on. Use <code>slice.router.href()</code> (or the
+<div class="callout callout-warning">A raw <code>&lt;a href="/x"&gt;</code> does not carry the locale when <code>localePrefix</code> is on. Use <code>slice.router.href()</code> (or the
 <code>Link</code> component) inside translated apps.</div>
 <h2 id="formatting">Formatting</h2>
 <p><code>slice.translator.format.*</code> uses the active locale and caches the <code>Intl</code> formatter per locale and options: <code>number</code>, <code>currency</code>, <code>percent</code>, <code>date</code>, <code>time</code>, <code>relative</code>, <code>list</code>. A component that owns a fixed format (a table of prices in USD, say) can keep its own <code>Intl</code> call.</p>
@@ -101,12 +101,12 @@ const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.t.ref(key) : 
 <p>Native SEO reads the same translator: the server builds <strong>one page per route and locale</strong>.</p>
 <ul><li><strong>Texts by key.</strong> <code>title</code>, <code>titleTemplate</code>, <code>description</code>, <code>imageAlt</code> and the <code>openGraph</code>/<code>twitter</code></li></ul>
 <p>title and description in <code>seo.json</code> (defaults, routes and <code>routes.js</code> <code>metadata</code>) accept   <code>{ "t": "key", "params": { … } }</code>; route metadata also accepts <code>titleKey</code> / <code>descriptionKey</code> as the   shorthand. The server resolves them at startup with the same <code>src/locales/*.json</code> the client   downloads; a plain string stays the same in every locale.</p>
-<ul><li><strong>Per-locale pages.</strong> With <code>routing</code>, <code>/pricing</code> and <code>/en/pricing</code> are prerendered separately, each</li></ul>
+<ul><li><strong>Per-locale pages.</strong> With a locale prefix, <code>/pricing</code> and <code>/en/pricing</code> are prerendered separately, each</li></ul>
 <p>with its own <code>&lt;html lang&gt;</code>, <code>dir</code>, <code>og:locale</code>, canonical and translated <code>&lt;head&gt;</code>.</p>
 <ul><li><strong>Alternates.</strong> Every page carries <code>&lt;link rel="alternate" hreflang="…"&gt;</code> for its locales plus</li></ul>
 <p><code>x-default</code> (the default locale URL).</p>
-<ul><li><strong>URLs.</strong> <code>/</code> under <code>"prefix"</code> answers <code>302</code> to the default locale. Under</li></ul>
-<p><code>"prefix-except-default"</code>, a default-locale prefix (<code>/es/pricing</code>) answers <code>301</code> to <code>/pricing</code>.   A prefix that is not a configured locale (<code>/fr/…</code>) is a normal path, so it is a <code>404</code>.</p>
+<ul><li><strong>URLs.</strong> <code>/</code> under <code>"always"</code> answers <code>302</code> to the default locale. Under</li></ul>
+<p><code>"except-default"</code>, a default-locale prefix (<code>/es/pricing</code>) answers <code>301</code> to <code>/pricing</code>.   A prefix that is not a configured locale (<code>/fr/…</code>) is a normal path, so it is a <code>404</code>.</p>
 <ul><li><strong>Sitemap.</strong> <code>slice seo sitemap</code> writes one <code>&lt;url&gt;</code> per route and locale with the same</li></ul>
 <p><code>xhtml:link</code> alternates and <code>x-default</code>.</p>
 <ul><li><strong><code>og:locale</code>.</strong> The locale as-is, with <code>-</code> → <code>_</code> (<code>pt-BR</code> → <code>pt_BR</code>), unless</li></ul>

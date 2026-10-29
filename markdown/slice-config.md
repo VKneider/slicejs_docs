@@ -157,7 +157,7 @@ missing `.html`.
 | `path` | `string` | `/locales` | Where `<path>/<locale>.json` is served from (copied into `dist/` by the build). |
 | `saveLocally` | `boolean` | `false` | Remember the choice in `localStorage`. |
 | `useBrowserLocale` | `boolean` | `false` | First visit: use the browser's language when supported. |
-| `routing` | `false \| "prefix" \| "prefix-except-default"` | `false` | Put the locale in the URL (`/es/pricing`; the default locale without a prefix in the second mode). |
+| `localePrefix` | `false \| "always" \| "except-default"` | `false` | Put the locale in the URL (`/es/pricing`; `except-default` leaves the default locale unprefixed). |
 | `ui` | `object` | none | `{ "enabled": true, "shortcut": "alt+shift+t" }` opens the translator panel. |
 
 Full guide: [Translating an app](/Documentation/Translator).

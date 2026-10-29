@@ -54,7 +54,7 @@ container.innerHTML = '';
 | Method | Signature | Notes |
 | --- | --- | --- |
 | `path` | `string` (getter) | The app path, without locale or query: `/pricing`. |
-| `href` | `(path, { locale }?) → string` | The URL for an `<a>`, with the locale when `routing` is on. |
+| `href` | `(path, { locale }?) → string` | The URL for an `<a>`, with the locale when `localePrefix` is on. |
 | `navigate` | `(path, options?)` | Programmatic navigation. `{ replace: true }` replaces history; `{ locale: 'en' }` switches language. |
 | `beforeEach` | `(to, from, next)` | Register a guard before navigation. |
 | `afterEach` | `(to, from)` | Run logic after navigation. |

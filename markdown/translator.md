@@ -30,7 +30,7 @@ alone and `format.*` uses the browser's language — so code written against it 
   "path": "/locales",
   "saveLocally": true,
   "useBrowserLocale": true,
-  "routing": false
+  "localePrefix": false
 }
 ```
 
@@ -39,16 +39,17 @@ alone and `format.*` uses the browser's language — so code written against it 
 | `enabled` | `boolean` | `false` | Off: nothing is loaded or observed and `t()` returns the key. |
 | `defaultLocale` | `string` | — | Required when enabled. The locale an unprefixed URL means. |
 | `fallbackLocale` | `string \| null` | `null` | Asked when the active locale has no entry for a key. |
-| `locales` | `string[]` | `[defaultLocale]` | The locales the app has. `setLocale()` refuses anything else. |
-| `path` | `string` | `/locales` | Where the dictionaries are served from. |
+| `locales` | `string[]` | `[defaultLocale]` | The locales the app has, plus a configured `fallbackLocale`. `setLocale()` refuses anything else. |
+| `path` | `string` | `/locales` | Where the dictionaries are served from. A relative value is normalized to `/value`. |
 | `saveLocally` | `boolean` | `false` | Remember the choice in `localStorage` (`slice:locale`). |
-| `useBrowserLocale` | `boolean` | `false` | On a first visit, use the browser's language when it is supported (`es-VE` → `es`). |
-| `routing` | `false \| "prefix" \| "prefix-except-default"` | `false` | Whether the locale lives in the URL. See [URLs](#urls-and-the-router). |
+| `useBrowserLocale` | `boolean` | `false` | On a first visit, use the browser language when supported (`es-VE` -> `es`); otherwise `defaultLocale`. |
+| `localePrefix` | `false \| "always" \| "except-default"` | `false` | Whether the locale lives in the URL. See [URLs](#urls-and-the-router). |
 | `ui` | `object` | none | `{ enabled, shortcut }`: the translator debugger panel. |
 
-**Which locale starts:** with `routing`, the URL decides — its prefix, or, with
-`"prefix-except-default"`, the default locale when there is none. Otherwise: the saved choice → the
-browser's language → `defaultLocale`.
+**Which locale starts:** an explicit URL prefix always wins. Without one, the saved choice -> the
+browser language (`useBrowserLocale`) -> `defaultLocale`. Under `"except-default"` an unprefixed URL
+means "no explicit choice yet", so `useBrowserLocale` still works on the first visit; once the user
+picks a language, `saveLocally` keeps it.
 
 The starting locale is applied before the first route renders. `slice init` projects can add the
 block by hand; `slice doctor` validates it against the schema.
@@ -267,7 +268,7 @@ that copied a string). It is not needed for templates or props.
 1. load what the locale needs (its main file, the namespaces already loaded, the fallback's). On failure
    the locale does not change and the promise rejects;
 2. set the locale, `<html lang>` and `<html dir>` (`rtl` for `ar`, `he`, `fa`, `ur`), save the choice
-   when `saveLocally`, and rewrite the URL when `routing` is on;
+   when `saveLocally`, and rewrite the URL when `localePrefix` is on;
 3. re-translate every `data-t` in the document;
 4. re-assign every prop that came from a marker, parents before children;
 5. re-apply the active route's `metadata` (translated titles work, see [Routing](/Documentation/Routing));
@@ -284,7 +285,7 @@ Two overlapping `setLocale()` calls: the last one wins. A locale that is not in 
 
 ## URLs and the router
 
-Independently of `routing`, the router is the only reader of the URL:
+Independently of `localePrefix`, the router is the only reader of the URL:
 
 ```javascript
 slice.router.path             // the app path: '/pricing' (no locale, no query)
@@ -297,8 +298,8 @@ Components use the shortcuts: no shared helper, no `window.location`.
 Component code should use these instead of `window.location.pathname`, and build anchors with
 `href(path)`, so the same component works whether or not the locale is in the URL.
 
-With `"routing": "prefix"` every URL carries the locale (`/es/pricing`, `/en/pricing`); with
-`"prefix-except-default"` the default locale has no prefix (`/pricing`, `/en/pricing`).
+With `"localePrefix": "always"` every URL carries the locale (`/es/pricing`, `/en/pricing`); with
+`"except-default"` the default locale has no prefix (`/pricing`, `/en/pricing`).
 
 - Routes are declared **once**, without a locale. `matchRoute` strips a known prefix and sets the
   locale.
@@ -308,14 +309,14 @@ With `"routing": "prefix"` every URL carries the locale (`/es/pricing`, `/en/pri
 - `navigate('/en/pricing')` means “that path in that locale”. A guard redirect stays in the target
   locale.
 - Back and forward follow the locale of the URL.
-- Under `"prefix-except-default"`, a default-locale prefix (`/es/pricing`) is canonicalized to
+- Under `"except-default"`, a default-locale prefix (`/es/pricing`) is canonicalized to
   `/pricing` with `replaceState`.
 - Guards and `router:change` receive `to.path === '/pricing'`, `to.locale === 'en'` and
   `to.url === '/en/pricing'`.
 - An unknown prefix (`/fr/…`) is not a locale: it is an ordinary path (a 404 when no route matches).
 
 :::warning
-A raw `<a href="/x">` does not carry the locale when `routing` is on. Use `slice.router.href()` (or the
+A raw `<a href="/x">` does not carry the locale when `localePrefix` is on. Use `slice.router.href()` (or the
 `Link` component) inside translated apps.
 :::
 
@@ -334,12 +335,12 @@ Native SEO reads the same translator: the server builds **one page per route and
   `{ "t": "key", "params": { … } }`; route metadata also accepts `titleKey` / `descriptionKey` as the
   shorthand. The server resolves them at startup with the same `src/locales/*.json` the client
   downloads; a plain string stays the same in every locale.
-- **Per-locale pages.** With `routing`, `/pricing` and `/en/pricing` are prerendered separately, each
+- **Per-locale pages.** With a locale prefix, `/pricing` and `/en/pricing` are prerendered separately, each
   with its own `<html lang>`, `dir`, `og:locale`, canonical and translated `<head>`.
 - **Alternates.** Every page carries `<link rel="alternate" hreflang="…">` for its locales plus
   `x-default` (the default locale URL).
-- **URLs.** `/` under `"prefix"` answers `302` to the default locale. Under
-  `"prefix-except-default"`, a default-locale prefix (`/es/pricing`) answers `301` to `/pricing`.
+- **URLs.** `/` under `"always"` answers `302` to the default locale. Under
+  `"except-default"`, a default-locale prefix (`/es/pricing`) answers `301` to `/pricing`.
   A prefix that is not a configured locale (`/fr/…`) is a normal path, so it is a `404`.
 - **Sitemap.** `slice seo sitemap` writes one `<url>` per route and locale with the same
   `xhtml:link` alternates and `x-default`.

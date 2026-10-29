@@ -81,16 +81,16 @@ missing key showing up on screen is the designed signal; development warns once 
 
 `await slice.translator.setLocale('en')` loads first (rejects and keeps the old locale on failure),
 then sets `<html lang|dir>` (rtl for ar/he/fa/ur), saves if `saveLocally`, rewrites the URL with
-`routing`, re-translates the document, re-assigns marker props (parents first), re-applies route
+`localePrefix`, re-translates the document, re-assigns marker props (parents first), re-applies route
 metadata, calls `watch()` and emits `translator:change`. **There is no `localeChanged()` hook** — do
 not invent one.
 
 ## Locale in the URL
 
-`translator.routing`: `false` (default) · `"prefix"` (`/es/pricing`) · `"prefix-except-default"`
-(`/pricing` + `/en/pricing`).
+`translator.localePrefix`: `false` (default) | `"always"` (`/es/pricing`, `/en/pricing`) |
+`"except-default"` (`/pricing` for the default locale, `/en/pricing` for the rest).
 
-Even with routing off, the router is the only URL reader:
+Even without a locale prefix, the router is the only URL reader:
 
 ```javascript
 slice.path                     // '/pricing' — no locale, no query (shortcut of router.path)
@@ -105,12 +105,9 @@ Traps:
 
 - Routes are declared without a locale; a known prefix is stripped by `matchRoute`.
 - `navigate` with a locale loads its dictionaries **before** pushing the URL.
-- Under `prefix-except-default`, `/es/pricing` is canonicalized to `/pricing` (replaceState).
+- Under `except-default`, `/es/pricing` is canonicalized to `/pricing` (replaceState).
 - Raw `<a href="/x">` loses the locale. Use `href()`/`Link` in translated apps.
 - Guards receive `to.path` (app path), `to.locale` and `to.url` (address bar).
-- **Library components that read `window.location.pathname`** (Route, MultiRoute, Navbar, BottomNav,
-  SideMenu, Breadcrumbs, TreeView) do not see the active route under `/en/...` until they migrate to
-  `slice.router.path` (slicejs-components 0007). Do not turn on `routing` before that migration.
 
 ## Server side and SEO
 
@@ -118,7 +115,7 @@ Traps:
 `translator.path` in both modes. If dictionaries 404 in production, check that mount and the
 configured `path` — not `public/`.
 
-With `routing`, native SEO prerenders **one page per route and locale**:
+With a locale prefix, native SEO prerenders **one page per route and locale**:
 
 - `title`, `titleTemplate`, `description`, `imageAlt` and the `openGraph`/`twitter` title and
   description in `seo.json` (and `routes.js` metadata) accept `{ t: 'key', params? }`. Route metadata
@@ -129,7 +126,7 @@ With `routing`, native SEO prerenders **one page per route and locale**:
   override or disable an affix with `metadata.titlePrefix/titleSuffix: false`.
 - Each page gets its own `<html lang|dir>`, canonical, `og:locale` and
   `<link rel="alternate" hreflang>` (plus `x-default`).
-- `/` under `prefix` → 302 to the default locale; `/es/x` under `prefix-except-default` → 301 to
+- `/` under `"always"` → 302 to the default locale; `/es/x` under `except-default` → 301 to
   `/x`; an unknown prefix (`/fr/…`) is a normal 404.
 - `slice seo sitemap` emits one `<url>` per route and locale with the same alternates; a `{ t }` key
   missing in a locale fails `slice seo check` and `slice translator check`.

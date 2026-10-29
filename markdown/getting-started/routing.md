@@ -29,7 +29,7 @@ values keep their original case (for example `${id}` in `/User/AB12` is `AB12`).
 | --- | --- | --- | --- |
 | `start` | `() => Promise<void>` | `Promise<void>` | Starts routing immediately. Recommended when using guards. |
 | `navigate` | `(path, options?)` | `Promise<void>` | Programmatic navigation. Pass `{ replace: true }` to replace history instead of pushing, and `{ locale }` to switch language when the translator puts the locale in the URL. |
-| `href` | `(path, { locale? }?) => string` | `string` | The URL to render in an `<a>`. With `translator.routing` it carries the locale (`/pricing` → `/en/pricing`); without it, the path is returned unchanged. |
+| `href` | `(path, { locale? }?) => string` | `string` | The URL to render in an `<a>`. With `translator.localePrefix` it carries the locale (`/pricing` → `/en/pricing`); without it, the path is returned unchanged. |
 | `path` | getter | `string` | The app path the router is showing, without locale or query. Use it instead of `window.location.pathname`. |
 | `beforeEach` | `(guard)` | `void` | Registers a guard `(to, from, next)`. |
 | `afterEach` | `(guard)` | `void` | Registers a guard `(to, from)` after navigation. |
@@ -105,8 +105,8 @@ Guards and route events receive `to` and `from` objects created by the router.
 | `params` | `object` | Dynamic params from `${param}` patterns. |
 | `query` | `object` | Parsed query string values. |
 | `metadata` | `object` | Route metadata from config. |
-| `locale` | `string \| null` | The locale of this navigation, when `translator.routing` is on. |
-| `url` | `string` | What the address bar shows (`/en/pricing` with routing). |
+| `locale` | `string \| null` | The locale of this navigation, when `translator.localePrefix` is on. |
+| `url` | `string` | What the address bar shows (`/en/pricing` with a locale prefix). |
 
 See [Translating an app](/Documentation/Translator) for locale-in-URL routing.
 
