@@ -123,7 +123,7 @@ const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.t.ref(key) : 
 <p>key that is a group, a marker used as a string, <code>data-t</code> with nothing to fill.</p>
 <h2 id="current-limits">Current limits</h2>
 <ul><li><strong>The library migration is partial.</strong> Route, MultiRoute, Navbar, BottomNav, Breadcrumbs, SideMenu,</li></ul>
-<p>TreeView, Link, Card, DataList, DescriptionList, Pagination and the docs shell read <code>slice.path</code> /   <code>slice.href()</code>, so locale-in-URL routing works. The built-in texts of DataList, Table, DatePicker,   Select and Pagination are still English until their inventory lands (component feature 0007);   NotFound is the reference migration.</p>
+<p>TreeView, Link, Card, DataList, DescriptionList, Pagination and the docs shell read <code>slice.path</code> /   <code>slice.href()</code>, so locale-in-URL routing works. Every visual component now ships en/es defaults for   its built-in texts (component feature 0007); the docs site and the lab still need their own   dictionaries for their page content.</p>
 <ul><li>Translated slugs (<code>/es/precios</code>) are out of scope.</li><li>Keys used only through an app helper (<code>tr(key)</code>, a lookup table) are invisible to</li></ul>
 <p><code>slice translator check</code>; that is why unused-key reporting is opt-in.</p>
 <h2 id="gotchas">Gotchas</h2>
