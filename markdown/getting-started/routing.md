@@ -34,6 +34,9 @@ values keep their original case (for example `${id}` in `/User/AB12` is `AB12`).
 | `beforeEach` | `(guard)` | `void` | Registers a guard `(to, from, next)`. |
 | `afterEach` | `(guard)` | `void` | Registers a guard `(to, from)` after navigation. |
 
+`slice.path` and `slice.href(path)` are the shortcuts at the `slice` level: components use those
+instead of `window.location.pathname` and of a per-component helper.
+
 ## Route Configuration
 ```javascript title="routes.js"
 const routes = [

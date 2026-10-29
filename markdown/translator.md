@@ -230,6 +230,9 @@ slice.router.path             // the app path: '/pricing' (no locale, no query)
 slice.router.href('/pricing') // the href to render: '/pricing' or '/en/pricing'
 ```
 
+`slice.router.path` and `slice.router.href()` are also exposed as `slice.path` and `slice.href()`.
+Components use the shortcuts: no shared helper, no `window.location`.
+
 Component code should use these instead of `window.location.pathname`, and build anchors with
 `href(path)`, so the same component works whether or not the locale is in the URL.
 
@@ -303,10 +306,11 @@ change), so the tab title follows the language without a reload.
 
 ## Current limits
 
-- **Some library components still read `window.location.pathname`** (`Route`, `MultiRoute`, `Navbar`,
-  `BottomNav`, `SideMenu`, `Breadcrumbs`, `TreeView`). Until the library migrates to
-  `slice.router.path` (slicejs-components feature 0007), do not enable `routing` in an app whose
-  active-route UI depends on them; the translator itself works fine without `routing`.
+- **The library migration is partial.** Route, MultiRoute, Navbar, BottomNav, Breadcrumbs, SideMenu,
+  TreeView, Link, Card, DataList, DescriptionList, Pagination and the docs shell read `slice.path` /
+  `slice.href()`, so locale-in-URL routing works. The built-in texts of DataList, Table, DatePicker,
+  Select and Pagination are still English until their inventory lands (component feature 0007);
+  NotFound is the reference migration.
 - Translated slugs (`/es/precios`) are out of scope.
 - Keys used only through an app helper (`tr(key)`, a lookup table) are invisible to
   `slice translator check`; that is why unused-key reporting is opt-in.

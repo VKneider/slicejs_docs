@@ -50,6 +50,13 @@ Destroying runs `beforeDestroy()` and cleans the registry — see [Common Gotcha
 Route params use `${param}` (not `:param`); each captures **one** segment and arrives as a string.
 See [Routing](/Documentation/Routing) and [Route Guards](/Documentation/Routing/Guards).
 
+Components read the current page from the shortcuts, never from `window.location`:
+
+| Shortcut | Equivalent | Purpose |
+| --- | --- | --- |
+| `slice.path` | `slice.router.path` | The app path, without locale or query. |
+| `slice.href(path)` | `slice.router.href(path)` | The URL for an `<a>`, with the locale when `routing` is on. |
+
 ## Translator
 | Method | Signature | Purpose |
 | --- | --- | --- |

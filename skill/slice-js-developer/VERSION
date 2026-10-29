@@ -1,9 +1,19 @@
 slice-js-developer
-version: 1.29.0
+version: 1.30.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.30.0
+  Slice shortcuts and the component-library migration.
+  - `slice.path` and `slice.href(path)` are the router shortcuts at the slice level. Components use
+    them instead of `window.location.pathname` / a per-component helper, so `slice get` copies no
+    extra module.
+  - Library built-in texts are `slice.*` keys with en/es defaults (`shared/text/texts.js`, lowest
+    priority), marked with `data-t`; instance props still win. NotFound is the reference migration;
+    dates go through `translator.format` unless a component passes an explicit locale.
+  Files touched: SKILL.md, VERSION, references/translator.md, ../manifest.json.
 
 1.29.0
   Multilingual SEO, the translator panel and CLI checks.

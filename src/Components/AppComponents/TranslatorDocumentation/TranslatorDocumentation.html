@@ -68,6 +68,7 @@ const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.translator.ke
 <h2 id="urls-and-the-router">URLs and the router</h2>
 <p>Independently of <code>routing</code>, the router is the only reader of the URL:</p>
 <div class="code-block" data-block-id="doc-block-12"></div>
+<p><code>slice.router.path</code> and <code>slice.router.href()</code> are also exposed as <code>slice.path</code> and <code>slice.href()</code>. Components use the shortcuts: no shared helper, no <code>window.location</code>.</p>
 <p>Component code should use these instead of <code>window.location.pathname</code>, and build anchors with <code>href(path)</code>, so the same component works whether or not the locale is in the URL.</p>
 <p>With <code>"routing": "prefix"</code> every URL carries the locale (<code>/es/pricing</code>, <code>/en/pricing</code>); with <code>"prefix-except-default"</code> the default locale has no prefix (<code>/pricing</code>, <code>/en/pricing</code>).</p>
 <ul><li>Routes are declared <strong>once</strong>, without a locale. <code>matchRoute</code> strips a known prefix and sets the</li></ul>
@@ -110,8 +111,8 @@ const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.translator.ke
 <ul><li><strong>Doctor.</strong> <code>slice doctor</code> has a <strong>Translator</strong> row using the same scan, so CI can gate on it.</li><li>Development warnings (outside production, once each): missing key per locale, missing parameter, a</li></ul>
 <p>key that is a group, a marker used as a string, <code>data-t</code> with nothing to fill.</p>
 <h2 id="current-limits">Current limits</h2>
-<ul><li><strong>Some library components still read <code>window.location.pathname</code></strong> (<code>Route</code>, <code>MultiRoute</code>, <code>Navbar</code>,</li></ul>
-<p><code>BottomNav</code>, <code>SideMenu</code>, <code>Breadcrumbs</code>, <code>TreeView</code>). Until the library migrates to   <code>slice.router.path</code> (slicejs-components feature 0007), do not enable <code>routing</code> in an app whose   active-route UI depends on them; the translator itself works fine without <code>routing</code>.</p>
+<ul><li><strong>The library migration is partial.</strong> Route, MultiRoute, Navbar, BottomNav, Breadcrumbs, SideMenu,</li></ul>
+<p>TreeView, Link, Card, DataList, DescriptionList, Pagination and the docs shell read <code>slice.path</code> /   <code>slice.href()</code>, so locale-in-URL routing works. The built-in texts of DataList, Table, DatePicker,   Select and Pagination are still English until their inventory lands (component feature 0007);   NotFound is the reference migration.</p>
 <ul><li>Translated slugs (<code>/es/precios</code>) are out of scope.</li><li>Keys used only through an app helper (<code>tr(key)</code>, a lookup table) are invisible to</li></ul>
 <p><code>slice translator check</code>; that is why unused-key reporting is opt-in.</p>
 <h2 id="gotchas">Gotchas</h2>

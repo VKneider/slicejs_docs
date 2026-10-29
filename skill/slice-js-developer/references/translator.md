@@ -39,6 +39,9 @@ Three mechanisms, chosen by **where the text lives**:
   and listeners. Dictionaries never contain HTML.
 
 ```javascript
+// Library components mark built-in texts and ship defaults (en/es) through shared/text/texts.js;
+// app dictionaries and instance props win. Routes use slice.path / slice.href().
+
 // Props (markers; nested in arrays/objects is fine)
 await slice.build('Button', { value: slice.translator.key('orders.save') });
 this.$badge.label = slice.translator.key('cart.items', { count });
@@ -83,10 +86,13 @@ not invent one.
 Even with routing off, the router is the only URL reader:
 
 ```javascript
-slice.router.path              // '/pricing' — no locale, no query
-slice.router.href('/pricing')  // '/pricing' or '/en/pricing'
+slice.path                     // '/pricing' — no locale, no query (shortcut of router.path)
+slice.href('/pricing')         // '/pricing' or '/en/pricing' (shortcut of router.href)
 await slice.router.navigate('/pricing', { locale: 'en' });
 ```
+
+Components read `slice.path` and build anchors with `slice.href(path)`; they import no helper and never
+read `window.location.pathname`.
 
 Traps:
 
