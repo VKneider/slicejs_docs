@@ -1,9 +1,15 @@
 slice-js-developer
-version: 1.32.0
-targets: slicejs-web-framework ^4.1.x
+version: 1.32.1
+targets: slicejs-web-framework ^4.2.x
 
 CHANGELOG
 =========
+
+1.32.1
+  Compatibility target follows the 4.2.0 release.
+  - t.list/t.ref.list, t.content/t.localized and sitemap.paths ship with
+    slicejs-web-framework 4.2.0; the skill no longer claims 4.1.x.
+  Files touched: VERSION, ../manifest.json.
 
 1.32.0
   Lists and content documents.
