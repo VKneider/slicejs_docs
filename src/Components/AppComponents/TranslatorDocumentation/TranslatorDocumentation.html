@@ -100,7 +100,7 @@ const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.t.ref(key) : 
 <h2 id="multilingual-seo">Multilingual SEO</h2>
 <p>Native SEO reads the same translator: the server builds <strong>one page per route and locale</strong>.</p>
 <ul><li><strong>Texts by key.</strong> <code>title</code>, <code>titleTemplate</code>, <code>description</code>, <code>imageAlt</code> and the <code>openGraph</code>/<code>twitter</code></li></ul>
-<p>title and description in <code>seo.json</code> (defaults, routes and <code>routes.js</code> <code>metadata</code>) accept   <code>{ "t": "key", "params": { … } }</code>. The server resolves them at startup with the same   <code>src/locales/*.json</code> the client downloads; a plain string stays the same in every locale.</p>
+<p>title and description in <code>seo.json</code> (defaults, routes and <code>routes.js</code> <code>metadata</code>) accept   <code>{ "t": "key", "params": { … } }</code>; route metadata also accepts <code>titleKey</code> / <code>descriptionKey</code> as the   shorthand. The server resolves them at startup with the same <code>src/locales/*.json</code> the client   downloads; a plain string stays the same in every locale.</p>
 <ul><li><strong>Per-locale pages.</strong> With <code>routing</code>, <code>/pricing</code> and <code>/en/pricing</code> are prerendered separately, each</li></ul>
 <p>with its own <code>&lt;html lang&gt;</code>, <code>dir</code>, <code>og:locale</code>, canonical and translated <code>&lt;head&gt;</code>.</p>
 <ul><li><strong>Alternates.</strong> Every page carries <code>&lt;link rel="alternate" hreflang="…"&gt;</code> for its locales plus</li></ul>
@@ -113,7 +113,7 @@ const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.t.ref(key) : 
 <p><code>seo.json</code> maps it: <code>"locales": { "en": { "ogLocale": "en_US" } }</code>.</p>
 <ul><li><strong>Validation.</strong> A <code>{ t }</code> key missing in one locale is an error in <code>slice seo check</code> and in the</li></ul>
 <p>SEO row of <code>slice doctor</code>, because the page would advertise the key as its title. <code>slice translator   check</code> validates the keys used by templates and code against the same dictionaries.</p>
-<p>Route metadata in <code>routes.js</code> is resolved on the client too (the router re-applies it after a locale change), so the tab title follows the language without a reload.</p>
+<p>Route metadata in <code>routes.js</code> is resolved on the client too (the router re-applies it after a locale change), so the tab title follows the language without a reload. The product name lives once in <code>router.titlePrefix</code> / <code>router.titleSuffix</code> (the separator is part of the string); the server reads the same block, so the prerendered <code>&lt;title&gt;</code> and the hydrated one match. A <code>titleKey</code> with the translator off shows the key and logs one warning per key, so an untranslated page is visible.</p>
 <h2 id="development-tools">Development tools</h2>
 <ul><li><strong>Debugger panel.</strong> Enable it with <code>"translator": { "ui": { "enabled": true, "shortcut": "alt+shift+t" } }</code>.</li></ul>
 <p>It shows the active locale and a switcher, the keys on this page that are missing in the active   locale (and the ones answered by the fallback), and a <strong>keys</strong> switch that shows keys instead of   texts everywhere (<code>setShowKeys</code>) — the fastest way to see what is translated and what is hardcoded.</p>

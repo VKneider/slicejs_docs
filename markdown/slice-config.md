@@ -167,6 +167,8 @@ Full guide: [Translating an app](/Documentation/Translator).
 | --- | --- | --- | --- |
 | `defaultRoute` | `string` | `/` | Default route path. |
 | `updateTitles` | `boolean` | `true` | The router writes `document.title` and the description from each route's `metadata` on navigation. `false` leaves them alone. |
+| `titlePrefix` | `string` | `''` | Text before every route title. The separator is part of the string (`"Acme · "`). |
+| `titleSuffix` | `string` | `''` | Text after every route title. The separator is part of the string (`" · Acme"`). |
 
 ## loading
 | Field | Type | Default | Notes |

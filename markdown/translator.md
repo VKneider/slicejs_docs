@@ -331,8 +331,9 @@ Native SEO reads the same translator: the server builds **one page per route and
 
 - **Texts by key.** `title`, `titleTemplate`, `description`, `imageAlt` and the `openGraph`/`twitter`
   title and description in `seo.json` (defaults, routes and `routes.js` `metadata`) accept
-  `{ "t": "key", "params": { … } }`. The server resolves them at startup with the same
-  `src/locales/*.json` the client downloads; a plain string stays the same in every locale.
+  `{ "t": "key", "params": { … } }`; route metadata also accepts `titleKey` / `descriptionKey` as the
+  shorthand. The server resolves them at startup with the same `src/locales/*.json` the client
+  downloads; a plain string stays the same in every locale.
 - **Per-locale pages.** With `routing`, `/pricing` and `/en/pricing` are prerendered separately, each
   with its own `<html lang>`, `dir`, `og:locale`, canonical and translated `<head>`.
 - **Alternates.** Every page carries `<link rel="alternate" hreflang="…">` for its locales plus
@@ -349,7 +350,10 @@ Native SEO reads the same translator: the server builds **one page per route and
   check` validates the keys used by templates and code against the same dictionaries.
 
 Route metadata in `routes.js` is resolved on the client too (the router re-applies it after a locale
-change), so the tab title follows the language without a reload.
+change), so the tab title follows the language without a reload. The product name lives once in
+`router.titlePrefix` / `router.titleSuffix` (the separator is part of the string); the server reads the
+same block, so the prerendered `<title>` and the hydrated one match. A `titleKey` with the translator
+off shows the key and logs one warning per key, so an untranslated page is visible.
 
 ## Development tools
 

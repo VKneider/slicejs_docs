@@ -58,18 +58,37 @@ export default routes;
 | `path` | `string` | yes | Supports dynamic params using `${param}`. |
 | `component` | `string` | yes | Component name from `components.js`. |
 | `children` | `Array<Route>` | no | Nested routes inherit parent path. |
-| `metadata` | `object` | no | Arbitrary data for guards and UI. `title` and `description` are read by the router (see below). |
+| `metadata` | `object` | no | Arbitrary data for guards and UI. `title`/`titleKey` and `description`/`descriptionKey` are read by the router (see below). |
 
 ### Route metadata and the document title
-`metadata` is free-form. The router reads two fields from it on every navigation, including the first
-one:
+`metadata` is free-form. The router reads these fields on every navigation, including the first one:
 
 | Field | Effect |
 | --- | --- |
-| `title` | `document.title` (and `metadata.titleTemplate` with `%s`, if present) |
-| `description` | the `meta[name="description"]` content |
+| `title` | `document.title`, literal |
+| `titleKey` | a dictionary key; with the translator on it wins over `title` |
+| `titlePrefix` / `titleSuffix` | per-route affixes; default to `router.titlePrefix` / `router.titleSuffix`, `false` disables them |
+| `titleTemplate` | legacy: the full title with `%s` replaced; when present, the affixes are ignored |
+| `description` / `descriptionKey` | the `meta[name="description"]` content, same rules |
 
-It only writes what the route declares: a route without `title` keeps whatever the server sent, so a
+The product name belongs in the config, not in every route:
+
+```json title="src/sliceConfig.json"
+"router": {
+  "titleSuffix": " · Acme"
+}
+```
+
+A route with `metadata: { titleKey: 'pricing.title' }` renders `Precios · Acme` in Spanish and
+`Pricing · Acme` in English. `titlePrefix` is the mirror (`"Acme · "`), and both compose as
+`prefix + title + suffix`; only one, both or neither are valid. The separator is part of the string.
+
+`titleKey` wins over `title` when the translator is enabled. With it disabled the key is shown as the
+title and the router logs one warning per key, so an untranslated page is visible instead of silently
+wrong. The server reads the same `router.titlePrefix/titleSuffix` when it prerenders, so the tab title
+does not change after hydration.
+
+It only writes what the route declares: a route without a title keeps whatever the server sent, so a
 prerendered page is never downgraded. `canonical` and `robots` are never written from the client —
 crawlers do not run JavaScript. A `router:change` listener still wins, because the metadata is applied
 before the event. Opt out with `router.updateTitles: false` in `sliceConfig.json`.

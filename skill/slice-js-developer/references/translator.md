@@ -121,7 +121,12 @@ configured `path` — not `public/`.
 With `routing`, native SEO prerenders **one page per route and locale**:
 
 - `title`, `titleTemplate`, `description`, `imageAlt` and the `openGraph`/`twitter` title and
-  description in `seo.json` (and `routes.js` metadata) accept `{ t: 'key', params? }`.
+  description in `seo.json` (and `routes.js` metadata) accept `{ t: 'key', params? }`. Route metadata
+  also accepts `titleKey` / `descriptionKey` (the key wins over the literal; with the translator off
+  the key is shown and the router logs one warning per key).
+- The product name goes once in `sliceConfig.router.titlePrefix` / `titleSuffix` (the separator is
+  part of the string); the server reads the same block so prerender and hydration agree. A route can
+  override or disable an affix with `metadata.titlePrefix/titleSuffix: false`.
 - Each page gets its own `<html lang|dir>`, canonical, `og:locale` and
   `<link rel="alternate" hreflang>` (plus `x-default`).
 - `/` under `prefix` → 302 to the default locale; `/es/x` under `prefix-except-default` → 301 to

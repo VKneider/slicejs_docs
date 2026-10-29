@@ -1,9 +1,18 @@
 slice-js-developer
-version: 1.31.1
+version: 1.31.2
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.31.2
+  Localized route titles and descriptions.
+  - metadata.titleKey / descriptionKey are the shorthand for { t }; they win over the literal, and
+    with the translator off the key is shown plus one warning per key.
+  - The product name lives once in sliceConfig.router.titlePrefix / titleSuffix (separator inside the
+    string); the server reads the same block so prerender and hydration agree.
+  - titleTemplate (%s) stays as a legacy escape hatch, not the documented path.
+  Files touched: VERSION, references/translator.md, ../manifest.json.
 
 1.31.1
   Document the library defaults helper (texts()).
