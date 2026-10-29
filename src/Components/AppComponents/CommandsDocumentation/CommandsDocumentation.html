@@ -173,17 +173,26 @@ These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</co
 <p>Validates <code>seo.json</code>, cross-checks it against <code>routes.js</code>, and compares the committed sitemap with what the manifest would produce. Exits non-zero on any problem, so it belongs in CI.</p>
 <div class="code-block" data-block-id="doc-block-49"></div>
 <p>See [SEO and Share Cards](/Documentation/Architecture/SEO) for the manifest fields and the origin rules.</p>
+<h2 id="translator">translator</h2>
+<h3 id="translator-init">translator init</h3>
+<p>Adds the <code>translator</code> block to <code>src/sliceConfig.json</code> and creates <code>src/locales/&lt;locale&gt;.json</code>. It never overwrites an existing dictionary or an existing value, so it is safe to re-run.</p>
+<div class="code-block" data-block-id="doc-block-50"></div>
+<div class="table-block" data-block-id="doc-block-51"></div>
+<h3 id="translator-check">translator check</h3>
+<p>Scans every <code>.html</code> and <code>.js</code> under <code>src/</code>, reusing the framework's <code>data-t</code> rules (text, <code>key.ariaLabel</code>-style attributes, <code>data-t-*</code> params) plus <code>slice.t()</code>, <code>slice.translator.key()</code> and <code>tr()</code> calls. Fails when a key is missing in a locale, when a plural has no <code>other</code>, and reports parameter drift and raw <code>href="/…"</code> links under <code>routing</code>.</p>
+<div class="code-block" data-block-id="doc-block-52"></div>
+<p><code>slice doctor</code> has a <strong>Translator</strong> row that runs the same scan. See [Translating an app](/Documentation/Translator).</p>
 <h2 id="version">version</h2>
 <p>Shows CLI version info and checks for updates.</p>
-<div class="code-block" data-block-id="doc-block-50"></div>
+<div class="code-block" data-block-id="doc-block-53"></div>
 <h2 id="help">help</h2>
 <p>Shows CLI help output.</p>
-<div class="code-block" data-block-id="doc-block-51"></div>
+<div class="code-block" data-block-id="doc-block-54"></div>
 <h2 id="types-generate">types generate</h2>
 <p>Generates a TypeScript declaration file from your components' <code>static props</code>, so editors can autocomplete and type-check <code>slice.build('Name', { ... })</code> calls.</p>
-<div class="code-block" data-block-id="doc-block-52"></div>
-<div class="code-block" data-block-id="doc-block-53"></div>
-<div class="table-block" data-block-id="doc-block-54"></div>
+<div class="code-block" data-block-id="doc-block-55"></div>
+<div class="code-block" data-block-id="doc-block-56"></div>
+<div class="table-block" data-block-id="doc-block-57"></div>
 <p>Re-run it whenever you add or change component props. The output is generated — don't edit it by hand, and re-generate (or wire it into your build) to keep autocomplete in sync.</p>
 <p>It also writes the event manifest (<code>src/slice-events.generated.js</code>), creates <code>jsconfig.json</code> when the project has none, and keeps that config pointed at the generated declarations. <code>slice lint</code> and <code>slice typecheck</code> run this refresh for you before they work.</p>
 <h2 id="best-practices">Best Practices</h2>

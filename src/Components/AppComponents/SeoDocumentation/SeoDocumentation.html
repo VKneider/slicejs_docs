@@ -45,6 +45,15 @@ manifest's (including the <code>| Acme</code> suffix), or let the manifest own t
 <p>the correct head and an empty <code>#app</code>. Pre-rendering the article content is a separate problem.</p>
 <ul><li><strong>Generating the social image</strong> is not part of the runtime. The manifest accepts <code>image</code>, and</li></ul>
 <p><code>slice seo images</code> produces the files from the real pages (it writes <code>public/og/manifest.json</code>,   which you pass as <code>seo.images</code>). See [CLI commands](/Documentation/CLI#seo-images).</p>
-<ul><li><strong>One language per route, for now.</strong> The manifest has no per-locale entries yet: with</li></ul>
-<p>[<code>translator.routing</code>](/Documentation/Translator) on, <code>/en/...</code> is still answered like an unknown   path until the multilingual SEO phase ships. Apps without native SEO get the shell and translate in   the browser.</p>
+<h2 id="several-languages">Several languages</h2>
+<p>With <code>slice.translator</code> configured, the same manifest drives <strong>one page per route and locale</strong>. The text fields accept <code>{ "t": "key", "params": { … } }</code>, and the server resolves them with the app's dictionaries:</p>
+<div class="code-block" data-block-id="doc-block-9"></div>
+<ul><li>Every literal route is prerendered once per locale (<code>/pricing</code>, <code>/en/pricing</code>), each with its own</li></ul>
+<p><code>&lt;html lang&gt;</code>, canonical, translated <code>&lt;head&gt;</code> and <code>og:locale</code>.</p>
+<ul><li>Each page carries <code>&lt;link rel="alternate" hreflang="…"&gt;</code> for its locales plus <code>x-default</code>.</li><li>Under <code>"prefix"</code>, <code>/</code> answers <code>302</code> to the default locale; under <code>"prefix-except-default"</code>, a</li></ul>
+<p>default-locale prefix (<code>/es/pricing</code>) answers <code>301</code> to <code>/pricing</code>.</p>
+<ul><li>A prefix that is not a configured locale is not a locale: it falls through to a real <code>404</code>.</li><li><code>slice seo sitemap</code> writes one <code>&lt;url&gt;</code> per route and locale with the same alternates; a <code>{ t }</code> key</li></ul>
+<p>missing in one locale fails <code>slice seo check</code>, because that page would advertise the key as title.</p>
+<ul><li><code>${param}</code> routes are rendered per request, per locale.</li></ul>
+<p>See [Translating an app](/Documentation/Translator) for the client half.</p>
 </div>

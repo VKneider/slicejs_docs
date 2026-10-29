@@ -85,12 +85,35 @@ const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.translator.ke
 <code>Link</code> component) inside translated apps.</div>
 <h2 id="formatting">Formatting</h2>
 <p><code>slice.translator.format.*</code> uses the active locale and caches the <code>Intl</code> formatter per locale and options: <code>number</code>, <code>currency</code>, <code>percent</code>, <code>date</code>, <code>time</code>, <code>relative</code>, <code>list</code>. A component that owns a fixed format (a table of prices in USD, say) can keep its own <code>Intl</code> call.</p>
+<h2 id="multilingual-seo">Multilingual SEO</h2>
+<p>Native SEO reads the same translator: the server builds <strong>one page per route and locale</strong>.</p>
+<ul><li><strong>Texts by key.</strong> <code>title</code>, <code>titleTemplate</code>, <code>description</code>, <code>imageAlt</code> and the <code>openGraph</code>/<code>twitter</code></li></ul>
+<p>title and description in <code>seo.json</code> (defaults, routes and <code>routes.js</code> <code>metadata</code>) accept   <code>{ "t": "key", "params": { … } }</code>. The server resolves them at startup with the same   <code>src/locales/*.json</code> the client downloads; a plain string stays the same in every locale.</p>
+<ul><li><strong>Per-locale pages.</strong> With <code>routing</code>, <code>/pricing</code> and <code>/en/pricing</code> are prerendered separately, each</li></ul>
+<p>with its own <code>&lt;html lang&gt;</code>, <code>dir</code>, <code>og:locale</code>, canonical and translated <code>&lt;head&gt;</code>.</p>
+<ul><li><strong>Alternates.</strong> Every page carries <code>&lt;link rel="alternate" hreflang="…"&gt;</code> for its locales plus</li></ul>
+<p><code>x-default</code> (the default locale URL).</p>
+<ul><li><strong>URLs.</strong> <code>/</code> under <code>"prefix"</code> answers <code>302</code> to the default locale. Under</li></ul>
+<p><code>"prefix-except-default"</code>, a default-locale prefix (<code>/es/pricing</code>) answers <code>301</code> to <code>/pricing</code>.   A prefix that is not a configured locale (<code>/fr/…</code>) is a normal path, so it is a <code>404</code>.</p>
+<ul><li><strong>Sitemap.</strong> <code>slice seo sitemap</code> writes one <code>&lt;url&gt;</code> per route and locale with the same</li></ul>
+<p><code>xhtml:link</code> alternates and <code>x-default</code>.</p>
+<ul><li><strong><code>og:locale</code>.</strong> The locale as-is, with <code>-</code> → <code>_</code> (<code>pt-BR</code> → <code>pt_BR</code>), unless</li></ul>
+<p><code>seo.json</code> maps it: <code>"locales": { "en": { "ogLocale": "en_US" } }</code>.</p>
+<ul><li><strong>Validation.</strong> A <code>{ t }</code> key missing in one locale is an error in <code>slice seo check</code> and in the</li></ul>
+<p>SEO row of <code>slice doctor</code>, because the page would advertise the key as its title. <code>slice translator   check</code> validates the keys used by templates and code against the same dictionaries.</p>
+<p>Route metadata in <code>routes.js</code> is resolved on the client too (the router re-applies it after a locale change), so the tab title follows the language without a reload.</p>
+<h2 id="development-tools">Development tools</h2>
+<ul><li><strong>Debugger panel.</strong> Enable it with <code>"translator": { "ui": { "enabled": true, "shortcut": "alt+shift+t" } }</code>.</li></ul>
+<p>It shows the active locale and a switcher, the keys on this page that are missing in the active   locale (and the ones answered by the fallback), and a <strong>keys</strong> switch that shows keys instead of   texts everywhere (<code>setShowKeys</code>) — the fastest way to see what is translated and what is hardcoded.</p>
+<ul><li><strong>CLI.</strong> <code>slice translator init</code> adds the <code>translator</code> block and creates <code>src/locales/&lt;locale&gt;.json</code></li></ul>
+<p>(never overwrites them). <code>slice translator check</code> scans templates, <code>data-t-*</code> params and   <code>slice.t()</code>/<code>key()</code>/<code>tr()</code> calls, and fails when a key is missing in a locale. <code>--unused</code> also   lists dictionary keys nothing reads.</p>
+<ul><li><strong>Doctor.</strong> <code>slice doctor</code> has a <strong>Translator</strong> row using the same scan, so CI can gate on it.</li><li>Development warnings (outside production, once each): missing key per locale, missing parameter, a</li></ul>
+<p>key that is a group, a marker used as a string, <code>data-t</code> with nothing to fill.</p>
 <h2 id="current-limits">Current limits</h2>
-<ul><li><strong>Native SEO is single-language for now.</strong> With <code>seo.json</code> configured, the server still prerenders</li></ul>
-<p>one page per route, so <code>/en/...</code> is answered like an unknown path until the multilingual SEO phase   (framework feature 0003, phase 5) ships. Apps <strong>without</strong> native SEO get the shell and work.</p>
 <ul><li><strong>Some library components still read <code>window.location.pathname</code></strong> (<code>Route</code>, <code>MultiRoute</code>, <code>Navbar</code>,</li></ul>
 <p><code>BottomNav</code>, <code>SideMenu</code>, <code>Breadcrumbs</code>, <code>TreeView</code>). Until the library migrates to   <code>slice.router.path</code> (slicejs-components feature 0007), do not enable <code>routing</code> in an app whose   active-route UI depends on them; the translator itself works fine without <code>routing</code>.</p>
-<ul><li>Translated slugs (<code>/es/precios</code>) are out of scope.</li></ul>
+<ul><li>Translated slugs (<code>/es/precios</code>) are out of scope.</li><li>Keys used only through an app helper (<code>tr(key)</code>, a lookup table) are invisible to</li></ul>
+<p><code>slice translator check</code>; that is why unused-key reporting is opt-in.</p>
 <h2 id="gotchas">Gotchas</h2>
 <ul><li><code>enabled: true</code> without <code>defaultLocale</code> stays disabled, silently by design. Set both.</li><li>A missing key is shown as the key on purpose — that is how you find it. Check the development warnings.</li><li>The observer watches every attribute (parameters are open-ended), and discards anything that does not</li></ul>
 <p>start with <code>data-t</code>, so unrelated animation/style churn does not re-translate.</p>
