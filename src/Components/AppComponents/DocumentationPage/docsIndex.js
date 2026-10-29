@@ -132,7 +132,7 @@ const docsIndex = [
   {
     title: 'Translating an app',
     route: '/Documentation/Translator',
-    description: 'slice.translator — dictionaries, data-t in templates, key() props, locale-aware URLs and formatting.',
+    description: 'slice.translator — dictionaries, data-t in templates, t.ref() for props, locale-aware URLs and formatting.',
     section: 'Getting Started',
     group: 'Configuration',
     order: 8,

@@ -5,7 +5,7 @@ navLabel: Translator
 section: Getting Started
 group: Configuration
 order: 8
-description: slice.translator — dictionaries, data-t in templates, key() props, locale-aware URLs and formatting.
+description: slice.translator — dictionaries, data-t in templates, t.ref() for props, locale-aware URLs and formatting.
 component: TranslatorDocumentation
 tags: [translator, i18n, locales, routing]
 ---
@@ -108,6 +108,8 @@ passed as a parameter is formatted with the locale. There is no ICU MessageForma
 | API | Signature | Notes |
 | --- | --- | --- |
 | `slice.t` | `t(key, params?) → string` | Shortcut of `slice.translator.t`. |
+| `slice.t.ref` | `t.ref(key, params?) → TranslationRef` | A prop reference. See [Props](#props-the-one-exception). |
+| `slice.locale` | `string` | Active locale shortcut. |
 | `slice.translator.t` | `t(key, params?) → string` | Lookup + plural + interpolation. |
 | `slice.translator.locale` | `string` | Active locale. |
 | `slice.translator.locales` | `readonly string[]` | Configured locales. |
@@ -116,7 +118,7 @@ passed as a parameter is formatted with the locale. There is no ICU MessageForma
 | `slice.translator.preload` | `preload(locale) → Promise<string>` | Load without switching. |
 | `slice.translator.load` | `load(namespace) → Promise<void>` | Load a namespace for the active and fallback locale. |
 | `slice.translator.add` | `add(locale, messages, { defaults }) → void` | Merge messages at runtime. |
-| `slice.translator.key` | `key(key, params?) → TranslationKey` | A prop reference. See [Props](#props-key-references). |
+| `slice.translator.ref` | `ref(key, params?) → TranslationRef` | A prop reference. See [Props](#props-the-one-exception). |
 | `slice.translator.watch` | `watch(component, callback) → () => void` | `callback(locale, previous)` until the component is destroyed. |
 | `slice.translator.apply` | `apply(root?) → number` | Translate `data-t` under `root` now (default: the document). |
 | `slice.translator.setShowKeys` | `setShowKeys(enabled) → boolean` | Debugger switch: `t()` returns keys instead of texts and the document re-renders. |
@@ -167,37 +169,61 @@ paint has no keys.
 
 Text computed at the moment it is used (`slice.t()` in a toast, in a confirm) needs nothing at all.
 
-## Props: key references
+## One entry point: `t`
+
+`t` is the method you use everywhere. The only exception is a value that must live in a component
+prop and survive a locale change without rebuilding the component; for that, `t` has a namespaced
+reference:
 
 ```javascript
-await slice.build('Button', { value: slice.translator.key('orders.save') });
-this.$count.label = slice.translator.key('cart.items', { count });
+slice.t('orders.save')        // "Guardar" — text, right now
+slice.t.ref('orders.save')    // a reference for a prop
+```
+
+| Text | Mechanism |
+| --- | --- |
+| In a template (`.html`) | `data-t` — nothing else |
+| Created from JS (`textContent`, `innerHTML`) | `data-t` / `dataset.t` (+ `data-t-*` params) |
+| Passed as a component prop, must follow the locale | `slice.t.ref()` |
+| Computed by your component from data | `slice.t()` + `update()`/`watch()` |
+| Outside the DOM (canvas, third-party widget) | `watch()` + `slice.t()` when drawing |
+| Read at the moment of use (toast, confirm) | `slice.t()` |
+
+Why the reference exists: `t()` returns a `string`, and a string in a prop is frozen. The reference is
+an object the framework resolves before the component sees it and re-assigns on every locale change.
+`data-t` cannot cover props (they are not DOM nodes), and `watch()` alone does not translate.
+
+## Props: the one exception
+
+```javascript
+await slice.build('Button', { value: slice.t.ref('orders.save') });
+this.$count.label = slice.t.ref('cart.items', { count });
 await slice.build('DropDown', {
-  items: [{ label: slice.translator.key('menu.home'), path: '/' }]
+  items: [{ label: slice.t.ref('menu.home'), path: '/' }]
 });
 ```
 
-- `key()` returns a frozen marker. **The component only ever receives the translated string**, through
-  its normal setter, so components need no changes.
-- Markers nested in arrays or plain objects are resolved, and the whole prop is assigned again on a
+- `t.ref()` returns a frozen reference. **The component only ever receives the translated string**,
+  through its normal setter, so components need no changes.
+- References nested in arrays or plain objects are resolved, and the whole prop is assigned again on a
   locale change.
 - Every prop passed through `setComponentProps` is refreshed. The setters of `static props` are also
-  wrapped once per class, so a later direct assignment (`this.$badge.label = key(…)`) works too;
-  assigning a plain string afterwards stops refreshing that prop.
-- Prop validation (`allowedValues`, unknown props) sees the translated strings, not the markers.
-- `String(marker)` returns the key and warns in development: a marker used as text is a mistake.
+  wrapped once per class, so a later direct assignment (`this.$badge.label = slice.t.ref(…)`) works
+  too; assigning a plain string afterwards stops refreshing that prop.
+- Prop validation (`allowedValues`, unknown props) sees the translated strings, not the references.
+- `String(reference)` returns the key and warns in development: a reference used as text is a mistake.
 
 :::warning
-`key()` resolves to the key when the translator is off. When a component must keep showing readable
-text on an app without dictionaries, guard the marker:
+`t.ref()` resolves to the key when the translator is off. When a component must keep showing readable
+text on an app without dictionaries, guard it:
 
 ```javascript
-const tr = (key, fallback) => slice.translator?.enabled ? slice.translator.key(key) : fallback;
+const tr = (key, fallback) => slice.translator?.enabled ? slice.t.ref(key) : fallback;
 ```
 :::
 
-Choose between the two mechanisms by where the text lives: **`data-t` for text in a template**,
-**`key()` for a value passed as a prop**. `slice.t()` is for text read at the moment of use.
+Outside the DOM, `slice.translator.watch(component, cb)` is still the escape hatch (canvas, a library
+that copied a string). It is not needed for templates or props.
 
 ## Changing the locale
 
@@ -298,7 +324,7 @@ change), so the tab title follows the language without a reload.
   texts everywhere (`setShowKeys`) — the fastest way to see what is translated and what is hardcoded.
 - **CLI.** `slice translator init` adds the `translator` block and creates `src/locales/<locale>.json`
   (never overwrites them). `slice translator check` scans templates, `data-t-*` params and
-  `slice.t()`/`key()`/`tr()` calls, and fails when a key is missing in a locale. `--unused` also
+  `slice.t()`/`t.ref()`/`tr()` calls, and fails when a key is missing in a locale. `--unused` also
   lists dictionary keys nothing reads.
 - **Doctor.** `slice doctor` has a **Translator** row using the same scan, so CI can gate on it.
 - Development warnings (outside production, once each): missing key per locale, missing parameter, a

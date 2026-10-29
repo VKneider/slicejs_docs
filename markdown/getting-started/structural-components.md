@@ -29,7 +29,7 @@ under `slice.*`. You do not build them directly.
 | --- | --- | --- |
 | Build / look up / destroy components | `slice.controller` | Lifecycle and the component registry. |
 | Navigate, guards, route params | `slice.router` | Client-side routing. |
-| Translate text and format dates/numbers | `slice.translator` | `slice.t()`, `data-t`, `key()` props. |
+| Translate text and format dates/numbers | `slice.translator` | `slice.t()`, `data-t`, `t.ref()` props. |
 | Shared state many components read | `slice.context` | Holds state; watchers + selectors. |
 | Announce "something happened" | `slice.events` | Fire-and-forget pub/sub. |
 | Themes and styles | `slice.stylesManager` | `slice.setTheme(name)`. |

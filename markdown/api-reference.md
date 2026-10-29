@@ -62,7 +62,7 @@ Components read the current page from the shortcuts, never from `window.location
 | --- | --- | --- |
 | `slice.t` | `t(key, params?) → string` | Translate a key (shortcut of `slice.translator.t`). |
 | `slice.translator.setLocale` | `setLocale(locale) → Promise<string>` | Load and switch; updates `<html lang\|dir>`, `data-t`, marker props and route metadata. |
-| `slice.translator.key` | `key(key, params?) → TranslationKey` | Pass a key as a prop; the framework resolves it and re-assigns it on a locale change. |
+| `slice.translator.ref` | `key(key, params?) → TranslationRef` | Pass a key as a prop; the framework resolves it and re-assigns it on a locale change. |
 | `slice.translator.watch` | `watch(component, cb) → () => void` | Run `cb(locale, previous)` on every change, for text outside the DOM. |
 | `slice.translator.add` | `add(locale, messages, { defaults }) → void` | Merge messages at runtime; `defaults` never overrides the app's dictionaries. |
 | `slice.translator.setShowKeys` | `setShowKeys(enabled) → boolean` | Debugger: `t()` returns keys instead of texts and the document re-renders. |

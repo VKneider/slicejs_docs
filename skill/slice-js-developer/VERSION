@@ -1,9 +1,19 @@
 slice-js-developer
-version: 1.30.0
+version: 1.31.0
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.31.0
+  One translation entry point: t() for text, t.ref() for props.
+  - slice.translator.key() is renamed to ref(); slice.t.ref() is the shortcut. No deprecated alias
+    (nothing published). TranslationKey -> TranslationRef.
+  - The rule: data-t/dataset.t for the DOM (templates and JS-created), t.ref() for props that must
+    follow the locale, t() for text read now, watch() only for canvas/third-party widgets.
+  - No fourth lifecycle hook and no global refreshComponents: a section that computes labels from
+    data can re-render from its own watch in init.
+  Files touched: SKILL.md, VERSION, references/translator.md, ../manifest.json.
 
 1.30.0
   Slice shortcuts and the component-library migration.

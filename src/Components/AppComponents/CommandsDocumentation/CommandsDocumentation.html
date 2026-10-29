@@ -179,7 +179,7 @@ These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</co
 <div class="code-block" data-block-id="doc-block-50"></div>
 <div class="table-block" data-block-id="doc-block-51"></div>
 <h3 id="translator-check">translator check</h3>
-<p>Scans every <code>.html</code> and <code>.js</code> under <code>src/</code>, reusing the framework's <code>data-t</code> rules (text, <code>key.ariaLabel</code>-style attributes, <code>data-t-*</code> params) plus <code>slice.t()</code>, <code>slice.translator.key()</code> and <code>tr()</code> calls. Fails when a key is missing in a locale, when a plural has no <code>other</code>, and reports parameter drift and raw <code>href="/…"</code> links under <code>routing</code>.</p>
+<p>Scans every <code>.html</code> and <code>.js</code> under <code>src/</code>, reusing the framework's <code>data-t</code> rules (text, <code>key.ariaLabel</code>-style attributes, <code>data-t-*</code> params) plus <code>slice.t()</code>, <code>slice.translator.ref()</code> and <code>tr()</code> calls. Fails when a key is missing in a locale, when a plural has no <code>other</code>, and reports parameter drift and raw <code>href="/…"</code> links under <code>routing</code>.</p>
 <div class="code-block" data-block-id="doc-block-52"></div>
 <p><code>slice doctor</code> has a <strong>Translator</strong> row that runs the same scan. See [Translating an app](/Documentation/Translator).</p>
 <h2 id="version">version</h2>

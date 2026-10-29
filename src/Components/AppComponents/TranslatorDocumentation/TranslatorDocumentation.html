@@ -39,22 +39,27 @@
 <div class="code-block" data-block-id="doc-block-9"></div>
 <p>Parameters come from <code>data-t-*</code> attributes (<code>data-t-user-name</code> → <code>{ userName }</code>); numeric strings become numbers. <code>data-t-text</code> and <code>data-t-slot</code> are directives, not parameters. Templates are translated inside <code>attachTemplate</code> while the component is still detached, so <code>init()</code> reads translated text and the first paint has no keys.</p>
 <p>Text computed at the moment it is used (<code>slice.t()</code> in a toast, in a confirm) needs nothing at all.</p>
-<h2 id="props-key-references">Props: key references</h2>
+<h2 id="one-entry-point-t">One entry point: <code>t</code></h2>
+<p><code>t</code> is the method you use everywhere. The only exception is a value that must live in a component prop and survive a locale change without rebuilding the component; for that, <code>t</code> has a namespaced reference:</p>
 <div class="code-block" data-block-id="doc-block-10"></div>
-<ul><li><code>key()</code> returns a frozen marker. <strong>The component only ever receives the translated string</strong>, through</li></ul>
-<p>its normal setter, so components need no changes.</p>
-<ul><li>Markers nested in arrays or plain objects are resolved, and the whole prop is assigned again on a</li></ul>
+<div class="table-block" data-block-id="doc-block-11"></div>
+<p>Why the reference exists: <code>t()</code> returns a <code>string</code>, and a string in a prop is frozen. The reference is an object the framework resolves before the component sees it and re-assigns on every locale change. <code>data-t</code> cannot cover props (they are not DOM nodes), and <code>watch()</code> alone does not translate.</p>
+<h2 id="props-the-one-exception">Props: the one exception</h2>
+<div class="code-block" data-block-id="doc-block-12"></div>
+<ul><li><code>t.ref()</code> returns a frozen reference. <strong>The component only ever receives the translated string</strong>,</li></ul>
+<p>through its normal setter, so components need no changes.</p>
+<ul><li>References nested in arrays or plain objects are resolved, and the whole prop is assigned again on a</li></ul>
 <p>locale change.</p>
 <ul><li>Every prop passed through <code>setComponentProps</code> is refreshed. The setters of <code>static props</code> are also</li></ul>
-<p>wrapped once per class, so a later direct assignment (<code>this.$badge.label = key(…)</code>) works too;   assigning a plain string afterwards stops refreshing that prop.</p>
-<ul><li>Prop validation (<code>allowedValues</code>, unknown props) sees the translated strings, not the markers.</li><li><code>String(marker)</code> returns the key and warns in development: a marker used as text is a mistake.</li></ul>
-<div class="callout callout-warning"><code>key()</code> resolves to the key when the translator is off. When a component must keep showing readable
-text on an app without dictionaries, guard the marker:
+<p>wrapped once per class, so a later direct assignment (<code>this.$badge.label = slice.t.ref(…)</code>) works   too; assigning a plain string afterwards stops refreshing that prop.</p>
+<ul><li>Prop validation (<code>allowedValues</code>, unknown props) sees the translated strings, not the references.</li><li><code>String(reference)</code> returns the key and warns in development: a reference used as text is a mistake.</li></ul>
+<div class="callout callout-warning"><code>t.ref()</code> resolves to the key when the translator is off. When a component must keep showing readable
+text on an app without dictionaries, guard it:
 
 ``<code>javascript
-const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.translator.key(key) : fallback;
+const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.t.ref(key) : fallback;
 </code>``</div>
-<p>Choose between the two mechanisms by where the text lives: <strong><code>data-t</code> for text in a template</strong>, <strong><code>key()</code> for a value passed as a prop</strong>. <code>slice.t()</code> is for text read at the moment of use.</p>
+<p>Outside the DOM, <code>slice.translator.watch(component, cb)</code> is still the escape hatch (canvas, a library that copied a string). It is not needed for templates or props.</p>
 <h2 id="changing-the-locale">Changing the locale</h2>
 <p><code>await slice.translator.setLocale('en')</code> runs, in order:</p>
 <ol><li>load what the locale needs (its main file, the namespaces already loaded, the fallback's). On failure</li></ol>
@@ -63,11 +68,11 @@ const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.translator.ke
 <p>when <code>saveLocally</code>, and rewrite the URL when <code>routing</code> is on;</p>
 <ol><li>re-translate every <code>data-t</code> in the document;</li><li>re-assign every prop that came from a marker, parents before children;</li><li>re-apply the active route's <code>metadata</code> (translated titles work, see [Routing](/Documentation/Routing));</li><li>call <code>watch()</code> callbacks and emit <code>translator:change</code> (<code>{ locale, previous }</code>).</li></ol>
 <p>There is no <code>localeChanged()</code> lifecycle hook: what lives in the DOM is marked, props are markers, and only what lives outside the DOM uses <code>watch()</code>:</p>
-<div class="code-block" data-block-id="doc-block-11"></div>
+<div class="code-block" data-block-id="doc-block-13"></div>
 <p>Two overlapping <code>setLocale()</code> calls: the last one wins. A locale that is not in <code>locales</code> throws.</p>
 <h2 id="urls-and-the-router">URLs and the router</h2>
 <p>Independently of <code>routing</code>, the router is the only reader of the URL:</p>
-<div class="code-block" data-block-id="doc-block-12"></div>
+<div class="code-block" data-block-id="doc-block-14"></div>
 <p><code>slice.router.path</code> and <code>slice.router.href()</code> are also exposed as <code>slice.path</code> and <code>slice.href()</code>. Components use the shortcuts: no shared helper, no <code>window.location</code>.</p>
 <p>Component code should use these instead of <code>window.location.pathname</code>, and build anchors with <code>href(path)</code>, so the same component works whether or not the locale is in the URL.</p>
 <p>With <code>"routing": "prefix"</code> every URL carries the locale (<code>/es/pricing</code>, <code>/en/pricing</code>); with <code>"prefix-except-default"</code> the default locale has no prefix (<code>/pricing</code>, <code>/en/pricing</code>).</p>
@@ -107,7 +112,7 @@ const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.translator.ke
 <ul><li><strong>Debugger panel.</strong> Enable it with <code>"translator": { "ui": { "enabled": true, "shortcut": "alt+shift+t" } }</code>.</li></ul>
 <p>It shows the active locale and a switcher, the keys on this page that are missing in the active   locale (and the ones answered by the fallback), and a <strong>keys</strong> switch that shows keys instead of   texts everywhere (<code>setShowKeys</code>) — the fastest way to see what is translated and what is hardcoded.</p>
 <ul><li><strong>CLI.</strong> <code>slice translator init</code> adds the <code>translator</code> block and creates <code>src/locales/&lt;locale&gt;.json</code></li></ul>
-<p>(never overwrites them). <code>slice translator check</code> scans templates, <code>data-t-*</code> params and   <code>slice.t()</code>/<code>key()</code>/<code>tr()</code> calls, and fails when a key is missing in a locale. <code>--unused</code> also   lists dictionary keys nothing reads.</p>
+<p>(never overwrites them). <code>slice translator check</code> scans templates, <code>data-t-*</code> params and   <code>slice.t()</code>/<code>t.ref()</code>/<code>tr()</code> calls, and fails when a key is missing in a locale. <code>--unused</code> also   lists dictionary keys nothing reads.</p>
 <ul><li><strong>Doctor.</strong> <code>slice doctor</code> has a <strong>Translator</strong> row using the same scan, so CI can gate on it.</li><li>Development warnings (outside production, once each): missing key per locale, missing parameter, a</li></ul>
 <p>key that is a group, a marker used as a string, <code>data-t</code> with nothing to fill.</p>
 <h2 id="current-limits">Current limits</h2>

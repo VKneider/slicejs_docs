@@ -575,7 +575,7 @@ npm exec slice translator init --locales es,en --default es
 
 ### translator check
 Scans every `.html` and `.js` under `src/`, reusing the framework's `data-t` rules (text,
-`key.ariaLabel`-style attributes, `data-t-*` params) plus `slice.t()`, `slice.translator.key()` and
+`key.ariaLabel`-style attributes, `data-t-*` params) plus `slice.t()`, `slice.translator.ref()` and
 `tr()` calls. Fails when a key is missing in a locale, when a plural has no `other`, and reports
 parameter drift and raw `href="/…"` links under `routing`.
 

@@ -17,7 +17,7 @@ Three mechanisms, chosen by **where the text lives**:
 | Text lives in | Use | Why |
 | --- | --- | --- |
 | A template (`.html`) or `App/index.html` | `data-t="key"` | A `MutationObserver` translates it on entry and on every locale change. Never write translated text from JS. |
-| A value passed as a prop | `slice.translator.key('key', params?)` | The component receives a plain string; the framework re-assigns the prop on a locale change. Components need no changes. |
+| A value passed as a prop | `slice.t.ref('key', params?)` | The component receives a plain string; the framework re-assigns the prop on a locale change. Components need no changes. |
 | A string read at the moment of use (toast, confirm, canvas) | `slice.t('key', params?)` | It is correct when created; nothing to refresh. |
 | A third-party widget that cached a string | `slice.translator.watch(component, cb)` | Escape hatch for what is outside the DOM. |
 
@@ -43,8 +43,8 @@ Three mechanisms, chosen by **where the text lives**:
 // app dictionaries and instance props win. Routes use slice.path / slice.href().
 
 // Props (markers; nested in arrays/objects is fine)
-await slice.build('Button', { value: slice.translator.key('orders.save') });
-this.$badge.label = slice.translator.key('cart.items', { count });
+await slice.build('Button', { value: slice.t.ref('orders.save') });
+this.$badge.label = slice.t.ref('cart.items', { count });
 
 // Read at use
 slice.t('orders.count', { count: 3 });
@@ -128,7 +128,7 @@ With `routing`, native SEO prerenders **one page per route and locale**:
 
 - `slice translator init [--locales es,en] [--default es]` adds the config block and creates the
   dictionaries (never overwrites).
-- `slice translator check [--unused]` scans templates + `data-t-*` + `slice.t()`/`key()`/`tr()` calls
+- `slice translator check [--unused]` scans templates + `data-t-*` + `slice.t()`/`t.ref()`/`tr()` calls
   and fails on a key missing in a locale. `slice doctor` runs the same scan in its Translator row.
 - `translator.ui.enabled` + `shortcut` (e.g. `alt+shift+t`) opens a panel with the locale switcher, the
   missing keys on the page, and a **keys** switch (`slice.translator.setShowKeys(true)`) that renders
@@ -143,7 +143,7 @@ unused-key reporting is opt-in.
 2. Dictionaries under `src/locales/<locale>.json` (+ namespaces for heavy screens).
 3. Template text uses `data-t`; attributes need their `key.<attribute>` entry.
 4. Text passed as a prop uses `key()`; guard markers when the app may run with the translator off:
-   `slice.translator?.enabled ? key(...) : fallback`.
+   `slice.translator?.enabled ? slice.t.ref(...) : fallback`.
 5. `<html lang|dir>` is updated by the framework — do not set it by hand.
 6. Test the switch: `setLocale()` must leave no key on screen, props must be re-assigned, and a
    reload must keep the choice when `saveLocally` is on.

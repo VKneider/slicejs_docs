@@ -150,7 +150,7 @@ missing `.html`.
 ## translator
 | Field | Type | Default | Notes |
 | --- | --- | --- | --- |
-| `enabled` | `boolean` | `false` | Creates dictionaries, `data-t` and `key()` support at `slice.translator`. Off: `slice.t()` returns the key. |
+| `enabled` | `boolean` | `false` | Creates dictionaries, `data-t` and `t.ref()` support at `slice.translator`. Off: `slice.t()` returns the key. |
 | `defaultLocale` | `string` | — | Required when enabled. The locale an unprefixed URL means. |
 | `fallbackLocale` | `string \| null` | `null` | Consulted when the active locale has no key. |
 | `locales` | `string[]` | `[defaultLocale]` | Locales the app has; `setLocale()` refuses others. |
