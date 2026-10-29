@@ -75,8 +75,28 @@ always the real path:
 ```
 
 `/producto/42` gets that title and `origin + /producto/42` as its canonical. A pattern cannot be
-enumerated, so it never enters the sitemap. A title built from the parameter needs the route's own
-metadata in `routes.js` and is not part of this version.
+enumerated, so it never enters the sitemap by itself. A title built from the parameter needs the
+route's own metadata in `routes.js` and is not part of this version.
+
+### Patterns in the sitemap
+
+A pattern can opt into the sitemap by declaring the values the app actually publishes. Each value is
+a string for a single parameter or an object when the pattern has several:
+
+```json
+{
+  "routes": {
+    "/producto/${id}": {
+      "title": "Producto",
+      "sitemap": { "paths": ["42", { "id": "7" }], "priority": 0.6 }
+    }
+  }
+}
+```
+
+`slice seo sitemap` expands every value into its own `<url>` (one per locale, with the same
+`hreflang` alternates), and `slice seo check` fails when a value is missing one of the pattern's
+parameters. Values are URL-encoded; the route itself still renders dynamically per request.
 
 ## Enabling it
 
