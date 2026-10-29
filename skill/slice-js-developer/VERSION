@@ -1,9 +1,19 @@
 slice-js-developer
-version: 1.31.0
+version: 1.31.1
 targets: slicejs-web-framework ^4.1.x
 
 CHANGELOG
 =========
+
+1.31.1
+  Document the library defaults helper (texts()).
+  - texts(namespace, { en, es }) registers the component's own defaults once at module load, at the
+    lowest priority, and returns a t() lookup with the English fallback.
+  - Priority: instance prop -> app dictionary -> component default -> key. Placement: the table in
+    the component file by default; a separate <Component>/texts.js only for a very large one; text
+    shared by several components stays in the shared module (slice.validation.*).
+  - Fixed the leftover key() mention in the checklist.
+  Files touched: VERSION, references/translator.md, ../manifest.json.
 
 1.31.0
   One translation entry point: t() for text, t.ref() for props.

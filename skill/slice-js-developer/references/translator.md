@@ -21,6 +21,13 @@ Three mechanisms, chosen by **where the text lives**:
 | A string read at the moment of use (toast, confirm, canvas) | `slice.t('key', params?)` | It is correct when created; nothing to refresh. |
 | A third-party widget that cached a string | `slice.translator.watch(component, cb)` | Escape hatch for what is outside the DOM. |
 
+A **library component** ships its own defaults: `texts('slice.modal', { en, es })` from
+`shared/text/texts.js` registers the lowest-priority layer once at module load and returns a `t()`
+lookup with the English fallback, so the component works with the translator off. Priority:
+instance prop → app dictionary → component default → key. Keep the table in the component file
+(`<Component>/texts.js` only for a very large one); text shared by several components lives in the
+shared module under its own namespace (`slice.validation.*`).
+
 ## Canonical snippets
 
 ```html
@@ -142,7 +149,7 @@ unused-key reporting is opt-in.
 1. `translator` block in `sliceConfig.json` (`enabled`, `defaultLocale`, `locales`, `path`).
 2. Dictionaries under `src/locales/<locale>.json` (+ namespaces for heavy screens).
 3. Template text uses `data-t`; attributes need their `key.<attribute>` entry.
-4. Text passed as a prop uses `key()`; guard markers when the app may run with the translator off:
+4. Text passed as a prop uses `slice.t.ref()`; guard markers when the app may run with the translator off:
    `slice.translator?.enabled ? slice.t.ref(...) : fallback`.
 5. `<html lang|dir>` is updated by the framework — do not set it by hand.
 6. Test the switch: `setLocale()` must leave no key on screen, props must be re-assigned, and a

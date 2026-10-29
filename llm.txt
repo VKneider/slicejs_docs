@@ -6296,6 +6296,40 @@ library ships its own texts without taking control of the dictionary.
 put them under `public/`.
 :::
 
+## Library components: `texts()`
+
+Visual components are copied one by one (`slice get`), so each one carries its own defaults instead
+of depending on a central file. `shared/text/texts.js` registers them in the defaults layer, once per
+namespace, when the component module loads:
+
+```js
+import { texts } from '../../shared/text/texts.js';
+
+const t = texts('slice.notFound', {
+  en: { title: 'Page Not Found', home: 'Go Home' },
+  es: { title: 'Página no encontrada', home: 'Ir al inicio' }
+});
+
+t('title'); // translated, or the English default with the translator off
+```
+
+The priority is **instance prop → app dictionary → component default → key**, so an app can translate
+a built-in text without touching the component:
+
+```json title="src/locales/es.json"
+{ "slice": { "modal": { "close": "Cerrar" } } }
+```
+
+With the translator disabled (or on a framework without it) `texts()` returns the English default,
+which is the text the component showed before. Built-in texts are marked with `data-t`; a text passed
+as a prop uses `slice.t.ref('slice.modal.close')`. The authoring contract is
+`COMPONENT_API_STANDARDS.md` §16 of the components library.
+
+:::note
+The migration is progressive: `NotFound` already ships en/es defaults. The rest of the library shows
+English until its own table lands; its text props keep working in the meantime.
+:::
+
 ## Messages
 
 | Feature | Dictionary | Call | Result (`es`) |
