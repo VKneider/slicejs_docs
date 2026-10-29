@@ -574,10 +574,14 @@ npm exec slice translator init --locales es,en --default es
 | `--dry-run` | `boolean` | `false` | Reports what would change, writes nothing. |
 
 ### translator check
-Scans every `.html` and `.js` under `src/`, reusing the framework's `data-t` rules (text,
-`key.ariaLabel`-style attributes, `data-t-*` params) plus `slice.t()`, `slice.translator.ref()` and
-`tr()` calls. Fails when a key is missing in a locale, when a plural has no `other`, and reports
-parameter drift and raw `href="/…"` links under `routing`.
+Scans `src/Components/**` (`.html` and `.js`), `src/App/index.html`, `src/App/index.js` and
+`src/routes.js`, reusing the framework's `data-t` rules (text, `key.ariaLabel`-style attributes,
+`data-t-*` params) plus `slice.t()`, `slice.t.ref()`, `slice.translator.ref()` and `tr()`/`translate()`/
+`$t()` calls. Fails when a key is missing in a locale, when a plural has no `other`, and reports
+parameter drift and raw `href="/…"` links when `localePrefix` is on.
+
+`data-t` written from JS (`el.innerHTML = '<p data-t="home.x"></p>'`) is not scanned; declare those keys
+in a template or use `slice.t()` so the check can see them.
 
 ```bash title="Gate a translated app"
 npm exec slice translator check

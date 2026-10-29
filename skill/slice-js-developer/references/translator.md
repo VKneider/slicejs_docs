@@ -46,8 +46,8 @@ shared module under its own namespace (`slice.validation.*`).
   and listeners. Dictionaries never contain HTML.
 
 ```javascript
-// Library components mark built-in texts and ship defaults (en/es) through shared/text/texts.js;
-// app dictionaries and instance props win. Routes use slice.path / slice.href().
+// Library components mark built-in texts (data-t) or read them through texts(), and ship en/es
+// defaults through shared/text/texts.js; app dictionaries and instance props win.
 
 // Props (markers; nested in arrays/objects is fine)
 await slice.build('Button', { value: slice.t.ref('orders.save') });

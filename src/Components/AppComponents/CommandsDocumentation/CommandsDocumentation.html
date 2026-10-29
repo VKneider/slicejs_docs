@@ -179,7 +179,8 @@ These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</co
 <div class="code-block" data-block-id="doc-block-50"></div>
 <div class="table-block" data-block-id="doc-block-51"></div>
 <h3 id="translator-check">translator check</h3>
-<p>Scans every <code>.html</code> and <code>.js</code> under <code>src/</code>, reusing the framework's <code>data-t</code> rules (text, <code>key.ariaLabel</code>-style attributes, <code>data-t-*</code> params) plus <code>slice.t()</code>, <code>slice.translator.ref()</code> and <code>tr()</code> calls. Fails when a key is missing in a locale, when a plural has no <code>other</code>, and reports parameter drift and raw <code>href="/…"</code> links under <code>routing</code>.</p>
+<p>Scans <code>src/Components/**</code> (<code>.html</code> and <code>.js</code>), <code>src/App/index.html</code>, <code>src/App/index.js</code> and <code>src/routes.js</code>, reusing the framework's <code>data-t</code> rules (text, <code>key.ariaLabel</code>-style attributes, <code>data-t-*</code> params) plus <code>slice.t()</code>, <code>slice.t.ref()</code>, <code>slice.translator.ref()</code> and <code>tr()</code>/<code>translate()</code>/ <code>$t()</code> calls. Fails when a key is missing in a locale, when a plural has no <code>other</code>, and reports parameter drift and raw <code>href="/…"</code> links when <code>localePrefix</code> is on.</p>
+<p><code>data-t</code> written from JS (<code>el.innerHTML = '&lt;p data-t="home.x"&gt;&lt;/p&gt;'</code>) is not scanned; declare those keys in a template or use <code>slice.t()</code> so the check can see them.</p>
 <div class="code-block" data-block-id="doc-block-52"></div>
 <p><code>slice doctor</code> has a <strong>Translator</strong> row that runs the same scan. See [Translating an app](/Documentation/Translator).</p>
 <h2 id="version">version</h2>

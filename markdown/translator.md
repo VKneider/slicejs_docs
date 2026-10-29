@@ -116,8 +116,8 @@ a built-in text without touching the component:
 ```
 
 With the translator disabled (or on a framework without it) `texts()` returns the English default,
-which is the text the component showed before. Built-in texts are marked with `data-t`; a text passed
-as a prop uses `slice.t.ref('slice.modal.close')`. The authoring contract is
+which is the text the component showed before. Built-in texts are marked with `data-t` or read
+through `texts()`; a text passed as a prop uses `slice.t.ref('slice.modal.close')`. The authoring contract is
 `COMPONENT_API_STANDARDS.md` §16 of the components library.
 
 :::note
