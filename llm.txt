@@ -3649,7 +3649,7 @@ export default routes;
 | `title` | `document.title`, literal |
 | `titleKey` | a dictionary key; with the translator on it wins over `title` |
 | `titlePrefix` / `titleSuffix` | per-route affixes; default to `router.titlePrefix` / `router.titleSuffix`, `false` disables them |
-| `titleTemplate` | legacy: the full title with `%s` replaced; when present, the affixes are ignored |
+| `titlePrefix` / `titleSuffix` | text before/after the title; the separator is part of the string, `false` disables it |
 | `description` / `descriptionKey` | the `meta[name="description"]` content, same rules |
 
 The product name belongs in the config, not in every route:
@@ -4979,14 +4979,14 @@ One file, with one entry per page. It can live at the project root (hand-written
   "version": 1,
   "origin": "https://acme.dev",
   "defaults": {
-    "titleTemplate": "%s | Acme",
+    "titleSuffix": " | Acme",
     "description": "Acme helps teams ship.",
     "siteName": "Acme",
     "locale": "en_US",
     "image": "/images/banner.png"
   },
   "routes": {
-    "/": { "title": "Home", "titleTemplate": "%s" },
+    "/": { "title": "Home", "titleSuffix": false },
     "/pricing": {
       "title": "Pricing",
       "description": "Plans and limits.",
@@ -5004,7 +5004,7 @@ One file, with one entry per page. It can live at the project root (hand-written
 | Field | What it does |
 |---|---|
 | `origin` | absolute URL used for canonical, `og:url`, `og:image` and the sitemap. Required in production |
-| `title` / `titleTemplate` | `<title>`, `og:title`, `twitter:title`. `%s` is the title; a template of `"%s"` opts a route out |
+| `title` / `titlePrefix` / `titleSuffix` | `<title>`, `og:title`, `twitter:title`. The affixes add text around the title (the separator is part of the string); `false` disables one for a route |
 | `description` | the meta description plus both social descriptions |
 | `canonical` | defaults to `origin + path` |
 | `image` / `imageAlt` | the social card; `og:image:width/height/type` are derived when the file is local |
@@ -5127,7 +5127,7 @@ dictionaries:
 
 ```json title="seo.json"
 {
-  "defaults": { "titleTemplate": { "t": "seo.titleTemplate" } },
+  "defaults": { "titleSuffix": { "t": "seo.titleSuffix" } },
   "routes": {
     "/pricing": { "title": { "t": "pricing.title" }, "description": { "t": "pricing.description" } }
   },
@@ -6270,15 +6270,15 @@ alone and `format.*` uses the browser's language — so code written against it 
 | `enabled` | `boolean` | `false` | Off: nothing is loaded or observed and `t()` returns the key. |
 | `defaultLocale` | `string` | — | Required when enabled. The locale an unprefixed URL means. |
 | `fallbackLocale` | `string \| null` | `null` | Asked when the active locale has no entry for a key. |
-| `locales` | `string[]` | `[defaultLocale]` | The locales the app has, plus a configured `fallbackLocale`. `setLocale()` refuses anything else. |
+| `locales` | `string[]` | `[defaultLocale]` | The locales the app has, plus a configured `fallbackLocale`. `setLocale()` refuses anything else; casing duplicates are merged. |
 | `path` | `string` | `/locales` | Where the dictionaries are served from. A relative value is normalized to `/value`. |
 | `saveLocally` | `boolean` | `false` | Remember the choice in `localStorage` (`slice:locale`). |
-| `useBrowserLocale` | `boolean` | `false` | On a first visit, use the browser language when supported (`es-VE` -> `es`); otherwise `defaultLocale`. |
+| `useBrowserLocale` | `boolean` | `false` | On a first visit, use the browser language when supported (`es-VE` → `es`); otherwise `defaultLocale`. |
 | `localePrefix` | `false \| "always" \| "except-default"` | `false` | Whether the locale lives in the URL. See [URLs](#urls-and-the-router). |
 | `ui` | `object` | none | `{ enabled, shortcut }`: the translator debugger panel. |
 
-**Which locale starts:** an explicit URL prefix always wins. Without one, the saved choice -> the
-browser language (`useBrowserLocale`) -> `defaultLocale`. Under `"except-default"` an unprefixed URL
+**Which locale starts:** an explicit URL prefix always wins. Without one, the saved choice → the
+browser language (`useBrowserLocale`) → `defaultLocale`. Under `"except-default"` an unprefixed URL
 means "no explicit choice yet", so `useBrowserLocale` still works on the first visit; once the user
 picks a language, `saveLocally` keeps it.
 
@@ -6352,7 +6352,7 @@ through `texts()`; a text passed as a prop uses `slice.t.ref('slice.modal.close'
 `COMPONENT_API_STANDARDS.md` §16 of the components library.
 
 :::note
-Every visual component now ships en/es defaults for its own chrome (`slice.table.*`,
+Every visual component ships en/es defaults for its own chrome (`slice.table.*`,
 `slice.modal.*`, `slice.validation.*`, …). Its text prop (`texts`, `labels`, `closeLabel`…) still wins,
 and an app dictionary always wins over both.
 :::
@@ -6489,7 +6489,7 @@ const tr = (key, fallback) => slice.translator?.enabled ? slice.t.ref(key) : fal
 ```
 :::
 
-Outside the DOM, `slice.translator.watch(component, cb)` is still the escape hatch (canvas, a library
+Outside the DOM, `slice.translator.watch(component, cb)` is the escape hatch (canvas, a library
 that copied a string). It is not needed for templates or props.
 
 ## Changing the locale
@@ -6561,31 +6561,36 @@ fixed format (a table of prices in USD, say) can keep its own `Intl` call.
 
 Native SEO reads the same translator: the server builds **one page per route and locale**.
 
-- **Texts by key.** `title`, `titleTemplate`, `description`, `imageAlt` and the `openGraph`/`twitter`
+- **Texts by key.** `title`, `description`, `imageAlt` and the `openGraph`/`twitter`
   title and description in `seo.json` (defaults, routes and `routes.js` `metadata`) accept
-  `{ "t": "key", "params": { … } }`; route metadata also accepts `titleKey` / `descriptionKey` as the
-  shorthand. The server resolves them at startup with the same `src/locales/*.json` the client
-  downloads; a plain string stays the same in every locale.
+  `{ "t": "key", "params": { … } }`; route metadata and `seo.json` entries also accept
+  `titleKey` / `descriptionKey` as the shorthand. The server resolves them at startup with the same
+  `src/locales/*.json` the client downloads; a plain string stays the same in every locale.
 - **Per-locale pages.** With a locale prefix, `/pricing` and `/en/pricing` are prerendered separately, each
   with its own `<html lang>`, `dir`, `og:locale`, canonical and translated `<head>`.
 - **Alternates.** Every page carries `<link rel="alternate" hreflang="…">` for its locales plus
   `x-default` (the default locale URL).
-- **URLs.** `/` under `"always"` answers `302` to the default locale. Under
-  `"except-default"`, a default-locale prefix (`/es/pricing`) answers `301` to `/pricing`.
-  A prefix that is not a configured locale (`/fr/…`) is a normal path, so it is a `404`.
+- **URLs.** `/` under `"always"` answers `302` to the default locale; a known unprefixed path under
+  `"always"` answers `302` to its prefixed URL. Under `"except-default"`, a default-locale prefix
+  (`/es/pricing`) answers `301` to `/pricing`. A prefix that is not a configured locale (`/fr/…`) is a
+  normal path, so it is a `404`.
 - **Sitemap.** `slice seo sitemap` writes one `<url>` per route and locale with the same
   `xhtml:link` alternates and `x-default`.
 - **`og:locale`.** The locale as-is, with `-` → `_` (`pt-BR` → `pt_BR`), unless
   `seo.json` maps it: `"locales": { "en": { "ogLocale": "en_US" } }`.
 - **Validation.** A `{ t }` key missing in one locale is an error in `slice seo check` and in the
   SEO row of `slice doctor`, because the page would advertise the key as its title. `slice translator
-  check` validates the keys used by templates and code against the same dictionaries.
+  check` validates the keys used by templates and code against the same dictionaries, including
+  namespace files.
+- **404.** The page uses `seo.notFound.title` and `seo.notFound.description` when the dictionaries
+  define them, plus the same title affixes; otherwise `Not found`, always `noindex`.
 
 Route metadata in `routes.js` is resolved on the client too (the router re-applies it after a locale
 change), so the tab title follows the language without a reload. The product name lives once in
 `router.titlePrefix` / `router.titleSuffix` (the separator is part of the string); the server reads the
-same block, so the prerendered `<title>` and the hydrated one match. A `titleKey` with the translator
-off shows the key and logs one warning per key, so an untranslated page is visible.
+same block, so the prerendered `<title>` and the hydrated one match. A route can override an affix or
+disable it with `metadata.titlePrefix/titleSuffix: false`. A `titleKey`/`descriptionKey` with the
+translator off shows the key and logs one warning per key, so an untranslated page is visible.
 
 ## Development tools
 
@@ -6595,29 +6600,27 @@ off shows the key and logs one warning per key, so an untranslated page is visib
   texts everywhere (`setShowKeys`) — the fastest way to see what is translated and what is hardcoded.
 - **CLI.** `slice translator init` adds the `translator` block and creates `src/locales/<locale>.json`
   (never overwrites them). `slice translator check` scans templates, `data-t-*` params and
-  `slice.t()`/`t.ref()`/`tr()` calls, and fails when a key is missing in a locale. `--unused` also
-  lists dictionary keys nothing reads.
+  `slice.t()`/`t.ref()`/`tr()`/`translate()`/`$t()` calls (plus namespace files), and fails when a key
+  is missing in a locale. `--unused` also lists dictionary keys nothing reads.
 - **Doctor.** `slice doctor` has a **Translator** row using the same scan, so CI can gate on it.
 - Development warnings (outside production, once each): missing key per locale, missing parameter, a
   key that is a group, a marker used as a string, `data-t` with nothing to fill.
 
 ## Current limits
 
-- **The library migration is partial.** Route, MultiRoute, Navbar, BottomNav, Breadcrumbs, SideMenu,
-  TreeView, Link, Card, DataList, DescriptionList, Pagination and the docs shell read `slice.path` /
-  `slice.href()`, so locale-in-URL routing works. Every visual component now ships en/es defaults for
-  its built-in texts (component feature 0007); the docs site and the lab still need their own
-  dictionaries for their page content.
+- **Locale-aware routing.** Route, MultiRoute, Navbar, BottomNav, Breadcrumbs, SideMenu, TreeView,
+  Link, Card, DataList, DescriptionList and Pagination read `slice.path` / `slice.href()`; every visual
+  component ships en/es defaults for its built-in texts (component feature 0007). The docs site still
+  needs its own dictionaries for its page content.
 - Translated slugs (`/es/precios`) are out of scope.
 - Keys used only through an app helper (`tr(key)`, a lookup table) are invisible to
   `slice translator check`; that is why unused-key reporting is opt-in.
 
 ## Gotchas
 
-- `enabled: true` without `defaultLocale` stays disabled, silently by design. Set both.
+- `enabled: true` without `defaultLocale` stays disabled and logs an error. Set both.
 - A missing key is shown as the key on purpose — that is how you find it. Check the development warnings.
-- The observer watches every attribute (parameters are open-ended), and discards anything that does not
-  start with `data-t`, so unrelated animation/style churn does not re-translate.
+- The observer watches attributes but only reacts to `data-t` / `data-t-*` (not `data-theme`, `data-tab`…), so unrelated animation/style churn does not re-translate.
 - Changing only an element's text content by hand under a `data-t` element lasts until the next locale
   change or dictionary merge, which re-applies the key.
 - The `aria-label` of a marked element needs its own entry: `{"home": {"search": {"ariaLabel": "Buscar"}}}`.

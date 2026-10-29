@@ -9,28 +9,53 @@
 <h2 id="overview">Overview</h2>
 <p>Slice Router handles client-side navigation, route parameters, nested routes, and route containers. It auto-starts shortly after initialization, but you should call <code>start()</code> manually when you use guards to ensure your guard logic runs before the first navigation.</p>
 <p>Routing is driven by a <code>routes.js</code> file and a runtime router available at <code>slice.router</code>.</p>
+<p>Path matching is <strong>case-insensitive</strong>: <code>/About</code> resolves to a route declared as <code>/about</code>. This applies to both static and <code>${param}</code> routes, and to <code>MultiRoute</code> containers. Captured parameter values keep their original case (for example <code>${id}</code> in <code>/User/AB12</code> is <code>AB12</code>).</p>
 <h2 id="router-api">Router API</h2>
 <div class="table-block" data-block-id="doc-block-1"></div>
+<p><code>slice.path</code> and <code>slice.href(path)</code> are the shortcuts at the <code>slice</code> level: components use those instead of <code>window.location.pathname</code> and of a per-component helper.</p>
 <h2 id="route-configuration">Route Configuration</h2>
 <div class="code-block" data-block-id="doc-block-2"></div>
 <h3 id="route-definition-fields">Route Definition Fields</h3>
 <div class="table-block" data-block-id="doc-block-3"></div>
+<h3 id="route-metadata-and-the-document-title">Route metadata and the document title</h3>
+<p><code>metadata</code> is free-form. The router reads these fields on every navigation, including the first one:</p>
+<div class="table-block" data-block-id="doc-block-4"></div>
+<p>The product name belongs in the config, not in every route:</p>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<p>A route with <code>metadata: { titleKey: 'pricing.title' }</code> renders <code>Precios · Acme</code> in Spanish and <code>Pricing · Acme</code> in English. <code>titlePrefix</code> is the mirror (<code>"Acme · "</code>), and both compose as <code>prefix + title + suffix</code>; only one, both or neither are valid. The separator is part of the string.</p>
+<p><code>titleKey</code> wins over <code>title</code> when the translator is enabled. With it disabled the key is shown as the title and the router logs one warning per key, so an untranslated page is visible instead of silently wrong. The server reads the same <code>router.titlePrefix/titleSuffix</code> when it prerenders, so the tab title does not change after hydration.</p>
+<p>It only writes what the route declares: a route without a title keeps whatever the server sent, so a prerendered page is never downgraded. <code>canonical</code> and <code>robots</code> are never written from the client — crawlers do not run JavaScript. A <code>router:change</code> listener still wins, because the metadata is applied before the event. Opt out with <code>router.updateTitles: false</code> in <code>sliceConfig.json</code>.</p>
+<p>See [SEO and Share Cards](/Documentation/Architecture/SEO) for the server half of the same metadata.</p>
 <h2 id="route-info-object">Route Info Object</h2>
 <p>Guards and route events receive <code>to</code> and <code>from</code> objects created by the router.</p>
-<div class="table-block" data-block-id="doc-block-4"></div>
+<div class="table-block" data-block-id="doc-block-6"></div>
+<p>See [Translating an app](/Documentation/Translator) for locale-in-URL routing.</p>
 <h2 id="basic-navigation">Basic Navigation</h2>
-<div class="code-block" data-block-id="doc-block-5"></div>
+<div class="code-block" data-block-id="doc-block-7"></div>
 <h2 id="route-containers">Route Containers</h2>
 <p>Slice provides two route container components:</p>
 <ul><li><code>slice-route</code> for a single path</li><li><code>slice-multi-route</code> for a list of routes</li></ul>
 <p>They cache components and call <code>update()</code> when a cached component is reused.</p>
-<div class="code-block" data-block-id="doc-block-6"></div>
-<div class="code-block" data-block-id="doc-block-7"></div>
-<h2 id="guards">Guards</h2>
+<div class="callout callout-warning"><code>routes.js</code> is the <strong>single source of truth</strong> for the Router. Containers do <strong>not</strong> register their
+paths with the Router — they only choose which component to show for the current URL. So every path
+a <code>Route</code>/<code>MultiRoute</code> can show must also exist in <code>routes.js</code> (in the App Shell pattern it maps to
+the shell). Otherwise a direct load, refresh, or deep-link to that URL resolves before the container
+mounts and falls through to <code>/404</code>.</div>
 <div class="code-block" data-block-id="doc-block-8"></div>
-<h2 id="route-change-events">Route Change Events</h2>
-<p>The router emits <code>router:change</code> using EventManager when enabled. Otherwise it dispatches a <code>CustomEvent</code> on <code>window</code>.</p>
 <div class="code-block" data-block-id="doc-block-9"></div>
+<h2 id="guards">Guards</h2>
+<div class="code-block" data-block-id="doc-block-10"></div>
+<h2 id="route-change-events">Route Change Events</h2>
+<p>The router emits <code>router:change</code> <strong>once per navigation</strong>, after the new route has been rendered. How you listen depends on whether EventManager is enabled — it's one or the other, <strong>never both</strong>:</p>
+<ul><li><strong><code>events.enabled: true</code></strong> → it goes through EventManager (<code>slice.events</code>).</li><li><strong><code>events.enabled: false</code></strong> → it dispatches a <code>CustomEvent</code> of the same name on <code>window</code> instead.</li></ul>
+<p>Either way the payload is <code>{ to, from }</code>, where each is a route object shaped <code>{ path, component, params, query, metadata }</code>:</p>
+<div class="code-block" data-block-id="doc-block-11"></div>
+<div class="code-block" data-block-id="doc-block-12"></div>
+<p>When events are enabled, <code>router:change</code> is <strong>auto-declared</strong> in the [Event Registry](/Documentation/Structural/EventRegistry), so you can subscribe without <code>register()</code>-ing it first.</p>
+<div class="callout callout-warning">Prefer the event's <code>to</code> payload over reading <code>slice.router.activeRoute</code> inside the handler.
+<code>activeRoute</code> does reflect the new route by the time <code>router:change</code> fires, but the payload is the
+guaranteed source and keeps your listener decoupled from router internals. If you only need the
+current URL, <code>window.location.pathname</code> is always trustworthy the instant the event fires.</div>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout callout-tip">Call <code>start()</code> after registering guards to avoid missing the first navigation.</div>
 <div class="callout callout-tip">Use metadata flags to keep guard logic declarative and centralized.</div>

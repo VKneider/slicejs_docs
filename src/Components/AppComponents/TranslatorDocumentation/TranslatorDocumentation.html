@@ -11,7 +11,7 @@
 <h2 id="enable-it">Enable it</h2>
 <div class="code-block" data-block-id="doc-block-1"></div>
 <div class="table-block" data-block-id="doc-block-2"></div>
-<p><strong>Which locale starts:</strong> an explicit URL prefix always wins. Without one, the saved choice -&gt; the browser language (<code>useBrowserLocale</code>) -&gt; <code>defaultLocale</code>. Under <code>"except-default"</code> an unprefixed URL means "no explicit choice yet", so <code>useBrowserLocale</code> still works on the first visit; once the user picks a language, <code>saveLocally</code> keeps it.</p>
+<p><strong>Which locale starts:</strong> an explicit URL prefix always wins. Without one, the saved choice → the browser language (<code>useBrowserLocale</code>) → <code>defaultLocale</code>. Under <code>"except-default"</code> an unprefixed URL means "no explicit choice yet", so <code>useBrowserLocale</code> still works on the first visit; once the user picks a language, <code>saveLocally</code> keeps it.</p>
 <p>The starting locale is applied before the first route renders. <code>slice init</code> projects can add the block by hand; <code>slice doctor</code> validates it against the schema.</p>
 <h2 id="dictionaries">Dictionaries</h2>
 <div class="code-block" data-block-id="doc-block-3"></div>
@@ -65,7 +65,7 @@ text on an app without dictionaries, guard it:
 ``<code>javascript
 const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.t.ref(key) : fallback;
 </code>``</div>
-<p>Outside the DOM, <code>slice.translator.watch(component, cb)</code> is still the escape hatch (canvas, a library that copied a string). It is not needed for templates or props.</p>
+<p>Outside the DOM, <code>slice.translator.watch(component, cb)</code> is the escape hatch (canvas, a library that copied a string). It is not needed for templates or props.</p>
 <h2 id="changing-the-locale">Changing the locale</h2>
 <p><code>await slice.translator.setLocale('en')</code> runs, in order:</p>
 <ol><li>load what the locale needs (its main file, the namespaces already loaded, the fallback's). On failure</li></ol>
@@ -99,37 +99,37 @@ const tr = (key, fallback) =&gt; slice.translator?.enabled ? slice.t.ref(key) : 
 <p><code>slice.translator.format.*</code> uses the active locale and caches the <code>Intl</code> formatter per locale and options: <code>number</code>, <code>currency</code>, <code>percent</code>, <code>date</code>, <code>time</code>, <code>relative</code>, <code>list</code>. A component that owns a fixed format (a table of prices in USD, say) can keep its own <code>Intl</code> call.</p>
 <h2 id="multilingual-seo">Multilingual SEO</h2>
 <p>Native SEO reads the same translator: the server builds <strong>one page per route and locale</strong>.</p>
-<ul><li><strong>Texts by key.</strong> <code>title</code>, <code>titleTemplate</code>, <code>description</code>, <code>imageAlt</code> and the <code>openGraph</code>/<code>twitter</code></li></ul>
-<p>title and description in <code>seo.json</code> (defaults, routes and <code>routes.js</code> <code>metadata</code>) accept   <code>{ "t": "key", "params": { … } }</code>; route metadata also accepts <code>titleKey</code> / <code>descriptionKey</code> as the   shorthand. The server resolves them at startup with the same <code>src/locales/*.json</code> the client   downloads; a plain string stays the same in every locale.</p>
+<ul><li><strong>Texts by key.</strong> <code>title</code>, <code>description</code>, <code>imageAlt</code> and the <code>openGraph</code>/<code>twitter</code></li></ul>
+<p>title and description in <code>seo.json</code> (defaults, routes and <code>routes.js</code> <code>metadata</code>) accept   <code>{ "t": "key", "params": { … } }</code>; route metadata and <code>seo.json</code> entries also accept   <code>titleKey</code> / <code>descriptionKey</code> as the shorthand. The server resolves them at startup with the same   <code>src/locales/*.json</code> the client downloads; a plain string stays the same in every locale.</p>
 <ul><li><strong>Per-locale pages.</strong> With a locale prefix, <code>/pricing</code> and <code>/en/pricing</code> are prerendered separately, each</li></ul>
 <p>with its own <code>&lt;html lang&gt;</code>, <code>dir</code>, <code>og:locale</code>, canonical and translated <code>&lt;head&gt;</code>.</p>
 <ul><li><strong>Alternates.</strong> Every page carries <code>&lt;link rel="alternate" hreflang="…"&gt;</code> for its locales plus</li></ul>
 <p><code>x-default</code> (the default locale URL).</p>
-<ul><li><strong>URLs.</strong> <code>/</code> under <code>"always"</code> answers <code>302</code> to the default locale. Under</li></ul>
-<p><code>"except-default"</code>, a default-locale prefix (<code>/es/pricing</code>) answers <code>301</code> to <code>/pricing</code>.   A prefix that is not a configured locale (<code>/fr/…</code>) is a normal path, so it is a <code>404</code>.</p>
+<ul><li><strong>URLs.</strong> <code>/</code> under <code>"always"</code> answers <code>302</code> to the default locale; a known unprefixed path under</li></ul>
+<p><code>"always"</code> answers <code>302</code> to its prefixed URL. Under <code>"except-default"</code>, a default-locale prefix   (<code>/es/pricing</code>) answers <code>301</code> to <code>/pricing</code>. A prefix that is not a configured locale (<code>/fr/…</code>) is a   normal path, so it is a <code>404</code>.</p>
 <ul><li><strong>Sitemap.</strong> <code>slice seo sitemap</code> writes one <code>&lt;url&gt;</code> per route and locale with the same</li></ul>
 <p><code>xhtml:link</code> alternates and <code>x-default</code>.</p>
 <ul><li><strong><code>og:locale</code>.</strong> The locale as-is, with <code>-</code> → <code>_</code> (<code>pt-BR</code> → <code>pt_BR</code>), unless</li></ul>
 <p><code>seo.json</code> maps it: <code>"locales": { "en": { "ogLocale": "en_US" } }</code>.</p>
 <ul><li><strong>Validation.</strong> A <code>{ t }</code> key missing in one locale is an error in <code>slice seo check</code> and in the</li></ul>
-<p>SEO row of <code>slice doctor</code>, because the page would advertise the key as its title. <code>slice translator   check</code> validates the keys used by templates and code against the same dictionaries.</p>
-<p>Route metadata in <code>routes.js</code> is resolved on the client too (the router re-applies it after a locale change), so the tab title follows the language without a reload. The product name lives once in <code>router.titlePrefix</code> / <code>router.titleSuffix</code> (the separator is part of the string); the server reads the same block, so the prerendered <code>&lt;title&gt;</code> and the hydrated one match. A <code>titleKey</code> with the translator off shows the key and logs one warning per key, so an untranslated page is visible.</p>
+<p>SEO row of <code>slice doctor</code>, because the page would advertise the key as its title. <code>slice translator   check</code> validates the keys used by templates and code against the same dictionaries, including   namespace files.</p>
+<ul><li><strong>404.</strong> The page uses <code>seo.notFound.title</code> and <code>seo.notFound.description</code> when the dictionaries</li></ul>
+<p>define them, plus the same title affixes; otherwise <code>Not found</code>, always <code>noindex</code>.</p>
+<p>Route metadata in <code>routes.js</code> is resolved on the client too (the router re-applies it after a locale change), so the tab title follows the language without a reload. The product name lives once in <code>router.titlePrefix</code> / <code>router.titleSuffix</code> (the separator is part of the string); the server reads the same block, so the prerendered <code>&lt;title&gt;</code> and the hydrated one match. A route can override an affix or disable it with <code>metadata.titlePrefix/titleSuffix: false</code>. A <code>titleKey</code>/<code>descriptionKey</code> with the translator off shows the key and logs one warning per key, so an untranslated page is visible.</p>
 <h2 id="development-tools">Development tools</h2>
 <ul><li><strong>Debugger panel.</strong> Enable it with <code>"translator": { "ui": { "enabled": true, "shortcut": "alt+shift+t" } }</code>.</li></ul>
 <p>It shows the active locale and a switcher, the keys on this page that are missing in the active   locale (and the ones answered by the fallback), and a <strong>keys</strong> switch that shows keys instead of   texts everywhere (<code>setShowKeys</code>) — the fastest way to see what is translated and what is hardcoded.</p>
 <ul><li><strong>CLI.</strong> <code>slice translator init</code> adds the <code>translator</code> block and creates <code>src/locales/&lt;locale&gt;.json</code></li></ul>
-<p>(never overwrites them). <code>slice translator check</code> scans templates, <code>data-t-*</code> params and   <code>slice.t()</code>/<code>t.ref()</code>/<code>tr()</code> calls, and fails when a key is missing in a locale. <code>--unused</code> also   lists dictionary keys nothing reads.</p>
+<p>(never overwrites them). <code>slice translator check</code> scans templates, <code>data-t-*</code> params and   <code>slice.t()</code>/<code>t.ref()</code>/<code>tr()</code>/<code>translate()</code>/<code>$t()</code> calls (plus namespace files), and fails when a key   is missing in a locale. <code>--unused</code> also lists dictionary keys nothing reads.</p>
 <ul><li><strong>Doctor.</strong> <code>slice doctor</code> has a <strong>Translator</strong> row using the same scan, so CI can gate on it.</li><li>Development warnings (outside production, once each): missing key per locale, missing parameter, a</li></ul>
 <p>key that is a group, a marker used as a string, <code>data-t</code> with nothing to fill.</p>
 <h2 id="current-limits">Current limits</h2>
-<ul><li><strong>The library migration is partial.</strong> Route, MultiRoute, Navbar, BottomNav, Breadcrumbs, SideMenu,</li></ul>
-<p>TreeView, Link, Card, DataList, DescriptionList, Pagination and the docs shell read <code>slice.path</code> /   <code>slice.href()</code>, so locale-in-URL routing works. Every visual component now ships en/es defaults for   its built-in texts (component feature 0007); the docs site and the lab still need their own   dictionaries for their page content.</p>
+<ul><li><strong>Locale-aware routing.</strong> Route, MultiRoute, Navbar, BottomNav, Breadcrumbs, SideMenu, TreeView,</li></ul>
+<p>Link, Card, DataList, DescriptionList and Pagination read <code>slice.path</code> / <code>slice.href()</code>; every visual   component ships en/es defaults for its built-in texts (component feature 0007). The docs site still   needs its own dictionaries for its page content.</p>
 <ul><li>Translated slugs (<code>/es/precios</code>) are out of scope.</li><li>Keys used only through an app helper (<code>tr(key)</code>, a lookup table) are invisible to</li></ul>
 <p><code>slice translator check</code>; that is why unused-key reporting is opt-in.</p>
 <h2 id="gotchas">Gotchas</h2>
-<ul><li><code>enabled: true</code> without <code>defaultLocale</code> stays disabled, silently by design. Set both.</li><li>A missing key is shown as the key on purpose — that is how you find it. Check the development warnings.</li><li>The observer watches every attribute (parameters are open-ended), and discards anything that does not</li></ul>
-<p>start with <code>data-t</code>, so unrelated animation/style churn does not re-translate.</p>
-<ul><li>Changing only an element's text content by hand under a <code>data-t</code> element lasts until the next locale</li></ul>
+<ul><li><code>enabled: true</code> without <code>defaultLocale</code> stays disabled and logs an error. Set both.</li><li>A missing key is shown as the key on purpose — that is how you find it. Check the development warnings.</li><li>The observer watches attributes but only reacts to <code>data-t</code> / <code>data-t-*</code> (not <code>data-theme</code>, <code>data-tab</code>…), so unrelated animation/style churn does not re-translate.</li><li>Changing only an element's text content by hand under a <code>data-t</code> element lasts until the next locale</li></ul>
 <p>change or dictionary merge, which re-applies the key.</p>
 <ul><li>The <code>aria-label</code> of a marked element needs its own entry: <code>{"home": {"search": {"ariaLabel": "Buscar"}}}</code>.</li></ul>
 </div>

@@ -10,7 +10,7 @@ page; this note carries the **decisions and traps**.
 
 - `enabled: false` → nothing is loaded or observed, `t()` returns the key, `format.*` uses the
   browser's locale. Code written against it runs in an untranslated app.
-- `enabled: true` requires `defaultLocale`. Without it the translator stays disabled (silently).
+- `enabled: true` requires `defaultLocale`. Without it the translator stays disabled and logs an error.
 
 Three mechanisms, chosen by **where the text lives**:
 
@@ -90,6 +90,10 @@ not invent one.
 `translator.localePrefix`: `false` (default) | `"always"` (`/es/pricing`, `/en/pricing`) |
 `"except-default"` (`/pricing` for the default locale, `/en/pricing` for the rest).
 
+The first locale: an explicit URL prefix → the saved choice → the browser language
+(`useBrowserLocale`) → `defaultLocale`. Under `except-default` an unprefixed URL means "no choice yet",
+so the browser choice still applies on the first visit.
+
 Even without a locale prefix, the router is the only URL reader:
 
 ```javascript
@@ -117,10 +121,10 @@ configured `path` — not `public/`.
 
 With a locale prefix, native SEO prerenders **one page per route and locale**:
 
-- `title`, `titleTemplate`, `description`, `imageAlt` and the `openGraph`/`twitter` title and
-  description in `seo.json` (and `routes.js` metadata) accept `{ t: 'key', params? }`. Route metadata
-  also accepts `titleKey` / `descriptionKey` (the key wins over the literal; with the translator off
-  the key is shown and the router logs one warning per key).
+- `title`, `description`, `imageAlt` and the `openGraph`/`twitter` title and
+  description in `seo.json` (and `routes.js` metadata) accept `{ t: 'key', params? }`. `seo.json`
+  entries and route metadata also accept `titleKey` / `descriptionKey` (the key wins over the literal;
+  with the translator off the key is shown and the router logs one warning per key).
 - The product name goes once in `sliceConfig.router.titlePrefix` / `titleSuffix` (the separator is
   part of the string); the server reads the same block so prerender and hydration agree. A route can
   override or disable an affix with `metadata.titlePrefix/titleSuffix: false`.
@@ -129,7 +133,10 @@ With a locale prefix, native SEO prerenders **one page per route and locale**:
 - `/` under `"always"` → 302 to the default locale; `/es/x` under `except-default` → 301 to
   `/x`; an unknown prefix (`/fr/…`) is a normal 404.
 - `slice seo sitemap` emits one `<url>` per route and locale with the same alternates; a `{ t }` key
-  missing in a locale fails `slice seo check` and `slice translator check`.
+  missing in a locale fails `slice seo check` (the templates/code keys are validated by
+  `slice translator check`).
+- The 404 page uses `seo.notFound.title` / `seo.notFound.description` when defined, plus the title
+  affixes; always `noindex`.
 - `og:locale` is the locale with `-` → `_`, unless `seo.json` maps it via
   `locales.<locale>.ogLocale`.
 
@@ -137,8 +144,9 @@ With a locale prefix, native SEO prerenders **one page per route and locale**:
 
 - `slice translator init [--locales es,en] [--default es]` adds the config block and creates the
   dictionaries (never overwrites).
-- `slice translator check [--unused]` scans templates + `data-t-*` + `slice.t()`/`t.ref()`/`tr()` calls
-  and fails on a key missing in a locale. `slice doctor` runs the same scan in its Translator row.
+- `slice translator check [--unused]` scans templates + `data-t-*` + `slice.t()`/`t.ref()`/`tr()`/
+  `translate()`/`$t()` calls and namespace files, and fails on a key missing in a locale. `slice doctor`
+  runs the same scan in its Translator row.
 - `translator.ui.enabled` + `shortcut` (e.g. `alt+shift+t`) opens a panel with the locale switcher, the
   missing keys on the page, and a **keys** switch (`slice.translator.setShowKeys(true)`) that renders
   every mark as its key.
@@ -148,7 +156,8 @@ unused-key reporting is opt-in.
 
 ## Checklist for a translated screen
 
-1. `translator` block in `sliceConfig.json` (`enabled`, `defaultLocale`, `locales`, `path`).
+1. `translator` block in `sliceConfig.json` (`enabled`, `defaultLocale`, `locales`, `path`,
+   `localePrefix`, and `useBrowserLocale`/`saveLocally` if the app should remember or detect).
 2. Dictionaries under `src/locales/<locale>.json` (+ namespaces for heavy screens).
 3. Template text uses `data-t`; attributes need their `key.<attribute>` entry.
 4. Text passed as a prop uses `slice.t.ref()`; guard markers when the app may run with the translator off:

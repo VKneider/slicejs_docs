@@ -8,7 +8,6 @@ order: 50
 description: Router setup, navigation, and guards.
 component: RoutingDocumentation
 tags: [routing, router, guards]
-generate: false
 ---
 
 # Slice Routing
@@ -68,7 +67,7 @@ export default routes;
 | `title` | `document.title`, literal |
 | `titleKey` | a dictionary key; with the translator on it wins over `title` |
 | `titlePrefix` / `titleSuffix` | per-route affixes; default to `router.titlePrefix` / `router.titleSuffix`, `false` disables them |
-| `titleTemplate` | legacy: the full title with `%s` replaced; when present, the affixes are ignored |
+| `titlePrefix` / `titleSuffix` | text before/after the title; the separator is part of the string, `false` disables it |
 | `description` / `descriptionKey` | the `meta[name="description"]` content, same rules |
 
 The product name belongs in the config, not in every route:

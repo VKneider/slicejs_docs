@@ -27,14 +27,14 @@ One file, with one entry per page. It can live at the project root (hand-written
   "version": 1,
   "origin": "https://acme.dev",
   "defaults": {
-    "titleTemplate": "%s | Acme",
+    "titleSuffix": " | Acme",
     "description": "Acme helps teams ship.",
     "siteName": "Acme",
     "locale": "en_US",
     "image": "/images/banner.png"
   },
   "routes": {
-    "/": { "title": "Home", "titleTemplate": "%s" },
+    "/": { "title": "Home", "titleSuffix": false },
     "/pricing": {
       "title": "Pricing",
       "description": "Plans and limits.",
@@ -52,7 +52,7 @@ One file, with one entry per page. It can live at the project root (hand-written
 | Field | What it does |
 |---|---|
 | `origin` | absolute URL used for canonical, `og:url`, `og:image` and the sitemap. Required in production |
-| `title` / `titleTemplate` | `<title>`, `og:title`, `twitter:title`. `%s` is the title; a template of `"%s"` opts a route out |
+| `title` / `titlePrefix` / `titleSuffix` | `<title>`, `og:title`, `twitter:title`. The affixes add text around the title (the separator is part of the string); `false` disables one for a route |
 | `description` | the meta description plus both social descriptions |
 | `canonical` | defaults to `origin + path` |
 | `image` / `imageAlt` | the social card; `og:image:width/height/type` are derived when the file is local |
@@ -175,7 +175,7 @@ dictionaries:
 
 ```json title="seo.json"
 {
-  "defaults": { "titleTemplate": { "t": "seo.titleTemplate" } },
+  "defaults": { "titleSuffix": { "t": "seo.titleSuffix" } },
   "routes": {
     "/pricing": { "title": { "t": "pricing.title" }, "description": { "t": "pricing.description" } }
   },

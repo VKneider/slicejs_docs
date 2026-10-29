@@ -21,7 +21,7 @@ CHANGELOG
     with the translator off the key is shown plus one warning per key.
   - The product name lives once in sliceConfig.router.titlePrefix / titleSuffix (separator inside the
     string); the server reads the same block so prerender and hydration agree.
-  - titleTemplate (%s) stays as a legacy escape hatch, not the documented path.
+  - Titles compose with router.titlePrefix/titleSuffix (separator inside the string); no template.
   Files touched: VERSION, references/translator.md, ../manifest.json.
 
 1.31.1
