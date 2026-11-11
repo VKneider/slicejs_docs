@@ -2,6 +2,8 @@
 
 Official registry components installed by `slice init` into `src/Components/Visual/`. **Check here before building from scratch** — use `await slice.build('Name', props)` if one fits.
 
+**Choosing between them?** Read [`component-selection.md`](component-selection.md) first. It maps user jobs to component groups, gives the "when this vs that" tables (Alert vs Callout vs Toast, Table vs DataList, Modal vs Lightbox, Select vs RadioGroup…), and lists the composition recipes for jobs that do not have a component yet. This page is the names + intent index; `slice browse` and the component source are the current API.
+
 The names + intent are below. For the **exact, current prop list** of any component, use one of (in order of freshness): `slice browse` / read its source in `src/Components/Visual/<Name>/`, or query the MCP for `getting-started/visual-components` (see SKILL.md doc_id map). Prop lists drift between versions — **don't trust memory or this table for them** (this table is intentionally names + intent only, no prop enumerations).
 
 _Verified against v4.x (the `VERSION` `targets` range). On a framework **major** bump, re-verify the component set and props against `slice browse` or source._

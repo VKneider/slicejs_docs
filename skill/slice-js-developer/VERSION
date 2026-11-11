@@ -1,9 +1,22 @@
 slice-js-developer
-version: 1.32.1
+version: 1.33.0
 targets: slicejs-web-framework ^4.2.x
 
 CHANGELOG
 =========
+
+1.33.0
+  Component selection guide.
+  - New references/component-selection.md: job-first selection, a group catalog
+    for layout, navigation, inputs, data, feedback, overlays and services, the
+    "when this vs that" tables (Alert vs Callout vs Toast, Table vs DataList,
+    Modal vs Lightbox, Select vs RadioGroup, Steps vs Timeline...), composition
+    recipes for jobs that still have no component, and when to build your own.
+  - SKILL.md points to it from the common tasks, the reuse-before-building rule
+    and the reference map; visual-catalog.md links to it.
+  - Companion study lives in slicejs-components/docs/COMPONENT_COVERAGE.md.
+  Files touched: SKILL.md, VERSION, references/component-selection.md,
+    references/visual-catalog.md, ../manifest.json.
 
 1.32.1
   Compatibility target follows the 4.2.0 release.
