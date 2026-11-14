@@ -310,6 +310,16 @@ const docsIndex = [
     tags: ['cli', 'tooling']
   },
   {
+    title: 'Documentation & AGENTS.md',
+    route: '/Documentation/Documentation-System',
+    description: 'How Slice projects document components, categories, events and decisions, and how coding agents read that documentation.',
+    section: 'Getting Started',
+    group: 'Tooling',
+    order: 16,
+    navLabel: 'Documentation & AGENTS',
+    tags: ['documentation', 'agents', 'agents-md', 'claude', 'events', 'cli', 'categories']
+  },
+  {
     title: 'External Dependencies',
     route: '/Documentation/External-Dependencies',
     description: 'Use npm packages in Slice.js — bare imports resolved from node_modules, or files served from src/public/.',

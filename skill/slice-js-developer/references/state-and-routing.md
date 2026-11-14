@@ -84,6 +84,10 @@ slice.events.register('cart', {
   complete, no execution. *Runtime* (observational): while the Events panel is open, each `emit()` is attributed to
   its component (via `bind`) or a stack-trace `file:line`. The debugger's **Registry** tab shows the static graph;
   **Subscribers/History** show the live one. A computed name (`emit(\`cart:${x}\`)`) can't be typed/documented statically.
+- **Human event docs:** `slice docs generate events` writes `docs/events/index.md`, one page per
+  namespace, `diagram.mmd` and a self-contained `diagram.html`. Event names must be
+  `namespace:action`; the generated index lists events without a namespace, declared-but-unused
+  events and dynamic sites. Regenerate after changing `register()` or an emit/subscribe call site.
 
 Subscribe **only in `init()`** — never in setters or the constructor.
 

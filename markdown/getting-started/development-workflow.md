@@ -36,6 +36,12 @@ These scripts are created by `slice init`; if your project uses pnpm, run them a
 The dev port comes from `sliceConfig.json` (`server.port`, default `3001`) and falls back to the
 next free port if it is taken.
 
+`slice dev` also regenerates the project documentation (AGENTS inventories, types and
+`docs/events/`) before it starts watching. `slice build` checks those generated files for projects
+that already have the scaffold. Run `npx slicejs-cli docs generate` (or `pnpm exec slice docs
+generate`) for a manual refresh and `... docs check` in CI; see
+[Documentation & AGENTS.md](/Documentation/Documentation-System).
+
 ## Where your code lives
 | You want to… | Put it in |
 | --- | --- |

@@ -238,26 +238,32 @@ Node ≥ 20. Use `npx slicejs-cli <cmd>` or the `npm run` scripts `slice init` s
 
 | Command (alias) | Purpose |
 | --- | --- |
-| `slice init` | Scaffold project: installs framework, creates `api/` + `src/`, installs registry Visual components, sets up scripts |
-| `slice dev` (`start`) | Dev server + HMR (`-p <port>`, `--no-hmr`) |
-| `slice build` | Production bundle → `dist/`; many flags (analyze, `--sourcemap`, `--hash-filenames`, `--compress`, `--strict-external`, `--no-validate`, …) — see `slice --help`; subcmds `clean`, `info` |
+| `slice init` | Scaffold project: installs framework, creates `api/` + `src/`, installs registry Visual components, sets up scripts, seeds `AGENTS.md` + `CLAUDE.md` + category guides + generated docs |
+| `slice dev` (`start`) | Dev server + HMR (`-p <port>`, `--no-hmr`); regenerates project documentation before watching |
+| `slice build` | Production bundle → `dist/`; checks generated docs for scaffolded projects; many flags (analyze, `--sourcemap`, `--hash-filenames`, `--compress`, `--strict-external`, `--no-validate`, …) — see `slice --help`; subcmds `clean`, `info` |
+| `slice docs generate [all\|agents\|types\|events]` | Generate project docs: `components.js` + AGENTS inventories, declarations/event manifest, `docs/events/*` (Markdown, Mermaid, standalone HTML) |
+| `slice docs check [all\|agents\|types\|events]` | Read-only drift check for generated project docs; exits 1 when stale |
 | `slice start` | Production server from `dist/` |
 | `slice component create [name]` (`comp new`) | Scaffold a component + register in `components.js`. **Non-interactive:** `--category <Cat>` (`-c`); omit args to be prompted. Service → only `.js` |
-| `slice component list` (`comp ls`) | Rescan folders and rewrite `components.js` |
+| `slice component list` (`comp ls`) | Rescan folders and rewrite `components.js`. Compact category summary by default; `--all`, `--category <name>`, `--json` |
 | `slice component delete [name]` (`comp remove`) | Remove a component + update `components.js`. **Non-interactive:** `--category <Cat> --yes` (`-c`/`-y`) |
 | `slice get <Names…>` | Install registry components (`-s` as Service, `-f` force) |
 | `slice browse` | List registry components (Visual/Service) |
 | `slice sync` | Update local Visual components from registry (`-f`). Services NOT updated — use `slice get <Name> --service --force` |
 | `slice skill add` | Install the Slice.js Claude Code skill into `.claude/skills/` (also `update` / `status`) |
-| `slice doctor` (`diagnose`) | Project diagnostics (structure, config + schema, SEO, deps + version skew, components/routes/server entry, missing npm imports, port) |
+| `slice doctor` (`diagnose`) | Project diagnostics (structure, config + schema, SEO, deps + version skew, components/routes, documentation/AGENTS, server entry, missing npm imports, port) |
 | `slice lint` | Runs the project's ESLint; refreshes `src/slice-build.generated.d.ts` first when the project uses types (`--no-types` opts out); the shared config is `slicejs-cli/eslint-config.js` |
 | `slice typecheck` | Refreshes the declarations, then runs the project's `tsc --noEmit` over `jsconfig.json` (needs `typescript`; `--no-types` skips the refresh); `slice setup lint --with-types` installs it |
 | `slice setup lint` | Adds ESLint + the shared config + `lint` scripts to an existing project (`--dry-run`). With `--with-types` it also installs TypeScript, adds `typecheck`, and generates the declarations + `jsconfig.json` |
 | `slice seo sitemap` / `seo check` | Write / validate the committed `public/sitemap.xml` from `seo.json` |
 | `slice seo images` (`og`) | Render each route's 1200×630 social card into `public/og/` + its `manifest.json` (needs Playwright) |
 | `slice version` / `slice update` | Versions / update CLI+framework |
-| `slice types generate` | Generate a `.d.ts` from `static props` for `slice.build` autocomplete (`-o <path>`) |
+| `slice types generate` | Alias of `slice docs generate types`: `.d.ts` from `static props` for `slice.build` autocomplete (`-o <path>`) |
 
-Project layout after `slice init`: `api/index.js` (Express server) · `src/Components/{Visual,Service,AppComponents,components.js}` · `src/public/{Themes,Styles,images}` (static assets, served at the root URL) · `src/routes.js` · `src/sliceConfig.json` · `src/App/index.html`.
+Project layout after `slice init`: `api/index.js` (Express server) · `src/Components/{Visual,Service,AppComponents,components.js,<Category>/AGENTS.md}` · `src/public/{Themes,Styles,images}` (static assets, served at the root URL) · `src/routes.js` · `src/sliceConfig.json` · `src/App/index.html` · `AGENTS.md` · `CLAUDE.md` · `docs/events/`.
 
-Typical loop: `slice init` → `slice dev` → `slice component create` (or `slice browse` + `slice get <Name>`) → edit → `slice component list` if you added folders manually → `slice doctor` when stuck → `slice build` + `slice start` for prod.
+Typical loop: `slice init` → `slice dev` (regenerates docs) → `slice component create` (or `slice browse` + `slice get <Name>`) → edit + component `README.md` → `slice docs generate` when a generated artifact changed → `slice doctor` when stuck → `slice build` + `slice start` for prod.
+
+Output is one symbol per severity: `✔` success, `!` warning, `✖` error, `•` info, `→` next action. Stack traces are hidden by default; `SLICE_DEBUG=1` prints them. Repeated diagnostics are grouped and use the `!` line (for example, dynamic `slice.build()` calls that cannot be bundled; stripped or unresolved import warnings are deduplicated). The dev server prints one banner and no per-bundle lines. Security rules are always enforced, but their warnings (including "framework file accessed without a valid referer") only print with `SLICE_DEBUG=1`, at most once per minute per category. `slice build` is a compact phase-by-phase summary; `--verbose` adds per-file sizes and the per-route bundle list.
+
+`sliceConfig.paths.components.<Category>.description` is optional short metadata and a seed for a new category guide. The category `AGENTS.md` is the formal documentation.

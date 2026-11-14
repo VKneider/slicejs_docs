@@ -44,12 +44,33 @@ You can bypass delegation for a specific invocation:
 SLICE_NO_LOCAL_DELEGATION=1 slice version
 ```
 
+## Output and logs
+The CLI uses one symbol per severity and one line per outcome:
+
+| Symbol | Meaning |
+| --- | --- |
+| `✔` | Success. The step completed. |
+| `!` | Warning. The command continued. |
+| `✖` | Error. The command stopped or the step failed. |
+| `•` | Information or a detail. |
+| `→` | Next action. |
+
+- Stack traces are hidden by default. Set `SLICE_DEBUG=1` to print them.
+- Repeated diagnostics are grouped and use the same `!` line: dynamic `slice.build()` calls that
+  cannot be bundled appear once with the file list, and stripped or unresolved import warnings are
+  deduplicated.
+- `slice dev` and `slice start` print the server banner once. The framework does not repeat
+  "server running" and does not log every bundle request.
+- Security rules are always enforced. Their warnings — including
+  "framework file accessed without a valid referer" — are only printed with `SLICE_DEBUG=1`,
+  at most once per minute per category.
+
 ## Command Summary
 | Command | Alias | Purpose |
 | --- | --- | --- |
-| `slice init` | - | Initialize project structure and install Visual components. |
-| `slice dev` | - | Start development server. |
-| `slice build` | - | Build production output (bundles + dist). |
+| `slice init` | - | Initialize project structure, install Visual components and seed `AGENTS.md` + generated docs. |
+| `slice dev` | - | Start development server and regenerate project documentation. |
+| `slice build` | - | Build production output (bundles + dist) and check generated docs for scaffolded projects. |
 | `slice build clean` | - | Remove generated bundles. |
 | `slice build info` | - | Show bundle configuration summary. |
 | `slice start` | - | Start production server. |
@@ -60,13 +81,15 @@ SLICE_NO_LOCAL_DELEGATION=1 slice version
 | `slice browse` | `slice registry list` | List official registry components. |
 | `slice sync` | `slice registry sync` | Sync local Visual components from registry. |
 | `slice docs` | - | Search and retrieve framework or Slice.js Components Markdown. |
+| `slice docs generate [all\|agents\|types\|events]` | - | Generate project docs: AGENTS inventory, declarations, event Markdown/Mermaid/HTML. |
+| `slice docs check [all\|agents\|types\|events]` | - | Check generated project docs for drift. |
 | `slice list` | - | Shortcut for `slice component list`. |
 | `slice version` | `slice v` | Show CLI version. |
 | `slice doctor` | `slice diagnose` | Run project diagnostics. |
 | `slice lint` | - | Run the project's ESLint (refreshes generated declarations first). |
 | `slice typecheck` | - | Type-check with the project's TypeScript (jsconfig.json). |
 | `slice setup lint` | - | Add ESLint + the shared config (and optionally TypeScript) to a project. |
-| `slice types generate` | - | Generate TypeScript typings for `slice.build`. |
+| `slice types generate` | - | Alias of `slice docs generate types`; generate TypeScript typings for `slice.build`. |
 | `slice help` | `slice --help` | Show CLI help. |
 
 ## `slice build` options
@@ -171,6 +194,40 @@ slice --no-version-check docs get Button --source components --json
 `slice docs get` reads documentation only. It does not install component source files; use
 `slice get <Name>` when the component itself should be added to the project.
 
+## docs generate / docs check
+
+The local half of `slice docs` maintains the project's own documentation. It does not touch the
+remote catalogs.
+
+```bash
+slice docs generate            # all: agents + types + events
+slice docs generate agents     # components.js + AGENTS.md generated blocks
+slice docs generate types      # .d.ts + slice-events.generated.js
+slice docs generate events     # docs/events/*
+
+slice docs check               # read-only drift check for everything
+slice docs check agents|types|events
+```
+
+`slice docs generate` writes:
+
+- `src/Components/components.js` and the category inventories inside each
+  `src/Components/<Category>/AGENTS.md`;
+- the root category table and `CLAUDE.md` when missing;
+- `src/slice-build.generated.d.ts`, the runtime shim and `src/slice-events.generated.js`;
+- `docs/events/index.md`, one page per namespace, `diagram.mmd` and a self-contained
+  `diagram.html`.
+
+`slice docs check` compares the generated files with the current project and exits non-zero when
+they drift. Use it in CI; use `slice docs generate` to fix.
+
+`slice dev` regenerates before starting the watch server. `slice build` runs `slice docs check` for
+projects that already have the scaffold (`AGENTS.md` + `docs/events/index.md`). `slice doctor` has a
+**Documentation** row for missing guides, placeholders and drift.
+
+See [Documentation & AGENTS.md](/Documentation/Documentation-System) for the full workflow, the
+module-first layout and the generated-vs-authored rules.
+
 ### pnpm build-approval note
 With pnpm v10+, lifecycle scripts are gated by `allowBuilds` in `pnpm-workspace.yaml`.
 `slice init --pm pnpm` automatically configures:
@@ -262,6 +319,8 @@ Production serves static assets from `src/public/` (copied into `dist/`) at the 
 
 ## build
 Builds production output by analyzing dependencies, generating bundles, and writing files to `/dist`.
+The default output is a compact, phase-by-phase summary: files optimized, build size, bundle counts
+and the request reduction. Per-file sizes and the per-route bundle list are opt-in with `--verbose`.
 
 :::tip
 Production builds include **Structural framework components** in bundles to avoid runtime fetches.
@@ -276,7 +335,7 @@ npm run build
 | Flag | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `-a, --analyze` | `boolean` | `false` | Analyze only, do not generate bundles. |
-| `-v, --verbose` | `boolean` | `false` | Output analysis metrics. |
+| `-v, --verbose` | `boolean` | `false` | Show per-file optimization, per-route bundles and analysis metrics. |
 | `--no-minify` | `boolean` | `false` | Disable minification (enabled by default). |
 | `--no-obfuscate` | `boolean` | `false` | Disable obfuscation (enabled by default). |
 | `--preview` | `boolean` | `false` | Start preview server after build. |
@@ -325,11 +384,24 @@ Rules:
 - An invalid `--category` fails with a message listing the valid categories.
 
 ## component list
-Lists all local components by scanning category paths from `sliceConfig.json` and rewrites
-`src/Components/components.js`.
+Lists local components by scanning category paths from `sliceConfig.json` and rewrites
+`src/Components/components.js`. The default output is a compact category summary; it does not print
+a huge table.
 
 ```bash title="List components"
 npm run component:list
+```
+
+| Option | Purpose |
+| --- | --- |
+| `-a, --all` | List every component, grouped by category |
+| `-c, --category <name>` | Only one category |
+| `--json` | Machine-readable `{ total, categories }` output |
+
+```bash title="Focused output"
+npm run component:list -- --all
+npm run component:list -- --category Visual
+npm run component:list -- --json
 ```
 
 ## component delete
@@ -612,8 +684,8 @@ npm run slice:help
 ```
 
 ## types generate
-Generates a TypeScript declaration file from your components' `static props`, so editors can
-autocomplete and type-check `slice.build('Name', { ... })` calls.
+Alias of `slice docs generate types`. Generates a TypeScript declaration file from your components'
+`static props`, so editors can autocomplete and type-check `slice.build('Name', { ... })` calls.
 
 ```bash title="Generate typings"
 npm run slice:types
@@ -632,7 +704,8 @@ hand, and re-generate (or wire it into your build) to keep autocomplete in sync.
 
 It also writes the event manifest (`src/slice-events.generated.js`), creates `jsconfig.json` when the
 project has none, and keeps that config pointed at the generated declarations. `slice lint` and
-`slice typecheck` run this refresh for you before they work.
+`slice typecheck` run this refresh for you before they work. Use `slice docs generate` when you also
+want the human event catalog and AGENTS inventories.
 
 ## Best Practices
 :::tip

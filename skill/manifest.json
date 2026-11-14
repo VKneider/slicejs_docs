@@ -1,6 +1,6 @@
 {
   "name": "slice-js-developer",
-  "version": "1.33.0",
+  "version": "1.34.1",
   "targets": "slicejs-web-framework ^4.2.x",
   "installPath": ".claude/skills/slice-js-developer",
   "files": [
@@ -14,6 +14,7 @@
     "assets/visual-component/Component.js",
     "references/component-selection.md",
     "references/config-theming-cli.md",
+    "references/documentation.md",
     "references/core-model.md",
     "references/gotchas-and-diagnostics.md",
     "references/state-and-routing.md",

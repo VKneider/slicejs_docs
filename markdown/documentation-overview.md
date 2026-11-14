@@ -268,6 +268,11 @@ const createToolingCards = () => {
       path: '/Documentation/Commands'
     },
     {
+      title: 'Documentation & AGENTS',
+      description: 'Category guides, component READMEs, event docs and agent instructions.',
+      path: '/Documentation/Documentation-System'
+    },
+    {
       title: 'sliceConfig.json',
       description: 'Configure themes, styles, routes, and structural services.',
       path: '/Documentation/Configuration/sliceConfig'

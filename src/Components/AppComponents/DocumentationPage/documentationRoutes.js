@@ -60,6 +60,11 @@ export const documentationRoutes = {
                   title: 'Linting',
                   path: '/Documentation/Linting',
                   component: 'LintingDocumentation'
+               },
+               {
+                  title: 'Documentation & AGENTS',
+                  path: '/Documentation/Documentation-System',
+                  component: 'DocumentationAndAgentsDocumentation'
                }
             ]
          },

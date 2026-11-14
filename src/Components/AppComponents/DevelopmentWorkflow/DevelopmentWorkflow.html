@@ -13,6 +13,7 @@
 <div class="code-block" data-block-id="doc-block-2"></div>
 <p>These scripts are created by <code>slice init</code>; if your project uses pnpm, run them as <code>pnpm run dev</code>, <code>pnpm run build</code>, <code>pnpm run start</code> — they are identical.</p>
 <p>The dev port comes from <code>sliceConfig.json</code> (<code>server.port</code>, default <code>3001</code>) and falls back to the next free port if it is taken.</p>
+<p><code>slice dev</code> also regenerates the project documentation (AGENTS inventories, types and <code>docs/events/</code>) before it starts watching. <code>slice build</code> checks those generated files for projects that already have the scaffold. Run <code>npx slicejs-cli docs generate</code> (or <code>pnpm exec slice docs generate</code>) for a manual refresh and <code>... docs check</code> in CI; see [Documentation &amp; AGENTS.md](/Documentation/Documentation-System).</p>
 <h2 id="where-your-code-lives">Where your code lives</h2>
 <div class="table-block" data-block-id="doc-block-3"></div>
 <h2 id="creating-and-registering-components">Creating and registering components</h2>

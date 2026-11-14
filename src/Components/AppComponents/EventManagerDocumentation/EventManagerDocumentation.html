@@ -54,6 +54,8 @@ dev-time validation, typed <code>emit</code>/<code>subscribe</code>, and a docum
 <div class="callout callout-warning">Avoid using EventManager as a data store. It does not retain state.</div>
 <h2 id="diagnostics">Diagnostics</h2>
 <div class="code-block" data-block-id="doc-block-10"></div>
+<h2 id="generated-documentation">Generated documentation</h2>
+<p><code>slice docs generate events</code> writes a committed event catalog under <code>docs/events/</code>: a summary index, one page per namespace, a Mermaid diagram and a self-contained HTML diagram. It uses the same static graph as the debugger Registry tab and excludes specs/tests/generated files. Run <code>slice docs check events</code> in CI. Event names must be <code>namespace:action</code>. See [Documentation &amp; AGENTS.md](/Documentation/Documentation-System).</p>
 <h2 id="debugger-panel">Debugger panel</h2>
 <p>Enable the EventManager UI to inspect subscriptions and recent emits in real time:</p>
 <div class="code-block" data-block-id="doc-block-11"></div>

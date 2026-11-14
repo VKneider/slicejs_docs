@@ -13,10 +13,11 @@ Read this SKILL.md fully — it carries the **complete mental model** and decisi
 
 - **`references/` — the distilled offline layer.** Source-verified notes that carry the *mistake-preventing* detail (traps, decision rules, canonical snippets). **Not a mirror of the docs** — deliberately thin. Enough to work common tasks with no network.
 - **`slicejs-mcp` — the live, authoritative docs.** It exposes both the Slice.js framework catalog and the Slice.js Components catalog when configured. **Your primary tool for depth** when it's configured — especially anything version-specific (full prop lists, every CLI flag, config fields, complete guides, and component examples). Don't reproduce it here; query it.
+- **`references/documentation.md` — how to document the project itself.** Read it before finishing any task: AGENTS.md, category guides, component READMEs, changelog, event docs and `slice docs generate/check`.
 
 Rule of thumb: reach for a **reference** at the *decision / trap* level; query the **MCP** at the *exhaustive / authoritative* level. Never answer a version-specific detail from memory — confirm it via the MCP (or the offline fallbacks). Use the framework catalog for framework behavior and the Components catalog for Visual/Service APIs and examples. See "Developing with the MCP" below.
 
-Common tasks: create a Visual/Service component · add routes/guards/pages · choose the right component for a surface; wire inter-component communication (Events vs Context) · configure themes/persistence/debug panels · diagnose a non-rendering/leaking/stale component · set up a new project · integrate an external library.
+Common tasks: create a Visual/Service component · add routes/guards/pages · choose the right component for a surface; wire inter-component communication (Events vs Context) · configure themes/persistence/debug panels · diagnose a non-rendering/leaking/stale component · set up a new project · integrate an external library · document a feature, category, component or event contract.
 
 ---
 
@@ -73,6 +74,7 @@ Lifecycle at a glance: constructor (sync) → `await init()` (once) → live (se
 - **Where singletons + bootstrap live:** keep `App/index.js` (almost) empty — only router **guards** go there. Put services + state setup in a **composition-root** initializer Service (e.g. `Providers`) built once from `AppShell.init()`; it creates contexts and builds the singletons in order. App-domain services go in their own data-driven category (`AppServices`), recovered via `slice.getComponent(sliceId)`. (Details in `core-model.md` → "App-scale composition".)
 - **Reuse before building:** check `references/visual-catalog.md` / `slice browse` — Button, Card, Grid, Navbar, Modal, Select, etc. likely already exist. **Before choosing between them, read `references/component-selection.md`**: it maps the user's job to a group, gives the "when this vs that" tables (Alert vs Callout vs Toast, Table vs DataList, Modal vs Lightbox, Select vs RadioGroup…), and lists the composition recipes for jobs that still have no component. The guide is selection; the component docs/MCP are props and examples.
 - **Translated app:** text in a template is *marked* (`data-t`), never written from JS; text passed as a prop is `slice.t.ref('key')`; text read at the moment of use is `slice.t()`. A dictionary list is `t.list(key)` (or `t.ref.list(key)` for a prop). Content records (experience, courses, projects) use a `copy: { en, es }` document read with `await t.content(name)`; `t.localized(value)` is the primitive. Do not add a `localeChanged()` hook — the framework refreshes marks, marker props and route metadata itself; content sections re-render from `watch()`/their own setter. Locale in the URL is opt-in (`translator.localePrefix`); read `slice.path` and build anchors with `slice.href()` (the router shortcuts), never `window.location.pathname`. `slice translator check` is the key gate (it also validates `t.list` keys and `content` copies); native SEO prerenders per locale when routing is on.
+- **Documentation is part of done:** read the root and nearest category `AGENTS.md` before coding; after changing behavior, update the component `README.md`, the category guide, the event docs and the changelog if the project uses one. Run `slice docs generate` / `slice docs check`. There is no line limit; the requirement is that docs are read and stay current. Full rulebook: `references/documentation.md`.
 
 ---
 
@@ -100,14 +102,15 @@ The MCP provides live access to two documentation catalogs. It is the **authorit
 
 Don't jump straight to a blind `search_docs`. Orient first, so recommendations fit *this* project:
 
-1. **List the relevant catalog** — use `slice_framework_list_docs()` for framework questions and `slice_components_list_docs()` for Visual/Service questions. This prevents guessing doc ids.
-2. **Read the project** to know what's relevant and what to recommend — the installed source is ground truth:
+1. **Read the project's instructions** — `AGENTS.md` at the root and the nearest `src/Components/<Category>/AGENTS.md`. Read the component `README.md` and `docs/events/` before changing those contracts. See `references/documentation.md`.
+2. **List the relevant catalog** — use `slice_framework_list_docs()` for framework questions and `slice_components_list_docs()` for Visual/Service questions. This prevents guessing doc ids.
+3. **Read the project** to know what's relevant and what to recommend — the installed source is ground truth:
    - `sliceConfig.json` → which managers are on (`events`/`context`/`themeManager`/`debugger`/`logger`), the `defaultTheme`, the component **categories** (`paths.components`), the server/port. This tells you what's enabled before you suggest using it.
    - `src/Components/components.js` → which components already exist (reuse before building).
    - `src/routes.js` → the app's routing shape (App Shell + MultiRoute vs Single-View).
    - `package.json` / `node_modules/slicejs-web-framework` → the framework version (so version-specific advice matches).
-3. **Offer the full docs for big/unfamiliar work.** If the task is large or the user is new to Slice, *ask*: "Want me to pull the full Slice.js docs into context (`get_llm_full_context`, ~2500 lines) for this, or stay targeted?" Only call it on a yes. For focused tasks, skip it and use the search→read loop.
-4. **Then** use the targeted search → get loop for each specific question.
+4. **Offer the full docs for big/unfamiliar work.** If the task is large or the user is new to Slice, *ask*: "Want me to pull the full Slice.js docs into context (`get_llm_full_context`, ~2500 lines) for this, or stay targeted?" Only call it on a yes. For focused tasks, skip it and use the search→read loop.
+5. **Then** use the targeted search → get loop for each specific question.
 
 Tailor advice to what you found: don't suggest `slice.context.watch` if `context.enabled` is false — flag that it must be enabled first (and that `context` needs `events`); recommend the existing theme/components rather than inventing new ones.
 
@@ -135,6 +138,7 @@ Tailor advice to what you found: don't suggest `slice.context.watch` if `context
 | Best practices, anti-patterns, Logger, Debugger, debug panels, leak inspector, troubleshooting | `references/gotchas-and-diagnostics.md` | `logger`, `getting-started/devtools`, `getting-started/leak-inspector` |
 | Which official Visual/Service components exist | `references/visual-catalog.md` | `slice_components_search_docs` / `slice_components_get_doc` |
 | Which component fits a job; when one vs another; what to compose for a gap | `references/component-selection.md` | `slice_components_search_docs` / `slice_components_get_doc` |
+| Project documentation, AGENTS.md, category guides, component READMEs, event docs, changelog | `references/documentation.md` | `slice docs generate/check` |
 | Server entrypoint, middleware order, SPA fallback, 404s | — | `project-architecture/server-entrypoint` |
 | SEO manifest, per-route head, sitemap, client titles | — | `project-architecture/seo`, `slice-config` (`router.updateTitles`) |
 | The MCP itself (tools, usage) | — | `slicejs-mcp` |
@@ -234,7 +238,9 @@ Rules that follow from it:
 
 **Orient first (MCP available):** before any workflow below, run the **Orientation protocol** above — list the relevant catalog and read `sliceConfig.json` / `components.js` / `routes.js` / the framework version — so every choice fits the actual project (enabled managers, existing components, routing style).
 
-**Component creation:** (1) decide category; (2) check `references/component-selection.md` for the job and `references/visual-catalog.md` for the names - reuse if it exists; (3) read `references/core-model.md` (+ `state-and-routing.md` if it needs events/routing/context, `config-theming-cli.md` if it needs an external lib); (4) scaffold the files non-interactively — `slice component create <Name> --category <Visual|Service|AppComponents>` (this also registers it in `components.js`); fill the logic using `assets/` as the content reference (don't write boilerplate from memory); (5) if you created files by hand instead, register them with `slice component list` (or edit `components.js` within one conversation); (6) walk the lifecycle/construction-order checklist in `core-model.md`.
+**Component creation:** (1) decide category; (2) check `references/component-selection.md` for the job and `references/visual-catalog.md` for the names - reuse if it exists; (3) read `references/core-model.md` (+ `state-and-routing.md` if it needs events/routing/context, `config-theming-cli.md` if it needs an external lib); (4) scaffold the files non-interactively — `slice component create <Name> --category <Visual|Service|AppComponents>` (this also registers it in `components.js`); fill the logic using `assets/` as the content reference (don't write boilerplate from memory); (5) if you created files by hand instead, register them with `slice component list` (or edit `components.js` within one conversation); (6) write the component `README.md` (purpose, API, events, gotchas) and update the category `AGENTS.md` inventory; (7) walk the lifecycle/construction-order checklist in `core-model.md`.
+
+**Documentation pass (every task):** before finishing, read `references/documentation.md` and apply its tables. Update the nearest category `AGENTS.md` for a new pattern/gotcha, the component `README.md` for an API/behavior change, `docs/events/` for an event contract, the changelog if the project uses one, and the root `AGENTS.md` if commands/categories changed. Run `slice docs generate` when a generated artifact changed; run `slice docs check` before claiming the task is done. If nothing applies, say “No docs impact” and why.
 
 **Project setup:** `slice init` scaffolds an **App Shell + MultiRoute** starter (an `AppShell` with a persistent navbar + a `MultiRoute` content area, plus `HomeSection`/`AboutSection`), installing only a lean set of Visual components — add more with `slice get <Name>`. Read `references/config-theming-cli.md` (CLI, config) and the architecture section of `references/state-and-routing.md`; the docs `getting-started/project-anatomy`, `getting-started/first-page`, and `getting-started/development-workflow` walk the post-init path file by file. Use `assets/sliceConfig.json` and `assets/routes.js` as starting templates. For a new large project you may WebFetch `.../master/llm.txt` (or `get_llm_full_context`) once for broad context.
 

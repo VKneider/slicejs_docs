@@ -210,6 +210,14 @@ if (slice.events.hasSubscribers("cart:updated")) {
 }
 ```
 
+## Generated documentation
+
+`slice docs generate events` writes a committed event catalog under `docs/events/`: a summary
+index, one page per namespace, a Mermaid diagram and a self-contained HTML diagram. It uses the same
+static graph as the debugger Registry tab and excludes specs/tests/generated files. Run
+`slice docs check events` in CI. Event names must be `namespace:action`. See
+[Documentation & AGENTS.md](/Documentation/Documentation-System).
+
 ## Debugger panel
 Enable the EventManager UI to inspect subscriptions and recent emits in real time:
 

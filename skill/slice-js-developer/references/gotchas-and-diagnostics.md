@@ -122,6 +122,20 @@ These bite once and are non-obvious — verified building real apps.
 - [ ] `setState` with a **partial** object → use `(prev) => ({ ...prev, … })` to merge
 - [ ] Interactive component wrapped in `<label>` → use a `<div>` (double-click bug)
 - [ ] Inner pane grows the page instead of scrolling → constrain grid/flex (`minmax(0,1fr)` + `min-height:0`) and give custom-element wrappers `display:block; height:100%`
+- [ ] Behavior/API changed but component `README.md` or category `AGENTS.md` still says the old thing → update them
+- [ ] Event contract changed but `docs/events/` is stale → run `slice docs generate events`
+- [ ] `components.js` or an AGENTS inventory was hand-edited → run `slice docs generate agents`
+- [ ] Generated docs look wrong after a build → run `slice docs check`, then `slice docs generate`
+
+### Documentation drift
+
+The static event graph and the AGENTS inventories are generated. If event docs show spec/test files,
+the CLI is older than the filter: update it and run `slice docs generate events`. The graph excludes
+`*.spec.js`, `*.test.js`, `*.generated.js`, `src/public/` and `src/bundles/`; anything else that
+appears as an emitter is application code.
+
+`slice docs check` is the read-only gate. `slice dev` regenerates; `slice build` checks projects
+that have the scaffold. Never hand-edit `components.js`, `docs/events/*` or `*.generated.d.ts`.
 
 ---
 

@@ -45,6 +45,7 @@
 <p>sections (for example <code>AppShell</code>, <code>HomeSection</code>). Same three-file pattern as <code>Visual</code>.</p>
 <ul><li><strong><code>Service</code></strong> holds plain logic classes (API clients, storage helpers).</li></ul>
 <p>When you call <code>slice.build('Name')</code>, Slice looks up the component's category in <code>components.js</code>, finds the matching <code>paths.components</code> entry, and loads the files from <code>&lt;path&gt;/&lt;Name&gt;/</code> using the rules for that <code>type</code>. You can add your own categories here (each needs a <code>path</code> and a <code>type</code>).</p>
+<p><code>slice init</code> and <code>slice docs generate agents</code> create a <code>src/Components/&lt;Category&gt;/AGENTS.md</code> for every category. <code>Visual</code> and <code>Service</code> are registry categories: <code>slice get</code> installs there, and their guides point to the remote component docs. App categories document their own components in a co-located <code>README.md</code>. See [Documentation &amp; AGENTS.md](/Documentation/Documentation-System).</p>
 <div class="callout callout-tip">You normally do not edit folders by hand — <code>slice component create</code> scaffolds a component in the
 right category and updates <code>components.js</code> for you. See Component Anatomy.</div>
 <div class="callout callout-warning">If a category's <code>path</code> or <code>type</code> is wrong, <code>slice.build()</code> returns <code>null</code> with a misleading

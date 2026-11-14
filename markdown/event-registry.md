@@ -125,6 +125,25 @@ or a best-effort `file:line` from the call stack for global emits. This is what 
 fired, with counts — and anything that fires but is missing from the static graph is a
 dynamic emit worth a look.
 
+## Human-readable event docs
+
+`slice docs generate events` turns the same graph into a committed event catalog:
+
+```text
+docs/events/
+├── index.md          # summary by namespace + drift
+├── cart.md           # one page per namespace
+├── router.md
+├── diagram.mmd       # Mermaid source
+└── diagram.html      # self-contained HTML + inline SVG
+```
+
+Each namespace page lists the payload and the emitters/listeners with component, category
+and `file:line`. `index.md` flags declared-but-unused events, used-but-undeclared events,
+names without a namespace, and dynamic sites. The scanner excludes specs, tests and generated
+files. `slice docs check events` is the drift gate. See
+[Documentation & AGENTS.md](/Documentation/Documentation-System).
+
 ## Debugger panel
 Enable the Events UI and open it with the shortcut to inspect all of the above:
 
@@ -159,8 +178,9 @@ standardization; many `register()` calls is modularization — both work with th
 :::
 
 :::tip
-Re-run `slice types generate` after adding events or emit/subscribe sites so the types
-and the static graph stay in sync.
+After adding events or emit/subscribe sites, run `slice docs generate types` for the typed
+contract and `slice docs generate events` for the human catalog. `slice docs check` catches
+drift.
 :::
 
 ## Gotchas
@@ -186,7 +206,8 @@ dev aid (a one-time warning plus a debugger badge), not a runtime gate.
 :::
 
 :::details title="Where do the static emitters/listeners come from?"
-From `slice types generate`, which scans your `emit`/`subscribe` call sites and writes
+From `slice docs generate types`, which scans your `emit`/`subscribe` call sites and writes
 `src/slice-events.generated.js`. The Events panel loads it to show the documented graph
-alongside live runtime activity. See [EventManager](/Documentation/Structural/EventManager).
+alongside live runtime activity. `slice docs generate events` writes the human catalog under
+`docs/events/`. See [EventManager](/Documentation/Structural/EventManager).
 :::

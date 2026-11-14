@@ -111,6 +111,7 @@ This is how Slice.js knows **where your components live and how to load them**. 
 | --- | --- | --- |
 | `path` | `string` | Folder (relative to `src/`) where that category's components live. |
 | `type` | `Visual` or `Service` | How to load a component in this category. |
+| `description` | `string` | Optional short purpose. Used as a seed when the category `AGENTS.md` is created; the guide itself is the formal documentation. |
 
 The `type` controls loading:
 - **`Visual`** — the component has a UI, so Slice loads three files per component:
@@ -135,6 +136,11 @@ A default project ships three categories:
 When you call `slice.build('Name')`, Slice looks up the component's category in `components.js`,
 finds the matching `paths.components` entry, and loads the files from `<path>/<Name>/` using the
 rules for that `type`. You can add your own categories here (each needs a `path` and a `type`).
+
+`slice init` and `slice docs generate agents` create a `src/Components/<Category>/AGENTS.md` for
+every category. `Visual` and `Service` are registry categories: `slice get` installs there, and
+their guides point to the remote component docs. App categories document their own components in a
+co-located `README.md`. See [Documentation & AGENTS.md](/Documentation/Documentation-System).
 
 :::tip
 You normally do not edit folders by hand — `slice component create` scaffolds a component in the

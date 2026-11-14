@@ -1,9 +1,41 @@
 slice-js-developer
-version: 1.33.0
+version: 1.34.1
 targets: slicejs-web-framework ^4.2.x
 
 CHANGELOG
 =========
+
+1.34.1
+  Quiet output and server logs.
+  - CLI output: one symbol per severity, no emoji prefixes, stack traces only
+    with SLICE_DEBUG=1.
+  - Dev server prints one READY banner; the framework no longer repeats the
+    running line or logs every bundle request.
+  - Security warnings (blocked paths, suspicious requests, framework files
+    accessed without a valid referer) are debug-only and deduplicated. The
+    rules themselves are unchanged.
+  Files touched: VERSION, references/config-theming-cli.md, ../manifest.json.
+
+1.34.0
+  Project documentation system.
+  - New references/documentation.md: module-first docs, root and category
+    AGENTS.md, component READMEs, optional per-category changelogs, namespaced
+    event docs, generated vs authored files, and the documentation decision table.
+  - SKILL.md: read the root/nearest AGENTS.md before coding, documentation is part
+    of done, component creation writes README + category inventory, and the
+    reference map points to documentation.md.
+  - CLI guidance: `slice docs generate [agents|types|events]`, `slice docs check`,
+    `slice dev` regeneration and `slice build` drift gate.
+  - CLI output: `slice component list` is a compact category summary by default
+    (`--all`, `--category`, `--json`); `slice dev` no longer prints the component
+    table.
+  - Event guidance: namespaces, docs/events/index.md, one page per namespace,
+    diagram.mmd and standalone diagram.html; specs/tests/generated files excluded.
+  - References updated: config-theming-cli.md, state-and-routing.md and
+    gotchas-and-diagnostics.md.
+  Files touched: SKILL.md, VERSION, references/documentation.md,
+    references/config-theming-cli.md, references/state-and-routing.md,
+    references/gotchas-and-diagnostics.md, ../manifest.json.
 
 1.33.0
   Component selection guide.

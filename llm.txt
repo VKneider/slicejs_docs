@@ -144,12 +144,33 @@ You can bypass delegation for a specific invocation:
 SLICE_NO_LOCAL_DELEGATION=1 slice version
 ```
 
+## Output and logs
+The CLI uses one symbol per severity and one line per outcome:
+
+| Symbol | Meaning |
+| --- | --- |
+| `✔` | Success. The step completed. |
+| `!` | Warning. The command continued. |
+| `✖` | Error. The command stopped or the step failed. |
+| `•` | Information or a detail. |
+| `→` | Next action. |
+
+- Stack traces are hidden by default. Set `SLICE_DEBUG=1` to print them.
+- Repeated diagnostics are grouped and use the same `!` line: dynamic `slice.build()` calls that
+  cannot be bundled appear once with the file list, and stripped or unresolved import warnings are
+  deduplicated.
+- `slice dev` and `slice start` print the server banner once. The framework does not repeat
+  "server running" and does not log every bundle request.
+- Security rules are always enforced. Their warnings — including
+  "framework file accessed without a valid referer" — are only printed with `SLICE_DEBUG=1`,
+  at most once per minute per category.
+
 ## Command Summary
 | Command | Alias | Purpose |
 | --- | --- | --- |
-| `slice init` | - | Initialize project structure and install Visual components. |
-| `slice dev` | - | Start development server. |
-| `slice build` | - | Build production output (bundles + dist). |
+| `slice init` | - | Initialize project structure, install Visual components and seed `AGENTS.md` + generated docs. |
+| `slice dev` | - | Start development server and regenerate project documentation. |
+| `slice build` | - | Build production output (bundles + dist) and check generated docs for scaffolded projects. |
 | `slice build clean` | - | Remove generated bundles. |
 | `slice build info` | - | Show bundle configuration summary. |
 | `slice start` | - | Start production server. |
@@ -160,13 +181,15 @@ SLICE_NO_LOCAL_DELEGATION=1 slice version
 | `slice browse` | `slice registry list` | List official registry components. |
 | `slice sync` | `slice registry sync` | Sync local Visual components from registry. |
 | `slice docs` | - | Search and retrieve framework or Slice.js Components Markdown. |
+| `slice docs generate [all\|agents\|types\|events]` | - | Generate project docs: AGENTS inventory, declarations, event Markdown/Mermaid/HTML. |
+| `slice docs check [all\|agents\|types\|events]` | - | Check generated project docs for drift. |
 | `slice list` | - | Shortcut for `slice component list`. |
 | `slice version` | `slice v` | Show CLI version. |
 | `slice doctor` | `slice diagnose` | Run project diagnostics. |
 | `slice lint` | - | Run the project's ESLint (refreshes generated declarations first). |
 | `slice typecheck` | - | Type-check with the project's TypeScript (jsconfig.json). |
 | `slice setup lint` | - | Add ESLint + the shared config (and optionally TypeScript) to a project. |
-| `slice types generate` | - | Generate TypeScript typings for `slice.build`. |
+| `slice types generate` | - | Alias of `slice docs generate types`; generate TypeScript typings for `slice.build`. |
 | `slice help` | `slice --help` | Show CLI help. |
 
 ## `slice build` options
@@ -271,6 +294,40 @@ slice --no-version-check docs get Button --source components --json
 `slice docs get` reads documentation only. It does not install component source files; use
 `slice get <Name>` when the component itself should be added to the project.
 
+## docs generate / docs check
+
+The local half of `slice docs` maintains the project's own documentation. It does not touch the
+remote catalogs.
+
+```bash
+slice docs generate            # all: agents + types + events
+slice docs generate agents     # components.js + AGENTS.md generated blocks
+slice docs generate types      # .d.ts + slice-events.generated.js
+slice docs generate events     # docs/events/*
+
+slice docs check               # read-only drift check for everything
+slice docs check agents|types|events
+```
+
+`slice docs generate` writes:
+
+- `src/Components/components.js` and the category inventories inside each
+  `src/Components/<Category>/AGENTS.md`;
+- the root category table and `CLAUDE.md` when missing;
+- `src/slice-build.generated.d.ts`, the runtime shim and `src/slice-events.generated.js`;
+- `docs/events/index.md`, one page per namespace, `diagram.mmd` and a self-contained
+  `diagram.html`.
+
+`slice docs check` compares the generated files with the current project and exits non-zero when
+they drift. Use it in CI; use `slice docs generate` to fix.
+
+`slice dev` regenerates before starting the watch server. `slice build` runs `slice docs check` for
+projects that already have the scaffold (`AGENTS.md` + `docs/events/index.md`). `slice doctor` has a
+**Documentation** row for missing guides, placeholders and drift.
+
+See [Documentation & AGENTS.md](/Documentation/Documentation-System) for the full workflow, the
+module-first layout and the generated-vs-authored rules.
+
 ### pnpm build-approval note
 With pnpm v10+, lifecycle scripts are gated by `allowBuilds` in `pnpm-workspace.yaml`.
 `slice init --pm pnpm` automatically configures:
@@ -362,6 +419,8 @@ Production serves static assets from `src/public/` (copied into `dist/`) at the 
 
 ## build
 Builds production output by analyzing dependencies, generating bundles, and writing files to `/dist`.
+The default output is a compact, phase-by-phase summary: files optimized, build size, bundle counts
+and the request reduction. Per-file sizes and the per-route bundle list are opt-in with `--verbose`.
 
 :::tip
 Production builds include **Structural framework components** in bundles to avoid runtime fetches.
@@ -376,7 +435,7 @@ npm run build
 | Flag | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `-a, --analyze` | `boolean` | `false` | Analyze only, do not generate bundles. |
-| `-v, --verbose` | `boolean` | `false` | Output analysis metrics. |
+| `-v, --verbose` | `boolean` | `false` | Show per-file optimization, per-route bundles and analysis metrics. |
 | `--no-minify` | `boolean` | `false` | Disable minification (enabled by default). |
 | `--no-obfuscate` | `boolean` | `false` | Disable obfuscation (enabled by default). |
 | `--preview` | `boolean` | `false` | Start preview server after build. |
@@ -425,11 +484,24 @@ Rules:
 - An invalid `--category` fails with a message listing the valid categories.
 
 ## component list
-Lists all local components by scanning category paths from `sliceConfig.json` and rewrites
-`src/Components/components.js`.
+Lists local components by scanning category paths from `sliceConfig.json` and rewrites
+`src/Components/components.js`. The default output is a compact category summary; it does not print
+a huge table.
 
 ```bash title="List components"
 npm run component:list
+```
+
+| Option | Purpose |
+| --- | --- |
+| `-a, --all` | List every component, grouped by category |
+| `-c, --category <name>` | Only one category |
+| `--json` | Machine-readable `{ total, categories }` output |
+
+```bash title="Focused output"
+npm run component:list -- --all
+npm run component:list -- --category Visual
+npm run component:list -- --json
 ```
 
 ## component delete
@@ -712,8 +784,8 @@ npm run slice:help
 ```
 
 ## types generate
-Generates a TypeScript declaration file from your components' `static props`, so editors can
-autocomplete and type-check `slice.build('Name', { ... })` calls.
+Alias of `slice docs generate types`. Generates a TypeScript declaration file from your components'
+`static props`, so editors can autocomplete and type-check `slice.build('Name', { ... })` calls.
 
 ```bash title="Generate typings"
 npm run slice:types
@@ -732,7 +804,8 @@ hand, and re-generate (or wire it into your build) to keep autocomplete in sync.
 
 It also writes the event manifest (`src/slice-events.generated.js`), creates `jsconfig.json` when the
 project has none, and keeps that config pointed at the generated declarations. `slice lint` and
-`slice typecheck` run this refresh for you before they work.
+`slice typecheck` run this refresh for you before they work. Use `slice docs generate` when you also
+want the human event catalog and AGENTS inventories.
 
 ## Best Practices
 :::tip
@@ -1234,6 +1307,11 @@ const createToolingCards = () => {
       path: '/Documentation/Commands'
     },
     {
+      title: 'Documentation & AGENTS',
+      description: 'Category guides, component READMEs, event docs and agent instructions.',
+      path: '/Documentation/Documentation-System'
+    },
+    {
       title: 'sliceConfig.json',
       description: 'Configure themes, styles, routes, and structural services.',
       path: '/Documentation/Configuration/sliceConfig'
@@ -1508,6 +1586,14 @@ if (slice.events.hasSubscribers("cart:updated")) {
 }
 ```
 
+## Generated documentation
+
+`slice docs generate events` writes a committed event catalog under `docs/events/`: a summary
+index, one page per namespace, a Mermaid diagram and a self-contained HTML diagram. It uses the same
+static graph as the debugger Registry tab and excludes specs/tests/generated files. Run
+`slice docs check events` in CI. Event names must be `namespace:action`. See
+[Documentation & AGENTS.md](/Documentation/Documentation-System).
+
 ## Debugger panel
 Enable the EventManager UI to inspect subscriptions and recent emits in real time:
 
@@ -1671,6 +1757,25 @@ or a best-effort `file:line` from the call stack for global emits. This is what 
 fired, with counts — and anything that fires but is missing from the static graph is a
 dynamic emit worth a look.
 
+## Human-readable event docs
+
+`slice docs generate events` turns the same graph into a committed event catalog:
+
+```text
+docs/events/
+├── index.md          # summary by namespace + drift
+├── cart.md           # one page per namespace
+├── router.md
+├── diagram.mmd       # Mermaid source
+└── diagram.html      # self-contained HTML + inline SVG
+```
+
+Each namespace page lists the payload and the emitters/listeners with component, category
+and `file:line`. `index.md` flags declared-but-unused events, used-but-undeclared events,
+names without a namespace, and dynamic sites. The scanner excludes specs, tests and generated
+files. `slice docs check events` is the drift gate. See
+[Documentation & AGENTS.md](/Documentation/Documentation-System).
+
 ## Debugger panel
 Enable the Events UI and open it with the shortcut to inspect all of the above:
 
@@ -1705,8 +1810,9 @@ standardization; many `register()` calls is modularization — both work with th
 :::
 
 :::tip
-Re-run `slice types generate` after adding events or emit/subscribe sites so the types
-and the static graph stay in sync.
+After adding events or emit/subscribe sites, run `slice docs generate types` for the typed
+contract and `slice docs generate events` for the human catalog. `slice docs check` catches
+drift.
 :::
 
 ## Gotchas
@@ -1732,9 +1838,10 @@ dev aid (a one-time warning plus a debugger badge), not a runtime gate.
 :::
 
 :::details title="Where do the static emitters/listeners come from?"
-From `slice types generate`, which scans your `emit`/`subscribe` call sites and writes
+From `slice docs generate types`, which scans your `emit`/`subscribe` call sites and writes
 `src/slice-events.generated.js`. The Events panel loads it to show the documented graph
-alongside live runtime activity. See [EventManager](/Documentation/Structural/EventManager).
+alongside live runtime activity. `slice docs generate events` writes the human catalog under
+`docs/events/`. See [EventManager](/Documentation/Structural/EventManager).
 :::
 
 === markdown/external-dependencies.md ===
@@ -2495,6 +2602,12 @@ These scripts are created by `slice init`; if your project uses pnpm, run them a
 The dev port comes from `sliceConfig.json` (`server.port`, default `3001`) and falls back to the
 next free port if it is taken.
 
+`slice dev` also regenerates the project documentation (AGENTS inventories, types and
+`docs/events/`) before it starts watching. `slice build` checks those generated files for projects
+that already have the scaffold. Run `npx slicejs-cli docs generate` (or `pnpm exec slice docs
+generate`) for a manual refresh and `... docs check` in CI; see
+[Documentation & AGENTS.md](/Documentation/Documentation-System).
+
 ## Where your code lives
 | You want to… | Put it in |
 | --- | --- |
@@ -2657,6 +2770,259 @@ DevTools (`Slice/Components/Structural/Debugger`, `.../EventManager/EventManager
 A prop only updates the UI if its **setter** does the DOM work. If editing a value in the inspector
 changes nothing, the bug is in that prop's setter, not the inspector.
 :::
+
+=== markdown/getting-started/documentation-and-agents.md ===
+# Documentation & AGENTS.md
+
+Slice projects ship documentation as part of the project, not as a follow-up. The goal is simple:
+an agent or a new teammate should know what a category is for, which component owns a behavior, which
+events cross a boundary, and what changed — without guessing.
+
+## What `slice init` creates
+
+A fresh project gets the documentation scaffold next to the code:
+
+```text title="Project documentation layout"
+my-app/
+├── AGENTS.md                         # root guide: commands, categories, read order
+├── CLAUDE.md                         # one line: @AGENTS.md (Claude compatibility)
+├── src/
+│   └── Components/
+│       ├── Visual/
+│       │   └── AGENTS.md             # registry category guide + inventory
+│       ├── Service/
+│       │   └── AGENTS.md
+│       └── AppComponents/
+│           ├── AGENTS.md
+│           └── Dashboard/
+│               ├── Dashboard.js/html/css
+│               └── README.md         # app-owned component docs
+└── docs/
+    └── events/
+        ├── index.md
+        ├── <namespace>.md
+        ├── diagram.mmd
+        └── diagram.html
+```
+
+`src/markdown/` is **not** part of an app project. That folder belongs to the Slice.js Components
+and Slice.js Docs sites, which generate pages from Markdown. Apps document the module next to the
+module.
+
+## Read order for agents
+
+Every coding agent should read, in this order:
+
+1. `AGENTS.md` at the project root.
+2. The nearest `src/Components/<Category>/AGENTS.md`.
+3. The component's `README.md` when changing its API, behavior or events.
+4. `docs/events/` when changing an event contract.
+5. The relevant design/decision note, if the project keeps one.
+
+`AGENTS.md` is an open Markdown format used by Codex, OpenCode, Cursor, Gemini CLI, Aider, Jules,
+Factory, Devin, VS Code/Copilot, Windsurf, Amp and others. Claude Code reads it directly on current
+versions; `CLAUDE.md` imports it for older versions. A direct user instruction wins over all of
+them.
+
+## Root `AGENTS.md`
+
+The root file is a router. It answers:
+
+- what this project is;
+- which commands to run;
+- which categories exist and where their guides live;
+- where component docs, event docs and changelogs live;
+- what “done” includes.
+
+Its category table is generated between markers:
+
+```md
+<!-- slice:generated:categories:start -->
+| Category | Type | Path | Components | Guide |
+| --- | --- | --- | --- | --- |
+| Visual | Visual | `src/Components/Visual` | 14 | [AGENTS.md](src/Components/Visual/AGENTS.md) |
+| Domain | Service | `src/Components/Domain` | 5 | [AGENTS.md](src/Components/Domain/AGENTS.md) |
+<!-- slice:generated:categories:end -->
+```
+
+Write freely around the markers. `slice docs generate agents` rewrites only the marked block.
+
+## Category `AGENTS.md`
+
+Every category in `sliceConfig.paths.components` has a guide. It explains the category, not just the
+files.
+
+### Visual and Service
+
+These are the registry categories. `slice get` installs components there. Their guide states the
+rule:
+
+- a registry component is not edited by hand;
+- its authoritative docs are `slice docs` / MCP;
+- a local component added to the same category is app-owned and documents its own `README.md`.
+
+### App categories
+
+Custom categories such as `Domain`, `Core`, `Providers` or `AppComponents` are app-owned. Their guide
+should cover:
+
+- what belongs here and what does not;
+- the local conventions and invariants;
+- the component inventory;
+- which events cross the boundary;
+- gotchas learned during implementation.
+
+The generated inventory is only the table:
+
+```md
+<!-- slice:generated:components:start -->
+| Component | Type | Files | Docs |
+| --- | --- | --- | --- |
+| CartService | Service | 1 | [README](./CartService/README.md) |
+| PricingService | Service | 1 | [README](./PricingService/README.md) |
+<!-- slice:generated:components:end -->
+```
+
+A good guide is documentation, not boilerplate. “Components go here” is not enough.
+
+## Component `README.md`
+
+An app-owned component documents itself next to its code:
+
+- purpose and when not to use it;
+- public props/API;
+- events emitted or listened to, with namespaces;
+- a minimal usage example;
+- lifecycle or singleton constraints;
+- gotchas;
+- a link to the category changelog if the project uses one.
+
+Registry components do not get a local copy of their docs. That would go stale; link to
+`slice docs get <component>` instead.
+
+## Generated documentation
+
+`slice docs generate` writes the generated half:
+
+```bash
+slice docs generate            # agents + types + events
+slice docs generate agents     # components.js + AGENTS generated blocks
+slice docs generate types      # .d.ts + event manifest
+slice docs generate events     # docs/events/*
+```
+
+`slice docs check` is the read-only counterpart. It exits non-zero when a generated file is stale:
+
+```bash
+slice docs check
+slice docs check agents
+slice docs check types
+slice docs check events
+```
+
+`slice types generate` remains an alias of `slice docs generate types`.
+
+| Command | What it does |
+| --- | --- |
+| `slice init` | Seeds `AGENTS.md`, `CLAUDE.md`, category guides, types and event docs |
+| `slice dev` | Regenerates the documentation before starting the watch server |
+| `slice build` | Checks documentation drift for projects that already have the scaffold |
+| `slice doctor` | Reports missing guides, placeholders and generated-doc drift |
+| `slice component create/delete` | Keeps `components.js` and the category inventory in sync |
+| `slice get` / `slice sync` | Updates the installed category inventory |
+
+Never hand-edit `components.js`, `docs/events/*`, `src/slice-events.generated.js` or
+`*.generated.d.ts`.
+
+## Event documentation
+
+The event catalog is generated from `slice.events.register(...)` and the static `emit` /
+`subscribe` call sites:
+
+```text
+docs/events/
+├── index.md          # summary by namespace + drift
+├── cart.md           # one page per namespace
+├── router.md
+├── diagram.mmd       # Mermaid source
+└── diagram.html      # self-contained HTML + inline SVG
+```
+
+Rules:
+
+- Event names are `namespace:action`.
+- Each namespace page lists payload, emitters, listeners, category and `file:line`.
+- `index.md` lists declared-but-unused events, used-but-undeclared events, names without a
+  namespace, and dynamic sites.
+- The scanner excludes `*.spec.js`, `*.test.js`, `*.generated.js`, `src/public/` and
+  `src/bundles/`.
+- `diagram.html` opens offline; it has no CDN or JavaScript dependency.
+
+Example namespace page:
+
+```md
+# cart events
+
+## `cart:add`
+
+Payload: `{ sku: string, qty: number }`
+
+| Role | Component | Category | Source |
+| --- | --- | --- | --- |
+| emitter | CartService | Domain | `src/Components/Domain/CartService/CartService.js:42` |
+| listener | CartBadge | Visual | `src/Components/Visual/CartBadge/CartBadge.js:18` |
+```
+
+## Changelog is optional
+
+The scaffold does not force a changelog. If the project uses one:
+
+- `CHANGELOG.md` root for release-level changes;
+- `src/Components/<Category>/CHANGELOG.md` for category-level changes;
+- per-component changelogs only for components with their own release history.
+
+A feature does not create a folder. It adds an entry to the changelog that already exists. If the
+project has no changelog, do not invent one unless the user asks.
+
+## What to update for each change
+
+| Change | Update |
+| --- | --- |
+| Feature | Component README, category guide if the category changed, changelog if used |
+| Bug | Regression test, component README/gotcha, changelog if user-facing |
+| New component | Component README, category inventory, tests |
+| Removed component | Category inventory, references, changelog if used |
+| Public props/API | Component README and examples |
+| Event contract | `slice.events.register`, `slice docs generate`, namespace page, tests |
+| Config/CLI | Root `AGENTS.md`, framework/CLI docs, changelog |
+| Architecture | Design/ADR doc, category guide, changelog |
+
+If none apply, say “No docs impact” and why. A test-only change or an internal refactor with no
+public behavior is a valid reason.
+
+## Library docs are different
+
+`slicejs-components` and `slicejs_docs` are documentation sites. Their Markdown source lives in
+`src/markdown/` or `markdown/` and their parsers generate the pages. That pipeline does not apply to
+apps.
+
+When working in those repositories:
+
+- edit the Markdown source, never the generated pages;
+- run the repo's docs generator;
+- regenerate the component agent manifest and OG/SEO artifacts when the page is public;
+- update the framework docs and the shared skill when guidance changes.
+
+## Why this helps agents
+
+- The root guide is small and points to the nearest category.
+- The category guide explains the boundary and links the component docs.
+- The component README explains the contract and gotchas.
+- The event catalog is generated from the actual call sites, so it cannot silently drift.
+- `slice docs check` catches stale generated docs before a build or PR.
+
+The result is documentation that is local, discoverable and current — not a second README nobody
+reads.
 
 === markdown/getting-started/environment-variables.md ===
 # Environment Variables
@@ -3442,6 +3808,8 @@ If you have not initialized a project yet, see Installation, then come back here
 ## The generated tree
 ```text title="Fresh project after slice init"
 my-app/
+├── AGENTS.md                    # Agent guide: read order, commands, category table
+├── CLAUDE.md                    # One line: @AGENTS.md (Claude compatibility)
 ├── api/                         # Express dev/prod server + security middleware (don't edit)
 ├── src/
 │   ├── App/
@@ -3450,11 +3818,14 @@ my-app/
 │   │   └── style.css            # App-level base styles
 │   ├── Components/
 │   │   ├── AppComponents/       # YOUR app-specific components
+│   │   │   ├── AGENTS.md        #   category guide + generated inventory
 │   │   │   ├── AppShell/        #   persistent shell: navbar + MultiRoute content area
 │   │   │   ├── HomeSection/     #   the "/" section
 │   │   │   └── AboutSection/    #   the "/about" section
 │   │   ├── Visual/              # Registry UI components installed for the starter
+│   │   │   └── AGENTS.md        #   registry rules + generated inventory
 │   │   ├── Service/             # Built-in services (FetchManager, storage helpers)
+│   │   │   └── AGENTS.md
 │   │   └── components.js        # Registry of local components (auto-generated)
 │   ├── public/                  # Served from the site root, copied to dist/ as-is
 │   │   ├── Themes/              #   Slice.css, Light.css, Dark.css (CSS variables)
@@ -3465,11 +3836,22 @@ my-app/
 │   │   └── sitemap.xml          #   Sitemap
 │   ├── routes.js                # Route table (path -> component)
 │   └── sliceConfig.json         # Framework configuration
+├── docs/
+│   └── events/                  # Generated event catalog, Mermaid + standalone HTML
+│       ├── index.md
+│       ├── <namespace>.md
+│       ├── diagram.mmd
+│       └── diagram.html
 ├── node_modules/                # Dependencies (framework + local CLI) — inside the project
 ├── .gitignore                   # Ignores node_modules/, dist/ and local .env files
 ├── package.json                 # Scripts, packageManager field, dependencies
 └── pnpm-lock.yaml               # Lockfile of your package manager (or package-lock.json)
 ```
+
+`AGENTS.md` and the category guides are part of the scaffold, not optional generated noise. They
+tell agents which category a component belongs to and where its docs live. `CLAUDE.md` only imports
+`AGENTS.md`. `src/markdown/` is not created in an app: that folder belongs to the Slice.js Components
+and Slice.js Docs sites.
 
 `slice init` creates the `my-app/` folder itself — you don't `mkdir` or `npm init`
 beforehand. The `package.json` pins your package manager in the `packageManager`
@@ -5728,6 +6110,7 @@ This is how Slice.js knows **where your components live and how to load them**. 
 | --- | --- | --- |
 | `path` | `string` | Folder (relative to `src/`) where that category's components live. |
 | `type` | `Visual` or `Service` | How to load a component in this category. |
+| `description` | `string` | Optional short purpose. Used as a seed when the category `AGENTS.md` is created; the guide itself is the formal documentation. |
 
 The `type` controls loading:
 - **`Visual`** — the component has a UI, so Slice loads three files per component:
@@ -5752,6 +6135,11 @@ A default project ships three categories:
 When you call `slice.build('Name')`, Slice looks up the component's category in `components.js`,
 finds the matching `paths.components` entry, and loads the files from `<path>/<Name>/` using the
 rules for that `type`. You can add your own categories here (each needs a `path` and a `type`).
+
+`slice init` and `slice docs generate agents` create a `src/Components/<Category>/AGENTS.md` for
+every category. `Visual` and `Service` are registry categories: `slice get` installs there, and
+their guides point to the remote component docs. App categories document their own components in a
+co-located `README.md`. See [Documentation & AGENTS.md](/Documentation/Documentation-System).
 
 :::tip
 You normally do not edit folders by hand — `slice component create` scaffolds a component in the

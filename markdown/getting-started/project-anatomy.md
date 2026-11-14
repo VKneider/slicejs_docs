@@ -22,6 +22,8 @@ If you have not initialized a project yet, see Installation, then come back here
 ## The generated tree
 ```text title="Fresh project after slice init"
 my-app/
+├── AGENTS.md                    # Agent guide: read order, commands, category table
+├── CLAUDE.md                    # One line: @AGENTS.md (Claude compatibility)
 ├── api/                         # Express dev/prod server + security middleware (don't edit)
 ├── src/
 │   ├── App/
@@ -30,11 +32,14 @@ my-app/
 │   │   └── style.css            # App-level base styles
 │   ├── Components/
 │   │   ├── AppComponents/       # YOUR app-specific components
+│   │   │   ├── AGENTS.md        #   category guide + generated inventory
 │   │   │   ├── AppShell/        #   persistent shell: navbar + MultiRoute content area
 │   │   │   ├── HomeSection/     #   the "/" section
 │   │   │   └── AboutSection/    #   the "/about" section
 │   │   ├── Visual/              # Registry UI components installed for the starter
+│   │   │   └── AGENTS.md        #   registry rules + generated inventory
 │   │   ├── Service/             # Built-in services (FetchManager, storage helpers)
+│   │   │   └── AGENTS.md
 │   │   └── components.js        # Registry of local components (auto-generated)
 │   ├── public/                  # Served from the site root, copied to dist/ as-is
 │   │   ├── Themes/              #   Slice.css, Light.css, Dark.css (CSS variables)
@@ -45,11 +50,22 @@ my-app/
 │   │   └── sitemap.xml          #   Sitemap
 │   ├── routes.js                # Route table (path -> component)
 │   └── sliceConfig.json         # Framework configuration
+├── docs/
+│   └── events/                  # Generated event catalog, Mermaid + standalone HTML
+│       ├── index.md
+│       ├── <namespace>.md
+│       ├── diagram.mmd
+│       └── diagram.html
 ├── node_modules/                # Dependencies (framework + local CLI) — inside the project
 ├── .gitignore                   # Ignores node_modules/, dist/ and local .env files
 ├── package.json                 # Scripts, packageManager field, dependencies
 └── pnpm-lock.yaml               # Lockfile of your package manager (or package-lock.json)
 ```
+
+`AGENTS.md` and the category guides are part of the scaffold, not optional generated noise. They
+tell agents which category a component belongs to and where its docs live. `CLAUDE.md` only imports
+`AGENTS.md`. `src/markdown/` is not created in an app: that folder belongs to the Slice.js Components
+and Slice.js Docs sites.
 
 `slice init` creates the `my-app/` folder itself — you don't `mkdir` or `npm init`
 beforehand. The `package.json` pins your package manager in the `packageManager`

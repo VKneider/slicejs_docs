@@ -154,6 +154,10 @@ const routes = [
              component: 'DevelopmentWorkflow',
           },
           {
+             path: '/Documentation-System',
+             component: 'DocumentationAndAgentsDocumentation',
+          },
+          {
              path: '/Component-Anatomy',
              component: 'ComponentAnatomy',
           },
