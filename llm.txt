@@ -422,6 +422,10 @@ Builds production output by analyzing dependencies, generating bundles, and writ
 The default output is a compact, phase-by-phase summary: files optimized, build size, bundle counts
 and the request reduction. Per-file sizes and the per-route bundle list are opt-in with `--verbose`.
 
+It also writes `dist/slice-env.json` (the shared public env payload) and
+`dist/slice-env.generated.js` (the ESM shim the runtime imports). There is no env endpoint in
+production; `slice dev` keeps the live `/slice-env.json` provider.
+
 :::tip
 Production builds include **Structural framework components** in bundles to avoid runtime fetches.
 These entries are stored as `Framework/Structural/<ComponentName>` in bundle config.
@@ -3057,12 +3061,18 @@ SLICE_PUBLIC_ENABLE_CHAT=true
 DB_PASSWORD=server-only
 ```
 
-## Runtime Endpoint Contract
-Slice.js serves environment data at `/slice-env.json` in both development and production.
+## Build-time Artifact
+`slice build` writes two files into `dist/`:
 
-```json title="/slice-env.json"
+- `slice-env.json` — the shared payload (`{ mode, env }`).
+- `slice-env.generated.js` — a tiny ESM shim that exports the same object.
+
+The runtime **imports** `/slice-env.generated.js` at boot. There is no env endpoint in production.
+`slice dev` keeps `/slice-env.json` live so `.env` edits do not require a build.
+
+```json title="dist/slice-env.json"
 {
-  "mode": "development",
+  "mode": "production",
   "env": {
     "SLICE_PUBLIC_API_URL": "https://api.example.com",
     "SLICE_PUBLIC_ENABLE_CHAT": "true"
@@ -3073,7 +3083,14 @@ Slice.js serves environment data at `/slice-env.json` in both development and pr
 ### Resolution Rules
 - `process.env` has priority over `.env` when both define the same key.
 - In development, values are resolved per request.
-- In production, values are resolved at startup and cached for the process lifetime.
+- In production, values are frozen at build time. Rebuild after changing `.env` or `SLICE_PUBLIC_*`.
+- `slice export` copies both files to the static output; `slice start` serves them as static assets.
+
+### Deployment Modes
+| Mode | Command | Env delivery |
+| --- | --- | --- |
+| Express | `slice build` + `slice start` | `dist/slice-env.generated.js` served as a static asset |
+| Static | `slice build` + `slice export` | `slice-env.generated.js` at the static root |
 
 ## Runtime Access in Components
 
@@ -3113,7 +3130,7 @@ Missing or empty values fall back: `bool`/`int`/`list` return the provided fallb
 :::steps
 1. Define browser-safe keys using `SLICE_PUBLIC_`.
 2. Keep secrets in non-public env keys.
-3. Verify endpoint output at `/slice-env.json`.
+3. Run `slice build` (or `slice export`) after changing public env values.
 4. Read values with `slice.env.*` (or `slice.getEnv`) in runtime code.
 :::
 
@@ -6242,14 +6259,20 @@ Never place secrets, tokens, private keys, or credentials in these variables.
 | `SLICE_PUBLIC_*` | yes | `SLICE_PUBLIC_API_URL=https://api.example.com` |
 | Any other key | no | `DB_PASSWORD=...` |
 
-### Runtime Endpoint Contract (`/slice-env.json`)
-Slice.js serves browser-safe runtime environment data at `/slice-env.json`.
+### Build-time Artifact (`slice-env.generated.js`)
+`slice build` writes browser-safe runtime environment data into `dist/`:
 
-Response shape:
+- `slice-env.json` — the shared payload (`{ mode, env }`).
+- `slice-env.generated.js` — an ESM shim that exports the same object.
 
-```json title="/slice-env.json"
+The runtime imports `/slice-env.generated.js` at boot; production has no env endpoint. `slice dev`
+keeps the live `/slice-env.json` provider so `.env` edits do not require a build.
+
+Payload shape:
+
+```json title="dist/slice-env.json"
 {
-  "mode": "development",
+  "mode": "production",
   "env": {
     "SLICE_PUBLIC_API_URL": "https://api.example.com"
   }
@@ -6261,7 +6284,8 @@ Response shape:
 | `mode` | `"development"` or `"production"` | Current runtime mode. |
 | `env` | `object` | Key/value map of browser-exposed `SLICE_PUBLIC_*` variables. |
 
-In development and production, the contract is the same: the endpoint returns `{ mode, env }` and `env` only contains `SLICE_PUBLIC_*` keys.
+In production the payload is frozen at build time. `slice export` copies both files to the static
+root; `slice start` serves them as static assets.
 
 ### Runtime API Access
 After Slice.js initializes, use these runtime helpers:

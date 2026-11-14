@@ -322,6 +322,10 @@ Builds production output by analyzing dependencies, generating bundles, and writ
 The default output is a compact, phase-by-phase summary: files optimized, build size, bundle counts
 and the request reduction. Per-file sizes and the per-route bundle list are opt-in with `--verbose`.
 
+It also writes `dist/slice-env.json` (the shared public env payload) and
+`dist/slice-env.generated.js` (the ESM shim the runtime imports). There is no env endpoint in
+production; `slice dev` keeps the live `/slice-env.json` provider.
+
 :::tip
 Production builds include **Structural framework components** in bundles to avoid runtime fetches.
 These entries are stored as `Framework/Structural/<ComponentName>` in bundle config.

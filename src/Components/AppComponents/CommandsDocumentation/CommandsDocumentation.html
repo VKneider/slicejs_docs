@@ -106,6 +106,7 @@
 <div class="callout callout-tip">Production serves static assets from <code>src/public/</code> (copied into <code>dist/</code>) at the root URL — e.g. <code>/Themes</code>, <code>/Styles</code>, <code>/images</code>.</div>
 <h2 id="build">build</h2>
 <p>Builds production output by analyzing dependencies, generating bundles, and writing files to <code>/dist</code>. The default output is a compact, phase-by-phase summary: files optimized, build size, bundle counts and the request reduction. Per-file sizes and the per-route bundle list are opt-in with <code>--verbose</code>.</p>
+<p>It also writes <code>dist/slice-env.json</code> (the shared public env payload) and <code>dist/slice-env.generated.js</code> (the ESM shim the runtime imports). There is no env endpoint in production; <code>slice dev</code> keeps the live <code>/slice-env.json</code> provider.</p>
 <div class="callout callout-tip">Production builds include <strong>Structural framework components</strong> in bundles to avoid runtime fetches.
 These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</code> in bundle config.</div>
 <div class="code-block" data-block-id="doc-block-24"></div>

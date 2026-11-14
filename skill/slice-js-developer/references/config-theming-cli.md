@@ -60,7 +60,7 @@ Common config bugs: missing `defaultTheme` when `themeManager.enabled` → unsty
 
 ### Public env vars
 
-Only vars prefixed `SLICE_PUBLIC_` reach the browser (loaded from `.env`). Read with `slice.getEnv('SLICE_PUBLIC_API_URL', fallback)` (or `slice.getPublicEnv()`). Everything without the prefix stays server-side. The framework serves them at `/slice-env.json` (re-read each request in dev). Full detail: query the MCP for `getting-started/environment-variables`.
+Only vars prefixed `SLICE_PUBLIC_` reach the browser (loaded from `.env`). Read with `slice.getEnv('SLICE_PUBLIC_API_URL', fallback)` (or `slice.getPublicEnv()`). Everything without the prefix stays server-side. `slice build` writes `dist/slice-env.json` plus `dist/slice-env.generated.js`; the runtime imports the ESM shim, so production has no env endpoint. `slice dev` keeps the live `/slice-env.json` provider. Full detail: query the MCP for `getting-started/environment-variables`.
 
 **Typed accessors (recent versions):** `slice.env` parses common shapes so you stop re-writing string splits / boolean checks — `slice.env.bool('SLICE_PUBLIC_AUTH_ENABLED')`, `slice.env.list('SLICE_PUBLIC_MODELS')` (csv → array), `slice.env.int('X', 5000)`, `slice.env.get('X', fb)`, `slice.env.has('X')`, `slice.env.all()`. Missing/empty values return the fallback.
 

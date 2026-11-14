@@ -243,14 +243,20 @@ Never place secrets, tokens, private keys, or credentials in these variables.
 | `SLICE_PUBLIC_*` | yes | `SLICE_PUBLIC_API_URL=https://api.example.com` |
 | Any other key | no | `DB_PASSWORD=...` |
 
-### Runtime Endpoint Contract (`/slice-env.json`)
-Slice.js serves browser-safe runtime environment data at `/slice-env.json`.
+### Build-time Artifact (`slice-env.generated.js`)
+`slice build` writes browser-safe runtime environment data into `dist/`:
 
-Response shape:
+- `slice-env.json` — the shared payload (`{ mode, env }`).
+- `slice-env.generated.js` — an ESM shim that exports the same object.
 
-```json title="/slice-env.json"
+The runtime imports `/slice-env.generated.js` at boot; production has no env endpoint. `slice dev`
+keeps the live `/slice-env.json` provider so `.env` edits do not require a build.
+
+Payload shape:
+
+```json title="dist/slice-env.json"
 {
-  "mode": "development",
+  "mode": "production",
   "env": {
     "SLICE_PUBLIC_API_URL": "https://api.example.com"
   }
@@ -262,7 +268,8 @@ Response shape:
 | `mode` | `"development"` or `"production"` | Current runtime mode. |
 | `env` | `object` | Key/value map of browser-exposed `SLICE_PUBLIC_*` variables. |
 
-In development and production, the contract is the same: the endpoint returns `{ mode, env }` and `env` only contains `SLICE_PUBLIC_*` keys.
+In production the payload is frozen at build time. `slice export` copies both files to the static
+root; `slice start` serves them as static assets.
 
 ### Runtime API Access
 After Slice.js initializes, use these runtime helpers:

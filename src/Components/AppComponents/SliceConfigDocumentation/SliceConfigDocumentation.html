@@ -82,12 +82,14 @@ missing <code>.html</code>.</div>
 Never place secrets, tokens, private keys, or credentials in these variables.</div>
 <h3 id="naming-contract">Naming Contract</h3>
 <div class="table-block" data-block-id="doc-block-21"></div>
-<h3 id="runtime-endpoint-contract-slice-envjson">Runtime Endpoint Contract (<code>/slice-env.json</code>)</h3>
-<p>Slice.js serves browser-safe runtime environment data at <code>/slice-env.json</code>.</p>
-<p>Response shape:</p>
+<h3 id="build-time-artifact-slice-envgeneratedjs">Build-time Artifact (<code>slice-env.generated.js</code>)</h3>
+<p><code>slice build</code> writes browser-safe runtime environment data into <code>dist/</code>:</p>
+<ul><li><code>slice-env.json</code> — the shared payload (<code>{ mode, env }</code>).</li><li><code>slice-env.generated.js</code> — an ESM shim that exports the same object.</li></ul>
+<p>The runtime imports <code>/slice-env.generated.js</code> at boot; production has no env endpoint. <code>slice dev</code> keeps the live <code>/slice-env.json</code> provider so <code>.env</code> edits do not require a build.</p>
+<p>Payload shape:</p>
 <div class="code-block" data-block-id="doc-block-22"></div>
 <div class="table-block" data-block-id="doc-block-23"></div>
-<p>In development and production, the contract is the same: the endpoint returns <code>{ mode, env }</code> and <code>env</code> only contains <code>SLICE_PUBLIC_*</code> keys.</p>
+<p>In production the payload is frozen at build time. <code>slice export</code> copies both files to the static root; <code>slice start</code> serves them as static assets.</p>
 <h3 id="runtime-api-access">Runtime API Access</h3>
 <p>After Slice.js initializes, use these runtime helpers:</p>
 <div class="table-block" data-block-id="doc-block-24"></div>
