@@ -1,6 +1,25 @@
 // api/middleware/securityMiddleware.js
 import path from 'path';
 
+// Keep the terminal quiet: real blocks still answer 403, but the reason is
+// reported only with SLICE_DEBUG=1 and at most once a minute per category.
+const WARNING_COOLDOWN_MS = 60_000;
+const lastWarningAt = new Map();
+
+function isDebug() {
+  return process.env.SLICE_DEBUG === '1' || process.env.SLICE_DEBUG === 'true';
+}
+
+function report(category, message, { always = false } = {}) {
+  if (!always && !isDebug()) return;
+
+  const now = Date.now();
+  if (now - (lastWarningAt.get(category) || 0) < WARNING_COOLDOWN_MS) return;
+  lastWarningAt.set(category, now);
+
+  console.warn(`[slice:security] ${message}`);
+}
+
 /**
  * Middleware de seguridad para prevenir acceso directo malicioso
  * pero permitir que la aplicación cargue sus dependencias normalmente
@@ -27,7 +46,7 @@ export function securityMiddleware(options = {}) {
     );
     
     if (isBlockedPath) {
-      console.warn(`🚫 Blocked access to sensitive path: ${requestPath}`);
+      report('blocked-path', `Blocked access to sensitive path: ${requestPath}`, { always: true });
       return res.status(403).json({
         error: 'Forbidden',
         message: 'Access to this resource is not allowed',
@@ -51,7 +70,7 @@ export function securityMiddleware(options = {}) {
     const fileExtension = path.extname(requestPath).toLowerCase();
     
     if (fileExtension && !allowedExtensions.includes(fileExtension)) {
-      console.warn(`🚫 Blocked file type: ${requestPath}`);
+      report('blocked-extension', `Blocked file type: ${requestPath}`, { always: true });
       return res.status(403).json({
         error: 'Forbidden',
         message: 'File type not allowed',
@@ -62,7 +81,7 @@ export function securityMiddleware(options = {}) {
     // 4. Prevenir path traversal attacks
     const normalizedPath = path.normalize(requestPath);
     if (normalizedPath.includes('..') || normalizedPath.includes('~')) {
-      console.warn(`🚫 Path traversal attempt: ${requestPath}`);
+      report('path-traversal', `Path traversal attempt: ${requestPath}`, { always: true });
       return res.status(403).json({
         error: 'Forbidden',
         message: 'Invalid path',
@@ -137,7 +156,7 @@ export function sliceFrameworkProtection(options = {}) {
 
     // En modo estricto, bloquear todo acceso sin referer válido
     if (strictMode) {
-      console.warn(`🚫 Blocked direct framework file access: ${requestPath}`);
+      report('blocked-framework', `Blocked direct framework file access: ${requestPath}`, { always: true });
       return res.status(403).json({
         error: 'Framework Protection',
         message: 'Direct access to Slice.js framework files is blocked',
@@ -146,8 +165,9 @@ export function sliceFrameworkProtection(options = {}) {
       });
     }
 
-    // En modo normal (desarrollo), permitir pero advertir
-    console.warn(`⚠️  Framework file accessed without valid referer: ${requestPath}`);
+    // En modo normal (desarrollo), permitir. A direct hit on a framework module
+    // is common while debugging, so it is only reported with SLICE_DEBUG=1.
+    report('framework-referer', `Framework file accessed without a valid referer: ${requestPath}`);
     next();
   };
 }
@@ -175,7 +195,7 @@ export function suspiciousRequestLogger() {
 
     if (isSuspicious) {
       const clientIp = req.ip || req.connection.remoteAddress;
-      console.warn(`⚠️  Suspicious request: ${requestPath} from ${clientIp}`);
+      report('suspicious', `Suspicious request: ${requestPath} from ${clientIp}`);
     }
 
     next();
@@ -209,7 +229,7 @@ export function directAccessProtection(options = {}) {
     const isDirectBrowserAccess = !referer && accept.includes('text/html');
     
     if (isDirectBrowserAccess) {
-      console.warn(`🚫 Blocked direct browser access: ${requestPath}`);
+      report('direct-access', `Blocked direct browser access: ${requestPath}`, { always: true });
       return res.status(403).send(`
         <!DOCTYPE html>
         <html>
@@ -231,7 +251,7 @@ export function directAccessProtection(options = {}) {
           </style>
         </head>
         <body>
-          <h1>🚫 Direct Access Denied</h1>
+          <h1>Direct Access Denied</h1>
           <p>This file cannot be accessed directly.</p>
           <p>Path: <code>${requestPath}</code></p>
           <p>Framework files are automatically loaded by the application.</p>

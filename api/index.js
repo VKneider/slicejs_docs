@@ -18,6 +18,14 @@ import sliceConfig from '../src/sliceConfig.json' with { type: 'json' };
 let server;
 const app = express();
 
+// Per-request bundle bookkeeping is useful when debugging the bundler and noise
+// everywhere else. `SLICE_DEBUG=1` brings it back.
+function debugLog(message) {
+  if (process.env.SLICE_DEBUG === '1' || process.env.SLICE_DEBUG === 'true') {
+    console.log(`[slice] ${message}`);
+  }
+}
+
 // Parsear argumentos de línea de comandos
 const args = process.argv.slice(2);
 
@@ -133,7 +141,7 @@ app.use('/bundles/', (req, res, next) => {
   // Solo procesar archivos .js
   if (req.path.endsWith('.js')) {
     const filePath = path.join(__dirname, `../${folderDeployed}`, 'bundles', req.path);
-    console.log(`📂 Processing bundle: ${req.path} -> ${filePath}`);
+    debugLog(`Processing bundle: ${req.path} -> ${filePath}`);
 
     // Verificar que el archivo existe
     if (fs.existsSync(filePath)) {
@@ -144,14 +152,14 @@ app.use('/bundles/', (req, res, next) => {
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate'); // No cachear para permitir actualizaciones en tiempo real
         res.setHeader('Pragma', 'no-cache');
         res.setHeader('Expires', '0');
-        console.log(`✅ Serving bundle: ${req.path} (${fileContent.length} bytes, ${Buffer.byteLength(fileContent, 'utf8')} bytes UTF-8)`);
+        debugLog(`Serving bundle: ${req.path} (${fileContent.length} bytes, ${Buffer.byteLength(fileContent, 'utf8')} bytes UTF-8)`);
         return res.send(fileContent);
       } catch (error) {
-        console.log(`❌ Error reading bundle file: ${error.message}`);
+        console.error(`Error reading bundle file: ${error.message}`);
         return res.status(500).send('Error reading bundle file');
       }
     } else {
-      console.log(`❌ Bundle file not found: ${filePath}`);
+      debugLog(`Bundle file not found: ${filePath}`);
       return res.status(404).send('Bundle file not found');
     }
   }
@@ -162,7 +170,6 @@ app.use('/bundles/', (req, res, next) => {
 
 // Servir otros archivos de bundles (JSON, CSS, etc.) con el middleware estático normal
 app.use('/bundles/', express.static(path.join(__dirname, `../${folderDeployed}`, 'bundles')));
-console.log(`📦 Serving bundles from /${folderDeployed}/bundles`);
 
 // Servir framework Slice.js (solo development)
 if (runMode === 'development') {
@@ -280,19 +287,18 @@ app.get('*', (req, res) => {
 
 function startServer() {
   server = app.listen(PORT, () => {
-    console.log(`🔒 Security middleware: active (zero-config, automatic)`);
-    console.log(`🚀 Slice.js server running on port ${PORT}`);
+    console.log(`Slice.js server running on port ${PORT}`);
   });
 }
 
 // Manejar cierre del proceso
 process.on('SIGINT', () => {
-  console.log('\n🛑 Slice server stopped');
+  console.log('\nSlice server stopped');
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n🛑 Server terminated');
+  console.log('\nServer terminated');
   process.exit(0);
 });
 
