@@ -73,6 +73,7 @@ The CLI uses one symbol per severity and one line per outcome:
 | `slice build` | - | Build production output (bundles + dist) and check generated docs for scaffolded projects. |
 | `slice build clean` | - | Remove generated bundles. |
 | `slice build info` | - | Show bundle configuration summary. |
+| `slice export` | - | Package the production build for a static host (experimental). |
 | `slice start` | - | Start production server. |
 | `slice component create` | `slice comp new` | Create a local component. |
 | `slice component list` | `slice comp ls` | List local components. |
@@ -356,6 +357,37 @@ npm run build
 - Supported: relative imports, bare npm packages (`import 'pkg'`), and absolute imports whose file exists under `src/public/`.
 - `slice dev` and `slice build` keep the same rule for preserved absolute (`public/`) imports.
 - See [External Dependencies](/Documentation/External-Dependencies) for npm packages.
+
+## export (experimental)
+Packages `dist/` for a static host — Cloudflare Pages, Netlify, Vercel, nginx, GitHub Pages or S3 —
+with no Express and no long-running Node process.
+
+```bash title="Static export"
+npm exec slice export --from-dist --host cloudflare
+npm exec slice export --host vercel
+```
+
+It flattens `dist/public` to the root, copies `slice-env.json` + `slice-env.generated.js`,
+prerenders every literal SEO route (and `sitemap.paths` patterns), writes a real `404.html`, and
+generates the host rules. `slice build` + `slice start` remains the Express mode; both share the
+same `dist/`.
+
+| Flag | Default | Notes |
+| --- | --- | --- |
+| `-o, --out <dir>` | `dist-static` | Output directory. |
+| `--from-dist` | `false` | Reuse `dist/` instead of running a build. |
+| `--host <name>` | `cloudflare` | `cloudflare`, `netlify`, `vercel`, `nginx`, `github`, `s3`, `none`. |
+| `--seo <file>` | auto | Manifest override (`seo.json` / `public/seo.json`). |
+| `--origin <url>` | manifest | Canonical origin override. |
+| `--images <file>` | auto | Social card manifest (`public/og/manifest.json`). |
+| `--no-prerender` | `false` | Shell + SPA fallback only. |
+| `--spa` | `false` | Serve unknown routes with `index.html`. Without SEO the fallback is already on. |
+| `--check` | `false` | Validate an existing export; write nothing. |
+| `--dry-run` | `false` | Report what would be written. |
+
+With SEO, the default is a **real 404** (`404.html`) and no catch-all. Known routes and
+`sitemap.paths` patterns are prerendered; add `sitemap.paths` for dynamic routes that must exist as
+files, or pass `--spa` to let the client router own unknown paths.
 
 ## component create
 Creates a new local component and registers it in `components.js`. Runs interactively, or

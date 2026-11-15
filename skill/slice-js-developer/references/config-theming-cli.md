@@ -241,6 +241,7 @@ Node ≥ 20. Use `npx slicejs-cli <cmd>` or the `npm run` scripts `slice init` s
 | `slice init` | Scaffold project: installs framework, creates `api/` + `src/`, installs registry Visual components, sets up scripts, seeds `AGENTS.md` + `CLAUDE.md` + category guides + generated docs |
 | `slice dev` (`start`) | Dev server + HMR (`-p <port>`, `--no-hmr`); regenerates project documentation before watching |
 | `slice build` | Production bundle → `dist/`; checks generated docs for scaffolded projects; many flags (analyze, `--sourcemap`, `--hash-filenames`, `--compress`, `--strict-external`, `--no-validate`, …) — see `slice --help`; subcmds `clean`, `info` |
+| `slice export` | Package `dist/` for a static host (Cloudflare/Netlify/Vercel/nginx/GitHub/S3): flatten public, prerender literal SEO routes + `sitemap.paths`, real 404, locale redirects, host rules; `--from-dist`, `--spa`, `--no-prerender`, `--check` |
 | `slice docs generate [all\|agents\|types\|events]` | Generate project docs: `components.js` + AGENTS inventories, declarations/event manifest, `docs/events/*` (Markdown, Mermaid, standalone HTML) |
 | `slice docs check [all\|agents\|types\|events]` | Read-only drift check for generated project docs; exits 1 when stale |
 | `slice start` | Production server from `dist/` |
