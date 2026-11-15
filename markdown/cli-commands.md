@@ -389,6 +389,10 @@ With SEO, the default is a **real 404** (`404.html`) and no catch-all. Known rou
 `sitemap.paths` patterns are prerendered; add `sitemap.paths` for dynamic routes that must exist as
 files, or pass `--spa` to let the client router own unknown paths.
 
+Cloudflare/Netlify, Vercel and nginx get server-side locale redirects. GitHub Pages, S3 and
+`--host none` cannot express them, so the export writes portable HTML redirect pages
+(`meta refresh` + `rel=canonical` + `noindex`).
+
 ## component create
 Creates a new local component and registers it in `components.js`. Runs interactively, or
 non-interactively when you pass the name and category on the command line.

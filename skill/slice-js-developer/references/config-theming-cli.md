@@ -263,6 +263,8 @@ Node ≥ 20. Use `npx slicejs-cli <cmd>` or the `npm run` scripts `slice init` s
 
 Project layout after `slice init`: `api/index.js` (Express server) · `src/Components/{Visual,Service,AppComponents,components.js,<Category>/AGENTS.md}` · `src/public/{Themes,Styles,images}` (static assets, served at the root URL) · `src/routes.js` · `src/sliceConfig.json` · `src/App/index.html` · `AGENTS.md` · `CLAUDE.md` · `docs/events/`.
 
+`slice export --host github|s3|none` writes portable HTML redirect pages for locale redirects (those hosts have no server rules). With SEO the default is a real 404; `--spa` restores the client-router fallback.
+
 Typical loop: `slice init` → `slice dev` (regenerates docs) → `slice component create` (or `slice browse` + `slice get <Name>`) → edit + component `README.md` → `slice docs generate` when a generated artifact changed → `slice doctor` when stuck → `slice build` + `slice start` for prod.
 
 Output is one symbol per severity: `✔` success, `!` warning, `✖` error, `•` info, `→` next action. Stack traces are hidden by default; `SLICE_DEBUG=1` prints them. Repeated diagnostics are grouped and use the `!` line (for example, dynamic `slice.build()` calls that cannot be bundled; stripped or unresolved import warnings are deduplicated). The dev server prints one banner and no per-bundle lines. Security rules are always enforced, but their warnings (including "framework file accessed without a valid referer") only print with `SLICE_DEBUG=1`, at most once per minute per category. `slice build` is a compact phase-by-phase summary; `--verbose` adds per-file sizes and the per-route bundle list.

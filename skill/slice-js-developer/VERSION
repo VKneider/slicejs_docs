@@ -10,6 +10,7 @@ CHANGELOG
   - `slice export` packages dist/ for a static host: flatten public, prerender
     literal SEO routes + sitemap.paths, real 404, locale redirects and host rules.
   - `--spa` restores the SPA catch-all; with SEO the default is a real 404.
+  - GitHub/S3/none get portable HTML redirect pages for locale redirects.
   Files touched: VERSION, references/config-theming-cli.md, ../manifest.json.
 
 1.34.2

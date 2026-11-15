@@ -122,6 +122,7 @@ These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</co
 <p>It flattens <code>dist/public</code> to the root, copies <code>slice-env.json</code> + <code>slice-env.generated.js</code>, prerenders every literal SEO route (and <code>sitemap.paths</code> patterns), writes a real <code>404.html</code>, and generates the host rules. <code>slice build</code> + <code>slice start</code> remains the Express mode; both share the same <code>dist/</code>.</p>
 <div class="table-block" data-block-id="doc-block-28"></div>
 <p>With SEO, the default is a <strong>real 404</strong> (<code>404.html</code>) and no catch-all. Known routes and <code>sitemap.paths</code> patterns are prerendered; add <code>sitemap.paths</code> for dynamic routes that must exist as files, or pass <code>--spa</code> to let the client router own unknown paths.</p>
+<p>Cloudflare/Netlify, Vercel and nginx get server-side locale redirects. GitHub Pages, S3 and <code>--host none</code> cannot express them, so the export writes portable HTML redirect pages (<code>meta refresh</code> + <code>rel=canonical</code> + <code>noindex</code>).</p>
 <h2 id="component-create">component create</h2>
 <p>Creates a new local component and registers it in <code>components.js</code>. Runs interactively, or non-interactively when you pass the name and category on the command line.</p>
 <div class="code-block" data-block-id="doc-block-29"></div>
