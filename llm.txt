@@ -469,8 +469,9 @@ npm exec slice export --host vercel
 
 It flattens `dist/public` to the root, copies `slice-env.json` + `slice-env.generated.js`,
 prerenders every literal SEO route (and `sitemap.paths` patterns), writes a real `404.html`, and
-generates the host rules. `slice build` + `slice start` remains the Express mode; both share the
-same `dist/`.
+generates the host rules. `Components/` is pruned by default so component source is not fetchable
+(Express production also 404s it); use `--keep-components` only for debugging. `slice build` +
+`slice start` remains the Express mode; both share the same `dist/`.
 
 | Flag | Default | Notes |
 | --- | --- | --- |
@@ -482,6 +483,7 @@ same `dist/`.
 | `--images <file>` | auto | Social card manifest (`public/og/manifest.json`). |
 | `--no-prerender` | `false` | Shell + SPA fallback only. |
 | `--spa` | `false` | Serve unknown routes with `index.html`. Without SEO the fallback is already on. |
+| `--keep-components` | `false` | Keep `Components/` in the export. Component source becomes fetchable; for debugging only. |
 | `--check` | `false` | Validate an existing export; write nothing. |
 | `--dry-run` | `false` | Report what would be written. |
 

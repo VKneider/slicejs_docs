@@ -263,7 +263,7 @@ Node ≥ 20. Use `npx slicejs-cli <cmd>` or the `npm run` scripts `slice init` s
 
 Project layout after `slice init`: `api/index.js` (Express server) · `src/Components/{Visual,Service,AppComponents,components.js,<Category>/AGENTS.md}` · `src/public/{Themes,Styles,images}` (static assets, served at the root URL) · `src/routes.js` · `src/sliceConfig.json` · `src/App/index.html` · `AGENTS.md` · `CLAUDE.md` · `docs/events/`.
 
-`slice export --host github|s3|none` writes portable HTML redirect pages for locale redirects (those hosts have no server rules). With SEO the default is a real 404; `--spa` restores the client-router fallback. The export is root-only: serve it at a domain/subdomain root; subpath hosting is not supported.
+`slice export --host github|s3|none` writes portable HTML redirect pages for locale redirects (those hosts have no server rules). With SEO the default is a real 404; `--spa` restores the client-router fallback. The export is root-only: serve it at a domain/subdomain root; subpath hosting is not supported. `Components/` is pruned by default (source not fetchable); `--keep-components` is debug-only.
 
 Typical loop: `slice init` → `slice dev` (regenerates docs) → `slice component create` (or `slice browse` + `slice get <Name>`) → edit + component `README.md` → `slice docs generate` when a generated artifact changed → `slice doctor` when stuck → `slice build` + `slice start` for prod.
 
