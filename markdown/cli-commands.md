@@ -315,8 +315,12 @@ npm run start
 | `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |
 
 :::tip
-Production serves static assets from `src/public/` (copied into `dist/`) at the root URL — e.g. `/Themes`, `/Styles`, `/images`.
+Production serves static assets from `src/public/` (copied into `dist/`) at the root URL - e.g. `/Themes`, `/Styles`, `/images`.
 :::
+
+Production does **not** expose `/Components`, the `/dist` tree, source maps, `.d.ts`, `.env`,
+`package.json` or `node_modules`. Only `/dist/bundles/` remains as a legacy mirror for older assets;
+component source and declarations are not public.
 
 ## build
 Builds production output by analyzing dependencies, generating bundles, and writing files to `/dist`.
