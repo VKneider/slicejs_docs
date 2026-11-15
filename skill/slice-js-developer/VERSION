@@ -1,9 +1,24 @@
 slice-js-developer
-version: 1.34.3
+version: 1.34.4
 targets: slicejs-web-framework ^4.2.x
 
 CHANGELOG
 =========
+
+1.34.4
+  Static export audit hardening + deployment guide.
+  - `slice export --out` is validated before `fs.remove()`: project root, `src`,
+    `dist`, `api`, ancestors, files and paths outside the project are rejected.
+  - The export is an allowlist (App/bundles/Slice/locales/events/public + eight
+    root files); `utils/`, `AppConfig.js`, `slice-events.generated.js`, `.map*`,
+    `.d.ts`, `.env*`, lockfiles and `node_modules` never ship.
+  - The framework SEO API is imported lazily, so an older framework only breaks
+    `export` with a clear message, not every CLI command.
+  - Production decodes percent-encoded paths before the guard (`/%2eenv`).
+  - `--check` now validates routes.js, host rules, map variants, sourceMappingURL,
+    `.env*`, package manifests and source-only folders.
+  - New user-facing deployment guide; `dist-static/` rationale documented.
+  Files touched: VERSION, references/config-theming-cli.md, ../manifest.json.
 
 1.34.3
   Static export (experimental).
