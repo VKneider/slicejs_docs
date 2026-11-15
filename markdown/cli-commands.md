@@ -393,6 +393,10 @@ Cloudflare/Netlify, Vercel and nginx get server-side locale redirects. GitHub Pa
 `--host none` cannot express them, so the export writes portable HTML redirect pages
 (`meta refresh` + `rel=canonical` + `noindex`).
 
+The export is **root-only**: serve it at a domain or subdomain root. Subpath hosting
+(`https://user.github.io/repo/`) is not supported, because the public route must stay the same as the
+app route.
+
 ## component create
 Creates a new local component and registers it in `components.js`. Runs interactively, or
 non-interactively when you pass the name and category on the command line.

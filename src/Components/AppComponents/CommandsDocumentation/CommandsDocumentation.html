@@ -123,6 +123,7 @@ These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</co
 <div class="table-block" data-block-id="doc-block-28"></div>
 <p>With SEO, the default is a <strong>real 404</strong> (<code>404.html</code>) and no catch-all. Known routes and <code>sitemap.paths</code> patterns are prerendered; add <code>sitemap.paths</code> for dynamic routes that must exist as files, or pass <code>--spa</code> to let the client router own unknown paths.</p>
 <p>Cloudflare/Netlify, Vercel and nginx get server-side locale redirects. GitHub Pages, S3 and <code>--host none</code> cannot express them, so the export writes portable HTML redirect pages (<code>meta refresh</code> + <code>rel=canonical</code> + <code>noindex</code>).</p>
+<p>The export is <strong>root-only</strong>: serve it at a domain or subdomain root. Subpath hosting (<code>https://user.github.io/repo/</code>) is not supported, because the public route must stay the same as the app route.</p>
 <h2 id="component-create">component create</h2>
 <p>Creates a new local component and registers it in <code>components.js</code>. Runs interactively, or non-interactively when you pass the name and category on the command line.</p>
 <div class="code-block" data-block-id="doc-block-29"></div>
