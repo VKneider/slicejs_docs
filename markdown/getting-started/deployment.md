@@ -210,6 +210,39 @@ Without SEO the shell is the only page and the SPA fallback is on by default.
 
 2. Pass `--spa` and let the client router resolve the route.
 
+## Backend routes (`/api`)
+
+A static export is just files: **there is no Express and no `/api/*`**. Do not
+point `/api` at the SPA fallback; it returns HTML, not JSON.
+
+If the app needs backend routes, use the Express server that ships with Slice:
+
+```bash
+slice build
+slice start
+```
+
+Add your routes in `api/index.js` (the `createSliceServer()` app). Deploy it on a
+Node host (Render, Fly, Railway, a VPS, Docker, or a serverless adapter). The
+static and Express modes are not mutually exclusive: you can keep the frontend
+static and call a separate API origin with `SLICE_PUBLIC_API_URL`.
+
+## Service worker
+
+`service-worker.js` is app-owned: Slice serves it and copies it into the build,
+but it does not generate the caching policy. For a static export:
+
+- every `PRECACHE` path must exist in `dist-static/`;
+- do not precache `/Components/...` (the exporter prunes it by default);
+- bump the cache name on every deploy, or use `--hash-filenames`;
+- if you want a new worker to take over immediately, call `skipWaiting()` in
+  `install` and `clients.claim()` in `activate` (the PWA guide shows the
+  pattern);
+- do not cache `/api/*` responses in a static export, because there is no API.
+
+See [Make Your App a PWA](/Documentation/Configuration/PWA) for the full worker
+example.
+
 ## Preview locally
 
 ```bash

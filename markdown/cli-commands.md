@@ -428,6 +428,10 @@ The export is **root-only**: serve it at a domain or subdomain root. Subpath hos
 (`https://user.github.io/repo/`) is not supported, because the public route must stay the same as the
 app route.
 
+A static export has **no `/api/*`**: it is files only. If the app needs backend routes, deploy with
+`slice build` + `slice start` (Express) on a Node host, or point the static frontend at a separate API
+origin. Do not route `/api` through the SPA fallback.
+
 `dist-static/` is a separate folder on purpose: `dist/` is the Express layout (`App/` at `/App`,
 `public/` at `/`, explicit root files), while a static host needs `public/*` at `/`, a root
 `index.html`, `404.html` and host rules. Keeping them separate preserves `slice start` and makes the

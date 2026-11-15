@@ -54,34 +54,45 @@ hosting (<code>https://user.github.io/repo/</code>) is not supported.</div>
 <ol><li>List concrete values in <code>seo.json</code>:</li></ol>
 <p>``<code>json    {      "routes": {        "/projects/${slug}": {          "sitemap": { "paths": ["alpha", "beta"] }        }      }    }    </code>``</p>
 <ol><li>Pass <code>--spa</code> and let the client router resolve the route.</li></ol>
-<h2 id="preview-locally">Preview locally</h2>
+<h2 id="backend-routes-api">Backend routes (<code>/api</code>)</h2>
+<p>A static export is just files: **there is no Express and no <code>/api/*</code>**. Do not point <code>/api</code> at the SPA fallback; it returns HTML, not JSON.</p>
+<p>If the app needs backend routes, use the Express server that ships with Slice:</p>
 <div class="code-block" data-block-id="doc-block-9"></div>
+<p>Add your routes in <code>api/index.js</code> (the <code>createSliceServer()</code> app). Deploy it on a Node host (Render, Fly, Railway, a VPS, Docker, or a serverless adapter). The static and Express modes are not mutually exclusive: you can keep the frontend static and call a separate API origin with <code>SLICE_PUBLIC_API_URL</code>.</p>
+<h2 id="service-worker">Service worker</h2>
+<p><code>service-worker.js</code> is app-owned: Slice serves it and copies it into the build, but it does not generate the caching policy. For a static export:</p>
+<ul><li>every <code>PRECACHE</code> path must exist in <code>dist-static/</code>;</li><li>do not precache <code>/Components/...</code> (the exporter prunes it by default);</li><li>bump the cache name on every deploy, or use <code>--hash-filenames</code>;</li><li>if you want a new worker to take over immediately, call <code>skipWaiting()</code> in</li></ul>
+<p><code>install</code> and <code>clients.claim()</code> in <code>activate</code> (the PWA guide shows the   pattern);</p>
+<ul><li>do not cache <code>/api/*</code> responses in a static export, because there is no API.</li></ul>
+<p>See [Make Your App a PWA](/Documentation/Configuration/PWA) for the full worker example.</p>
+<h2 id="preview-locally">Preview locally</h2>
+<div class="code-block" data-block-id="doc-block-10"></div>
 <p>This respects <code>404.html</code> and the prerendered route files. Do <strong>not</strong> use <code>npx serve -s</code> to validate the 404: the <code>-s</code> flag forces an SPA fallback and hides the real <code>404.html</code>. Use <code>npx serve -s</code> only when you intentionally want to test <code>--spa</code> behavior.</p>
 <p><code>slice start</code> serves <code>dist/</code>, not <code>dist-static/</code>; there is no built-in static preview command.</p>
 <h2 id="host-matrix">Host matrix</h2>
 <h3 id="cloudflare-pages-netlify">Cloudflare Pages / Netlify</h3>
-<div class="code-block" data-block-id="doc-block-10"></div>
+<div class="code-block" data-block-id="doc-block-11"></div>
 <p>Upload <code>dist-static/</code>. The exporter writes <code>_redirects</code> and <code>_headers</code>:</p>
 <ul><li>locale redirects,</li><li>optional <code>/*  /index.html  200</code> when <code>--spa</code> is used,</li><li>security headers,</li><li><code>Cache-Control: no-store</code> for <code>/bundles/*</code> and the env pair.</li></ul>
 <h3 id="vercel">Vercel</h3>
-<div class="code-block" data-block-id="doc-block-11"></div>
+<div class="code-block" data-block-id="doc-block-12"></div>
 <p>Upload <code>dist-static/</code> and let Vercel read <code>vercel.json</code> (redirects, optional rewrite, cache headers). Set the project output directory to <code>dist-static</code> if you deploy from a Git repository.</p>
 <h3 id="nginx">nginx</h3>
-<div class="code-block" data-block-id="doc-block-12"></div>
+<div class="code-block" data-block-id="doc-block-13"></div>
 <p>Copy <code>dist-static/</code> to the server and include <code>nginx.conf</code> (or merge it into your site config). It maps <code>404</code> to <code>/404.html</code> and sets <code>no-store</code> on bundles and env files.</p>
 <h3 id="github-pages">GitHub Pages</h3>
 <p>Root-only. Two supported shapes:</p>
-<div class="table-block" data-block-id="doc-block-13"></div>
-<div class="code-block" data-block-id="doc-block-14"></div>
+<div class="table-block" data-block-id="doc-block-14"></div>
+<div class="code-block" data-block-id="doc-block-15"></div>
 <p>Publish <code>dist-static/</code> to the <code>gh-pages</code> branch (or <code>/docs</code>) and configure the custom domain in <strong>Settings → Pages</strong>. <code>.nojekyll</code> is written automatically.</p>
 <p>GitHub Pages has no server redirects and no custom headers. Locale redirects become HTML <code>meta refresh</code> pages; there is no CSP/HSTS control. If the app depends on <code>/api/*</code>, GitHub Pages is not enough: use a separate backend or a host with functions.</p>
 <h3 id="s3-cloudfront">S3 + CloudFront</h3>
-<div class="code-block" data-block-id="doc-block-15"></div>
+<div class="code-block" data-block-id="doc-block-16"></div>
 <p>Upload <code>dist-static/</code> with <code>index.html</code> as the default root document and <code>404.html</code> as the error document. Locale redirects become HTML redirect pages. For an SPA fallback, use a CloudFront function or <code>CustomErrorResponses</code> to <code>/index.html</code> (soft 404).</p>
 <h3 id="-host-none"><code>--host none</code></h3>
 <p>No host rules. The folder is portable: <code>index.html</code>, prerendered routes, <code>404.html</code>, env files and client redirect pages. Use it for a custom server or a host the exporter does not model.</p>
 <h2 id="validate-before-upload">Validate before upload</h2>
-<div class="code-block" data-block-id="doc-block-16"></div>
+<div class="code-block" data-block-id="doc-block-17"></div>
 <p><code>--check</code> writes nothing and fails when:</p>
 <ul><li>a required runtime file is missing (<code>index.html</code>, <code>404.html</code>, <code>routes.js</code>,</li></ul>
 <p><code>sliceConfig.json</code>, the env pair, <code>bundles/bundle.config.json</code>,   <code>Slice/Slice.js</code>),</p>
@@ -94,16 +105,16 @@ hosting (<code>https://user.github.io/repo/</code>) is not supported.</div>
 <ul><li>a literal route has no prerendered page and the export has no SPA fallback.</li></ul>
 <p><code>--check</code> does <strong>not</strong> enumerate <code>${param}</code> routes, verify every referenced asset, or scan application config for secrets.</p>
 <p>Run it in CI before uploading:</p>
-<div class="code-block" data-block-id="doc-block-17"></div>
+<div class="code-block" data-block-id="doc-block-18"></div>
 <h2 id="environment-variables">Environment variables</h2>
 <p><code>slice build</code> writes <code>dist/slice-env.json</code> and <code>dist/slice-env.generated.js</code>. The runtime imports the shim, so there is no production env endpoint. Values are frozen at build time: rebuild after changing <code>.env</code> or <code>SLICE_PUBLIC_*</code>.</p>
 <p>Only <code>SLICE_PUBLIC_*</code> keys reach the browser. See [Environment Variables](/Documentation/Configuration/environment-variables).</p>
 <h2 id="what-is-public">What is public</h2>
 <p>These files are served by design and must not contain secrets:</p>
-<div class="table-block" data-block-id="doc-block-18"></div>
+<div class="table-block" data-block-id="doc-block-19"></div>
 <p>Everything else is either in a bundle or pruned.</p>
 <h2 id="troubleshooting">Troubleshooting</h2>
-<div class="table-block" data-block-id="doc-block-19"></div>
+<div class="table-block" data-block-id="doc-block-20"></div>
 <h2 id="related-docs">Related docs</h2>
 <ul><li>[CLI Commands](/Documentation/CLI) — <code>build</code>, <code>start</code>, <code>export</code>.</li><li>[Environment Variables](/Documentation/Configuration/environment-variables).</li><li>[Project Anatomy](/Documentation/Project-Anatomy).</li><li>[Server Entrypoint](/Documentation/Architecture/Server-Entrypoint).</li></ul>
 </div>
