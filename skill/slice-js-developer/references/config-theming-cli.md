@@ -41,7 +41,7 @@ Field notes:
 - **`events`/`context`** — `enabled` turns on `slice.events`/`slice.context` (no-op when false); `ui.enabled` + `ui.shortcut` add the live debug panels.
 - **`paths.components`** — category → `{ path, type }`. `type: "Visual"` loads `.html`/`.css`; `"Service"` loads only `.js`. A wrong `path`/`type` makes `slice.build` return `null` with a misleading "not found".
 - **`logger.showLogs.console.<level>`** — which levels reach the console. The buffer is always built (`slice.logger.getLogs()` works regardless).
-- **Static assets** — there is **no** `publicFolders` setting. Put static files under `src/public/`; everything there is served at the root URL and copied into the build. `Themes`, `Styles` and `images` live under `src/public/` (URLs `/Themes`, `/Styles`, `/images` unchanged).
+- **Static assets** — put static files under `src/public/`; everything there is served at the root URL and copied into the build. `Themes`, `Styles` and `images` live under `src/public/` (URLs `/Themes`, `/Styles`, `/images` unchanged).
 
 **Production overrides** — keep app managers on, turn off dev panels + verbose logs:
 

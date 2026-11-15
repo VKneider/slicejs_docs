@@ -439,8 +439,8 @@ upload boundary explicit.
 
 `--check` validates the runtime files, the allowlist, source maps and declarations, `.env*`,
 `package.json`, `node_modules`, `sourceMappingURL=`, host-rule coherence, and literal route coverage
-when there is no SPA fallback. It does **not** enumerate `${param}` routes, verify every referenced
-asset, or scan application config for secrets. Run it in CI before uploading.
+when there is no SPA fallback. It does **not** enumerate `${param}` routes or verify every referenced
+asset. Run it in CI before uploading.
 
 ## component create
 Creates a new local component and registers it in `components.js`. Runs interactively, or

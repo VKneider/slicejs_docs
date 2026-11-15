@@ -539,8 +539,8 @@ upload boundary explicit.
 
 `--check` validates the runtime files, the allowlist, source maps and declarations, `.env*`,
 `package.json`, `node_modules`, `sourceMappingURL=`, host-rule coherence, and literal route coverage
-when there is no SPA fallback. It does **not** enumerate `${param}` routes, verify every referenced
-asset, or scan application config for secrets. Run it in CI before uploading.
+when there is no SPA fallback. It does **not** enumerate `${param}` routes or verify every referenced
+asset. Run it in CI before uploading.
 
 ## component create
 Creates a new local component and registers it in `components.js`. Runs interactively, or
@@ -2877,10 +2877,26 @@ slice build
 slice start
 ```
 
-Add your routes in `api/index.js` (the `createSliceServer()` app). Deploy it on a
-Node host (Render, Fly, Railway, a VPS, Docker, or a serverless adapter). The
-static and Express modes are not mutually exclusive: you can keep the frontend
-static and call a separate API origin with `SLICE_PUBLIC_API_URL`.
+Add your routes in `api/index.js`, before `start()` mounts the terminal fallback:
+
+```js title="api/index.js"
+import { createSliceServer } from 'slicejs-web-framework/api/framework/server.js';
+
+const { app, start } = createSliceServer();
+
+app.get('/api/health', (req, res) => {
+  res.json({ ok: true });
+});
+
+await start();
+```
+
+Deploy it on a Node host (Render, Fly, Railway, a VPS, Docker, or a serverless
+adapter). A serverless adapter that imports the app instead of running it should
+mount `sliceFallback()` and `sliceErrorHandler()` by hand, as Conclave does.
+
+The static and Express modes are not mutually exclusive: you can keep the
+frontend static and call a separate API origin with `SLICE_PUBLIC_API_URL`.
 
 ## Service worker
 
@@ -3009,8 +3025,8 @@ slice export --from-dist --host cloudflare --check
   without `.nojekyll`),
 - a literal route has no prerendered page and the export has no SPA fallback.
 
-`--check` does **not** enumerate `${param}` routes, verify every referenced
-asset, or scan application config for secrets.
+`--check` does **not** enumerate `${param}` routes or verify every referenced
+asset.
 
 Run it in CI before uploading:
 
@@ -6411,11 +6427,11 @@ to `dist/`. The starter already includes `src/public/images/`, so
 `src/public/images/icon-192.png` is served at `/images/icon-192.png`. Provide at
 least 192×192 and 512×512, plus a 512×512 `maskable` for Android.
 
-`src/public/` is the **only** public asset entry point. There is no
-`publicFolders` setting: everything under `src/public/` is served at `/` and
-copied into the build. That is also why `Themes/`, `Styles/` and `images/` live
-there — `paths.themes` and `paths.styles` point at the URLs those folders expose
-(`/Themes`, `/Styles`). You do not need to expose them in `sliceConfig.json`.
+`src/public/` is the **only** public asset entry point: everything under it is
+served at `/` and copied into the build. That is also why `Themes/`, `Styles/`
+and `images/` live there — `paths.themes` and `paths.styles` point at the URLs
+those folders expose (`/Themes`, `/Styles`). You do not need to expose them in
+`sliceConfig.json`.
 
 ## 3. The service worker
 Create `src/service-worker.js` (served at `/service-worker.js`). A minimal

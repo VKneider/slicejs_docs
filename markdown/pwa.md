@@ -58,11 +58,11 @@ to `dist/`. The starter already includes `src/public/images/`, so
 `src/public/images/icon-192.png` is served at `/images/icon-192.png`. Provide at
 least 192×192 and 512×512, plus a 512×512 `maskable` for Android.
 
-`src/public/` is the **only** public asset entry point. There is no
-`publicFolders` setting: everything under `src/public/` is served at `/` and
-copied into the build. That is also why `Themes/`, `Styles/` and `images/` live
-there — `paths.themes` and `paths.styles` point at the URLs those folders expose
-(`/Themes`, `/Styles`). You do not need to expose them in `sliceConfig.json`.
+`src/public/` is the **only** public asset entry point: everything under it is
+served at `/` and copied into the build. That is also why `Themes/`, `Styles/`
+and `images/` live there — `paths.themes` and `paths.styles` point at the URLs
+those folders expose (`/Themes`, `/Styles`). You do not need to expose them in
+`sliceConfig.json`.
 
 ## 3. The service worker
 Create `src/service-worker.js` (served at `/service-worker.js`). A minimal

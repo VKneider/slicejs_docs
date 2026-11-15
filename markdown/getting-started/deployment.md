@@ -222,10 +222,26 @@ slice build
 slice start
 ```
 
-Add your routes in `api/index.js` (the `createSliceServer()` app). Deploy it on a
-Node host (Render, Fly, Railway, a VPS, Docker, or a serverless adapter). The
-static and Express modes are not mutually exclusive: you can keep the frontend
-static and call a separate API origin with `SLICE_PUBLIC_API_URL`.
+Add your routes in `api/index.js`, before `start()` mounts the terminal fallback:
+
+```js title="api/index.js"
+import { createSliceServer } from 'slicejs-web-framework/api/framework/server.js';
+
+const { app, start } = createSliceServer();
+
+app.get('/api/health', (req, res) => {
+  res.json({ ok: true });
+});
+
+await start();
+```
+
+Deploy it on a Node host (Render, Fly, Railway, a VPS, Docker, or a serverless
+adapter). A serverless adapter that imports the app instead of running it should
+mount `sliceFallback()` and `sliceErrorHandler()` by hand, as Conclave does.
+
+The static and Express modes are not mutually exclusive: you can keep the
+frontend static and call a separate API origin with `SLICE_PUBLIC_API_URL`.
 
 ## Service worker
 
@@ -354,8 +370,8 @@ slice export --from-dist --host cloudflare --check
   without `.nojekyll`),
 - a literal route has no prerendered page and the export has no SPA fallback.
 
-`--check` does **not** enumerate `${param}` routes, verify every referenced
-asset, or scan application config for secrets.
+`--check` does **not** enumerate `${param}` routes or verify every referenced
+asset.
 
 Run it in CI before uploading:
 
