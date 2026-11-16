@@ -33,6 +33,8 @@ hosting (<code>https://user.github.io/repo/</code>) is not supported.</div>
 <ul><li><code>dist/public/*</code> at <code>/</code> (Themes, Styles, images, PWA),</li><li><code>/App/*</code>,</li><li><code>/routes.js</code> and <code>/sliceConfig.json</code>,</li><li><code>/bundles/*</code> and the legacy <code>/dist/bundles/*</code> mirror,</li><li><code>/Slice/Slice.js</code>,</li><li><code>/slice-env.json</code> and <code>/slice-env.generated.js</code>,</li><li><code>/service-worker.js</code> and <code>/manifest.json</code>,</li><li>translator dictionaries under their configured folder.</li></ul>
 <p>It does <strong>not</strong> expose <code>/Components</code>, the rest of the <code>/dist</code> tree, <code>.map</code>, <code>.d.ts</code>, <code>.env</code>, <code>package.json</code> or <code>node_modules</code>. A real <code>404</code> requires SEO; see [SEO and Share Cards](/Documentation/Architecture/SEO). Without SEO the fallback returns the shell with <code>200</code> (a soft 404).</p>
 <h2 id="static-export">Static export</h2>
+<div class="callout callout-warning"><code>slice export</code> is <strong>experimental</strong>. The output layout, flags and host presets
+may change between releases; <code>slice start</code> remains the stable Express path.</div>
 <div class="code-block" data-block-id="doc-block-5"></div>
 <p>Or let the exporter build first:</p>
 <div class="code-block" data-block-id="doc-block-6"></div>

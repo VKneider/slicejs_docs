@@ -112,6 +112,11 @@ keys in `sliceConfig.json`, `routes.js`, `bundle.config.json` or
 
 ## Static export
 
+:::warning
+`slice export` is **experimental**. The output layout, flags and host presets
+may change between releases; `slice start` remains the stable Express path.
+:::
+
 ```bash
 slice build
 slice export --from-dist --host cloudflare
