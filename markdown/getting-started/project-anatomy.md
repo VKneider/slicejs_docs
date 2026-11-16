@@ -57,7 +57,7 @@ my-app/
 │       ├── diagram.mmd
 │       └── diagram.html
 ├── node_modules/                # Dependencies (framework + local CLI) — inside the project
-├── .gitignore                   # Ignores node_modules/, dist/ and local .env files
+├── .gitignore                   # Ignores node_modules/, dist/, dist-static/ and local .env files
 ├── package.json                 # Scripts, packageManager field, dependencies
 └── pnpm-lock.yaml               # Lockfile of your package manager (or package-lock.json)
 ```
@@ -93,8 +93,8 @@ The starter installs only the Visual components it uses. Add more on demand with
 | `src/Components/Service/*` | Built-in services you can use or extend. | Optional |
 | `src/public/*` | Public files served from the site root (`/Themes/...`, `/images/...`) and copied to `dist/` by the build. | Yes |
 | `src/public/Themes/*` | Theme files defining CSS variables. | Optional |
-| `.gitignore` | Keeps `node_modules/`, the `dist/` build output and local `.env` files out of git. | Rarely |
-| `api/` | The server. Zero-config; serves `/src` in dev and `/dist` in production. | No |
+| `.gitignore` | Keeps `node_modules/`, the `dist/` build output, the `dist-static/` export and local `.env` files out of git. | Rarely |
+| `api/` | The server. Zero-config; serves `/src` in dev and the built files under `/dist` in production (`public/` at the root, `/App`, bundles and the runtime). | No |
 
 ## How a page reaches the screen
 1. `index.html` loads `/App/index.js`, which imports Slice and exposes the global `slice`.

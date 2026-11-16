@@ -73,6 +73,7 @@ The CLI uses one symbol per severity and one line per outcome:
 | `slice build` | - | Build production output (bundles + dist) and check generated docs for scaffolded projects. |
 | `slice build clean` | - | Remove generated bundles. |
 | `slice build info` | - | Show bundle configuration summary. |
+| `slice export` | - | Package the production build for a static host (experimental). |
 | `slice start` | - | Start production server. |
 | `slice component create` | `slice comp new` | Create a local component. |
 | `slice component list` | `slice comp ls` | List local components. |
@@ -308,19 +309,34 @@ Starts the production server and serves from `/dist`.
 npm run start
 ```
 
+If `dist/` or `dist/bundles/bundle.config.json` is missing, `slice start` runs `slice build`
+automatically. `src/` and `api/` are still required: the server entrypoint is `api/index.js`.
+
 ### Options
 | Flag | Type | Default | Notes |
 | --- | --- | --- | --- |
-| `-p, --port` | `number` | `3000` | Defaults to 3000 unless `-p` is passed. Falls back to port+1 if the requested port is busy. |
+| `-p, --port` | `number` | `3000` | Priority: `--port` → `sliceConfig.server.port` → `3000`. Falls back to port+1 if the requested port is busy. |
 
 :::tip
-Production serves static assets from `src/public/` (copied into `dist/`) at the root URL — e.g. `/Themes`, `/Styles`, `/images`.
+Production serves static assets from `src/public/` (copied into `dist/`) at the root URL - e.g. `/Themes`, `/Styles`, `/images`.
 :::
+
+Production does **not** expose `/Components`, the `/dist` tree, source maps, `.d.ts`, `.env`,
+`package.json` or `node_modules`. Only `/dist/bundles/` remains as a legacy mirror for older assets;
+component source and declarations are not public.
+
+A real `404` requires SEO. Without SEO the fallback returns the shell with `200` (soft 404). See
+[Deployment](/Documentation/Deployment) for the full hosting matrix and
+[Server Entrypoint](/Documentation/Architecture/Server-Entrypoint) for the fallback rules.
 
 ## build
 Builds production output by analyzing dependencies, generating bundles, and writing files to `/dist`.
 The default output is a compact, phase-by-phase summary: files optimized, build size, bundle counts
 and the request reduction. Per-file sizes and the per-route bundle list are opt-in with `--verbose`.
+
+It also writes `dist/slice-env.json` (the shared public env payload) and
+`dist/slice-env.generated.js` (the ESM shim the runtime imports). There is no env endpoint in
+production; `slice dev` keeps the live `/slice-env.json` provider.
 
 :::tip
 Production builds include **Structural framework components** in bundles to avoid runtime fetches.
@@ -336,11 +352,17 @@ npm run build
 | --- | --- | --- | --- |
 | `-a, --analyze` | `boolean` | `false` | Analyze only, do not generate bundles. |
 | `-v, --verbose` | `boolean` | `false` | Show per-file optimization, per-route bundles and analysis metrics. |
-| `--no-minify` | `boolean` | `false` | Disable minification (enabled by default). |
+| `--no-minify` | `boolean` | `false` | Disable minification (enabled by default). Debug only. |
 | `--no-obfuscate` | `boolean` | `false` | Disable obfuscation (enabled by default). |
 | `--preview` | `boolean` | `false` | Start preview server after build. |
 | `--serve` | `boolean` | `false` | Start preview server without building. |
 | `--skip-clean` | `boolean` | `false` | Skip cleaning dist before build. |
+| `--sourcemap` | `boolean` | `false` | Emit `.map` files next to minified bundles. `slice export` filters them out; never publish them. |
+| `--hash-filenames` | `boolean` | `false` | Add a content hash to bundle filenames for immutable CDN caching. |
+| `--compress` | `boolean` | `false` | Precompress dist assets to `.gz` and `.br`. `slice export` does not publish the precompressed siblings. |
+| `--allow-unoptimized` | `boolean` | `false` | Succeed even if some files could not be minified; they ship as-is. |
+| `--no-validate` | `boolean` | `false` | Skip component prop validation before building. |
+| `--strict-external` / `--no-strict-external` | `boolean` | strict | Fail (default) or continue when a `node_modules` dependency cannot be resolved. |
 
 ### Subcommands
 | Command | Purpose |
@@ -352,6 +374,80 @@ npm run build
 - Supported: relative imports, bare npm packages (`import 'pkg'`), and absolute imports whose file exists under `src/public/`.
 - `slice dev` and `slice build` keep the same rule for preserved absolute (`public/`) imports.
 - See [External Dependencies](/Documentation/External-Dependencies) for npm packages.
+
+## export (experimental)
+Packages `dist/` for a static host — Cloudflare Pages, Netlify, Vercel, nginx, GitHub Pages or S3 —
+with no Express and no long-running Node process. See [Deployment](/Documentation/Deployment) for
+the full guide.
+
+```bash title="Static export"
+npm exec slice export --from-dist --host cloudflare
+npm exec slice export --host vercel
+```
+
+It flattens `dist/public` to the root, copies `slice-env.json` + `slice-env.generated.js`,
+prerenders every literal SEO route (and `sitemap.paths` patterns), writes a real `404.html`, and
+generates the host rules. `Components/` is pruned by default so component source is not fetchable
+(Express production also 404s it); use `--keep-components` only for debugging. `slice build` +
+`slice start` remains the Express mode; both share the same `dist/`.
+
+| Flag | Default | Notes |
+| --- | --- | --- |
+| `-o, --out <dir>` | `dist-static` | Output directory. Validated before writing: `.`, `src`, `dist`, `api`, ancestors, paths outside the project and existing folders that are not a previous export are rejected. |
+| `--from-dist` | `false` | Reuse `dist/` instead of running a build. |
+| `--host <name>` | `cloudflare` | `cloudflare`, `netlify`, `vercel`, `nginx`, `github`, `s3`, `none`. |
+| `--seo <file>` | auto | Manifest override (`seo.json` / `public/seo.json`). |
+| `--origin <url>` | manifest | Canonical origin override. |
+| `--images <file>` | auto | Social card manifest (`public/og/manifest.json`). |
+| `--no-prerender` | `false` | Shell + SPA fallback only. |
+| `--spa` | `false` | Serve unknown routes with `index.html`. Without SEO the fallback is already on. |
+| `--keep-components` | `false` | Keep `Components/` in the export. Component source becomes fetchable; for debugging only. |
+| `--check` | `false` | Validate an existing export; write nothing. |
+| `--dry-run` | `false` | Report what would be written. |
+| `--sourcemap` | `false` | Delegated to build, but maps are filtered from the export. |
+| `--hash-filenames` | `false` | Delegated to build. |
+| `--compress` | `false` | Delegated to build. `.br`/`.gz` siblings are copied; the host must be configured to serve them (`brotli_static`/`gzip_static`, etc.). |
+| `--no-minify` | `false` | Delegated to build; debug only. |
+| `--no-obfuscate` | `false` | Delegated to build. |
+
+The export is an allowlist: it publishes `App/`, `bundles/`, `Slice/`, `locales/`, `events/`,
+`public/*` flattened to the root, and eight root files (`routes.js`, `sliceConfig.json`,
+`slice-env.json`, `slice-env.generated.js`, `robots.txt`, `sitemap.xml`, `manifest.json`,
+`service-worker.js`, plus `slice-events.generated.js` when `events.ui.enabled`). It skips `utils/`,
+`AppConfig.js`, generated `.d.ts`, `.map*`, `.env*`, `package.json`, lockfiles, `node_modules` and
+`.git`.
+
+With SEO, the default is a **real 404** (`404.html`) and no catch-all. Known routes and
+`sitemap.paths` patterns are prerendered; add `sitemap.paths` for dynamic routes that must exist as
+files, or pass `--spa` to let the client router own unknown paths.
+
+Cloudflare/Netlify, Vercel and nginx get server-side locale redirects. GitHub Pages, S3 and
+`--host none` cannot express them, so the export writes portable HTML redirect pages
+(`meta refresh` + `rel=canonical` + `noindex`).
+
+`--spa` is host-specific: Netlify writes `/* /index.html 200`, Vercel a `/(.*)` rewrite, nginx
+`try_files ... /index.html`, and Cloudflare omits `404.html` so Pages auto-SPA. GitHub/S3/none write
+the shell as `404.html` and keep a `404` status. Vercel redirects use `statusCode` (301/302);
+`permanent` would produce 308/307.
+
+The export is **root-only**: serve it at a domain or subdomain root. Subpath hosting
+(`https://user.github.io/repo/`) is not supported, because the public route must stay the same as the
+app route.
+
+A static export has **no `/api/*`**: it is files only. If the app needs backend routes, deploy with
+`slice build` + `slice start` (Express) on a Node host, or point the static frontend at a separate API
+origin. Do not route `/api` through the SPA fallback.
+
+`dist-static/` is a separate folder on purpose: `dist/` is the Express layout (`App/` at `/App`,
+`public/` at `/`, explicit root files), while a static host needs `public/*` at `/`, a root
+`index.html`, `404.html` and host rules. Keeping them separate preserves `slice start` and makes the
+upload boundary explicit.
+
+`--check` validates the runtime files, the allowlist, source maps and declarations, `.env*`,
+`package.json`, `node_modules`, `sourceMappingURL=`, host-rule coherence, and literal route coverage
+when there is no SPA fallback. It does **not** enumerate `${param}` routes or verify every referenced
+asset; it warns when a bundle calls `fetch("/api/...")` because a static host cannot serve Express
+routes. Run it in CI before uploading.
 
 ## component create
 Creates a new local component and registers it in `components.js`. Runs interactively, or

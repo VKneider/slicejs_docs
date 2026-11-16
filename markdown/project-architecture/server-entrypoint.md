@@ -73,7 +73,8 @@ The fallback is where "nobody answered" is decided:
 | Request | What it answers |
 |---|---|
 | a known page | the prerendered HTML for that route (or the plain shell without SEO) |
-| a path that is not a page | the same shell with a real `404` |
+| a path that is not a page, with SEO | the `404` page with a real `404` status |
+| a path that is not a page, without SEO | the shell with `200` (soft 404) |
 | an unknown `/api/*` path | `404` JSON, never the shell |
 | a non-`GET` request | falls through, so Express answers it |
 | a component file in development (`.html`, `.css`) | the shell, or an empty stylesheet for JS-only components |

@@ -42,12 +42,18 @@ SLICE_PUBLIC_ENABLE_CHAT=true
 DB_PASSWORD=server-only
 ```
 
-## Runtime Endpoint Contract
-Slice.js serves environment data at `/slice-env.json` in both development and production.
+## Build-time Artifact
+`slice build` writes two files into `dist/`:
 
-```json title="/slice-env.json"
+- `slice-env.json` — the shared payload (`{ mode, env }`).
+- `slice-env.generated.js` — a tiny ESM shim that exports the same object.
+
+The runtime **imports** `/slice-env.generated.js` at boot. There is no env endpoint in production.
+`slice dev` keeps `/slice-env.json` live so `.env` edits do not require a build.
+
+```json title="dist/slice-env.json"
 {
-  "mode": "development",
+  "mode": "production",
   "env": {
     "SLICE_PUBLIC_API_URL": "https://api.example.com",
     "SLICE_PUBLIC_ENABLE_CHAT": "true"
@@ -58,7 +64,14 @@ Slice.js serves environment data at `/slice-env.json` in both development and pr
 ### Resolution Rules
 - `process.env` has priority over `.env` when both define the same key.
 - In development, values are resolved per request.
-- In production, values are resolved at startup and cached for the process lifetime.
+- In production, values are frozen at build time. Rebuild after changing `.env` or `SLICE_PUBLIC_*`.
+- `slice export` copies both files to the static output; `slice start` serves them as static assets.
+
+### Deployment Modes
+| Mode | Command | Env delivery |
+| --- | --- | --- |
+| Express | `slice build` + `slice start` | `dist/slice-env.generated.js` served as a static asset |
+| Static | `slice build` + `slice export` | `slice-env.generated.js` at the static root |
 
 ## Runtime Access in Components
 
@@ -98,7 +111,7 @@ Missing or empty values fall back: `bool`/`int`/`list` return the provided fallb
 :::steps
 1. Define browser-safe keys using `SLICE_PUBLIC_`.
 2. Keep secrets in non-public env keys.
-3. Verify endpoint output at `/slice-env.json`.
+3. Run `slice build` (or `slice export`) after changing public env values.
 4. Read values with `slice.env.*` (or `slice.getEnv`) in runtime code.
 :::
 

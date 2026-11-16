@@ -23,10 +23,13 @@ service worker with `Cache-Control: no-cache` and `Service-Worker-Allowed: /` so
 its scope is the whole app). Drop the files in `src/` and they're served at the
 site root; `slice build` copies them into `dist/` for production.
 
+They can also live in `src/public/`; Express prefers the `public/` copy for
+these two files, and `slice export` preserves that precedence.
+
 ## Steps
 :::steps
 1. Add `src/manifest.json`.
-2. Add icons and expose their folder in `sliceConfig.json`.
+2. Add icons under `src/public/`.
 3. Add `src/service-worker.js`.
 4. Link the manifest and theme color in `App/index.html`.
 5. Register the service worker — in production only.
@@ -57,6 +60,12 @@ Put your icons under `src/public/` so they are served at the root URL and copied
 to `dist/`. The starter already includes `src/public/images/`, so
 `src/public/images/icon-192.png` is served at `/images/icon-192.png`. Provide at
 least 192×192 and 512×512, plus a 512×512 `maskable` for Android.
+
+`src/public/` is the **only** public asset entry point: everything under it is
+served at `/` and copied into the build. That is also why `Themes/`, `Styles/`
+and `images/` live there — `paths.themes` and `paths.styles` point at the URLs
+those folders expose (`/Themes`, `/Styles`). You do not need to expose them in
+`sliceConfig.json`.
 
 ## 3. The service worker
 Create `src/service-worker.js` (served at `/service-worker.js`). A minimal
@@ -91,8 +100,14 @@ self.addEventListener('fetch', (event) => {
 ```
 
 List in `PRECACHE` the assets you want available offline. In production your code
-ships as hashed bundles under `/bundles/`, so add the ones your first screen needs
-and bump `CACHE` whenever you deploy new assets.
+ships as bundles under `/bundles/` (hashed only when you build with
+`--hash-filenames`), so add the ones your first screen needs and bump `CACHE`
+whenever you deploy new assets.
+
+The `fetch` handler in the example is cache-first for everything except
+navigations. If you keep stable bundle filenames, that means an open tab can keep
+serving the old bundle until the worker updates. Either bump `CACHE` on every
+deploy (as above), or use `--hash-filenames` so a new build produces new URLs.
 
 ## 4. Link it in the page
 Add the manifest and theme color to `App/index.html`:
@@ -136,6 +151,24 @@ so users get the new assets instead of a stale shell.
 Keep `PRECACHE` small — just the shell and what the first screen needs. Everything
 else is cached on demand by the cache-first `fetch` handler.
 :::
+
+## Static export
+`service-worker.js` is published at the export root, so the same worker works on
+a static host. Two export-specific rules:
+
+- Every path in `PRECACHE` must exist in `dist-static/`. The shell in this
+  example is `/` and `/manifest.json`; if you precache `/App/index.html`, that
+  file is present too.
+- Do **not** precache `/Components/...` in a static export: the exporter prunes
+  `Components/` by default. Use bundle URLs or public assets instead.
+
+If you use `--spa`, navigations fall back to `/index.html` (or the configured
+catch-all); without `--spa`, unknown routes get the real `404.html`.
+
+## Backend routes
+A service worker cannot add a backend. If your PWA calls `/api/*`, deploy the app
+with `slice start` (Express) instead of `slice export`, or keep the static
+frontend and point it at a separate API origin through `SLICE_PUBLIC_API_URL`.
 
 ## Gotchas
 :::warning

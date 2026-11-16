@@ -101,11 +101,15 @@
 <h2 id="start">start</h2>
 <p>Starts the production server and serves from <code>/dist</code>.</p>
 <div class="code-block" data-block-id="doc-block-22"></div>
+<p>If <code>dist/</code> or <code>dist/bundles/bundle.config.json</code> is missing, <code>slice start</code> runs <code>slice build</code> automatically. <code>src/</code> and <code>api/</code> are still required: the server entrypoint is <code>api/index.js</code>.</p>
 <h3 id="options-3">Options</h3>
 <div class="table-block" data-block-id="doc-block-23"></div>
-<div class="callout callout-tip">Production serves static assets from <code>src/public/</code> (copied into <code>dist/</code>) at the root URL — e.g. <code>/Themes</code>, <code>/Styles</code>, <code>/images</code>.</div>
+<div class="callout callout-tip">Production serves static assets from <code>src/public/</code> (copied into <code>dist/</code>) at the root URL - e.g. <code>/Themes</code>, <code>/Styles</code>, <code>/images</code>.</div>
+<p>Production does <strong>not</strong> expose <code>/Components</code>, the <code>/dist</code> tree, source maps, <code>.d.ts</code>, <code>.env</code>, <code>package.json</code> or <code>node_modules</code>. Only <code>/dist/bundles/</code> remains as a legacy mirror for older assets; component source and declarations are not public.</p>
+<p>A real <code>404</code> requires SEO. Without SEO the fallback returns the shell with <code>200</code> (soft 404). See [Deployment](/Documentation/Deployment) for the full hosting matrix and [Server Entrypoint](/Documentation/Architecture/Server-Entrypoint) for the fallback rules.</p>
 <h2 id="build">build</h2>
 <p>Builds production output by analyzing dependencies, generating bundles, and writing files to <code>/dist</code>. The default output is a compact, phase-by-phase summary: files optimized, build size, bundle counts and the request reduction. Per-file sizes and the per-route bundle list are opt-in with <code>--verbose</code>.</p>
+<p>It also writes <code>dist/slice-env.json</code> (the shared public env payload) and <code>dist/slice-env.generated.js</code> (the ESM shim the runtime imports). There is no env endpoint in production; <code>slice dev</code> keeps the live <code>/slice-env.json</code> provider.</p>
 <div class="callout callout-tip">Production builds include <strong>Structural framework components</strong> in bundles to avoid runtime fetches.
 These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</code> in bundle config.</div>
 <div class="code-block" data-block-id="doc-block-24"></div>
@@ -115,40 +119,53 @@ These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</co
 <div class="table-block" data-block-id="doc-block-26"></div>
 <h3 id="import-support-scope-2">Import support scope</h3>
 <ul><li>Supported: relative imports, bare npm packages (<code>import 'pkg'</code>), and absolute imports whose file exists under <code>src/public/</code>.</li><li><code>slice dev</code> and <code>slice build</code> keep the same rule for preserved absolute (<code>public/</code>) imports.</li><li>See [External Dependencies](/Documentation/External-Dependencies) for npm packages.</li></ul>
+<h2 id="export-experimental">export (experimental)</h2>
+<p>Packages <code>dist/</code> for a static host — Cloudflare Pages, Netlify, Vercel, nginx, GitHub Pages or S3 — with no Express and no long-running Node process. See [Deployment](/Documentation/Deployment) for the full guide.</p>
+<div class="code-block" data-block-id="doc-block-27"></div>
+<p>It flattens <code>dist/public</code> to the root, copies <code>slice-env.json</code> + <code>slice-env.generated.js</code>, prerenders every literal SEO route (and <code>sitemap.paths</code> patterns), writes a real <code>404.html</code>, and generates the host rules. <code>Components/</code> is pruned by default so component source is not fetchable (Express production also 404s it); use <code>--keep-components</code> only for debugging. <code>slice build</code> + <code>slice start</code> remains the Express mode; both share the same <code>dist/</code>.</p>
+<div class="table-block" data-block-id="doc-block-28"></div>
+<p>The export is an allowlist: it publishes <code>App/</code>, <code>bundles/</code>, <code>Slice/</code>, <code>locales/</code>, <code>events/</code>, <code>public/*</code> flattened to the root, and eight root files (<code>routes.js</code>, <code>sliceConfig.json</code>, <code>slice-env.json</code>, <code>slice-env.generated.js</code>, <code>robots.txt</code>, <code>sitemap.xml</code>, <code>manifest.json</code>, <code>service-worker.js</code>, plus <code>slice-events.generated.js</code> when <code>events.ui.enabled</code>). It skips <code>utils/</code>, <code>AppConfig.js</code>, generated <code>.d.ts</code>, <code>.map*</code>, <code>.env*</code>, <code>package.json</code>, lockfiles, <code>node_modules</code> and <code>.git</code>.</p>
+<p>With SEO, the default is a <strong>real 404</strong> (<code>404.html</code>) and no catch-all. Known routes and <code>sitemap.paths</code> patterns are prerendered; add <code>sitemap.paths</code> for dynamic routes that must exist as files, or pass <code>--spa</code> to let the client router own unknown paths.</p>
+<p>Cloudflare/Netlify, Vercel and nginx get server-side locale redirects. GitHub Pages, S3 and <code>--host none</code> cannot express them, so the export writes portable HTML redirect pages (<code>meta refresh</code> + <code>rel=canonical</code> + <code>noindex</code>).</p>
+<p><code>--spa</code> is host-specific: Netlify writes <code>/* /index.html 200</code>, Vercel a <code>/(.*)</code> rewrite, nginx <code>try_files ... /index.html</code>, and Cloudflare omits <code>404.html</code> so Pages auto-SPA. GitHub/S3/none write the shell as <code>404.html</code> and keep a <code>404</code> status. Vercel redirects use <code>statusCode</code> (301/302); <code>permanent</code> would produce 308/307.</p>
+<p>The export is <strong>root-only</strong>: serve it at a domain or subdomain root. Subpath hosting (<code>https://user.github.io/repo/</code>) is not supported, because the public route must stay the same as the app route.</p>
+<p>A static export has **no <code>/api/*</code>**: it is files only. If the app needs backend routes, deploy with <code>slice build</code> + <code>slice start</code> (Express) on a Node host, or point the static frontend at a separate API origin. Do not route <code>/api</code> through the SPA fallback.</p>
+<p><code>dist-static/</code> is a separate folder on purpose: <code>dist/</code> is the Express layout (<code>App/</code> at <code>/App</code>, <code>public/</code> at <code>/</code>, explicit root files), while a static host needs <code>public/*</code> at <code>/</code>, a root <code>index.html</code>, <code>404.html</code> and host rules. Keeping them separate preserves <code>slice start</code> and makes the upload boundary explicit.</p>
+<p><code>--check</code> validates the runtime files, the allowlist, source maps and declarations, <code>.env*</code>, <code>package.json</code>, <code>node_modules</code>, <code>sourceMappingURL=</code>, host-rule coherence, and literal route coverage when there is no SPA fallback. It does <strong>not</strong> enumerate <code>${param}</code> routes or verify every referenced asset; it warns when a bundle calls <code>fetch("/api/...")</code> because a static host cannot serve Express routes. Run it in CI before uploading.</p>
 <h2 id="component-create">component create</h2>
 <p>Creates a new local component and registers it in <code>components.js</code>. Runs interactively, or non-interactively when you pass the name and category on the command line.</p>
-<div class="code-block" data-block-id="doc-block-27"></div>
-<div class="code-block" data-block-id="doc-block-28"></div>
 <div class="code-block" data-block-id="doc-block-29"></div>
-<div class="table-block" data-block-id="doc-block-30"></div>
+<div class="code-block" data-block-id="doc-block-30"></div>
+<div class="code-block" data-block-id="doc-block-31"></div>
+<div class="table-block" data-block-id="doc-block-32"></div>
 <p>Only the missing pieces are prompted, so <code>npm run component:create -- UserCard</code> asks just for the category. Passing both runs with no prompts — useful for scripts and AI agents.</p>
 <p>Rules:</p>
 <ul><li>Name must start with a letter and be alphanumeric.</li><li>Visual components get <code>.js</code>, <code>.html</code>, <code>.css</code>; Service components get <code>.js</code> only.</li><li>An invalid <code>--category</code> fails with a message listing the valid categories.</li></ul>
 <h2 id="component-list">component list</h2>
 <p>Lists local components by scanning category paths from <code>sliceConfig.json</code> and rewrites <code>src/Components/components.js</code>. The default output is a compact category summary; it does not print a huge table.</p>
-<div class="code-block" data-block-id="doc-block-31"></div>
-<div class="table-block" data-block-id="doc-block-32"></div>
 <div class="code-block" data-block-id="doc-block-33"></div>
+<div class="table-block" data-block-id="doc-block-34"></div>
+<div class="code-block" data-block-id="doc-block-35"></div>
 <h2 id="component-delete">component delete</h2>
 <p>Deletes a local component and updates <code>components.js</code>. Interactive by default; pass the name, <code>--category</code>, and <code>--yes</code> to delete non-interactively.</p>
-<div class="code-block" data-block-id="doc-block-34"></div>
-<div class="code-block" data-block-id="doc-block-35"></div>
-<div class="table-block" data-block-id="doc-block-36"></div>
+<div class="code-block" data-block-id="doc-block-36"></div>
+<div class="code-block" data-block-id="doc-block-37"></div>
+<div class="table-block" data-block-id="doc-block-38"></div>
 <h2 id="get-registry-get">get / registry get</h2>
 <p>Downloads components from the official registry (Visual or Service) into your project.</p>
-<div class="code-block" data-block-id="doc-block-37"></div>
+<div class="code-block" data-block-id="doc-block-39"></div>
 <h3 id="options-5">Options</h3>
-<div class="table-block" data-block-id="doc-block-38"></div>
+<div class="table-block" data-block-id="doc-block-40"></div>
 <p>Notes:</p>
 <ul><li>If no names are provided, the CLI opens an interactive selector.</li><li>Registry is fetched from the Slice docs repo.</li></ul>
 <h2 id="browse-registry-list">browse / registry list</h2>
 <p>Lists available registry components.</p>
-<div class="code-block" data-block-id="doc-block-39"></div>
+<div class="code-block" data-block-id="doc-block-41"></div>
 <h2 id="sync-registry-sync">sync / registry sync</h2>
 <p>Updates local Visual components to latest registry versions. Service components are detected but not updated automatically.</p>
-<div class="code-block" data-block-id="doc-block-40"></div>
+<div class="code-block" data-block-id="doc-block-42"></div>
 <h3 id="options-6">Options</h3>
-<div class="table-block" data-block-id="doc-block-41"></div>
+<div class="table-block" data-block-id="doc-block-43"></div>
 <h2 id="doctor">doctor</h2>
 <p>Runs project diagnostics (structure, config, SEO, dependencies, components and routes, the server entry, external imports, port availability) and exits 1 when any row is a failure, so it works as a gate. Rows marked as warnings are advisory and exit 0.</p>
 <p>Three rows cover what only a static check can see before a deploy:</p>
@@ -159,64 +176,64 @@ These entries are stored as <code>Framework/Structural/&lt;ComponentName&gt;</co
 <ul><li><strong>Server entry</strong> parses <code>api/index.js</code>; the build never executes it, so a syntax error there used to</li></ul>
 <p>reach production as a 500.</p>
 <p>The <strong>Configuration</strong> and <strong>Components &amp; Routes</strong> rows use the same rules as <code>slice build</code>: if the build would be blocked, doctor fails too, with the same message.</p>
-<div class="code-block" data-block-id="doc-block-42"></div>
+<div class="code-block" data-block-id="doc-block-44"></div>
 <h2 id="lint">lint</h2>
 <p>Runs the project's ESLint with the config it declares. The CLI does not bundle ESLint: install it in the project (<code>npm i -D eslint</code>). <code>slice lint</code> is a thin wrapper so scripts and CI do not need to know the binary name.</p>
-<div class="code-block" data-block-id="doc-block-43"></div>
+<div class="code-block" data-block-id="doc-block-45"></div>
 <p>Before ESLint runs, <code>slice lint</code> regenerates the generated declarations (and <code>jsconfig.json</code>) when the project uses them, so the editor and <code>slice typecheck</code> never read a stale <code>.d.ts</code>. <code>--no-types</code> skips that phase. The command propagates ESLint's exit status.</p>
 <p>The shared flat config ships with the CLI, so a project's config is one import:</p>
-<div class="code-block" data-block-id="doc-block-44"></div>
-<p>It provides the browser environment plus the <code>slice</code>/<code>Slice</code> globals <strong>only for <code>src/</code></strong>, Node globals for <code>api/</code>, <code>scripts/</code> and <code>*.config.js</code>, <code>js.configs.recommended</code>, a set of rules that warn rather than block, ignores for generated and vendored output (<code>dist/</code>, <code>components.js</code>, <code>*.generated.js</code>, <code>.agents/</code>, <code>.claude/</code>), and a Node/browser override for <code>*.spec.js</code> and <code>tests/</code>. Tooling that runs in Node imports <code>nodeConfig</code> instead:</p>
-<div class="code-block" data-block-id="doc-block-45"></div>
-<p>A folder that deliberately mixes both worlds (a build script driving a headless browser, docs templates that are browser components) opts into the other globals with the exported presets:</p>
 <div class="code-block" data-block-id="doc-block-46"></div>
+<p>It provides the browser environment plus the <code>slice</code>/<code>Slice</code> globals <strong>only for <code>src/</code></strong>, Node globals for <code>api/</code>, <code>scripts/</code> and <code>*.config.js</code>, <code>js.configs.recommended</code>, a set of rules that warn rather than block, ignores for generated and vendored output (<code>dist/</code>, <code>components.js</code>, <code>*.generated.js</code>, <code>.agents/</code>, <code>.claude/</code>), and a Node/browser override for <code>*.spec.js</code> and <code>tests/</code>. Tooling that runs in Node imports <code>nodeConfig</code> instead:</p>
+<div class="code-block" data-block-id="doc-block-47"></div>
+<p>A folder that deliberately mixes both worlds (a build script driving a headless browser, docs templates that are browser components) opts into the other globals with the exported presets:</p>
+<div class="code-block" data-block-id="doc-block-48"></div>
 <p>Lint is for style and environment mistakes. Framework invariants — a component that cannot load, a broken route, a reserved prop, a prop the build rejects — are <code>slice build</code> / <code>slice doctor</code> rules and are not duplicated here, so the two can never drift.</p>
 <h3 id="setting-it-up-in-an-existing-project">Setting it up in an existing project</h3>
 <p><code>slice setup lint</code> installs <code>eslint</code> and <code>slicejs-cli</code> as devDependencies when they are missing, writes <code>eslint.config.js</code> if the project has none, and adds <code>lint</code> / <code>lint:fix</code> scripts. It never overwrites a config or a script you already have, and <code>--dry-run</code> prints the plan without touching anything. <code>--with-types</code> also installs <code>typescript</code>, adds a <code>typecheck</code> script, generates the declarations and writes <code>jsconfig.json</code>.</p>
-<div class="code-block" data-block-id="doc-block-47"></div>
+<div class="code-block" data-block-id="doc-block-49"></div>
 <p><code>slice init</code> does not install ESLint: the linter is a choice, and choosing it later is one command.</p>
 <h2 id="typecheck">typecheck</h2>
 <p>Runs the project's own TypeScript over the JS components with <code>tsc --noEmit</code>, using the <code>jsconfig.json</code> that <code>slice types generate</code> maintains (<code>allowJs</code> + <code>checkJs</code>). It refreshes the generated declarations first (unless <code>--no-types</code>), then compares the code against them.</p>
-<div class="code-block" data-block-id="doc-block-48"></div>
+<div class="code-block" data-block-id="doc-block-50"></div>
 <p>The scope is the generated declarations plus the components and app entry that use them (<code>src/Components/**/*.js</code>, <code>src/App/**/*.js</code>, <code>src/routes.js</code> and <code>src/**/*.d.ts</code>, minus the public/vendored folders) — not every file in the project. That keeps <code>tsc</code> fast; broad <code>src/**/*.js</code> or <code>api/**/*.js</code> includes are dropped from <code>jsconfig.json</code> when it is maintained. Registered events are typed, so <code>slice.events.emit</code>/<code>subscribe</code> reject a payload that does not match the catalog. The exit code is <code>tsc</code>'s.</p>
 <p>The two commands split the job: <code>slice lint</code> is the fast check editors run on save; <code>slice typecheck</code> is the compiler step for CI. Run it before <code>slice build</code>.</p>
 <h2 id="seo">seo</h2>
 <h3 id="seo-sitemap">seo sitemap</h3>
 <p>Writes <code>src/public/sitemap.xml</code> from <code>seo.json</code>, and <code>robots.txt</code> when the manifest has a <code>robotsTxt</code> block. Only indexable routes are listed; a <code>${param}</code> route cannot be enumerated and never appears.</p>
-<div class="code-block" data-block-id="doc-block-49"></div>
-<div class="table-block" data-block-id="doc-block-50"></div>
+<div class="code-block" data-block-id="doc-block-51"></div>
+<div class="table-block" data-block-id="doc-block-52"></div>
 <p>An existing file that would change asks first (default answer: no). A non-interactive run (CI) fails with a message naming <code>--yes</code> instead of waiting for input, and a file whose content is unchanged is never rewritten.</p>
 <h3 id="seo-images">seo images</h3>
 <p>Renders the 1200×630 card each indexable route advertises, from the real page. It boots the app's <code>api/index.js</code> in development on a free port unless you pass <code>--base-url</code>.</p>
-<div class="code-block" data-block-id="doc-block-51"></div>
-<div class="table-block" data-block-id="doc-block-52"></div>
+<div class="code-block" data-block-id="doc-block-53"></div>
+<div class="table-block" data-block-id="doc-block-54"></div>
 <p>It needs Playwright in the project (<code>npm i -D playwright &amp;&amp; npx playwright install chromium</code>). The command writes <code>&lt;outDir&gt;/manifest.json</code>, which you pass as <code>seo.images</code> so the server merges the cards; <code>seo.json</code> itself is never edited (it is generated). Defaults for the card — <code>theme</code>, <code>selector</code>, <code>template</code>, <code>outDir</code>, <code>budgetKB</code> — live in the <code>images</code> block of <code>seo.json</code>.</p>
 <h3 id="seo-check">seo check</h3>
 <p>Validates <code>seo.json</code>, cross-checks it against <code>routes.js</code>, and compares the committed sitemap with what the manifest would produce. Exits non-zero on any problem, so it belongs in CI.</p>
-<div class="code-block" data-block-id="doc-block-53"></div>
+<div class="code-block" data-block-id="doc-block-55"></div>
 <p>See [SEO and Share Cards](/Documentation/Architecture/SEO) for the manifest fields and the origin rules.</p>
 <h2 id="translator">translator</h2>
 <h3 id="translator-init">translator init</h3>
 <p>Adds the <code>translator</code> block to <code>src/sliceConfig.json</code> and creates <code>src/locales/&lt;locale&gt;.json</code>. It never overwrites an existing dictionary or an existing value, so it is safe to re-run.</p>
-<div class="code-block" data-block-id="doc-block-54"></div>
-<div class="table-block" data-block-id="doc-block-55"></div>
+<div class="code-block" data-block-id="doc-block-56"></div>
+<div class="table-block" data-block-id="doc-block-57"></div>
 <h3 id="translator-check">translator check</h3>
 <p>Scans <code>src/Components/**</code> (<code>.html</code> and <code>.js</code>), <code>src/App/index.html</code>, <code>src/App/index.js</code> and <code>src/routes.js</code>, reusing the framework's <code>data-t</code> rules (text, <code>key.ariaLabel</code>-style attributes, <code>data-t-*</code> params) plus <code>slice.t()</code>, <code>slice.t.ref()</code>, <code>slice.t.list()</code>, <code>slice.t.ref.list()</code>, <code>slice.translator.ref()</code> and <code>tr()</code>/<code>translate()</code>/<code>$t()</code> calls. Fails when a key is missing in a locale, when a list key is not an array, when a plural has no <code>other</code>, and reports parameter drift and raw <code>href="/…"</code> links when <code>localePrefix</code> is on.</p>
 <p>It also checks <code>slice.t.content('name')</code> calls: the document must exist in <code>src/locales/content/name.json</code>, and every <code>copy</code> in it must have a branch for each locale, the same shape across branches, and no empty strings.</p>
 <p><code>data-t</code> written from JS (<code>el.innerHTML = '&lt;p data-t="home.x"&gt;&lt;/p&gt;'</code>) and keys built dynamically (`<code>slice.t(</code>orders.${state}<code>)</code>`) are not scanned; declare those keys in a template or with a literal call so the check can see them.</p>
-<div class="code-block" data-block-id="doc-block-56"></div>
+<div class="code-block" data-block-id="doc-block-58"></div>
 <p><code>slice doctor</code> has a <strong>Translator</strong> row that runs the same scan. See [Translating an app](/Documentation/Translator).</p>
 <h2 id="version">version</h2>
 <p>Shows CLI version info and checks for updates.</p>
-<div class="code-block" data-block-id="doc-block-57"></div>
+<div class="code-block" data-block-id="doc-block-59"></div>
 <h2 id="help">help</h2>
 <p>Shows CLI help output.</p>
-<div class="code-block" data-block-id="doc-block-58"></div>
+<div class="code-block" data-block-id="doc-block-60"></div>
 <h2 id="types-generate">types generate</h2>
 <p>Alias of <code>slice docs generate types</code>. Generates a TypeScript declaration file from your components' <code>static props</code>, so editors can autocomplete and type-check <code>slice.build('Name', { ... })</code> calls.</p>
-<div class="code-block" data-block-id="doc-block-59"></div>
-<div class="code-block" data-block-id="doc-block-60"></div>
-<div class="table-block" data-block-id="doc-block-61"></div>
+<div class="code-block" data-block-id="doc-block-61"></div>
+<div class="code-block" data-block-id="doc-block-62"></div>
+<div class="table-block" data-block-id="doc-block-63"></div>
 <p>Re-run it whenever you add or change component props. The output is generated — don't edit it by hand, and re-generate (or wire it into your build) to keep autocomplete in sync.</p>
 <p>It also writes the event manifest (<code>src/slice-events.generated.js</code>), creates <code>jsconfig.json</code> when the project has none, and keeps that config pointed at the generated declarations. <code>slice lint</code> and <code>slice typecheck</code> run this refresh for you before they work. Use <code>slice docs generate</code> when you also want the human event catalog and AGENTS inventories.</p>
 <h2 id="best-practices">Best Practices</h2>

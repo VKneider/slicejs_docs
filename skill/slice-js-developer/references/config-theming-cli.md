@@ -41,7 +41,7 @@ Field notes:
 - **`events`/`context`** — `enabled` turns on `slice.events`/`slice.context` (no-op when false); `ui.enabled` + `ui.shortcut` add the live debug panels.
 - **`paths.components`** — category → `{ path, type }`. `type: "Visual"` loads `.html`/`.css`; `"Service"` loads only `.js`. A wrong `path`/`type` makes `slice.build` return `null` with a misleading "not found".
 - **`logger.showLogs.console.<level>`** — which levels reach the console. The buffer is always built (`slice.logger.getLogs()` works regardless).
-- **Static assets** — there is **no** `publicFolders` setting. Put static files under `src/public/`; everything there is served at the root URL and copied into the build. `Themes`, `Styles` and `images` live under `src/public/` (URLs `/Themes`, `/Styles`, `/images` unchanged).
+- **Static assets** — put static files under `src/public/`; everything there is served at the root URL and copied into the build. `Themes`, `Styles` and `images` live under `src/public/` (URLs `/Themes`, `/Styles`, `/images` unchanged).
 
 **Production overrides** — keep app managers on, turn off dev panels + verbose logs:
 
@@ -60,7 +60,7 @@ Common config bugs: missing `defaultTheme` when `themeManager.enabled` → unsty
 
 ### Public env vars
 
-Only vars prefixed `SLICE_PUBLIC_` reach the browser (loaded from `.env`). Read with `slice.getEnv('SLICE_PUBLIC_API_URL', fallback)` (or `slice.getPublicEnv()`). Everything without the prefix stays server-side. The framework serves them at `/slice-env.json` (re-read each request in dev). Full detail: query the MCP for `getting-started/environment-variables`.
+Only vars prefixed `SLICE_PUBLIC_` reach the browser (loaded from `.env`). Read with `slice.getEnv('SLICE_PUBLIC_API_URL', fallback)` (or `slice.getPublicEnv()`). Everything without the prefix stays server-side. `slice build` writes `dist/slice-env.json` plus `dist/slice-env.generated.js`; the runtime imports the ESM shim, so production has no env endpoint. `slice dev` keeps the live `/slice-env.json` provider. Full detail: query the MCP for `getting-started/environment-variables`.
 
 **Typed accessors (recent versions):** `slice.env` parses common shapes so you stop re-writing string splits / boolean checks — `slice.env.bool('SLICE_PUBLIC_AUTH_ENABLED')`, `slice.env.list('SLICE_PUBLIC_MODELS')` (csv → array), `slice.env.int('X', 5000)`, `slice.env.get('X', fb)`, `slice.env.has('X')`, `slice.env.all()`. Missing/empty values return the fallback.
 
@@ -241,9 +241,10 @@ Node ≥ 20. Use `npx slicejs-cli <cmd>` or the `npm run` scripts `slice init` s
 | `slice init` | Scaffold project: installs framework, creates `api/` + `src/`, installs registry Visual components, sets up scripts, seeds `AGENTS.md` + `CLAUDE.md` + category guides + generated docs |
 | `slice dev` (`start`) | Dev server + HMR (`-p <port>`, `--no-hmr`); regenerates project documentation before watching |
 | `slice build` | Production bundle → `dist/`; checks generated docs for scaffolded projects; many flags (analyze, `--sourcemap`, `--hash-filenames`, `--compress`, `--strict-external`, `--no-validate`, …) — see `slice --help`; subcmds `clean`, `info` |
+| `slice export` | **Experimental.** Package `dist/` for a static host (Cloudflare/Netlify/Vercel/nginx/GitHub/S3) into `dist-static/`: flatten public, prerender literal SEO routes + `sitemap.paths`, real 404, locale redirects, host rules; allowlist copy (no `utils/`, `AppConfig.js`, maps, `.env`), safe `--out`, `--from-dist`, `--spa`, `--no-prerender`, `--check`. No `/api/*`: use `slice start` (Express) for backend routes. |
 | `slice docs generate [all\|agents\|types\|events]` | Generate project docs: `components.js` + AGENTS inventories, declarations/event manifest, `docs/events/*` (Markdown, Mermaid, standalone HTML) |
 | `slice docs check [all\|agents\|types\|events]` | Read-only drift check for generated project docs; exits 1 when stale |
-| `slice start` | Production server from `dist/` |
+| `slice start` | Production server from `dist/`; auto-builds when `dist/` is missing; port `--port` → config → 3000 |
 | `slice component create [name]` (`comp new`) | Scaffold a component + register in `components.js`. **Non-interactive:** `--category <Cat>` (`-c`); omit args to be prompted. Service → only `.js` |
 | `slice component list` (`comp ls`) | Rescan folders and rewrite `components.js`. Compact category summary by default; `--all`, `--category <name>`, `--json` |
 | `slice component delete [name]` (`comp remove`) | Remove a component + update `components.js`. **Non-interactive:** `--category <Cat> --yes` (`-c`/`-y`) |
@@ -261,6 +262,8 @@ Node ≥ 20. Use `npx slicejs-cli <cmd>` or the `npm run` scripts `slice init` s
 | `slice types generate` | Alias of `slice docs generate types`: `.d.ts` from `static props` for `slice.build` autocomplete (`-o <path>`) |
 
 Project layout after `slice init`: `api/index.js` (Express server) · `src/Components/{Visual,Service,AppComponents,components.js,<Category>/AGENTS.md}` · `src/public/{Themes,Styles,images}` (static assets, served at the root URL) · `src/routes.js` · `src/sliceConfig.json` · `src/App/index.html` · `AGENTS.md` · `CLAUDE.md` · `docs/events/`.
+
+`slice export --host github|s3|none` writes portable HTML redirect pages for locale redirects (those hosts have no server rules). With SEO the default is a real 404; `--spa` restores the client-router fallback. The export is root-only: serve it at a domain/subdomain root; subpath hosting is not supported. `dist-static/` is separate from the Express `dist/` on purpose. The export is an allowlist (no `utils/`, `AppConfig.js`, `.map*`, `.d.ts`, `.env*`, lockfiles; `slice-events.generated.js` only when `events.ui.enabled`); `--out` rejects `.`, `src`, `dist`, `api`, ancestors, paths outside the project and existing folders that are not a previous export. `Components/` is pruned by default (source not fetchable); `--keep-components` is debug-only. `--check` validates runtime files, the allowlist, maps/declarations/env/package files, `sourceMappingURL=`, host-rule coherence and literal route coverage when there is no SPA fallback, but not dynamic `${param}` routes, every asset reference or app secrets. `slice start` likewise never serves `/Components`, the `/dist` tree, `.map`, `.d.ts`, `.env`, `package.json` or `node_modules`. A static export has no `/api/*`: if the app needs backend routes, deploy with `slice start` (Express) or a separate API origin. Host rules are verified locally: Cloudflare `--spa` omits `404.html` (auto-SPA; never a `_redirects` catch-all), Vercel redirects use `statusCode`, GitHub/S3/`none` write the shell as `404.html` with status 404, and every preset carries the three security headers. Full guide: query the MCP for `getting-started/deployment`.
 
 Typical loop: `slice init` → `slice dev` (regenerates docs) → `slice component create` (or `slice browse` + `slice get <Name>`) → edit + component `README.md` → `slice docs generate` when a generated artifact changed → `slice doctor` when stuck → `slice build` + `slice start` for prod.
 

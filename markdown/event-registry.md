@@ -208,6 +208,8 @@ dev aid (a one-time warning plus a debugger badge), not a runtime gate.
 :::details title="Where do the static emitters/listeners come from?"
 From `slice docs generate types`, which scans your `emit`/`subscribe` call sites and writes
 `src/slice-events.generated.js`. The Events panel loads it to show the documented graph
-alongside live runtime activity. `slice docs generate events` writes the human catalog under
+alongside live runtime activity. The file is only published and served when
+`events.ui.enabled` is true; with the panel off there is no consumer, so `slice start` and
+`slice export` leave it out. `slice docs generate events` writes the human catalog under
 `docs/events/`. See [EventManager](/Documentation/Structural/EventManager).
 :::

@@ -170,6 +170,16 @@ const docsIndex = [
     tags: ['pwa', 'manifest', 'service-worker', 'offline', 'configuration']
   },
   {
+    title: 'Deployment',
+    route: '/Documentation/Deployment',
+    description: 'Host a Slice app with Express (slice start) or as a static site (slice export), including GitHub Pages, Vercel, nginx and S3.',
+    section: 'Getting Started',
+    group: 'Deployment',
+    order: 12,
+    navLabel: 'Deployment',
+    tags: ['deployment', 'hosting', 'static', 'express', 'github-pages']
+  },
+  {
     title: 'Logger',
     route: '/Documentation/Structural/Logger',
     description: 'Structured logging and filters for Slice.js.',

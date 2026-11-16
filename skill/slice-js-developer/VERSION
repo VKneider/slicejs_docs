@@ -1,9 +1,90 @@
 slice-js-developer
-version: 1.34.1
+version: 1.34.9
 targets: slicejs-web-framework ^4.2.x
 
 CHANGELOG
 =========
+
+1.34.9
+  Event catalog follows the debugger UI.
+  - `slice-events.generated.js` is exported/served only when
+    `events.ui.enabled`; with the panel off there is no consumer.
+  - Build parity: PWA files in public/, custom translator.path, ComponentsPage
+    docs modules and custom host-rule collisions are covered.
+  Files touched: VERSION, references/config-theming-cli.md, ../manifest.json.
+
+1.34.8
+  Export marked experimental.
+  - `slice export` flags/layout may change; `slice start` remains the stable
+    Express path.
+  - Host rules are modular presets under commands/export/hosts/*.
+  Files touched: VERSION, references/config-theming-cli.md, ../manifest.json.
+
+1.34.7
+  Local host-rule PoC.
+  - Verified real 404 and --spa exports with wrangler pages dev, netlify-cli
+    dev, vercel dev --local and nginx 1.30.6.
+  - Vercel and nginx now include the same security headers as
+    Cloudflare/Netlify; nginx uses `always` so 404 responses keep them.
+  Files touched: VERSION, references/config-theming-cli.md, ../manifest.json.
+
+1.34.6
+  Host rules verified against current docs.
+  - Cloudflare Pages rejects `_redirects: /* /index.html 200` as an infinite
+    loop and `/* / 200` hijacks assets. `--spa` omits `404.html` and uses the
+    Pages automatic SPA mode.
+  - Vercel redirects use `statusCode` (301/302); `permanent` maps to 308/307.
+  - Netlify keeps the catch-all (existing files win); nginx keeps
+    `try_files ... /index.html`; GitHub/S3/none write the shell as `404.html`
+    with status 404.
+  Files touched: VERSION, references/config-theming-cli.md, ../manifest.json.
+
+1.34.5
+  Static export scope and PWA guidance.
+  - `src/public/` is the only public asset entry point; Themes/Styles/images
+    live there because that is what `/Themes` and `/Styles` expose.
+  - A static export has no `/api/*`: use `slice start` (Express) on a Node host
+    or a separate API origin.
+  - PWA guidance: service workers are app-owned; bump the cache or use
+    `--hash-filenames`, do not precache `/Components/...` in an export, and use
+    skipWaiting/clients.claim when immediate takeover is wanted.
+  Files touched: VERSION, references/config-theming-cli.md, ../manifest.json.
+
+1.34.4
+  Static export audit hardening + deployment guide.
+  - `slice export --out` is validated before `fs.remove()`: project root, `src`,
+    `dist`, `api`, ancestors, files and paths outside the project are rejected.
+  - The export is an allowlist (App/bundles/Slice/locales/events/public + eight
+    root files); `utils/`, `AppConfig.js`, `slice-events.generated.js`, `.map*`,
+    `.d.ts`, `.env*`, lockfiles and `node_modules` never ship.
+  - The framework SEO API is imported lazily, so an older framework only breaks
+    `export` with a clear message, not every CLI command.
+  - Production decodes percent-encoded paths before the guard (`/%2eenv`).
+  - `--check` now validates routes.js, host rules, map variants, sourceMappingURL,
+    `.env*`, package manifests and source-only folders.
+  - New user-facing deployment guide; `dist-static/` rationale documented.
+  Files touched: VERSION, references/config-theming-cli.md, ../manifest.json.
+
+1.34.3
+  Static export (experimental).
+  - `slice export` packages dist/ for a static host: flatten public, prerender
+    literal SEO routes + sitemap.paths, real 404, locale redirects and host rules.
+  - `--spa` restores the SPA catch-all; with SEO the default is a real 404.
+  - GitHub/S3/none get portable HTML redirect pages for locale redirects.
+  - Root-only: no base path; the public route equals the app route.
+  - `Components/` is pruned by default; `--keep-components` is debug-only.
+  - `slice start` blocks /Components, /dist tree, maps, d.ts, .env, package.json,
+    node_modules in production.
+  Files touched: VERSION, references/config-theming-cli.md, ../manifest.json.
+
+1.34.2
+  Build-time public env.
+  - `slice build` writes dist/slice-env.json and dist/slice-env.generated.js.
+  - The runtime imports the ESM shim; production has no env endpoint. `slice dev`
+    keeps the live /slice-env.json provider, and `slice start` serves the built
+    files as static assets.
+  - Updated config-theming-cli.md.
+  Files touched: VERSION, references/config-theming-cli.md, ../manifest.json.
 
 1.34.1
   Quiet output and server logs.
@@ -422,10 +503,10 @@ CHANGELOG
     dynamic import('pkg'); package CSS injected, WASM/images/fonts inlined.
     Dev rewrites bare specifiers to /@slice-modules/<pkg> (cached in
     node_modules/.slice-deps); build bundles once (shared -> vendor-shared).
-    Replaces the old "vendor into src/libs + publicFolders" pattern.
-  - publicFolders REMOVED. Static assets live under src/public/ (served at the
-    root URL, copied into the build) — Themes/Styles/images moved there; no
-    config key. Absolute imports kept only when the file exists under public/.
+    Replaces the old "vendor into src/libs" pattern.
+  - Static assets live under src/public/ (served at the root URL, copied into the
+    build) — Themes/Styles/images moved there; no config key. Absolute imports
+    kept only when the file exists under public/.
   - Build-time prop validation: `slice build` runs the doctor prop checks and
     BLOCKS on definition errors (unknown type, schema/items/allowedValues
     mismatch); style issues warn. Bypass with --no-validate.
