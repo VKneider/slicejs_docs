@@ -424,6 +424,11 @@ Cloudflare/Netlify, Vercel and nginx get server-side locale redirects. GitHub Pa
 `--host none` cannot express them, so the export writes portable HTML redirect pages
 (`meta refresh` + `rel=canonical` + `noindex`).
 
+`--spa` is host-specific: Netlify writes `/* /index.html 200`, Vercel a `/(.*)` rewrite, nginx
+`try_files ... /index.html`, and Cloudflare omits `404.html` so Pages auto-SPA. GitHub/S3/none write
+the shell as `404.html` and keep a `404` status. Vercel redirects use `statusCode` (301/302);
+`permanent` would produce 308/307.
+
 The export is **root-only**: serve it at a domain or subdomain root. Subpath hosting
 (`https://user.github.io/repo/`) is not supported, because the public route must stay the same as the
 app route.

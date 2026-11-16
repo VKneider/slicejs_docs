@@ -186,9 +186,19 @@ With SEO:
   nginx `location`) or as portable HTML `meta refresh` pages for hosts without
   server rules (GitHub Pages, S3, `--host none`).
 
-`--spa` restores the client-router fallback: unknown routes serve
-`index.html` with `200`. Use it only when the router must handle deep links that
-were not prerendered.
+`--spa` restores the client-router fallback, but the mechanics depend on the host:
+
+| Host | `--spa` behavior |
+|---|---|
+| Cloudflare Pages | Omits `404.html`; Pages auto-SPA serves the root with `200`. Never write a `_redirects` catch-all. |
+| Netlify | Adds `/*  /index.html  200`; existing files still win. |
+| Vercel | Adds a `/(.*)` rewrite; the filesystem wins first. |
+| nginx | `try_files $uri $uri/ /index.html;`. |
+| GitHub Pages | Writes the shell as `404.html`; unknown routes render the app with status `404`. |
+| S3 / CloudFront | Writes the shell as `404.html`; use a CloudFront function for a true `200`. |
+| `none` | Writes the shell as `404.html`; your server decides the status. |
+
+Use `--spa` only when the router must handle deep links that were not prerendered.
 
 Without SEO the shell is the only page and the SPA fallback is on by default.
 
@@ -284,9 +294,15 @@ slice export --host cloudflare   # or --host netlify
 Upload `dist-static/`. The exporter writes `_redirects` and `_headers`:
 
 - locale redirects,
-- optional `/*  /index.html  200` when `--spa` is used,
 - security headers,
 - `Cache-Control: no-store` for `/bundles/*` and the env pair.
+
+Cloudflare Pages has no SPA catch-all in `_redirects`: it rejects
+`/* /index.html 200` as an infinite loop, and `/* / 200` intercepts assets.
+`--spa` therefore **omits `404.html`**, which enables Cloudflare's automatic
+SPA mode. If you need a real 404, do not use `--spa`.
+
+Netlify uses the same files plus `/*  /index.html  200` when `--spa` is used.
 
 ### Vercel
 
@@ -297,6 +313,10 @@ slice export --host vercel
 Upload `dist-static/` and let Vercel read `vercel.json` (redirects, optional
 rewrite, cache headers). Set the project output directory to `dist-static` if
 you deploy from a Git repository.
+
+Locale redirects use `statusCode: 301|302`; Vercel's `permanent` boolean maps to
+**308/307**, not 301/302. The `/(.*)` rewrite only applies when there is no file
+at the requested path, so bundles and assets are served normally.
 
 ### nginx
 
@@ -330,6 +350,9 @@ become HTML `meta refresh` pages; there is no CSP/HSTS control. If the app
 depends on `/api/*`, GitHub Pages is not enough: use a separate backend or a
 host with functions.
 
+`--spa` on GitHub writes the shell as `404.html`, so unknown routes render the
+app but GitHub still returns `404`. A `200` fallback is not possible on Pages.
+
 ### S3 + CloudFront
 
 ```bash
@@ -338,8 +361,9 @@ slice export --host s3
 
 Upload `dist-static/` with `index.html` as the default root document and
 `404.html` as the error document. Locale redirects become HTML redirect pages.
-For an SPA fallback, use a CloudFront function or `CustomErrorResponses` to
-`/index.html` (soft 404).
+`--spa` writes the shell as `404.html` (soft 404, status 404). For a true `200`
+fallback, use a CloudFront function to rewrite navigation requests to
+`/index.html`; `CustomErrorResponses` alone keeps the 404 status.
 
 ### `--host none`
 
