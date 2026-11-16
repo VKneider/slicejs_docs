@@ -12,11 +12,11 @@ importers:
         specifier: ^4.21.0
         version: 4.22.2
       slicejs-cli:
-        specifier: ^4.5.0
-        version: 4.5.0
+        specifier: ^4.6.0
+        version: 4.6.0
       slicejs-web-framework:
-        specifier: ^4.2.0
-        version: 4.2.0
+        specifier: ^4.3.0
+        version: 4.3.0
 
 packages:
 
@@ -905,13 +905,13 @@ packages:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
 
-  slicejs-cli@4.5.0:
-    resolution: {integrity: sha512-r2HGxg4B/TtZVEi87mDLMxN1EHobByUFSvZj5EVd6YqRzm+Ce5DbnYPzcyljTGKQ7P4mNAoSYK0c/4AvIjabVQ==}
+  slicejs-cli@4.6.0:
+    resolution: {integrity: sha512-JrWSu8Q+Qz+DjzUTEDdYhB7eX//EFh+XbSrMp82pQ716YaPzlVdCVkvIlEVdbhIPeTeo4LMz7dCVL0cr+qFhwg==}
     engines: {node: '>=20.0.0'}
     hasBin: true
 
-  slicejs-web-framework@4.2.0:
-    resolution: {integrity: sha512-1uYeaFwXY5GPhOvsk+tP1E54aaHTXc/JhBjcYWyCnAo3JMJZbT8NdFek+YktXJrZam/qlCIVy3QRDDkkLprJjg==}
+  slicejs-web-framework@4.3.0:
+    resolution: {integrity: sha512-q5/y7qhfd4CI8tzQAmAPgixN2/8BV3Sk+wmljZDOL5cu2+rzn5HhVuK8NJHyC69AAqXKMJ24fhzwSqFucOSMqA==}
     engines: {node: '>=20'}
 
   source-map-support@0.5.21:
@@ -1809,7 +1809,7 @@ snapshots:
 
   signal-exit@4.1.0: {}
 
-  slicejs-cli@4.5.0:
+  slicejs-cli@4.6.0:
     dependencies:
       '@babel/parser': 7.29.7
       '@babel/traverse': 7.29.7
@@ -1825,14 +1825,14 @@ snapshots:
       html-minifier-terser: 7.2.0
       inquirer: 12.11.1
       ora: 8.2.0
-      slicejs-web-framework: 4.2.0
+      slicejs-web-framework: 4.3.0
       terser: 5.48.0
     transitivePeerDependencies:
       - '@types/node'
       - eslint
       - supports-color
 
-  slicejs-web-framework@4.2.0:
+  slicejs-web-framework@4.3.0:
     dependencies:
       compression: 1.8.1
       es-module-lexer: 2.3.2
