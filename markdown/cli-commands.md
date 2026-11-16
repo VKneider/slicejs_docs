@@ -445,7 +445,8 @@ upload boundary explicit.
 `--check` validates the runtime files, the allowlist, source maps and declarations, `.env*`,
 `package.json`, `node_modules`, `sourceMappingURL=`, host-rule coherence, and literal route coverage
 when there is no SPA fallback. It does **not** enumerate `${param}` routes or verify every referenced
-asset. Run it in CI before uploading.
+asset; it warns when a bundle calls `fetch("/api/...")` because a static host cannot serve Express
+routes. Run it in CI before uploading.
 
 ## component create
 Creates a new local component and registers it in `components.js`. Runs interactively, or

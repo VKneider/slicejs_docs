@@ -405,7 +405,8 @@ slice export --from-dist --host cloudflare --check
 - a literal route has no prerendered page and the export has no SPA fallback.
 
 `--check` does **not** enumerate `${param}` routes or verify every referenced
-asset.
+asset. It warns when a bundle calls `fetch("/api/...")`, because a static host
+cannot serve Express routes.
 
 Run it in CI before uploading:
 

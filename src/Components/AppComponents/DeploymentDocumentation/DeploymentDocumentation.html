@@ -115,7 +115,7 @@ may change between releases; <code>slice start</code> remains the stable Express
 <ul><li>an exported <code>.js</code> contains <code>sourceMappingURL=</code>,</li><li>host rules are incoherent (<code>_redirects</code> without <code>_headers</code>, invalid</li></ul>
 <p><code>vercel.json</code>, nginx without <code>error_page 404 /404.html</code>, explicit GitHub host   without <code>.nojekyll</code>),</p>
 <ul><li>a literal route has no prerendered page and the export has no SPA fallback.</li></ul>
-<p><code>--check</code> does <strong>not</strong> enumerate <code>${param}</code> routes or verify every referenced asset.</p>
+<p><code>--check</code> does <strong>not</strong> enumerate <code>${param}</code> routes or verify every referenced asset. It warns when a bundle calls <code>fetch("/api/...")</code>, because a static host cannot serve Express routes.</p>
 <p>Run it in CI before uploading:</p>
 <div class="code-block" data-block-id="doc-block-20"></div>
 <h2 id="environment-variables">Environment variables</h2>
