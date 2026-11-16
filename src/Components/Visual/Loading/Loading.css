@@ -1,56 +1,398 @@
-/* Container principal - ahora sin position hardcoded */
-.full-screen {
-  width: 100%;
-  height: 100%;
-  /* position se maneja desde JavaScript */
-  inset: 0; /* top: 0, right: 0, bottom: 0, left: 0 */
-  background: rgba(90, 90, 90, 0.5);
-  z-index: 500;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* Loading — the busy overlay, its four indicators, and the first-load welcome. */
+
+/* The app's loader starts before the theme is loaded, so every colour has a
+   fallback: the first frames of the welcome screen look right too. */
+slice-loading {
+  --slice-loading-accent: var(--primary-color, #7c3aed);
+  --slice-loading-text: var(--font-primary-color, #1d1b29);
+  --slice-loading-muted: var(--font-secondary-color, #6b6880);
+  --slice-loading-page: var(--primary-background-color, #ffffff);
+  --slice-loading-size: 48px;
+  --slice-loading-bar-height: 3px;
+
+  display: block;
+  /* Its own stacking context: an ancestor's filter or transform cannot
+     distort the overlay, and nothing underneath paints over it. */
+  isolation: isolate;
 }
 
-.pizza-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+slice-loading[data-size='sm'] { --slice-loading-size: 28px; }
+slice-loading[data-size='lg'] { --slice-loading-size: 72px; }
+
+slice-loading .slice-loading__overlay {
   position: relative;
-  z-index: 501;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  animation: slice-loading-fade-in 0.18s ease-out;
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
+/* ── Backdrops ──────────────────────────────────────────────────── */
+
+slice-loading[data-backdrop='dim'] .slice-loading__overlay {
+  background: color-mix(in srgb, var(--slice-loading-page) 55%, rgb(40 40 48 / 0.55));
+}
+
+slice-loading[data-backdrop='blur'] .slice-loading__overlay {
+  background: color-mix(in srgb, var(--slice-loading-page) 55%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+slice-loading[data-backdrop='solid'] .slice-loading__overlay {
+  background: var(--slice-loading-page);
+}
+
+/* No backdrop: nothing is blocked. */
+slice-loading[data-backdrop='none'] {
+  pointer-events: none;
+}
+
+/* ── Indicators: one per variant ────────────────────────────────── */
+
+slice-loading .slice-loading__indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+slice-loading .slice-loading__mark {
+  display: none;
+}
+
+slice-loading[data-variant='slice'] .slice-loading__mark--slice,
+slice-loading[data-variant='spinner'] .slice-loading__mark--spinner,
+slice-loading[data-variant='dots'] .slice-loading__mark--dots {
+  display: inline-flex;
+}
+
+/* slice: the Slice.js logo, spinning. */
+slice-loading .slice-loading__logo {
+  width: var(--slice-loading-size);
+  height: var(--slice-loading-size);
+  animation: slice-loading-spin 0.9s linear infinite;
+}
+
+slice-loading .slice-loading__logo path {
+  fill: var(--slice-loading-accent);
+}
+
+/* spinner: a ring. */
+slice-loading .slice-loading__mark--spinner {
+  width: var(--slice-loading-size);
+  height: var(--slice-loading-size);
+  box-sizing: border-box;
+  border: max(3px, calc(var(--slice-loading-size) / 12)) solid color-mix(in srgb, var(--slice-loading-accent) 20%, transparent);
+  border-top-color: var(--slice-loading-accent);
+  border-radius: 50%;
+  animation: slice-loading-spin 0.8s linear infinite;
+}
+
+/* dots: three bouncing dots. */
+slice-loading .slice-loading__mark--dots {
+  gap: calc(var(--slice-loading-size) / 6);
+}
+
+slice-loading .slice-loading__mark--dots > i {
+  width: calc(var(--slice-loading-size) / 4);
+  height: calc(var(--slice-loading-size) / 4);
+  border-radius: 50%;
+  background: var(--slice-loading-accent);
+  animation: slice-loading-bounce 1s ease-in-out infinite;
+}
+
+slice-loading .slice-loading__mark--dots > i:nth-child(2) { animation-delay: 0.15s; }
+slice-loading .slice-loading__mark--dots > i:nth-child(3) { animation-delay: 0.3s; }
+
+/* bar: a thin line along the top, for route changes and work that should
+   not block the page. */
+slice-loading[data-variant='bar'] .slice-loading__overlay {
+  justify-content: flex-start;
+}
+
+slice-loading[data-variant='bar'] .slice-loading__mark--bar {
+  display: block;
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--slice-loading-bar-height);
+  overflow: hidden;
+  background: color-mix(in srgb, var(--slice-loading-accent) 18%, transparent);
+}
+
+slice-loading .slice-loading__mark--bar > i {
+  display: block;
+  height: 100%;
+  background: var(--slice-loading-accent);
+  transition: width 0.2s ease;
+}
+
+slice-loading[data-progress='indeterminate'] .slice-loading__mark--bar > i {
+  width: 40%;
+  animation: slice-loading-slide 1.1s ease-in-out infinite;
+}
+
+/* The bar's label is a small pill under its end, so it does not sit on the
+   content it leaves usable. */
+slice-loading[data-variant='bar'] .slice-loading__indicator {
+  align-self: flex-end;
+  margin: calc(var(--slice-loading-bar-height) + 6px) 8px 0 0;
+}
+
+slice-loading[data-variant='bar'] .slice-loading__label {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--slice-surface-raised, var(--slice-loading-page));
+  box-shadow: var(--slice-shadow-sm, 0 1px 4px rgb(0 0 0 / 0.12));
+  font-size: 0.78rem;
+}
+
+slice-loading .slice-loading__label {
+  max-width: min(80vw, 360px);
+  color: var(--slice-loading-text);
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+slice-loading .slice-loading__label[hidden] {
+  display: none;
+}
+
+slice-loading .slice-loading__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ── Welcome: the first load of the page ────────────────────────── */
+
+slice-loading .slice-loading__welcome[hidden],
+slice-loading .slice-loading__welcome [hidden] {
+  display: none;
+}
+
+slice-loading.is-welcome .slice-loading__overlay::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(circle at 20% 15%, color-mix(in srgb, var(--secondary-color, var(--slice-loading-accent)) 60%, transparent) 0 12%, transparent 13%),
+    radial-gradient(circle at 80% 25%, color-mix(in srgb, var(--slice-loading-accent) 60%, transparent) 0 14%, transparent 15%),
+    radial-gradient(circle at 35% 78%, color-mix(in srgb, var(--warning-color, var(--slice-loading-accent)) 60%, transparent) 0 10%, transparent 11%),
+    radial-gradient(circle at 78% 82%, color-mix(in srgb, var(--slice-loading-accent) 45%, transparent) 0 11%, transparent 12%);
+  opacity: 0.22;
+  pointer-events: none;
+}
+
+slice-loading .slice-loading__welcome {
+  position: relative;
+  display: grid;
+  place-items: center;
+  z-index: 1;
+}
+
+slice-loading.is-welcome .slice-loading__indicator {
+  position: relative;
+  z-index: 1;
+  --slice-loading-size: 32px;
+}
+
+slice-loading .slice-loading__burst {
+  position: absolute;
+  width: min(70vw, 420px);
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+
+slice-loading .slice-loading__burst-dot {
+  position: absolute;
+  border-radius: 999px;
+  transform: translate(-50%, -50%) scale(0.3);
+  opacity: 0;
+  animation: slice-loading-burst 0.72s cubic-bezier(.22, .88, .31, 1.03) forwards;
+}
+
+slice-loading .slice-loading__burst-dot--a {
+  left: 16%; top: 46%; width: 84px; height: 84px;
+  background: color-mix(in srgb, var(--secondary-color, var(--slice-loading-accent)) 70%, var(--slice-loading-page));
+  animation-delay: 0.08s;
+}
+
+slice-loading .slice-loading__burst-dot--b {
+  left: 76%; top: 30%; width: 60px; height: 60px;
+  background: color-mix(in srgb, var(--slice-loading-accent) 70%, var(--slice-loading-page));
+  animation-delay: 0.15s;
+}
+
+slice-loading .slice-loading__burst-dot--c {
+  left: 70%; top: 76%; width: 46px; height: 46px;
+  background: color-mix(in srgb, var(--warning-color, var(--slice-loading-accent)) 70%, var(--slice-loading-page));
+  animation-delay: 0.22s;
+}
+
+slice-loading .slice-loading__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: min(84vw, 380px);
+  max-width: 90vw;
+  box-sizing: border-box;
+  padding: 22px 28px;
+  border: 1px solid var(--slice-border-raised, color-mix(in srgb, var(--slice-loading-accent) 18%, transparent));
+  border-radius: 18px;
+  background: var(--slice-surface-raised, var(--slice-loading-page));
+  box-shadow: var(--slice-shadow-lg, 0 18px 48px rgb(0 0 0 / 0.16));
+  text-align: center;
+  animation: slice-loading-card 0.72s cubic-bezier(.16, .82, .24, 1) 0.16s both;
+}
+
+slice-loading .slice-loading__brand {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 4px;
+  object-fit: contain;
+}
+
+slice-loading .slice-loading__kicker {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--slice-loading-muted);
+}
+
+slice-loading .slice-loading__title {
+  margin: 0;
+  font-size: clamp(1.25rem, 3.4vw, 1.9rem);
+  line-height: 1.1;
+  color: var(--slice-loading-text);
+}
+
+slice-loading .slice-loading__subtitle {
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+  color: var(--slice-loading-muted);
+}
+
+slice-loading .slice-loading__welcome-custom {
+  position: relative;
+}
+
+/* ── Leaving: the handover to the page ──────────────────────────── */
+
+/* stop(): the overlay fades where it is, so what is underneath crossfades in
+   instead of appearing in one frame. It stops blocking at once — the page is
+   already ready when stop() is called. Durations match EXIT_MS and
+   WELCOME_EXIT_MS in Loading.js. */
+slice-loading.is-leaving {
+  pointer-events: none;
+}
+
+slice-loading.is-leaving .slice-loading__overlay {
+  animation: slice-loading-fade-out 0.22s ease-out forwards;
+}
+
+/* The indicator lifts a touch while it fades: the eye follows it out instead
+   of landing on the page that appeared under it. */
+slice-loading.is-leaving .slice-loading__indicator {
+  animation: slice-loading-indicator-out 0.22s ease-out forwards;
+}
+
+slice-loading.is-leaving.is-welcome .slice-loading__overlay {
+  animation-duration: 0.32s;
+}
+
+/* The welcome card steps back and out, under the same fade. */
+slice-loading.is-leaving.is-welcome .slice-loading__card {
+  animation: slice-loading-card-out 0.32s ease-in forwards;
+}
+
+/* ── Motion ─────────────────────────────────────────────────────── */
+
+@keyframes slice-loading-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes slice-loading-bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slice-loading-slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+
+@keyframes slice-loading-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slice-loading-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes slice-loading-indicator-out {
+  to { opacity: 0; transform: translateY(-6px) scale(0.94); }
+}
+
+@keyframes slice-loading-card-out {
+  to { opacity: 0; transform: translateY(-10px) scale(1.03); }
+}
+
+@keyframes slice-loading-burst {
+  0% { transform: translate(-50%, -50%) scale(0.25); opacity: 0; }
+  55% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+}
+
+@keyframes slice-loading-card {
+  0% { opacity: 0; transform: translateY(18px) scale(0.95); }
+  65% { opacity: 1; transform: translateY(-2px) scale(1.02); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* Still, for people who asked the system for less motion: the indicators
+   pulse slowly instead of spinning, so the page still reads as busy. */
+@media (prefers-reduced-motion: reduce) {
+  slice-loading .slice-loading__logo,
+  slice-loading .slice-loading__mark--spinner,
+  slice-loading .slice-loading__mark--dots > i,
+  slice-loading[data-progress='indeterminate'] .slice-loading__mark--bar > i {
+    animation: slice-loading-pulse 2s ease-in-out infinite;
   }
 
-  to {
-    transform: rotate(360deg);
+  /* Entrances are dropped, and nothing moves on the way out. The fade itself
+     stays (opacity only, no displacement): without it the page would appear
+     in one frame, which is the harder thing to read. */
+  slice-loading:not(.is-leaving) .slice-loading__overlay,
+  slice-loading .slice-loading__card,
+  slice-loading.is-leaving.is-welcome .slice-loading__card,
+  slice-loading.is-leaving .slice-loading__indicator,
+  slice-loading .slice-loading__burst-dot {
+    animation: none;
+  }
+
+  slice-loading .slice-loading__burst-dot {
+    opacity: 0.8;
+    transform: translate(-50%, -50%);
   }
 }
 
-@keyframes fade {
-  0% {
-    opacity: 0;
-  }
-
-  50% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-  }
-}
-
-.slice_logo {
-  animation: spin 0.1s linear infinite;
-  height: 50px;
-  width: 50px;
-
-  path {
-    fill: var(--primary-color);
-  }
+@keyframes slice-loading-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
 }

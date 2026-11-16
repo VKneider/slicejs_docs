@@ -1,17 +1,49 @@
 /* Encapsulated under the custom element so the switch styles never leak. */
 
+/* ----------------------------------------------------------------- theme knobs
+   Every part of the look is a custom property declared on the HOST, so a
+   consumer can retune any of them per instance. Not on the container: a
+   property declared there would shadow every host-level override (same
+   reasoning as Checkbox.css). A `variant` is then a few overrides on the
+   container. The defaults reproduce the original switch exactly. */
+slice-switch {
+  display: inline-block;
+
+  --slice-switch-accent: var(--success-color);
+  --slice-switch-surface: color-mix(in srgb, var(--secondary-background-color) 72%, transparent);
+  --slice-switch-surface-border: color-mix(in srgb, var(--primary-color-shade) 60%, transparent);
+  --slice-switch-surface-border-hover: color-mix(in srgb, var(--primary-color) 55%, transparent);
+  --slice-switch-surface-border-width: 1px;
+  --slice-switch-track-surface: var(--secondary-background-color);
+  --slice-switch-track-border: color-mix(in srgb, var(--primary-color) 75%, transparent);
+  /* `--slice-border` is an app-level 1px token, so it needs its own fallback. */
+  --slice-switch-track-border-width: var(--slice-border, 1px);
+  /* The knob. A literal white by default (the original look), but a token, so
+     a theme or an instance can change it. */
+  --slice-switch-thumb: #ffffff;
+  --slice-switch-thumb-checked: var(--slice-switch-thumb);
+  /* Without it a white knob on a light, unchecked track all but disappears. */
+  --slice-switch-thumb-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+  /* Track height; width and knob derive from it. em-based, so `data-size`
+     scales the whole control through the switch's font-size. */
+  --slice-switch-height: 1.8em;
+}
+
 slice-switch .slice_switch {
+  /* `customColor.accent` lands on the HOST as --slice-switch-custom-accent and
+     is resolved here, below the container, so a variant's own accent cannot
+     shadow the per-instance colour. */
+  --slice-switch-accent-effective: var(--slice-switch-custom-accent, var(--slice-switch-accent));
+  --button-height: var(--slice-switch-height);
   --button-width: calc(var(--button-height) * 2);
-  --button-height: 1.8em;
   --toggle-diameter: calc(var(--button-width) / 3);
   --button-toggle-offset: calc(
     (var(--button-height) - var(--toggle-diameter)) / 2
   );
-  --toggle-shadow-offset: 10px;
-  --toggle-wider: 1.8em;
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 8px;
   user-select: none;
 }
 
@@ -19,13 +51,13 @@ slice-switch .slice_switch_container {
   width: fit-content;
   padding: 8px 10px;
   border-radius: 10px;
-  background: color-mix(in srgb, var(--secondary-background-color) 72%, transparent);
-  border: 1px solid color-mix(in srgb, var(--primary-color-shade) 60%, transparent);
+  background: var(--slice-switch-surface);
+  border: var(--slice-switch-surface-border-width) solid var(--slice-switch-surface-border);
   margin: 10px 0;
 }
 
 slice-switch .slice_switch_container:hover {
-  border-color: color-mix(in srgb, var(--primary-color) 55%, transparent);
+  border-color: var(--slice-switch-surface-border-hover);
 }
 
 slice-switch .switch_label {
@@ -40,8 +72,8 @@ slice-switch .slider {
   display: inline-block;
   width: var(--button-width);
   height: var(--button-height);
-  background-color: var(--secondary-background-color);
-  border: var(--slice-border) solid color-mix(in srgb, var(--primary-color) 75%, transparent);
+  background-color: var(--slice-switch-track-surface);
+  border: var(--slice-switch-track-border-width) solid var(--slice-switch-track-border);
   border-radius: calc(var(--button-height) / 2);
   position: relative;
   transition: 0.3s all ease-in-out;
@@ -52,7 +84,8 @@ slice-switch .slider::after {
   display: inline-block;
   width: var(--toggle-diameter);
   height: var(--toggle-diameter);
-  background-color: #ffffff;
+  background-color: var(--slice-switch-thumb);
+  box-shadow: var(--slice-switch-thumb-shadow);
   border-radius: calc(var(--toggle-diameter) / 2);
   position: absolute;
   top: var(--button-toggle-offset);
@@ -61,11 +94,12 @@ slice-switch .slider::after {
 }
 
 slice-switch .slice_switch input[type="checkbox"]:checked + .slider {
-  background-color: var(--success-color);
-  border: var(--slice-border) solid var(--success-color);
+  background-color: var(--slice-switch-accent-effective);
+  border: var(--slice-switch-track-border-width) solid var(--slice-switch-accent-effective);
 }
 
 slice-switch .slice_switch input[type="checkbox"]:checked + .slider::after {
+  background-color: var(--slice-switch-thumb-checked);
   transform: translateX(
     calc(
       var(--button-width) - var(--toggle-diameter) - var(--button-toggle-offset)
@@ -74,7 +108,35 @@ slice-switch .slice_switch input[type="checkbox"]:checked + .slider::after {
 }
 
 slice-switch .slice_switch input[type="checkbox"] {
-  display: none;
+  /* Visually hidden, NOT `display: none`: a display:none input is dropped from
+     the accessibility tree and the tab order, so the switch could not be
+     reached or toggled by keyboard at all. Kept focusable and 1px, clipped. */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The focus ring lives on the visible control, since the input itself is clipped. */
+slice-switch .slice_switch input[type="checkbox"]:focus-visible + .slider {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* `gap` keeps the label off the slider; the slider sizes itself with its border
+   included, so `--slice-border` cannot inflate it past the declared box. */
+slice-switch .slider {
+  box-sizing: border-box;
+  flex: none;
+}
+
+slice-switch .switch_label {
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 slice-switch .disabled {
@@ -82,4 +144,96 @@ slice-switch .disabled {
   background-color: var(--primary-color-shade);
   color: var(--disabled-color);
   cursor: not-allowed;
+}
+
+/* -------------------------------------------------------------------- variants
+   Mirrors Checkbox.css so a Switch and a Checkbox with the same `variant` sit
+   together. All values derive from theme tokens. */
+
+slice-switch .slice_switch_container.slice_switch--default {
+  --slice-switch-accent: var(--success-color);
+}
+
+/* outlined — no surface, a crisp outline; the accent is the theme primary. */
+slice-switch .slice_switch_container.slice_switch--outlined {
+  --slice-switch-accent: var(--primary-color);
+  --slice-switch-surface: transparent;
+  --slice-switch-surface-border: color-mix(in srgb, var(--primary-color) 45%, transparent);
+  --slice-switch-surface-border-hover: var(--primary-color);
+  --slice-switch-track-surface: transparent;
+  --slice-switch-track-border: var(--primary-color);
+}
+
+/* soft — a tinted, borderless surface and a muted primary track. */
+slice-switch .slice_switch_container.slice_switch--soft {
+  --slice-switch-accent: color-mix(in srgb, var(--primary-color) 70%, var(--secondary-background-color));
+  --slice-switch-surface: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  --slice-switch-surface-border: transparent;
+  --slice-switch-surface-border-hover: transparent;
+  --slice-switch-track-surface: color-mix(in srgb, var(--primary-color) 10%, var(--secondary-background-color));
+  --slice-switch-track-border: color-mix(in srgb, var(--primary-color) 40%, transparent);
+}
+
+/* danger — a switch that turns on something destructive or risky. */
+slice-switch .slice_switch_container.slice_switch--danger {
+  --slice-switch-accent: var(--danger-color);
+  --slice-switch-surface: color-mix(in srgb, var(--danger-color) 10%, transparent);
+  --slice-switch-surface-border: color-mix(in srgb, var(--danger-color) 40%, transparent);
+  --slice-switch-surface-border-hover: color-mix(in srgb, var(--danger-color) 65%, transparent);
+  --slice-switch-track-border: color-mix(in srgb, var(--danger-color) 70%, transparent);
+}
+
+/* ----------------------------------------------------------------------- sizes
+   `md` is the base. Switch implements the scale itself, like Checkbox: the
+   shared scale.css is a shelved prototype (DESIGN_SYSTEM.md). The track is
+   em-based, so scaling `.slice_switch`'s font-size scales track and knob. */
+
+slice-switch[data-size='sm'] .slice_switch_container {
+  padding: 5px 8px;
+  border-radius: 8px;
+  margin: 6px 0;
+}
+
+slice-switch[data-size='sm'] .slice_switch {
+  font-size: 0.8em;
+  gap: 6px;
+}
+
+slice-switch[data-size='sm'] .switch_label {
+  font-size: 0.85rem;
+}
+
+slice-switch[data-size='lg'] .slice_switch_container {
+  padding: 10px 14px;
+  border-radius: 12px;
+}
+
+slice-switch[data-size='lg'] .slice_switch {
+  font-size: 1.15em;
+}
+
+slice-switch[data-size='lg'] .switch_label {
+  font-size: 1.05rem;
+}
+
+/* ------------------------------------------------------------------- plain
+   Declared AFTER the sizes block on purpose: it ties with
+   `[data-size='…'] .slice_switch_container` on specificity, so source order is
+   what makes `plain` win the container padding. */
+slice-switch .slice_switch_container.slice_switch--plain {
+  --slice-switch-surface: transparent;
+  --slice-switch-surface-border: transparent;
+  --slice-switch-surface-border-hover: transparent;
+  --slice-switch-surface-border-width: 0;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+}
+
+/* The slide is decorative: never animate it when the user asked for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  slice-switch .slider,
+  slice-switch .slider::after {
+    transition: none;
+  }
 }

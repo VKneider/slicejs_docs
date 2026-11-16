@@ -227,9 +227,9 @@ document.querySelector('#app').appendChild(card);`
         path: '/Documentation/Themes'
       },
       {
-        title: 'Playground',
-        description: 'Experiment with components and routing in a live sandbox.',
-        path: '/Playground'
+        title: 'Components',
+        description: 'Browse the official visual component library and its live examples.',
+        path: '/Documentation/Components'
       }
     ];
 

@@ -13,7 +13,8 @@ export default class NotFound extends HTMLElement {
 
    init() {
       //change title of the page
-      document.title = '404 - Not Found';
+      // Keep the 404 title identical to the manifest entry.
+      document.title = 'Not found | Slice.js';
    }
 }
 

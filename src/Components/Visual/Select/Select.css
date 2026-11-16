@@ -1,127 +1,557 @@
-/* Encapsulated under the custom element so the select styles never leak. */
+/* Select. Encapsulated under the element; colours from the theme tokens.
+
+   The label floats like Input's: inside the field while it is empty, above it
+   once there is a value, a search or an open list. Variants share Button's
+   names (outlined / filled / ghost) because they mean the same thing here.
+   Sizes are implemented locally, like the other controls: the shared scale.css
+   is a shelved prototype no application loads. */
+
+slice-select {
+  --select-height: 42px;
+  --select-pad-x: 12px;
+  --select-font-size: 14px;
+  --select-radius: var(--border-radius-slice, 10px);
+  --select-row-height: 38px;
+  --select-border: var(--slice-border-raised, color-mix(in srgb, var(--font-primary-color) 18%, transparent));
+  --select-bg: var(--slice-surface-raised, var(--primary-background-color));
+  --select-accent: var(--primary-color);
+  --select-danger: var(--danger-color, #dc2626);
+
+  display: block;
+  font-family: var(--font-family);
+  font-size: var(--select-font-size);
+}
+
+slice-select[hidden] {
+  display: none;
+}
+
+slice-select[data-size='sm'] {
+  --select-height: 32px;
+  --select-pad-x: 10px;
+  --select-font-size: 13px;
+  --select-radius: calc(var(--border-radius-slice, 10px) * 0.8);
+}
+
+slice-select[data-size='lg'] {
+  --select-height: 50px;
+  --select-pad-x: 14px;
+  --select-font-size: 16px;
+}
+
+slice-select[data-variant='filled'] {
+  --select-bg: color-mix(in srgb, var(--primary-color) 7%, var(--primary-background-color));
+  --select-border: transparent;
+}
+
+slice-select[data-variant='ghost'] {
+  --select-bg: transparent;
+  --select-border: transparent;
+}
 
 slice-select .slice_select_dropdown {
-  font-family: var(--font-family);
-  max-width: 100%;
-  margin-bottom: 25px;
-  margin-top: 25px;
   position: relative;
+  max-width: 100%;
+  /* Spacing belongs to the container; --control-margin-block restores it. */
+  margin: var(--control-margin-block, 0);
 }
+
+/* A label floats ABOVE the field: leave it room so it never sits on what is
+   above the Select. */
+slice-select .slice_select_dropdown:has(.slice_select_label:not([hidden])) {
+  padding-top: calc(var(--select-font-size) * 1.05);
+}
+
+/* ------------------------------------------------------------------ field */
 
 slice-select .slice_select_container {
-  cursor: pointer;
+  box-sizing: border-box;
+  position: relative;
   display: flex;
-  padding: 10px;
-  border-radius: var(--border-radius-slice);
-  border: var(--slice-border) solid var(--primary-color);
-  background-color: var(--primary-background-color);
-  justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
+  gap: 4px 6px;
+  min-height: var(--select-height);
+  padding: 4px var(--select-pad-x);
+  border: var(--slice-border, 1px) solid var(--select-border);
+  border-radius: var(--select-radius);
+  background-color: var(--select-bg);
+  color: var(--font-primary-color);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 
-slice-select .slice_select_container:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-color) 55%, transparent);
+slice-select .slice_select_container:hover {
+  border-color: color-mix(in srgb, var(--select-accent) 45%, var(--select-border));
+}
+
+slice-select[data-variant='ghost'] .slice_select_container:hover {
+  background-color: color-mix(in srgb, var(--select-accent) 7%, transparent);
+}
+
+slice-select .slice_select_container:focus-within,
+slice-select.slice_select--open .slice_select_container {
+  border-color: var(--select-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--select-accent) 22%, transparent);
+}
+
+slice-select.slice_select--invalid .slice_select_container {
+  border-color: var(--select-danger);
+}
+
+slice-select.slice_select--invalid .slice_select_container:focus-within {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--select-danger) 22%, transparent);
+}
+
+slice-select.slice_select--disabled .slice_select_container {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 slice-select .slice_select {
-  pointer-events: none;
-  color: var(--font-primary-color);
-  width: 100%;
-  background: none;
+  flex: 1 1 60px;
+  min-width: 40px;
+  height: calc(var(--select-height) - 10px);
+  margin: 0;
+  padding: 0;
+  border: 0;
   outline: none;
-  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-overflow: ellipsis;
+  cursor: inherit;
 }
 
+slice-select.slice_select--searchable.slice_select--open .slice_select {
+  cursor: text;
+}
+
+slice-select .slice_select::placeholder {
+  color: var(--font-secondary-color, currentColor);
+  opacity: 0.8;
+}
+
+/* The floating label. */
 slice-select .slice_select_label {
-  color: var(--primary-color);
   position: absolute;
-  transition: all 0.5s;
+  top: calc(var(--select-height) / 2);
+  left: var(--select-pad-x);
+  max-width: calc(100% - 2 * var(--select-pad-x) - 40px);
+  overflow: hidden;
+  color: var(--font-secondary-color, var(--select-accent));
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transform-origin: left center;
+  /* transform only: an opacity tween would print the label and the
+     placeholder over each other for the length of the fade. */
+  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), color 0.15s ease;
+}
+
+slice-select .slice_select_label[hidden] {
+  display: none;
+}
+
+slice-select .slice_select_label.slice_select_value {
+  transform: translateY(calc(-50% - var(--select-height) / 2 - 0.9em)) scale(0.82);
+  color: var(--select-accent);
+}
+
+slice-select.slice_select--invalid .slice_select_label.slice_select_value {
+  color: var(--select-danger);
+}
+
+slice-select.slice_select--required .slice_select_label::after {
+  content: ' *';
+  color: var(--select-danger);
+}
+
+/* Chips (multiple). */
+slice-select .slice_select_chips {
+  display: contents;
+}
+
+slice-select .slice_select_chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  height: calc(var(--select-height) - 16px);
+  min-height: 22px;
+  padding: 0 4px 0 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--select-accent) 14%, transparent);
+  color: var(--select-accent);
+  font-size: 0.88em;
+  font-weight: 600;
+  animation: slice-select-chip-in 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+slice-select .slice_select_chip_label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+slice-select .slice_select_chip_remove,
+slice-select .slice_select_clear {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+slice-select .slice_select_chip_remove:hover {
+  background: color-mix(in srgb, var(--select-accent) 22%, transparent);
+}
+
+/* A drawn ✕. */
+slice-select .slice_select_chip_remove::before,
+slice-select .slice_select_chip_remove::after,
+slice-select .slice_select_clear::before,
+slice-select .slice_select_clear::after {
+  content: '';
+  position: absolute;
+  width: 9px;
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+  transform: rotate(45deg);
+}
+
+slice-select .slice_select_chip_remove::after,
+slice-select .slice_select_clear::after {
+  transform: rotate(-45deg);
+}
+
+slice-select .slice_select_clear {
+  width: 22px;
+  height: 22px;
+  margin-left: auto;
+  color: var(--font-secondary-color, currentColor);
+}
+
+slice-select .slice_select_clear:hover {
+  background: color-mix(in srgb, var(--font-primary-color) 10%, transparent);
+  color: var(--font-primary-color);
+}
+
+slice-select .slice_select_clear[hidden] {
+  display: none;
+}
+
+/* The chevron. */
+slice-select .slice_select_caret {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  margin: -3px 3px 0 4px;
+  border-right: 1.5px solid var(--select-accent);
+  border-bottom: 1.5px solid var(--select-accent);
+  transform: rotate(45deg);
+  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), margin 0.22s ease;
+}
+
+slice-select.slice_select--open .slice_select_caret {
+  margin-top: 4px;
+  transform: rotate(225deg);
+}
+
+/* ---------------------------------------------------------------- message */
+
+slice-select .slice_select_message {
+  margin-top: 5px;
+  padding: 0 var(--select-pad-x);
+  color: var(--font-secondary-color, currentColor);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+slice-select .slice_select_message[hidden] {
+  display: none;
+}
+
+slice-select .slice_select_message--error {
+  color: var(--select-danger);
+}
+
+/* ------------------------------------------------------------------- menu
+   A manual popover in the top layer; top / left / max-height come from
+   Select.js. The browser's popover defaults are reset here. */
+
+slice-select .slice_select_menu {
+  box-sizing: border-box;
+  position: fixed;
+  inset: auto;
+  z-index: 1000;
+  display: none;
+  min-width: var(--select-anchor-width, 200px);
+  max-width: min(480px, calc(100vw - 16px));
+  max-height: 300px;
+  margin: 0;
+  padding: 4px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  color: var(--font-primary-color);
+  font-family: var(--font-family);
+  font-size: var(--select-font-size);
+  background-color: var(--slice-surface-raised, var(--primary-background-color));
+  border: var(--slice-border, 1px) solid var(--slice-border-raised, rgba(0, 0, 0, 0.12));
+  border-radius: var(--select-radius);
+  box-shadow: var(--slice-shadow-md, 0 10px 28px rgba(0, 0, 0, 0.18));
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.14s ease, transform 0.14s ease;
+}
+
+slice-select .slice_select_menu.menu_open {
+  display: block;
+}
+
+slice-select .slice_select_menu.is-open {
+  opacity: 1;
+  transform: none;
+}
+
+slice-select .slice_select_menu[data-side='top'] {
+  transform: translateY(4px);
+}
+
+slice-select .slice_select_menu[data-side='top'].is-open {
+  transform: none;
+}
+
+slice-select .slice_select_menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+slice-select .slice_select_menu::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--select-accent) 35%, transparent);
+  border-radius: 999px;
+}
+
+slice-select .slice_select_option {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--select-row-height);
+  padding: 6px 10px;
+  border-radius: calc(var(--select-radius) * 0.7);
+  cursor: pointer;
   user-select: none;
 }
 
-slice-select .slice_select_value {
-  scale: 0.8;
-  transform: translateY(-200%);
-  transition: all 0.5s;
+slice-select .slice_select_menu--virtual .slice_select_option {
+  height: var(--select-row-height);
 }
 
-slice-select .slice_select_menu {
-  display: none;
-  border: var(--slice-border) solid var(--primary-color);
-  list-style: none;
-  font-family: var(--font-family);
-  visibility: hidden;
+slice-select .slice_select_option.highlighted {
+  background-color: color-mix(in srgb, var(--select-accent) 12%, transparent);
+}
+
+slice-select .slice_select_option[aria-selected='true'] {
+  color: var(--select-accent);
+  font-weight: 600;
+}
+
+slice-select .slice_select_option[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: default;
+}
+
+slice-select .slice_select_option[aria-disabled='true'].highlighted {
+  background: transparent;
+}
+
+slice-select .slice_select_option_text {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+
+slice-select .slice_select_option_label {
   overflow: hidden;
-  position: absolute;
-  opacity: 0;
-  transition: 0s, opacity 0.3s;
-  top: 100%;
-  width: 100%;
-  z-index: 1;
-  background-color: var(--primary-background-color);
-  border-radius: var(--border-radius-slice);
-  box-shadow: 0 0 10px 0 #00000050;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-slice-select .slice_select_menu div {
+slice-select .slice_select_option_label mark {
+  padding: 0 1px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--select-accent) 24%, transparent);
+  color: inherit;
+}
+
+slice-select .slice_select_option_description {
+  overflow: hidden;
+  color: var(--font-secondary-color, currentColor);
+  font-size: 0.85em;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+slice-select .slice_select_option_icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: var(--font-secondary-color, currentColor);
+}
+
+/* Single: a tick at the end of the chosen option. */
+slice-select:not(.slice_select--multiple) .slice_select_option[aria-selected='true']::after {
+  content: '';
+  flex: none;
+  width: 5px;
+  height: 10px;
+  margin: 0 3px 3px auto;
+  border-right: 2px solid var(--select-accent);
+  border-bottom: 2px solid var(--select-accent);
+  transform: rotate(45deg);
+}
+
+/* Multiple: a checkbox at the start (mixed on "Select all"). */
+slice-select .slice_select_check {
+  box-sizing: border-box;
+  position: relative;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid color-mix(in srgb, var(--font-primary-color) 45%, transparent);
+  border-radius: 4px;
+  background: var(--primary-background-color);
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+
+slice-select .slice_select_option[aria-selected='true'] .slice_select_check,
+slice-select .slice_select_option.is-mixed .slice_select_check {
+  border-color: var(--select-accent);
+  background: var(--select-accent);
+}
+
+slice-select .slice_select_option[aria-selected='true'] .slice_select_check::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border-right: 2px solid var(--primary-color-contrast, #fff);
+  border-bottom: 2px solid var(--primary-color-contrast, #fff);
+  transform: rotate(45deg);
+}
+
+slice-select .slice_select_option.is-mixed .slice_select_check::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  top: 6px;
+  height: 2px;
+  background: var(--primary-color-contrast, #fff);
+}
+
+slice-select .slice_select_option--all {
+  margin-bottom: 2px;
+  border-bottom: 1px solid var(--slice-border-raised, rgba(0, 0, 0, 0.1));
+  border-radius: calc(var(--select-radius) * 0.7) calc(var(--select-radius) * 0.7) 0 0;
+}
+
+slice-select .slice_select_option--create {
+  color: var(--select-accent);
+}
+
+slice-select .slice_select_option--create::before {
+  content: '+';
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+slice-select .slice_select_group {
+  padding: 10px 10px 4px;
+  color: var(--font-secondary-color, currentColor);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+slice-select .slice_select_menu--virtual .slice_select_group {
+  box-sizing: border-box;
+  height: var(--select-row-height);
+  display: flex;
+  align-items: flex-end;
+}
+
+slice-select .slice_select_no_results {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  color: var(--font-primary-color);
-  cursor: pointer;
+  gap: 8px;
   padding: 10px;
+  color: var(--font-secondary-color, currentColor);
 }
 
-/* Checkmark on the right, shown only on selected options — makes the selected
-   state obvious, especially in multi-select. */
-slice-select .slice_select_menu div::after {
-  content: "";
-  flex: 0 0 auto;
-  width: 6px;
-  height: 11px;
-  margin: 0 2px 3px 0;
-  border: solid var(--primary-color);
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg) scale(0.5);
-  opacity: 0;
-  transition: opacity 0.15s ease, transform 0.15s ease;
+slice-select .slice_select_loading::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border: 2px solid color-mix(in srgb, var(--select-accent) 30%, transparent);
+  border-top-color: var(--select-accent);
+  border-radius: 50%;
+  animation: slice-select-spin 0.7s linear infinite;
 }
 
-slice-select .slice_select_menu div:hover {
-  background-color: color-mix(in srgb, var(--primary-color) 10%, transparent);
+@keyframes slice-select-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-slice-select .menu_open {
-  display: block;
-  overflow-y: auto;
-  min-height: min-content;
-  max-height: 240px;
-  visibility: visible;
-  opacity: 1;
+@keyframes slice-select-chip-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
 }
 
-slice-select .menu_open::-webkit-scrollbar {
-  width: 6px;
+@media (pointer: coarse) {
+  slice-select .slice_select_option {
+    min-height: max(var(--select-row-height), 42px);
+  }
 }
 
-slice-select .menu_open::-webkit-scrollbar-thumb {
-  background: var(--secondary-color);
-  border-radius: var(--border-radius-slice);
-}
+@media (prefers-reduced-motion: reduce) {
+  slice-select .slice_select_container,
+  slice-select .slice_select_label,
+  slice-select .slice_select_caret,
+  slice-select .slice_select_menu {
+    transition: none;
+  }
 
-slice-select .slice_select_menu div.active {
-  color: var(--primary-color);
-  font-weight: 600;
-  background-color: color-mix(in srgb, var(--primary-color) 18%, transparent);
-}
-
-slice-select .slice_select_menu div.active::after {
-  opacity: 1;
-  transform: rotate(45deg) scale(1);
-}
-
-slice-select .slice_select_container .caret {
-  border-top-color: var(--primary-color);
+  slice-select .slice_select_chip,
+  slice-select .slice_select_loading::before {
+    animation: none;
+  }
 }

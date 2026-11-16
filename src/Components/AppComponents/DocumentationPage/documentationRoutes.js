@@ -14,8 +14,8 @@ export const documentationRoutes = {
             component: 'Installation'
          },
          {
-            title: 'Slice-cli Commands',
-            path: '/Documentation/Commands',
+            title: 'Slice CLI',
+            path: '/Documentation/CLI',
             component: 'CommandsDocumentation'
          },
          {

@@ -1,8 +1,12 @@
 <div class="slice_select_dropdown">
   <div class="slice_select_container">
     <label class="slice_select_label"></label>
-    <input class="slice_select" />
-    <div class="caret"></div>
+    <div class="slice_select_chips"></div>
+    <input class="slice_select" type="text" role="combobox" autocomplete="off" spellcheck="false" aria-autocomplete="list" aria-expanded="false" />
+    <button class="slice_select_clear" type="button" tabindex="-1" aria-label="Clear selection" hidden></button>
+    <span class="slice_select_caret" aria-hidden="true"></span>
   </div>
-  <div class="slice_select_menu"></div>
+  <div class="slice_select_message" hidden></div>
+  <div class="slice_select_menu" role="listbox" popover="manual"></div>
+  <div class="slice_select_form" hidden></div>
 </div>

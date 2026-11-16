@@ -1,5 +1,36 @@
 /* Encapsulated under the custom element so the checkbox styles never leak. */
 
+/* ----------------------------------------------------------------- theme knobs
+   Every part of the checkbox's look is a custom property, declared on the HOST so
+   a consumer can retune any of them per instance (`el.style.setProperty(...)` or
+   app CSS). They must NOT be declared on the container: a custom property declared
+   on an element beats the inherited one, so a container-level default would shadow
+   every host-level override instead of letting it through. A `variant` is then a
+   handful of overrides on the container instead of a parallel copy of these rules,
+   and the box (`.checkmark`) inherits them by cascade. The defaults reproduce the
+   original success-colored checkbox exactly, so nothing changes by default. */
+slice-checkbox {
+  display: inline-block;
+
+  --slice-checkbox-accent: var(--success-color);
+  --slice-checkbox-accent-contrast: var(--success-contrast, #ffffff);
+  --slice-checkbox-surface: color-mix(in srgb, var(--secondary-background-color) 72%, transparent);
+  --slice-checkbox-surface-border: color-mix(in srgb, var(--primary-color-shade) 60%, transparent);
+  --slice-checkbox-surface-border-hover: color-mix(in srgb, var(--primary-color) 55%, transparent);
+  --slice-checkbox-box-surface: var(--secondary-background-color);
+  --slice-checkbox-box-border: var(--primary-color);
+  /* Border WIDTHS are the consumer's escape hatch: set them on the host to retune
+     or remove a border for one instance without touching the component — e.g. a
+     filled, borderless box is `--slice-checkbox-box-border-width: 0` plus a
+     `--slice-checkbox-box-surface`. `--slice-border` is an app-level 1px token, so
+     it needs its own fallback here. */
+  --slice-checkbox-surface-border-width: 1px;
+  --slice-checkbox-box-border-width: var(--slice-border, 1px);
+  /* Resolved against `.checkmark`'s own font-size, so `data-size` scales the box
+     and its em-based tick together (see the sizes block below). */
+  --slice-checkbox-box-size: 1.3em;
+}
+
 slice-checkbox .slice_checkbox input {
   position: absolute;
   opacity: 0;
@@ -12,13 +43,13 @@ slice-checkbox .slice_checkbox_container {
   width: fit-content;
   padding: 8px 10px;
   border-radius: 10px;
-  background: color-mix(in srgb, var(--secondary-background-color) 72%, transparent);
-  border: 1px solid color-mix(in srgb, var(--primary-color-shade) 60%, transparent);
+  background: var(--slice-checkbox-surface);
+  border: var(--slice-checkbox-surface-border-width) solid var(--slice-checkbox-surface-border);
   margin: 10px 0;
 }
 
 slice-checkbox .slice_checkbox_container:hover {
-  border-color: color-mix(in srgb, var(--primary-color) 55%, transparent);
+  border-color: var(--slice-checkbox-surface-border-hover);
 }
 
 slice-checkbox .slice_checkbox {
@@ -35,26 +66,46 @@ slice-checkbox .checkbox_label {
   font-family: var(--font-family);
   color: var(--font-primary-color);
   font-size: 0.95rem;
+  cursor: pointer;
 }
 
 slice-checkbox .checkmark {
   position: relative;
   top: 0;
   left: 0;
-  height: 1.3em;
-  width: 1.3em;
-  background-color: var(--secondary-background-color);
-  border: var(--slice-border) solid var(--primary-color);
+  height: var(--slice-checkbox-box-size);
+  width: var(--slice-checkbox-box-size);
+  background-color: var(--slice-checkbox-box-surface);
+  border: var(--slice-checkbox-box-border-width) solid var(--slice-checkbox-box-border);
   transition: all 0.3s;
   border-radius: var(--border-radius-slice);
   cursor: pointer;
+  flex: none;
+}
+
+/* The real input is clipped to 0×0 for styling, so the focus ring has to be
+   drawn on the visible checkmark — otherwise a keyboard user gets no indicator. */
+slice-checkbox .slice_checkbox input:focus-visible ~ .checkmark {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
 slice-checkbox .slice_checkbox input:checked ~ .checkmark {
-  border: var(--slice-border) solid var(--success-color);
-  background-color: var(--success-color);
+  border: var(--slice-checkbox-box-border-width) solid var(--slice-checkbox-accent);
+  background-color: var(--slice-checkbox-accent);
   animation: slice_checkbox_pop 0.5s;
   animation-direction: alternate;
+}
+
+/* The pop is decorative: never animate it when the user asked for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  slice-checkbox .slice_checkbox input:checked ~ .checkmark {
+    animation: none;
+  }
+
+  slice-checkbox .checkmark {
+    transition: none;
+  }
 }
 
 slice-checkbox .checkmark:after {
@@ -72,7 +123,7 @@ slice-checkbox .slice_checkbox .checkmark:after {
   top: 0.25em;
   width: 0.25em;
   height: 0.5em;
-  border: solid var(--success-contrast, #ffffff);
+  border: solid var(--slice-checkbox-accent-contrast, var(--success-contrast, #ffffff));
   border-width: 0 0.15em 0.15em 0;
   transform: rotate(45deg);
 }
@@ -82,6 +133,107 @@ slice-checkbox .disabled {
   background-color: var(--primary-color-shade);
   color: var(--disabled-color);
   cursor: not-allowed;
+}
+
+/* -------------------------------------------------------------------- variants
+   All values derive from theme tokens, so the variants follow the active theme.
+   `default` is spelled out only to document that it is the base rule above; the
+   others re-point the accent and/or the surface. Declared after the base rules
+   and with a higher specificity, so they win. */
+
+slice-checkbox .slice_checkbox_container.slice_checkbox--default {
+  --slice-checkbox-accent: var(--success-color);
+  --slice-checkbox-accent-contrast: var(--success-contrast, #ffffff);
+}
+
+/* outlined — no surface, a crisp accent outline; the accent is the theme's
+   primary instead of the success green. */
+slice-checkbox .slice_checkbox_container.slice_checkbox--outlined {
+  --slice-checkbox-accent: var(--primary-color);
+  --slice-checkbox-accent-contrast: var(--primary-color-contrast);
+  --slice-checkbox-surface: transparent;
+  --slice-checkbox-surface-border: color-mix(in srgb, var(--primary-color) 45%, transparent);
+  --slice-checkbox-surface-border-hover: var(--primary-color);
+  --slice-checkbox-box-surface: transparent;
+  --slice-checkbox-box-border: var(--primary-color);
+}
+
+/* soft — a tinted, borderless surface; the checked box is a muted primary wash
+   with the tick drawn in the accent itself rather than in a contrast color. */
+slice-checkbox .slice_checkbox_container.slice_checkbox--soft {
+  --slice-checkbox-accent: color-mix(in srgb, var(--primary-color) 22%, transparent);
+  --slice-checkbox-accent-contrast: var(--primary-color);
+  --slice-checkbox-surface: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  --slice-checkbox-surface-border: transparent;
+  --slice-checkbox-surface-border-hover: transparent;
+  --slice-checkbox-box-surface: color-mix(in srgb, var(--primary-color) 8%, transparent);
+  --slice-checkbox-box-border: color-mix(in srgb, var(--primary-color) 40%, transparent);
+}
+
+/* danger — destructive confirmations ("this will delete…"). Derives from the
+   danger tokens so it follows the theme. */
+slice-checkbox .slice_checkbox_container.slice_checkbox--danger {
+  --slice-checkbox-accent: var(--danger-color);
+  --slice-checkbox-accent-contrast: var(--danger-contrast, #ffffff);
+  --slice-checkbox-surface: color-mix(in srgb, var(--danger-color) 10%, transparent);
+  --slice-checkbox-surface-border: color-mix(in srgb, var(--danger-color) 40%, transparent);
+  --slice-checkbox-surface-border-hover: color-mix(in srgb, var(--danger-color) 65%, transparent);
+  --slice-checkbox-box-surface: var(--secondary-background-color);
+  --slice-checkbox-box-border: var(--danger-color);
+}
+
+/* ----------------------------------------------------------------------- sizes
+   `md` is the base rule. `applySize` writes `data-size` on the host, and Checkbox
+   implements the scale itself because the shared scale.css is a shelved prototype
+   no application loads — the same reasoning Input documents (see BACKLOG.md).
+   Scaling the checkmark's own font-size scales the box AND its em-based tick
+   together, so the proportions never drift. */
+
+slice-checkbox[data-size='sm'] .slice_checkbox_container {
+  padding: 5px 8px;
+  border-radius: 8px;
+  margin: 6px 0;
+}
+
+slice-checkbox[data-size='sm'] .checkmark {
+  font-size: 0.9em;
+}
+
+slice-checkbox[data-size='sm'] .checkbox_label {
+  font-size: 0.85rem;
+}
+
+slice-checkbox[data-size='lg'] .slice_checkbox_container {
+  padding: 10px 14px;
+  border-radius: 12px;
+}
+
+slice-checkbox[data-size='lg'] .checkmark {
+  font-size: 1.1em;
+}
+
+slice-checkbox[data-size='lg'] .checkbox_label {
+  font-size: 1.05rem;
+}
+
+/* ------------------------------------------------------------------- plain
+   No chip at all: the bare box + label, for dense rows, toolbars and tables
+   where the surrounding surface IS the container. The box border stays — without
+   it an unchecked checkbox would be invisible; retune the box itself with
+   `--slice-checkbox-box-border-width` / `--slice-checkbox-box-surface`.
+
+   Declared AFTER the sizes block on purpose: it ties with
+   `[data-size='…'] .slice_checkbox_container` on specificity, so source order is
+   what makes `plain` win the container padding (size must still drive the box and
+   the label, which it does through `.checkmark` / `.checkbox_label`). */
+slice-checkbox .slice_checkbox_container.slice_checkbox--plain {
+  --slice-checkbox-surface: transparent;
+  --slice-checkbox-surface-border: transparent;
+  --slice-checkbox-surface-border-hover: transparent;
+  --slice-checkbox-surface-border-width: 0;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
 }
 
 @keyframes slice_checkbox_pop {

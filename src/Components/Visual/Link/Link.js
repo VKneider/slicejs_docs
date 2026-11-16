@@ -13,7 +13,17 @@ export default class Link extends HTMLElement {
    async onClick(event) {
       event.preventDefault();
       const path = this.querySelector('a')?.getAttribute('href');
-      if (path) slice.router.navigate(path);
+      if (!path || path === '#') return;
+      // External destinations are real links, not router routes.
+      if (/^(https?:)?\/\//i.test(path)) {
+         window.open(path, '_blank', 'noopener,noreferrer');
+         return;
+      }
+      if (/^(mailto|tel):/i.test(path)) {
+         window.location.href = path;
+         return;
+      }
+      slice.router.navigate(path);
    }
 
    // Built with DOM APIs (setAttribute / textContent) instead of an innerHTML
@@ -24,6 +34,10 @@ export default class Link extends HTMLElement {
       const anchor = document.createElement('a');
       anchor.setAttribute('href', path);
       anchor.setAttribute('data-route', '');
+      if (/^(https?:)?\/\//i.test(path)) {
+         anchor.setAttribute('target', '_blank');
+         anchor.setAttribute('rel', 'noopener noreferrer');
+      }
       if (classes) anchor.className = classes;
       anchor.textContent = text;
       this.replaceChildren(anchor);

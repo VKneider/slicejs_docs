@@ -13,6 +13,9 @@ export default class DocumentationPage extends HTMLElement {
    async init() {
       const titleByRoute = new Map(docsIndex.map(d => [d.route, d.title]));
       slice.router.afterEach((to) => {
+        // The docs page owns titles only for docs routes; the router's
+        // metadata titles must survive on /Playground, /about, /404, etc.
+        if (!to.path.startsWith('/Documentation')) return;
         const title = titleByRoute.get(to.path) || 'Slice - Documentation';
         document.title = `${title} | Slice.js`;
       });
@@ -29,8 +32,7 @@ export default class DocumentationPage extends HTMLElement {
          items: [
             { text: 'Home', path: '/' },
             { text: 'Documentation', path: '/Documentation' },
-            { text: 'Playground', path: '/Playground' },
-            { text: 'Theme Creator', path: '/ThemeCreator' },
+            { text: 'Components', path: 'https://components.slicejs.com' },
          ],
          buttons: [],
       });

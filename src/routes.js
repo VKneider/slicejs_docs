@@ -1,6 +1,6 @@
 const routes = [
    // Rutas principales
-   { path: '/', component: 'LandingPage' },
+   { path: '/', component: 'LandingPage', metadata: { title: 'Slice.js Web Framework' } },
    {
       path: '/Documentation',
       component: 'DocumentationPage',
@@ -8,10 +8,6 @@ const routes = [
          {
             path: '/Slice',
             component: 'WhatIsSlice',
-         },
-         {
-            path: '/Commands',
-            component: 'CommandsDocumentation',
          },
          {
             path: '/CLI',
@@ -200,16 +196,11 @@ const routes = [
        ]
     },
    // Otras rutas
-   { path: '/Playground', component: 'Playground' },
-   { path: '/ThemeCreator', component: 'ThemeCreator' },
-   { path: '/404', component: 'NotFound' },
-   {
-      path: '/Docum/${category}/${id}',
-      component: 'LandingPage',
-   },
+   { path: '/404', component: 'NotFound', metadata: { title: 'Not found | Slice.js' } },
    {
       path: '/about',
       component: 'TheSliceTeam',
+      metadata: { title: 'About | Slice.js' },
    },
 ];
 export default routes;

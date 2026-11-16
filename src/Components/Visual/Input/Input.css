@@ -1,11 +1,150 @@
-/* Encapsulated under the custom element so the input styles never leak. */
+/* Input. Encapsulated under the element; colours from the theme tokens.
 
-slice-input .eye {
-  color: var(--primary-color);
-  position: absolute;
-  user-select: none;
-  cursor: pointer;
-  right: 10px;
+   One field system with Textarea and Select: the same heights, padding,
+   border, focus ring and variants. The floating label and the error shake are
+   SHARED with Textarea: the rules marked "shared" below are repeated, value
+   for value, in Textarea.css (a stylesheet is loaded per component, so they
+   cannot live in one file), and Textarea.spec.js fails if the two drift. */
+
+slice-input {
+  --field-height: 42px;
+  --field-pad-x: 12px;
+  --field-font-size: 14px;
+  --field-radius: var(--border-radius-slice, 10px);
+  --field-border: var(--slice-border-raised, color-mix(in srgb, var(--font-primary-color) 18%, transparent));
+  --field-bg: var(--slice-surface-raised, var(--primary-background-color));
+  --field-accent: var(--primary-color);
+  --field-danger: var(--danger-color, #dc2626);
+  --field-muted: var(--font-secondary-color, color-mix(in srgb, var(--font-primary-color) 65%, transparent));
+  --field-icon-size: 18px;
+
+  display: block;
+  font-family: var(--font-family);
+  font-size: var(--field-font-size);
+}
+
+slice-input[hidden] {
+  display: none;
+}
+
+/* ---------------------------------------------------------------- sizes */
+
+slice-input[data-size='sm'] {
+  --field-height: 32px;
+  --field-pad-x: 10px;
+  --field-font-size: 13px;
+  --field-radius: calc(var(--border-radius-slice, 10px) * 0.8);
+  --field-icon-size: 16px;
+}
+
+slice-input[data-size='lg'] {
+  --field-height: 50px;
+  --field-pad-x: 14px;
+  --field-font-size: 16px;
+  --field-icon-size: 20px;
+}
+
+/* ------------------------------------------------------------- variants */
+
+slice-input[data-variant='filled'] {
+  --field-bg: color-mix(in srgb, var(--primary-color) 7%, var(--primary-background-color));
+  --field-border: transparent;
+}
+
+slice-input[data-variant='ghost'] {
+  --field-bg: transparent;
+  --field-border: transparent;
+}
+
+/* --------------------------------------------------------------- layout */
+
+slice-input .slice_input_wrap {
+  position: relative;
+  max-width: 100%;
+  /* Spacing belongs to the container (a Form, a Grid); this restores it. */
+  margin: var(--control-margin-block, 0);
+}
+
+/* A floating label rises ABOVE the field: leave it room so it never sits on
+   whatever is above the Input. */
+slice-input.slice_input--labelled[data-label-placement='floating'] .slice_input_wrap {
+  padding-top: calc(var(--field-font-size) * 1.15);
+}
+
+slice-input .slice_input {
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--field-height);
+  padding: 0 var(--field-pad-x);
+  border: var(--slice-border, 1px) solid var(--field-border);
+  border-radius: var(--field-radius);
+  background-color: var(--field-bg);
+  color: var(--font-primary-color);
+  cursor: text;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+slice-input .slice_input:hover {
+  border-color: color-mix(in srgb, var(--field-accent) 45%, var(--field-border));
+}
+
+slice-input[data-variant='ghost'] .slice_input:hover {
+  background-color: color-mix(in srgb, var(--field-accent) 7%, transparent);
+}
+
+slice-input .slice_input:focus-within {
+  border-color: var(--field-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--field-accent) 22%, transparent);
+}
+
+slice-input .slice_input.is-invalid {
+  border-color: var(--field-danger);
+}
+
+slice-input .slice_input.is-invalid:focus-within {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--field-danger) 22%, transparent);
+}
+
+slice-input .slice_input.disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+slice-input .slice_input.readonly {
+  background-color: var(--tertiary-background-color, var(--field-bg));
+  cursor: default;
+}
+
+slice-input .input_area {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: calc(var(--field-height) - 2px);
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: none;
+  color: var(--font-primary-color);
+  font: inherit;
+  text-overflow: ellipsis;
+}
+
+slice-input .input_area:disabled {
+  cursor: not-allowed;
+}
+
+slice-input .input_area::placeholder {
+  color: var(--field-muted);
+  opacity: 0.8;
+}
+
+/* With a label inside the field, the native hint only shows once the label has
+   risen: before that, the two would print on top of each other. */
+slice-input.slice_input--labelled[data-label-placement='floating']:not(.slice_input--focused) .input_area::placeholder {
+  color: transparent;
 }
 
 slice-input .input_area::-webkit-inner-spin-button {
@@ -13,91 +152,202 @@ slice-input .input_area::-webkit-inner-spin-button {
   margin: 0;
 }
 
-slice-input .input_area {
-  color: var(--font-primary-color);
-  width: 100%;
-  background: none;
-  outline: none;
-  border: none;
+/* ---------------------------------------------------------- adornments */
+
+slice-input .slice_input_icon {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: var(--field-icon-size);
+  color: var(--field-muted);
+  transition: color 0.15s ease;
 }
 
-slice-input .slice_input {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  max-width: 100%;
-  border-radius: var(--border-radius-slice);
-  font-family: var(--font-family);
-  border: var(--slice-border) solid var(--primary-color);
-  background-color: var(--primary-background-color);
-  margin-bottom: 25px;
-  margin-top: 25px;
-  position: relative;
+slice-input .slice_input:focus-within .slice_input_icon {
+  color: var(--field-accent);
 }
+
+slice-input .slice_input_prefix,
+slice-input .slice_input_suffix {
+  flex: none;
+  color: var(--field-muted);
+  white-space: nowrap;
+  user-select: none;
+}
+
+slice-input .slice_input_icon[hidden],
+slice-input .slice_input_prefix[hidden],
+slice-input .slice_input_suffix[hidden],
+slice-input .slice_input_clear[hidden],
+slice-input .slice_input_footer[hidden],
+slice-input .slice_input_count[hidden],
+slice-input .slice_input_placeholder[hidden] {
+  display: none;
+}
+
+slice-input .slice_input_clear {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin-right: -4px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--field-muted);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+slice-input .slice_input_clear:hover {
+  background: color-mix(in srgb, currentColor 14%, transparent);
+  color: var(--font-primary-color);
+}
+
+slice-input .slice_eye_icon {
+  /* Hidden by default; shown only for secret password inputs. */
+  display: none;
+  position: relative;
+  flex: none;
+  color: var(--field-accent);
+  user-select: none;
+  cursor: pointer;
+}
+
+/* 40px hit area around an 18px glyph, without moving the glyph. */
+slice-input .slice_eye_icon::after {
+  content: '';
+  position: absolute;
+  inset: -11px calc(-1 * var(--field-pad-x)) -11px -11px;
+}
+
+slice-input .slice_eye_icon svg {
+  display: block;
+}
+
+slice-input .slice_eye_icon .eye-off,
+slice-input .slice_eye_icon[aria-pressed='true'] .eye-open {
+  display: none;
+}
+
+slice-input .slice_eye_icon[aria-pressed='true'] .eye-off {
+  display: block;
+}
+
+/* -------------------------------------------------- floating label (shared) */
 
 slice-input .slice_input_placeholder {
-  color: var(--primary-color);
   position: absolute;
-  transition: all 0.5s;
+  top: 50%;
+  left: var(--field-pad-x);
+  right: var(--field-pad-x);
+  padding: 0;
+  overflow: hidden;
+  color: var(--field-muted);
+  font-size: 1em;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   user-select: none;
-  cursor: text;
-}
-
-slice-input .slice_input_value {
-  scale: 0.8;
-  transform: translateY(-200%);
-  transition: all 0.5s;
-}
-
-slice-input .required,
-slice-input .required label,
-slice-input .required input {
-  border-color: var(--danger-color);
-  --primary-color: var(--danger-color);
-}
-
-slice-input .disabled,
-slice-input .disabled label {
-  border-color: var(--disabled-color);
-  cursor: not-allowed;
   pointer-events: none;
-  color: var(--disabled-color);
+  transform: translateY(-50%);
+  transform-origin: left bottom;
+  transition: top 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    left 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    color 0.15s ease;
 }
 
-slice-input .disabled div {
-  background-color: var(--primary-color-shade);
+/* With an icon, the resting label sits after it. */
+slice-input.slice_input--icon .slice_input_placeholder {
+  left: calc(var(--field-pad-x) + var(--field-icon-size) + 8px);
 }
 
-slice-input .color_input {
-  border-radius: 100%;
-  height: 50px;
-  width: 50px;
+/* Risen: entirely above the field, so the border and the focus ring never run
+   through the text. */
+slice-input .slice_input_placeholder.slice_input_value,
+slice-input .slice_input_placeholder.slice_input_focus,
+slice-input .slice_input:has(.input_area:autofill) .slice_input_placeholder {
+  top: 0;
+  left: var(--field-pad-x);
+  transform: translateY(calc(-100% - 5px)) scale(0.82);
 }
 
-slice-input .message {
-  color: var(--danger-color);
-  font-size: small;
+slice-input .slice_input_placeholder.slice_input_focus {
+  color: var(--field-accent);
 }
+
+slice-input .slice_input.is-invalid .slice_input_placeholder {
+  color: var(--field-danger);
+}
+
+slice-input.slice_input--required .slice_input_placeholder::after {
+  content: ' *';
+  color: var(--field-danger);
+}
+
+/* Above: a plain label in the flow, over the field. */
+slice-input[data-label-placement='above'] .slice_input_placeholder:not([hidden]) {
+  position: static;
+  display: block;
+  margin-bottom: 6px;
+  color: var(--font-primary-color);
+  font-size: 0.93em;
+  font-weight: 600;
+  transform: none;
+  transition: color 0.15s ease;
+}
+
+/* ------------------------------------------------------- shake (shared) */
 
 @keyframes slice_input_shake {
-  0% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-5px) rotate(0.5deg);
-  }
-  50% {
-    transform: translateX(5px) rotate(-0.5deg);
-  }
-  75% {
-    transform: translateX(-3px) rotate(0.3deg);
-  }
-  100% {
-    transform: translateX(0);
-  }
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px) rotate(0.5deg); }
+  50% { transform: translateX(5px) rotate(-0.5deg); }
+  75% { transform: translateX(-3px) rotate(0.3deg); }
+  100% { transform: translateX(0); }
 }
 
-slice-input .error {
-  --primary-color: var(--danger-color);
-  animation: slice_input_shake 0.5s infinite;
+slice-input .slice_input.error {
+  animation: slice_input_shake 0.5s;
+}
+
+/* ------------------------------------------------------- help and error */
+
+slice-input .slice_input_footer {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 5px;
+  padding: 0 var(--field-pad-x);
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--field-muted);
+}
+
+slice-input .slice_input_message {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+slice-input .slice_input_message--error {
+  color: var(--field-danger);
+}
+
+slice-input .slice_input_count {
+  flex: none;
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  slice-input .slice_input.error {
+    animation: none;
+  }
+
+  slice-input .slice_input_placeholder {
+    transition: color 0.15s ease;
+  }
 }
