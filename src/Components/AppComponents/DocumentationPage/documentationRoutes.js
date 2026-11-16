@@ -47,6 +47,11 @@ export const documentationRoutes = {
                   component: 'DevelopmentWorkflow'
                },
                {
+                  title: 'Deployment',
+                  path: '/Documentation/Deployment',
+                  component: 'DeploymentDocumentation'
+               },
+               {
                   title: 'Common Gotchas',
                   path: '/Documentation/Common-Gotchas',
                   component: 'CommonGotchasDocumentation'
@@ -252,6 +257,16 @@ export const documentationRoutes = {
              title: 'Refreshing Component Data',
              path: '/Documentation/Architecture/Refreshing-Component-Data',
              component: 'RefreshingComponentDataDocumentation'
+          },
+          {
+             title: 'SEO and Share Cards',
+             path: '/Documentation/Architecture/SEO',
+             component: 'SeoDocumentation'
+          },
+          {
+             title: 'Server Entrypoint',
+             path: '/Documentation/Architecture/Server-Entrypoint',
+             component: 'ServerEntrypointDocumentation'
           }
        ]
    },

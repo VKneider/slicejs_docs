@@ -16,6 +16,7 @@ const components = {
   "ContextManagerDocumentation": "AppComponents",
   "ContextVsEventsDocumentation": "AppComponents",
   "CopyMarkdownMenu": "AppComponents",
+  "DeploymentDocumentation": "AppComponents",
   "Details": "Visual",
   "DetailsDocumentation": "AppComponents",
   "DevelopmentWorkflow": "AppComponents",
