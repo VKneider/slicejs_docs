@@ -9,6 +9,7 @@
 <h2 id="overview">Overview</h2>
 <p>A Progressive Web App is <strong>installable</strong> (add to home screen) and can work <strong>offline</strong>. A Slice app becomes one by adding three things — a web app manifest, some icons, and a service worker — and registering the worker from your page.</p>
 <p>You don't need any extra server setup: the Slice dev/prod server already serves <code>/manifest.json</code> and <code>/service-worker.js</code> with the correct MIME types (and the service worker with <code>Cache-Control: no-cache</code> and <code>Service-Worker-Allowed: /</code> so its scope is the whole app). Drop the files in <code>src/</code> and they're served at the site root; <code>slice build</code> copies them into <code>dist/</code> for production.</p>
+<p>They can also live in <code>src/public/</code>; Express prefers the <code>public/</code> copy for these two files, and <code>slice export</code> preserves that precedence.</p>
 <h2 id="steps">Steps</h2>
 <ol class="steps"><li>Add <code>src/manifest.json</code>.</li><li>Add icons under <code>src/public/</code>.</li><li>Add <code>src/service-worker.js</code>.</li><li>Link the manifest and theme color in <code>App/index.html</code>.</li><li>Register the service worker — in production only.</li></ol>
 <h2 id="1-the-manifest">1. The manifest</h2>

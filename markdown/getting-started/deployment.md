@@ -163,6 +163,13 @@ uploaded.
 imports it, so it is published only when `events.ui.enabled` is true. With the
 debugger UI off, neither `slice export` nor `slice start` serves it.
 
+If `translator.path` is not `/locales` (for example `/i18n`), the export copies
+that folder at the configured path. If `src/public` contains a host rule file
+the selected preset writes (`_headers`, `_redirects`, `vercel.json` or
+`nginx.conf`), the export stops instead of silently replacing your CSP or
+redirects; merge those rules into the generated file or move them out of
+`public/`.
+
 ### Options
 
 | Flag | Default | Notes |

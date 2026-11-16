@@ -1,9 +1,17 @@
 slice-js-developer
-version: 1.34.8
+version: 1.34.9
 targets: slicejs-web-framework ^4.2.x
 
 CHANGELOG
 =========
+
+1.34.9
+  Event catalog follows the debugger UI.
+  - `slice-events.generated.js` is exported/served only when
+    `events.ui.enabled`; with the panel off there is no consumer.
+  - Build parity: PWA files in public/, custom translator.path, ComponentsPage
+    docs modules and custom host-rule collisions are covered.
+  Files touched: VERSION, references/config-theming-cli.md, ../manifest.json.
 
 1.34.8
   Export marked experimental.

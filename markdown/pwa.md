@@ -23,6 +23,9 @@ service worker with `Cache-Control: no-cache` and `Service-Worker-Allowed: /` so
 its scope is the whole app). Drop the files in `src/` and they're served at the
 site root; `slice build` copies them into `dist/` for production.
 
+They can also live in `src/public/`; Express prefers the `public/` copy for
+these two files, and `slice export` preserves that precedence.
+
 ## Steps
 :::steps
 1. Add `src/manifest.json`.
