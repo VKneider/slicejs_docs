@@ -1,308 +1,65 @@
-// api/index.js - Seguridad automática sin configuración
-import express from 'express';
-import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import { 
-  securityMiddleware, 
-  sliceFrameworkProtection, 
-  suspiciousRequestLogger
-} from './middleware/securityMiddleware.js';
-import { createPublicEnvProvider } from './utils/publicEnvResolver.js';
+// api/index.js — server entrypoint.
+//
+// The framework owns the mechanics (security, static files, bundles, SPA
+// fallback, per-route SEO head, real 404). This app only provides the generated
+// artifacts: `seo.json` and the sitemap the parser writes from markdown.
+//
+// Everything this app adds goes between createSliceServer() and start().
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-import sliceConfig from '../src/sliceConfig.json' with { type: 'json' };
+import fs from 'node:fs';
+import path from 'node:path';
 
-let server;
-const app = express();
+import { createSliceServer } from 'slicejs-web-framework/api/framework/server.js';
 
-// Per-request bundle bookkeeping is useful when debugging the bundler and noise
-// everywhere else. `SLICE_DEBUG=1` brings it back.
-function debugLog(message) {
-  if (process.env.SLICE_DEBUG === '1' || process.env.SLICE_DEBUG === 'true') {
-    console.log(`[slice] ${message}`);
+const production =
+  process.env.NODE_ENV === 'production' || process.argv.includes('--production');
+const mode = production ? 'production' : 'development';
+
+const { app, start } = createSliceServer({
+  mode,
+  seo: {
+    // Relative paths resolve inside the deployed public/ folder, so the same
+    // config works for src/ in development and dist/ in production.
+    manifest: 'seo.json',
+    images: 'og/manifest.json'
   }
-}
-
-// Parsear argumentos de línea de comandos
-const args = process.argv.slice(2);
-
-const runMode = process.env.NODE_ENV === 'production' ? 'production' : 'development';
-const folderDeployed = runMode === 'production' ? 'dist' : 'src';
-const publicEnvProvider = createPublicEnvProvider({
-  mode: runMode,
-  envFilePath: path.join(__dirname, '..', '.env')
 });
 
-// Obtener puerto desde process.env.PORT con fallback a sliceConfig.json
-const PORT = process.env.PORT || sliceConfig.server?.port || 3001;
+// The client router matches paths case-insensitively; the SEO manifest is
+// exact-match. Send a wrong-case URL to its canonical path instead of a 404.
+const manifestPath = path.join(
+  process.cwd(),
+  production ? 'dist' : 'src',
+  'public',
+  'seo.json'
+);
+let canonicalByLower = new Map();
+try {
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  canonicalByLower = new Map(
+    Object.keys(manifest.routes || {}).map((route) => [route.toLowerCase(), route])
+  );
+} catch {
+  // The manifest is generated; a missing one is already reported by the server.
+}
 
-// ==============================================
-// MIDDLEWARES DE SEGURIDAD (APLICAR PRIMERO)
-// ==============================================
-
-// 1. Logger de peticiones sospechosas (solo observación, no bloquea)
-app.use(suspiciousRequestLogger());
-
-// 2. Protección del framework - TOTALMENTE AUTOMÁTICA
-// Detecta automáticamente el dominio desde los headers
-// Funciona en localhost, IP, y cualquier dominio
-app.use(sliceFrameworkProtection());
-
-// 3. Middleware de seguridad general
-app.use(securityMiddleware({
-  allowedExtensions: [
-    '.js', '.mjs', '.cjs',
-    '.css',
-    '.html', '.htm',
-    '.json',
-    '.svg', '.png', '.jpg', '.jpeg', '.gif', '.webp', '.avif', '.ico',
-    '.woff', '.woff2', '.ttf', '.otf', '.eot',
-    '.txt', '.xml', '.pdf',
-    '.webm', '.mp4', '.mp3', '.wav', '.ogg',
-    '.wasm'
-  ],
-  blockedPaths: [
-    '/node_modules',
-    '/package.json',
-    '/package-lock.json',
-    '/.env',
-    '/.git',
-    '/api/middleware'
-  ],
-  allowPublicAssets: true
-}));
-
-// ==============================================
-// MIDDLEWARES DE APLICACIÓN
-// ==============================================
-
-// Middleware global para archivos JavaScript con MIME types correctos
 app.use((req, res, next) => {
-  if (req.path.endsWith('.js')) {
-    // Forzar headers correctos para TODOS los archivos .js
-    res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-  }
-  next();
+  if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+  const target = canonicalByLower.get(req.path.toLowerCase());
+  if (!target || target === req.path) return next();
+  const query = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+  return res.redirect(301, `${target}${query}`);
 });
 
-// Middleware para parsear JSON y formularios
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Configurar headers de CORS
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
-  } else {
-    next();
-  }
-});
-
-// ==============================================
-// RUNTIME MODE ENDPOINT
-// ==============================================
-
-app.get('/slice-env.json', (req, res) => {
-  const payload = publicEnvProvider.getPayload();
-  res.setHeader('Cache-Control', 'no-store');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
-  res.json(payload);
-});
-
-// ==============================================
-// ARCHIVOS ESTÁTICOS (DESPUÉS DE SEGURIDAD)
-// ==============================================
-
-if (runMode === 'production') {
-  app.get('/Slice/Slice.js', (req, res) => {
-    const slicePath = path.join(__dirname, '..', 'node_modules', 'slicejs-web-framework', 'Slice', 'Slice.js');
-    if (fs.existsSync(slicePath)) {
-      res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-      return res.send(fs.readFileSync(slicePath, 'utf8'));
-    }
-    return res.status(404).send('Slice.js not found');
-  });
-
-  app.use('/Slice', (req, res) => res.status(404).send('Not found'));
-  app.use('/Components', (req, res) => res.status(404).send('Not found'));
-}
-
-// Middleware personalizado para archivos de bundles con MIME types correctos
-// ⚠️ DEBE IR ANTES del middleware general para tener prioridad
-app.use('/bundles/', (req, res, next) => {
-  // Solo procesar archivos .js
-  if (req.path.endsWith('.js')) {
-    const filePath = path.join(__dirname, `../${folderDeployed}`, 'bundles', req.path);
-    debugLog(`Processing bundle: ${req.path} -> ${filePath}`);
-
-    // Verificar que el archivo existe
-    if (fs.existsSync(filePath)) {
-      try {
-        // Leer y servir el archivo con headers correctos
-        const fileContent = fs.readFileSync(filePath, 'utf8');
-        res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate'); // No cachear para permitir actualizaciones en tiempo real
-        res.setHeader('Pragma', 'no-cache');
-        res.setHeader('Expires', '0');
-        debugLog(`Serving bundle: ${req.path} (${fileContent.length} bytes, ${Buffer.byteLength(fileContent, 'utf8')} bytes UTF-8)`);
-        return res.send(fileContent);
-      } catch (error) {
-        console.error(`Error reading bundle file: ${error.message}`);
-        return res.status(500).send('Error reading bundle file');
-      }
-    } else {
-      debugLog(`Bundle file not found: ${filePath}`);
-      return res.status(404).send('Bundle file not found');
-    }
-  }
-
-  // Para archivos no .js, continuar con el middleware estático normal
-  next();
-});
-
-// Servir otros archivos de bundles (JSON, CSS, etc.) con el middleware estático normal
-app.use('/bundles/', express.static(path.join(__dirname, `../${folderDeployed}`, 'bundles')));
-
-// Servir framework Slice.js (solo development)
-if (runMode === 'development') {
-  app.use('/Slice/', express.static(path.join(__dirname, '..', 'node_modules', 'slicejs-web-framework', 'Slice')));
-}
-
-// Resolve a deployed asset preferring the public/ folder (served at the root URL).
-const resolveDeployedFile = (fileName) => {
-  const inPublic = path.join(__dirname, `../${folderDeployed}`, 'public', fileName);
-  return fs.existsSync(inPublic) ? inPublic : path.join(__dirname, `../${folderDeployed}`, fileName);
-};
-
-// Servir archivos estáticos del proyecto: src/public/ se sirve en la raíz.
-if (runMode === 'development') {
-  app.use(express.static(path.join(__dirname, `../${folderDeployed}`, 'public')));
-  app.use(express.static(path.join(__dirname, `../${folderDeployed}`)));
-} else {
-  app.use(express.static(path.join(__dirname, `../${folderDeployed}`, 'public')));
-  app.use('/App', express.static(path.join(__dirname, `../${folderDeployed}`, 'App')));
-  app.get('/manifest.json', (req, res) => {
-    const manifestPath = resolveDeployedFile('manifest.json');
-    if (fs.existsSync(manifestPath)) {
-      res.setHeader('Content-Type', 'application/json; charset=utf-8');
-      return res.send(fs.readFileSync(manifestPath, 'utf8'));
-    }
-    return res.status(404).send('manifest.json not found');
-  });
-  app.get('/service-worker.js', (req, res) => {
-    const workerPath = resolveDeployedFile('service-worker.js');
-    if (fs.existsSync(workerPath)) {
-      res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-      return res.send(fs.readFileSync(workerPath, 'utf8'));
-    }
-    return res.status(404).send('service-worker.js not found');
-  });
-  app.get('/routes.js', (req, res) => {
-    const routesPath = path.join(__dirname, `../${folderDeployed}`, 'routes.js');
-    if (fs.existsSync(routesPath)) {
-      res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-      return res.send(fs.readFileSync(routesPath, 'utf8'));
-    }
-    return res.status(404).send('routes.js not found');
-  });
-  app.get('/sliceConfig.json', (req, res) => {
-    const configPath = path.join(__dirname, `../${folderDeployed}`, 'sliceConfig.json');
-    if (fs.existsSync(configPath)) {
-      res.setHeader('Content-Type', 'application/json; charset=utf-8');
-      return res.send(fs.readFileSync(configPath, 'utf8'));
-    }
-    return res.status(404).send('sliceConfig.json not found');
-  });
-  app.use('/bundles/', express.static(path.join(__dirname, `../${folderDeployed}`, 'bundles')));
-  app.use('/dist/', express.static(path.join(__dirname, '..', 'dist')));
-}
-
-// ==============================================
-// RUTAS DE API
-// ==============================================
-
-// Ruta de ejemplo para API
 app.get('/api/status', (req, res) => {
   res.json({
     status: 'ok',
-    mode: runMode,
-    folder: folderDeployed,
-    timestamp: new Date().toISOString(),
+    mode,
     framework: 'Slice.js',
-    version: '2.0.0',
-    security: {
-      enabled: true,
-      mode: 'automatic',
-      description: 'Zero-config security - works with any domain'
-    }
+    timestamp: new Date().toISOString()
   });
 });
 
-
-// ==============================================
-// SEO: robots.txt & sitemap.xml
-// ==============================================
-
-app.get('/robots.txt', (req, res) => {
-  res.sendFile(path.join(__dirname, `../${folderDeployed}`, 'robots.txt'));
-});
-
-app.get('/sitemap.xml', (req, res) => {
-  res.sendFile(path.join(__dirname, `../${folderDeployed}`, 'sitemap.xml'));
-});
-
-// ==============================================
-// SPA FALLBACK
-// ==============================================
-
-// SPA fallback - servir index.html para rutas no encontradas
-app.get('*', (req, res) => {
-  const indexPath = path.join(__dirname, `../${folderDeployed}`, "App", 'index.html');
-  res.sendFile(indexPath, (err) => {
-    if (err) {
-      res.status(404).send(`
-        <h1>404 - Page Not Found</h1>
-        <p>The requested file could not be found in /${folderDeployed}</p>
-        <p>Make sure you've run the appropriate build command:</p>
-        <ul>
-          <li>For development: Files should be in /src</li>
-          <li>For production: Run "npm run slice:build" first</li>
-        </ul>
-      `);
-    }
-  });
-});
-
-// ==============================================
-// INICIO DEL SERVIDOR
-// ==============================================
-
-function startServer() {
-  server = app.listen(PORT, () => {
-    console.log(`Slice.js server running on port ${PORT}`);
-  });
-}
-
-// Manejar cierre del proceso
-process.on('SIGINT', () => {
-  console.log('\nSlice server stopped');
-  process.exit(0);
-});
-
-process.on('SIGTERM', () => {
-  console.log('\nServer terminated');
-  process.exit(0);
-});
-
-// Iniciar servidor
-startServer();
+await start();
 
 export default app;

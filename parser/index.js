@@ -8,12 +8,14 @@ import { parseMarkdownFile } from './lib/markdownParser.js';
 import { writeComponentFiles } from './lib/generator.js';
 import { collectDocCandidates } from './lib/report.js';
 import { writeDocsIndex } from './lib/docsIndex.js';
+import { writeSeoArtifacts } from './lib/seo.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..');
 const MARKDOWN_DIR = path.join(ROOT, 'markdown');
 const OUTPUT_DIR = path.join(ROOT, 'src', 'Components', 'AppComponents');
+const PUBLIC_DIR = path.join(ROOT, 'src', 'public');
 
 const readAllMarkdownFiles = (dir) => {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -54,6 +56,8 @@ const run = () => {
 
   const generated = [];
   const indexEntries = [];
+  const seoEntries = [];
+  const parseErrors = [];
 
   for (const filePath of markdownFiles) {
     try {
@@ -67,6 +71,14 @@ const run = () => {
       const isMarkdownGuide = path.basename(filePath).toLowerCase() === 'markdown-guide.md';
       if (!isMarkdownGuide) {
         indexEntries.push(parsed.frontMatter);
+        seoEntries.push({
+          route: parsed.frontMatter.route,
+          title: parsed.frontMatter.title,
+          description: parsed.frontMatter.description,
+          section: parsed.frontMatter.section,
+          group: parsed.frontMatter.group,
+          markdownFile: path.relative(ROOT, filePath).replace(/\\/g, '/')
+        });
       }
       if (isGenerateFalse || isMarkdownGuide) {
         console.log(`Skipped ${path.relative(ROOT, filePath)} (generate: false)`);
@@ -77,8 +89,14 @@ const run = () => {
       generated.push({ filePath, component: result.componentClass });
       console.log(`Generated ${result.componentClass} from ${path.relative(ROOT, filePath)}`);
     } catch (error) {
-      console.warn(`Failed to parse ${filePath}:`, error.message);
+      parseErrors.push(`[${path.relative(ROOT, filePath)}] ${error.message}`);
     }
+  }
+
+  if (parseErrors.length > 0) {
+    console.error('Markdown parsing failed:');
+    for (const error of parseErrors) console.error(`- ${error}`);
+    process.exit(1);
   }
 
   const appComponents = readAllAppComponents(OUTPUT_DIR);
@@ -86,6 +104,11 @@ const run = () => {
 
   const docsIndexPath = path.join(ROOT, 'src', 'Components', 'AppComponents', 'DocumentationPage', 'docsIndex.js');
   writeDocsIndex(indexEntries, docsIndexPath);
+
+  const seo = writeSeoArtifacts({ root: ROOT, publicDir: PUBLIC_DIR, entries: seoEntries });
+  if (seo.changed.length > 0) {
+    console.log(`SEO artifacts updated: ${seo.changed.join(', ')}`);
+  }
 
   const reportPath = path.join(ROOT, 'parser', 'report.json');
   fs.writeFileSync(reportPath, JSON.stringify({ generated, ...report }, null, 2), 'utf8');

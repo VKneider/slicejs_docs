@@ -20,26 +20,40 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.9.0
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Generate documentation artifacts
-        run: npm run docs:generate
+        run: pnpm docs:generate
 
       - name: Generate llm.txt
-        run: npm run docs:llm
+        run: pnpm docs:llm
+
+      - name: Verify SEO artifacts
+        run: |
+          pnpm test
+          pnpm og:check
+          node ./node_modules/slicejs-cli/client.js seo check
+
+      - name: Build
+        run: pnpm build
 
       - name: Check generated changes (PR)
         if: github.event_name == 'pull_request'
         run: |
           if ! git diff --quiet; then
-            echo "Generated files are out of date. Run 'npm run docs:generate' and commit changes."
+            echo "Generated files are out of date. Run 'pnpm docs:generate' and commit changes."
             git status --short
             exit 1
           fi
@@ -50,7 +64,7 @@ jobs:
           if ! git diff --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add src/Components src/Styles src/routes.js llm.txt
+            git add src/Components src/Styles src/routes.js src/public llm.txt
             git commit -m "chore(docs): auto-generate docs artifacts from markdown"
             git push
           else

@@ -1,0 +1,411 @@
+{
+  "version": 1,
+  "generator": "1",
+  "origin": "https://slicejs.com",
+  "card": {
+    "width": 1200,
+    "height": 630
+  },
+  "images": {
+    "/": {
+      "path": "/og/home-9bf7ca6a2d.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 50286,
+      "kind": "page"
+    },
+    "/Documentation": {
+      "path": "/og/documentation-c3a0e2a89a.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 93947,
+      "kind": "page"
+    },
+    "/Documentation/API-Reference": {
+      "path": "/og/documentation-api-reference-3b9071050b.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 89333,
+      "kind": "page"
+    },
+    "/Documentation/Architecture": {
+      "path": "/og/documentation-architecture-ed1f7d096b.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 96431,
+      "kind": "page"
+    },
+    "/Documentation/Architecture/App-Shell-MultiRoute": {
+      "path": "/og/documentation-architecture-app-shell-multiroute-12d2fcbd49.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 84234,
+      "kind": "page"
+    },
+    "/Documentation/Architecture/Component-Styles": {
+      "path": "/og/documentation-architecture-component-styles-ffc854126c.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 105879,
+      "kind": "page"
+    },
+    "/Documentation/Architecture/Refreshing-Component-Data": {
+      "path": "/og/documentation-architecture-refreshing-component-data-a298dbe788.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 98028,
+      "kind": "page"
+    },
+    "/Documentation/Architecture/Routing-Data": {
+      "path": "/og/documentation-architecture-routing-data-8647abc807.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 92302,
+      "kind": "page"
+    },
+    "/Documentation/Architecture/SEO": {
+      "path": "/og/documentation-architecture-seo-1de9af3511.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 100020,
+      "kind": "page"
+    },
+    "/Documentation/Architecture/Server-Entrypoint": {
+      "path": "/og/documentation-architecture-server-entrypoint-f522d8786d.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 88674,
+      "kind": "page"
+    },
+    "/Documentation/Architecture/Service-Patterns": {
+      "path": "/og/documentation-architecture-service-patterns-d6ab4cba75.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 96661,
+      "kind": "page"
+    },
+    "/Documentation/Architecture/Single-View-SPA": {
+      "path": "/og/documentation-architecture-single-view-spa-ab859e101f.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 85019,
+      "kind": "page"
+    },
+    "/Documentation/CLI": {
+      "path": "/og/documentation-cli-677e78274c.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 72346,
+      "kind": "page"
+    },
+    "/Documentation/Common-Gotchas": {
+      "path": "/og/documentation-common-gotchas-6c18190741.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 88118,
+      "kind": "page"
+    },
+    "/Documentation/Component-Anatomy": {
+      "path": "/og/documentation-component-anatomy-daf581124c.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 85715,
+      "kind": "page"
+    },
+    "/Documentation/Components": {
+      "path": "/og/documentation-components-4894764522.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 70026,
+      "kind": "page"
+    },
+    "/Documentation/Configuration/PWA": {
+      "path": "/og/documentation-configuration-pwa-0db0ae67dd.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 103095,
+      "kind": "page"
+    },
+    "/Documentation/Configuration/environment-variables": {
+      "path": "/og/documentation-configuration-environment-variables-558881de14.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 80261,
+      "kind": "page"
+    },
+    "/Documentation/Configuration/sliceConfig": {
+      "path": "/og/documentation-configuration-sliceconfig-c7c21ee077.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 82918,
+      "kind": "page"
+    },
+    "/Documentation/Deployment": {
+      "path": "/og/documentation-deployment-d38133405d.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 73037,
+      "kind": "page"
+    },
+    "/Documentation/DevTools": {
+      "path": "/og/documentation-devtools-027ed1ba05.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 77461,
+      "kind": "page"
+    },
+    "/Documentation/Development-Workflow": {
+      "path": "/og/documentation-development-workflow-b1e7724176.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 82695,
+      "kind": "page"
+    },
+    "/Documentation/Documentation-System": {
+      "path": "/og/documentation-documentation-system-db9ceb08e5.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 91166,
+      "kind": "page"
+    },
+    "/Documentation/External-Dependencies": {
+      "path": "/og/documentation-external-dependencies-166252abec.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 86456,
+      "kind": "page"
+    },
+    "/Documentation/First-Page": {
+      "path": "/og/documentation-first-page-a3b5ce544b.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 77404,
+      "kind": "page"
+    },
+    "/Documentation/Installation": {
+      "path": "/og/documentation-installation-6773284390.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 67599,
+      "kind": "page"
+    },
+    "/Documentation/LeakInspector": {
+      "path": "/og/documentation-leakinspector-7a0e2d2314.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 95691,
+      "kind": "page"
+    },
+    "/Documentation/LifeCycle-Methods": {
+      "path": "/og/documentation-lifecycle-methods-78502f6ee0.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 82843,
+      "kind": "page"
+    },
+    "/Documentation/LifeCycle-Methods/beforeDestroy": {
+      "path": "/og/documentation-lifecycle-methods-beforedestroy-6fe22b5aaa.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 87208,
+      "kind": "page"
+    },
+    "/Documentation/LifeCycle-Methods/init": {
+      "path": "/og/documentation-lifecycle-methods-init-17480e6007.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 86663,
+      "kind": "page"
+    },
+    "/Documentation/LifeCycle-Methods/update": {
+      "path": "/og/documentation-lifecycle-methods-update-30394e95f1.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 91830,
+      "kind": "page"
+    },
+    "/Documentation/Linting": {
+      "path": "/og/documentation-linting-aa166e80df.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 88099,
+      "kind": "page"
+    },
+    "/Documentation/Project-Anatomy": {
+      "path": "/og/documentation-project-anatomy-d9c44149f5.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 82479,
+      "kind": "page"
+    },
+    "/Documentation/Routing": {
+      "path": "/og/documentation-routing-cd0984c3c9.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 94891,
+      "kind": "page"
+    },
+    "/Documentation/Routing/Guards": {
+      "path": "/og/documentation-routing-guards-79f9b043ad.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 79942,
+      "kind": "page"
+    },
+    "/Documentation/Service": {
+      "path": "/og/documentation-service-048c578d6a.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 72294,
+      "kind": "page"
+    },
+    "/Documentation/Slice": {
+      "path": "/og/documentation-slice-92f433fa39.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 98037,
+      "kind": "page"
+    },
+    "/Documentation/Slice-MCP": {
+      "path": "/og/documentation-slice-mcp-d44a6a5a58.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 77025,
+      "kind": "page"
+    },
+    "/Documentation/Static-Props": {
+      "path": "/og/documentation-static-props-1f0552deae.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 72857,
+      "kind": "page"
+    },
+    "/Documentation/Structural": {
+      "path": "/og/documentation-structural-8dcbe00a08.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 74295,
+      "kind": "page"
+    },
+    "/Documentation/Structural/Context-vs-Events": {
+      "path": "/og/documentation-structural-context-vs-events-599f9eca79.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 82154,
+      "kind": "page"
+    },
+    "/Documentation/Structural/ContextManager": {
+      "path": "/og/documentation-structural-contextmanager-7acbe883d9.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 75275,
+      "kind": "page"
+    },
+    "/Documentation/Structural/EventManager": {
+      "path": "/og/documentation-structural-eventmanager-d83f28b975.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 75143,
+      "kind": "page"
+    },
+    "/Documentation/Structural/EventRegistry": {
+      "path": "/og/documentation-structural-eventregistry-93e29e4455.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 88802,
+      "kind": "page"
+    },
+    "/Documentation/Structural/Logger": {
+      "path": "/og/documentation-structural-logger-9ce76072ce.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 67978,
+      "kind": "page"
+    },
+    "/Documentation/The-build-method": {
+      "path": "/og/documentation-the-build-method-b61f06927f.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 80858,
+      "kind": "page"
+    },
+    "/Documentation/Themes": {
+      "path": "/og/documentation-themes-454853b80a.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 93876,
+      "kind": "page"
+    },
+    "/Documentation/Translator": {
+      "path": "/og/documentation-translator-c29938b0e0.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 90860,
+      "kind": "page"
+    },
+    "/Documentation/Visual": {
+      "path": "/og/documentation-visual-0b14901c9b.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 62176,
+      "kind": "page"
+    },
+    "/about": {
+      "path": "/og/about-7ed5749abd.jpg",
+      "width": 1200,
+      "height": 630,
+      "type": "image/jpeg",
+      "bytes": 46702,
+      "kind": "page"
+    }
+  }
+}
