@@ -318,6 +318,10 @@ Locale redirects use `statusCode: 301|302`; Vercel's `permanent` boolean maps to
 **308/307**, not 301/302. The `/(.*)` rewrite only applies when there is no file
 at the requested path, so bundles and assets are served normally.
 
+`vercel.json` also carries the three security headers (`X-Content-Type-Options`,
+`X-Frame-Options`, `Referrer-Policy`) and `Cache-Control: no-store` for bundles
+and the env pair.
+
 ### nginx
 
 ```bash
@@ -325,8 +329,9 @@ slice export --host nginx
 ```
 
 Copy `dist-static/` to the server and include `nginx.conf` (or merge it into
-your site config). It maps `404` to `/404.html` and sets `no-store` on bundles
-and env files.
+your site config). It maps `404` to `/404.html`, sets `no-store` on bundles and
+env files, and adds the three security headers with `always` (so 404 responses
+keep them).
 
 ### GitHub Pages
 

@@ -85,9 +85,10 @@ hosting (<code>https://user.github.io/repo/</code>) is not supported.</div>
 <div class="code-block" data-block-id="doc-block-14"></div>
 <p>Upload <code>dist-static/</code> and let Vercel read <code>vercel.json</code> (redirects, optional rewrite, cache headers). Set the project output directory to <code>dist-static</code> if you deploy from a Git repository.</p>
 <p>Locale redirects use <code>statusCode: 301|302</code>; Vercel's <code>permanent</code> boolean maps to <strong>308/307</strong>, not 301/302. The <code>/(.*)</code> rewrite only applies when there is no file at the requested path, so bundles and assets are served normally.</p>
+<p><code>vercel.json</code> also carries the three security headers (<code>X-Content-Type-Options</code>, <code>X-Frame-Options</code>, <code>Referrer-Policy</code>) and <code>Cache-Control: no-store</code> for bundles and the env pair.</p>
 <h3 id="nginx">nginx</h3>
 <div class="code-block" data-block-id="doc-block-15"></div>
-<p>Copy <code>dist-static/</code> to the server and include <code>nginx.conf</code> (or merge it into your site config). It maps <code>404</code> to <code>/404.html</code> and sets <code>no-store</code> on bundles and env files.</p>
+<p>Copy <code>dist-static/</code> to the server and include <code>nginx.conf</code> (or merge it into your site config). It maps <code>404</code> to <code>/404.html</code>, sets <code>no-store</code> on bundles and env files, and adds the three security headers with <code>always</code> (so 404 responses keep them).</p>
 <h3 id="github-pages">GitHub Pages</h3>
 <p>Root-only. Two supported shapes:</p>
 <div class="table-block" data-block-id="doc-block-16"></div>

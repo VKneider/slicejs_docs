@@ -1,6 +1,6 @@
 {
   "name": "slice-js-developer",
-  "version": "1.34.6",
+  "version": "1.34.7",
   "targets": "slicejs-web-framework ^4.2.x",
   "installPath": ".claude/skills/slice-js-developer",
   "files": [
