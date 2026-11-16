@@ -1,9 +1,22 @@
 slice-js-developer
-version: 1.34.9
+version: 1.35.0
 targets: slicejs-web-framework ^4.2.x
 
 CHANGELOG
 =========
+
+1.35.0
+  Contributing back, repo-first.
+  - New references/contributing.md: consent-and-timing rules, repo-first reading
+    (CONTRIBUTING.md, issue/PR templates, AGENTS.md), component PR path for
+    slicejs-components, framework bug/feature path for slice.js, security routing
+    and agent copy.
+  - SKILL.md: new "Contributing back (optional, user-initiated)" section, reference
+    map entry and common-task pointer. Scope is components + framework; the CLI is
+    intentionally excluded.
+  - The skill routes only: each repository's own contribution files are
+    authoritative and must be read before drafting an issue or PR.
+  Files touched: SKILL.md, VERSION, references/contributing.md, ../manifest.json.
 
 1.34.9
   Event catalog follows the debugger UI.

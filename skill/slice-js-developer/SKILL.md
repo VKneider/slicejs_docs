@@ -9,15 +9,16 @@ Slice.js is a component-based frontend framework built on native Web Components.
 
 ## How to use this skill
 
-Read this SKILL.md fully — it carries the **complete mental model** and decision rules, so most tasks need nothing else. Two depth layers sit behind it:
+Read this SKILL.md fully — it carries the **complete mental model** and decision rules, so most tasks need nothing else. The layers behind it:
 
 - **`references/` — the distilled offline layer.** Source-verified notes that carry the *mistake-preventing* detail (traps, decision rules, canonical snippets). **Not a mirror of the docs** — deliberately thin. Enough to work common tasks with no network.
 - **`slicejs-mcp` — the live, authoritative docs.** It exposes both the Slice.js framework catalog and the Slice.js Components catalog when configured. **Your primary tool for depth** when it's configured — especially anything version-specific (full prop lists, every CLI flag, config fields, complete guides, and component examples). Don't reproduce it here; query it.
 - **`references/documentation.md` — how to document the project itself.** Read it before finishing any task: AGENTS.md, category guides, component READMEs, changelog, event docs and `slice docs generate/check`.
+- **`references/contributing.md` — how to turn generic work into a contribution.** Read it only after the user accepts a contribution suggestion: repo routing, repo-first file reading, component PR, framework bug/feature, security.
 
 Rule of thumb: reach for a **reference** at the *decision / trap* level; query the **MCP** at the *exhaustive / authoritative* level. Never answer a version-specific detail from memory — confirm it via the MCP (or the offline fallbacks). Use the framework catalog for framework behavior and the Components catalog for Visual/Service APIs and examples. See "Developing with the MCP" below.
 
-Common tasks: create a Visual/Service component · add routes/guards/pages · choose the right component for a surface; wire inter-component communication (Events vs Context) · configure themes/persistence/debug panels · diagnose a non-rendering/leaking/stale component · set up a new project · integrate an external library · document a feature, category, component or event contract.
+Common tasks: create a Visual/Service component · add routes/guards/pages · choose the right component for a surface; wire inter-component communication (Events vs Context) · configure themes/persistence/debug panels · diagnose a non-rendering/leaking/stale component · set up a new project · integrate an external library · document a feature, category, component or event contract · turn a generic component or framework bug into a contribution.
 
 ---
 
@@ -139,6 +140,7 @@ Tailor advice to what you found: don't suggest `slice.context.watch` if `context
 | Which official Visual/Service components exist | `references/visual-catalog.md` | `slice_components_search_docs` / `slice_components_get_doc` |
 | Which component fits a job; when one vs another; what to compose for a gap | `references/component-selection.md` | `slice_components_search_docs` / `slice_components_get_doc` |
 | Project documentation, AGENTS.md, category guides, component READMEs, event docs, changelog | `references/documentation.md` | `slice docs generate/check` |
+| Contributing a generic component, framework bug or feature request | `references/contributing.md` | — (repo-first: read the repo's CONTRIBUTING.md and issue/PR templates) |
 | Server entrypoint, middleware order, SPA fallback, 404s | — | `project-architecture/server-entrypoint` |
 | SEO manifest, per-route head, sitemap, client titles | — | `project-architecture/seo`, `slice-config` (`router.updateTitles`) |
 | The MCP itself (tools, usage) | — | `slicejs-mcp` |
@@ -247,6 +249,35 @@ Rules that follow from it:
 **Debugging:** start with the checklist in `references/gotchas-and-diagnostics.md` (most bugs are there — query before `attachTemplate`, missing `await`, `innerHTML=''` without `destroyByContainer`, missing `update()`); enable the debug panels (`alt+shift+e` events, `alt+shift+c` context); for rendering issues focus on `core-model.md`.
 
 **Testing:** Slice ships **no official test harness** (the `test` script is a stub; no framework test utilities). See `references/gotchas-and-diagnostics.md` → "Testing" for the pragmatic approach — keep logic in Services so it unit-tests as plain JS, and drive `slice dev` with a browser/E2E tool for Visual components (which need a live DOM + the `slice` global).
+
+---
+
+## Contributing back (optional, user-initiated)
+
+Finish the user's task first. Then, **once**, if the work is generic and reusable, offer the matching contribution path. Never fork, open an issue, open a PR, push or post anything without an explicit “yes”. If the user declines, drop it for the rest of the session.
+
+Only two targets are in scope:
+
+| Signal | Repository | Smallest useful next step |
+| --- | --- | --- |
+| A generic Visual/Service component, or a backward-compatible improvement to one | `slicejs-components` | Check `WANTED_COMPONENTS.md`, then a PR with its `.spec.js` and docs page |
+| A framework runtime/router/lifecycle/server/SEO bug or feature | `slice.js` | A reduced repro plus the issue template |
+
+`slicejs-cli` is intentionally out of scope here. Framework guides live in `slice.js_docs`; use it only when the contribution is documentation.
+
+**Repo-first rule:** before drafting anything, read the target repository's own `CONTRIBUTING.md`, `.github/ISSUE_TEMPLATE/*`, `.github/PULL_REQUEST_TEMPLATE.md` and `AGENTS.md`. Those files are authoritative; this skill only routes. If a repository has no `CONTRIBUTING.md`, say so and follow its issue/PR templates. If the repo files and this skill disagree, the repo wins.
+
+- Generic means no app-specific imports, copy, routes, services or data.
+- Reuse first: check the registry (`slice browse` / Components MCP) before proposing a component.
+- One sentence, at the end, with a concrete next step — not “would you like to contribute?”.
+- Read `references/contributing.md` only after the user accepts.
+- Security reports never go through a public issue. Follow the repo's `SECURITY.md`; if it is missing, ask for a private channel.
+
+Example (use the user's language):
+
+> Esto es genérico y podría vivir en el registry. Si quieres, preparo el PR a `slicejs-components` con su spec y docs. ¿Lo hago?
+
+> This looks like a framework bug rather than an app bug. I can reduce it to a minimal repro and draft the `slice.js` issue with the repo template. Want me to?
 
 ---
 
