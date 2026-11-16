@@ -413,8 +413,9 @@ generates the host rules. `Components/` is pruned by default so component source
 The export is an allowlist: it publishes `App/`, `bundles/`, `Slice/`, `locales/`, `events/`,
 `public/*` flattened to the root, and eight root files (`routes.js`, `sliceConfig.json`,
 `slice-env.json`, `slice-env.generated.js`, `robots.txt`, `sitemap.xml`, `manifest.json`,
-`service-worker.js`). It skips `utils/`, `AppConfig.js`, `slice-events.generated.js`, generated
-`.d.ts`, `.map*`, `.env*`, `package.json`, lockfiles, `node_modules` and `.git`.
+`service-worker.js`, plus `slice-events.generated.js` when `events.ui.enabled`). It skips `utils/`,
+`AppConfig.js`, generated `.d.ts`, `.map*`, `.env*`, `package.json`, lockfiles, `node_modules` and
+`.git`.
 
 With SEO, the default is a **real 404** (`404.html`) and no catch-all. Known routes and
 `sitemap.paths` patterns are prerendered; add `sitemap.paths` for dynamic routes that must exist as

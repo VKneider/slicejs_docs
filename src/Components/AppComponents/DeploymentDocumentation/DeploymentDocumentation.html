@@ -42,7 +42,8 @@ may change between releases; <code>slice start</code> remains the stable Express
 <h3 id="output">Output</h3>
 <div class="code-block" data-block-id="doc-block-7"></div>
 <p><code>Components/</code> is pruned by default: every component used at runtime is in a bundle, and Express production also 404s <code>/Components</code>. <code>--keep-components</code> is a debugging escape and the CLI warns that component source becomes fetchable.</p>
-<p>The export is an allowlist. It never publishes <code>utils/</code>, <code>AppConfig.js</code>, <code>slice-events.generated.js</code>, generated <code>.d.ts</code>, <code>.map</code>, <code>.map.br</code>, <code>.map.gz</code>, <code>.env*</code>, <code>package.json</code>, lockfiles, <code>node_modules</code> or <code>.git</code>. If a file is not in the allowlist, it is not uploaded.</p>
+<p>The export is an allowlist. It never publishes <code>utils/</code>, <code>AppConfig.js</code>, generated <code>.d.ts</code>, <code>.map</code>, <code>.map.br</code>, <code>.map.gz</code>, <code>.env*</code>, <code>package.json</code>, lockfiles, <code>node_modules</code> or <code>.git</code>. If a file is not in the allowlist, it is not uploaded.</p>
+<p><code>slice-events.generated.js</code> is the exception: the event debugger dynamically imports it, so it is published only when <code>events.ui.enabled</code> is true. With the debugger UI off, neither <code>slice export</code> nor <code>slice start</code> serves it.</p>
 <h3 id="options">Options</h3>
 <div class="table-block" data-block-id="doc-block-8"></div>
 <h3 id="404-and-redirects">404 and redirects</h3>
@@ -108,8 +109,8 @@ may change between releases; <code>slice start</code> remains the stable Express
 <p><code>--check</code> writes nothing and fails when:</p>
 <ul><li>a required runtime file is missing (<code>index.html</code>, <code>404.html</code>, <code>routes.js</code>,</li></ul>
 <p><code>sliceConfig.json</code>, the env pair, <code>bundles/bundle.config.json</code>,   <code>Slice/Slice.js</code>),</p>
-<ul><li><code>Components/</code> is present without <code>--keep-components</code>,</li><li><code>public/</code> was not flattened,</li><li><code>utils/</code>, <code>src/</code>, <code>api/</code>, <code>node_modules/</code>, <code>.git/</code>, <code>AppConfig.js</code>,</li></ul>
-<p><code>slice-events.generated.js</code> or a generated <code>.d.ts</code> is present,</p>
+<ul><li><code>Components/</code> is present without <code>--keep-components</code>,</li><li><code>public/</code> was not flattened,</li><li><code>utils/</code>, <code>src/</code>, <code>api/</code>, <code>node_modules/</code>, <code>.git/</code>, <code>AppConfig.js</code> or a</li></ul>
+<p>generated <code>.d.ts</code> is present,</p>
 <ul><li>any <code>.map</code>, <code>.map.br</code>, <code>.map.gz</code>, <code>.d.ts</code>, <code>.env*</code>, <code>package.json</code>, lockfile,</li></ul>
 <p><code>node_modules</code> or <code>.git</code> is present,</p>
 <ul><li>an exported <code>.js</code> contains <code>sourceMappingURL=</code>,</li><li>host rules are incoherent (<code>_redirects</code> without <code>_headers</code>, invalid</li></ul>

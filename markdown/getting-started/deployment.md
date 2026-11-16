@@ -155,9 +155,13 @@ bundle, and Express production also 404s `/Components`. `--keep-components` is a
 debugging escape and the CLI warns that component source becomes fetchable.
 
 The export is an allowlist. It never publishes `utils/`, `AppConfig.js`,
-`slice-events.generated.js`, generated `.d.ts`, `.map`, `.map.br`, `.map.gz`,
-`.env*`, `package.json`, lockfiles, `node_modules` or `.git`. If a file is not in
-the allowlist, it is not uploaded.
+generated `.d.ts`, `.map`, `.map.br`, `.map.gz`, `.env*`, `package.json`,
+lockfiles, `node_modules` or `.git`. If a file is not in the allowlist, it is not
+uploaded.
+
+`slice-events.generated.js` is the exception: the event debugger dynamically
+imports it, so it is published only when `events.ui.enabled` is true. With the
+debugger UI off, neither `slice export` nor `slice start` serves it.
 
 ### Options
 
@@ -394,8 +398,8 @@ slice export --from-dist --host cloudflare --check
   `Slice/Slice.js`),
 - `Components/` is present without `--keep-components`,
 - `public/` was not flattened,
-- `utils/`, `src/`, `api/`, `node_modules/`, `.git/`, `AppConfig.js`,
-  `slice-events.generated.js` or a generated `.d.ts` is present,
+- `utils/`, `src/`, `api/`, `node_modules/`, `.git/`, `AppConfig.js` or a
+  generated `.d.ts` is present,
 - any `.map`, `.map.br`, `.map.gz`, `.d.ts`, `.env*`, `package.json`, lockfile,
   `node_modules` or `.git` is present,
 - an exported `.js` contains `sourceMappingURL=`,
