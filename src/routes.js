@@ -137,6 +137,14 @@ const routes = [
               path: '/Architecture/Refreshing-Component-Data',
               component: 'RefreshingComponentDataDocumentation',
            },
+           {
+              path: '/Architecture/SEO',
+              component: 'SeoDocumentation',
+           },
+           {
+              path: '/Architecture/Server-Entrypoint',
+              component: 'ServerEntrypointDocumentation',
+           },
           {
              path: '/Components',
              component: 'VisualDocumentation'
@@ -152,6 +160,10 @@ const routes = [
           {
              path: '/Development-Workflow',
              component: 'DevelopmentWorkflow',
+          },
+          {
+             path: '/Deployment',
+             component: 'DeploymentDocumentation',
           },
           {
              path: '/Documentation-System',
