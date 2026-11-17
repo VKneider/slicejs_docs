@@ -4,7 +4,7 @@
     "main":  "index.js",
     "scripts":  {
                     "dev":  "node ./node_modules/slicejs-cli/client.js dev",
-                    "build":  "node ./node_modules/slicejs-cli/client.js build",
+                    "build":  "node ./node_modules/slicejs-cli/client.js types generate \u0026\u0026 node ./node_modules/slicejs-cli/client.js build",
                     "start":  "node ./node_modules/slicejs-cli/client.js start",
                     "test":  "node --test parser/tests/seo.test.js parser/tests/routes.test.js",
                     "slice:init":  "node ./node_modules/slicejs-cli/client.js init",
