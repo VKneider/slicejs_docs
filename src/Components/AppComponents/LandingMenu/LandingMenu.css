@@ -114,3 +114,35 @@ slice-landing-menu {
     scale: 1;
   }
 }
+slice-landing-menu .hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+slice-landing-menu .landing-github {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 2px solid var(--font-primary-color);
+  border-radius: 8px;
+  color: var(--font-primary-color);
+  background: var(--primary-background-color);
+  font-weight: 700;
+  text-decoration: none;
+  transition: background .15s ease, color .15s ease, transform .08s ease;
+}
+
+slice-landing-menu .landing-github:hover {
+  background: var(--font-primary-color);
+  color: var(--primary-background-color);
+  transform: translateY(-1px);
+}
+
+slice-landing-menu .landing-github:active {
+  transform: translateY(0);
+}
