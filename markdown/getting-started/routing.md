@@ -196,27 +196,23 @@ When events are enabled, `router:change` is **auto-declared** in the
 [Event Registry](/Documentation/Structural/EventRegistry), so you can subscribe without
 `register()`-ing it first.
 
-:::warning
 Prefer the event's `to` payload over reading `slice.router.activeRoute` inside the handler.
 `activeRoute` does reflect the new route by the time `router:change` fires, but the payload is the
 guaranteed source and keeps your listener decoupled from router internals. If you only need the
 current URL, `window.location.pathname` is always trustworthy the instant the event fires.
-:::
 
 ## Best Practices
-:::tip
 Call `start()` after registering guards to avoid missing the first navigation.
-:::
 
-:::tip
 Use metadata flags to keep guard logic declarative and centralized.
-:::
 
 ## Gotchas
 :::warning
 `navigate()` is async. Await it when you depend on the next route being ready.
 :::
 
-:::warning
-Dynamic params use `${param}` syntax, not `:param`.
+:::compare left="Slice Router" right="Express-style"
+The Router matches `/orders/${id}`: the `${param}` syntax, passed to `matchPath`.
+---
+A `:param` is not matched, so the route never resolves and the deep link falls through to `/404`.
 :::

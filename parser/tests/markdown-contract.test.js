@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 
 import { parseMarkdownFile } from '../lib/markdownParser.js';
+import { lintCalloutBudget } from '../index.js';
 
 const fixture = `---
 title: Contract Fixture
@@ -138,4 +139,37 @@ test('breadcrumb and lede come from front matter', () => {
     { text: 'Component Model' }
   ]);
   assert.match(html, /<p class="doc-lede">A fixture for the shared markdown contract\.<\/p>/);
+});
+
+test('the callout budget allows three callouts and rejects a fourth', () => {
+  const page = (count) => `# Page\n\n${':::tip\nAdvice.\n:::\n\n'.repeat(count)}`;
+
+  assert.deepEqual(lintCalloutBudget(page(3), 'markdown/page.md'), []);
+
+  const errors = lintCalloutBudget(page(4), 'markdown/page.md');
+
+  assert.equal(errors.length, 1);
+  assert.match(errors[0], /markdown\/page\.md/);
+  assert.match(errors[0], /4 callouts/);
+  assert.match(errors[0], /:::compare/);
+});
+
+test('the callout budget does not count compare, details, steps or related', () => {
+  const markdown = [
+    ':::tip', 'One.', ':::',
+    ':::compare left="A" right="B"', 'Left.', '---', 'Right.', ':::',
+    ':::details title="More"', 'Body.', ':::',
+    ':::steps', '1. First.', ':::',
+    ':::related', '- [Button](/Documentation/Button) - The button.', ':::',
+    ':::warning', 'Two.', ':::',
+    ':::note', 'Three.', ':::'
+  ].join('\n');
+
+  assert.deepEqual(lintCalloutBudget(markdown, 'markdown/page.md'), []);
+});
+
+test('the callout budget ignores ::: inside a code fence', () => {
+  const markdown = ['```md', ':::tip', 'A.', ':::', ':::warning', 'B.', ':::', ':::note', 'C.', ':::', ':::callout', 'D.', ':::', '```'].join('\n');
+
+  assert.deepEqual(lintCalloutBudget(markdown, 'markdown/page.md'), []);
 });

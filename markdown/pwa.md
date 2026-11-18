@@ -147,10 +147,8 @@ Bump the `CACHE` string on every deploy. The `activate` handler deletes old cach
 so users get the new assets instead of a stale shell.
 :::
 
-:::tip
 Keep `PRECACHE` small — just the shell and what the first screen needs. Everything
 else is cached on demand by the cache-first `fetch` handler.
-:::
 
 ## Static export
 `service-worker.js` is published at the export root, so the same worker works on

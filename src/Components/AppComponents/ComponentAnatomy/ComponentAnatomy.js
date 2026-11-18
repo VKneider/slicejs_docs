@@ -9,7 +9,7 @@ export default class ComponentAnatomy extends HTMLElement {
 
   async init() {
     this.markdownPath = "getting-started/component-anatomy.md";
-    this.markdownContent = "---\ntitle: Component Anatomy\nroute: /Documentation/Component-Anatomy\nnavLabel: Component Anatomy\nsection: Components\ngroup: Component Model\norder: 10\ndescription: How to author a Slice component, generate it with the CLI, and register it.\ncomponent: ComponentAnatomy\ntags: [components, cli, anatomy, props]\n---\n\n# Component Anatomy\n\n## Overview\nA Slice component is a small folder. A **Visual** component (with UI) has three files; a\n**Service** component (logic only) has one. This page shows how to generate a component with the\nCLI, what each file is for, and how the constructor, props, and registration work.\n\n## Generate components with the CLI\nDo not create component files by hand — let the CLI scaffold them and register them for you.\nPass the **name** and **`--category`** to run with no prompts:\n\n```bash title=\"Non-interactive (recommended for scripts and agents)\"\nnpm run component:create -- UserCard --category AppComponents\nnpm run component:create -- AuthService -c Service\n```\n\nOmit them to be prompted instead (only the missing pieces are asked):\n\n```bash title=\"Interactive\"\nnpm run component:create                  # prompts for name + category\nnpm run component:create -- UserCard      # prompts only for category\n```\n\nEither way, the CLI:\n- creates `src/Components/<Category>/<Name>/` with the right files, and\n- adds the component to `src/Components/components.js` so it is loadable immediately.\n\nThe category must exist in `paths.components` (see below). Through the npm script, separate the\nargs with `--`: `npm run component:create -- UserCard --category Visual`.\n\n```javascript title=\"Generated Visual component (skeleton)\"\nexport default class MyButton extends HTMLElement {\n  static props = {\n    // Define your public props here, e.g.\n    // value: { type: 'string', default: 'Button', required: false }\n  };\n\n  constructor(props) {\n    super();\n    slice.attachTemplate(this);\n    slice.controller.setComponentProps(this, props);\n  }\n\n  init() {\n    // One-time async setup (optional)\n  }\n\n  update() {\n    // Refresh when reused by routing (optional)\n  }\n}\n\ncustomElements.define('slice-mybutton', MyButton);\n```\n\n:::tip\nIf you ever add or move component folders by hand, run `npm run component:list` to regenerate\n`components.js`.\n:::\n\n## The three files of a Visual component\n```text title=\"src/Components/AppComponents/UserCard/\"\nUserCard.js     # the class: props, constructor, lifecycle, setters\nUserCard.html   # the template (inner markup only)\nUserCard.css    # the styles\n```\n\n- **`.html`** contains only the **inner** markup — no `<template>` wrapper and no root element\n  matching the tag. Slice injects it as **light-DOM children** of the custom element. Slice does\n  not use Shadow DOM; do not call `attachShadow()`.\n- **`.css`** should reference theme variables (`var(--...)`) instead of hardcoded colors, so theme\n  switching keeps working. Use BEM-style class names (`block__element--modifier`) to avoid clashes.\n\n## The constructor\nEvery Visual component's constructor does three things, in order:\n\n```javascript title=\"UserCard.js\"\nexport default class UserCard extends HTMLElement {\n  static props = {\n    name:     { type: 'string',   default: '' },\n    onSelect: { type: 'function', default: null }\n  };\n\n  constructor(props) {\n    super();\n    slice.attachTemplate(this);                        // 1. inject the .html\n    this.$name = this.querySelector('.user-card__name'); // 2. cache refs (works now)\n    this.$root = this.querySelector('.user-card');\n    this.$root.addEventListener('click', () => this._onSelect?.());\n    slice.controller.setComponentProps(this, props);   // 3. apply props (fires setters) — LAST\n  }\n\n  async init() {\n    // async-only work: fetch, build children with await slice.build(...)\n  }\n\n  set name(value) { this._name = value || ''; this.$name.textContent = this._name; }\n  set onSelect(fn) { this._onSelect = typeof fn === 'function' ? fn : null; }\n}\n\ncustomElements.define('slice-user-card', UserCard);\n```\n\nKey rules:\n- The DOM exists **only after** `slice.attachTemplate(this)`. Before it, `querySelector` returns\n  `null`; after it, queries work in the constructor.\n- Call `slice.controller.setComponentProps(this, props)` **last**.\n\n### Where to cache DOM references\nTwo valid patterns:\n- **In the constructor**, after `attachTemplate` (shown above, as the official components do).\n  Setters can update the DOM directly with no extra guards.\n- **In `init()`** instead. Because `setComponentProps` runs in the constructor (before `init()`),\n  setters fire before those references exist — so guard their DOM access with `?.`:\n\n```javascript title=\"Caching refs in init()\"\nconstructor(props) {\n  super();\n  slice.attachTemplate(this);\n  slice.controller.setComponentProps(this, props);\n}\nasync init() {\n  this.$name = this.querySelector('.user-card__name');\n  this.applyName();\n}\nset name(v) { this._name = v || ''; this.applyName?.(); }   // ?. — setter may run before init\napplyName() { if (this.$name) this.$name.textContent = this._name; }\n```\n\n## static props and setters\n`static props` is the component's public contract. Each entry has a `type` and an optional\n`default` or `required: true`.\n\n```javascript title=\"static props\"\nstatic props = {\n  value:    { type: 'string',   default: 'Click me' },\n  disabled: { type: 'boolean',  default: false },\n  items:    { type: 'array',    default: [] },\n  onClick:  { type: 'function', default: null },\n  userId:   { type: 'string',   required: true }   // no default → required\n};\n```\n\nTypes: `string`, `number`, `boolean`, `array`, `object`, `function`. At **build**,\n`setComponentProps` applies defaults, validates in development, and assigns each prop **through its\nsetter** (`this[prop] = value`); defaults pass through setters too. On an already-built component it\n**refreshes** instead (see *Refreshing a built component* below). Because of this, **side effects\nbelong in setters** — assigning a prop is all the rest of your code needs to do, and the Debugger\ncan change props live through the same path. Keep internal state (cached data, timers) on `this`,\nnot in `static props`.\n\n## Refreshing a built component\nAfter a component is built, refresh it by **assigning a prop** (its setter runs) or, to apply\nseveral at once, with `slice.setComponentProps(component, props)`. It is the **same** function the\nconstructor uses — it detects build vs refresh automatically:\n\n| Context | What it does |\n| --- | --- |\n| Constructor (not yet registered) | Applies `static props` defaults, validates `required`, fires every setter. |\n| Built component (refresh) | Assigns only the props you pass — **no defaults, no `required` check** — and respects setter diff-guards, so unchanged values don't re-touch the DOM. |\n\n```javascript title=\"Refresh in place\"\nconst card = slice.getComponent('user-1');\ncard.name = 'Ada';                                            // one prop: the setter runs\nslice.setComponentProps(card, { name: 'Ada', role: 'Admin' }); // several at once, omitted props kept\n```\n\nThe key property: omitting a prop on refresh **leaves it as-is** — it is not reset to its default.\nThat is what makes refreshing surviving instances safe.\n\n:::tip\nCheck whether an instance is still the live registered one (not destroyed or replaced by a rebuild)\nwith `slice.isComponentAlive(component)`.\n:::\n\n## customElements.define\nRegister the custom element once at the bottom of the file:\n\n```javascript\ncustomElements.define('slice-user-card', UserCard);\n```\n\nThe tag must contain a hyphen. You rarely write the tag in HTML — `await slice.build('UserCard',\nprops)` instantiates it for you.\n\n## Component categories and registration\nTwo things make a component loadable:\n\n1. **`components.js`** maps each component name to a **category**:\n   ```javascript title=\"src/Components/components.js (auto-generated)\"\n   const components = {\n     \"UserCard\": \"AppComponents\",\n     \"Button\":   \"Visual\",\n     \"AuthService\": \"Service\"\n   };\n   export default components;\n   ```\n2. **`sliceConfig.json` → `paths.components`** defines each category's folder (`path`) and how to\n   load it (`type`: `Visual` loads `.js`+`.html`+`.css`; `Service` loads only `.js`). See\n   sliceConfig.json for the full explanation.\n\nWhen you call `slice.build('UserCard')`, Slice reads the category from `components.js`, finds the\nmatching `paths.components` entry, and loads the files from `<path>/UserCard/`. `slice component\ncreate` keeps both in sync; if a component is missing from `components.js`, `slice.build()` returns\n`null`.\n\n## Service components\nA Service is a plain class — no `HTMLElement`, no `static props`, no lifecycle, no\n`customElements.define`. Put it in a `Service`-type category and build it the same way:\n\n```javascript title=\"AuthService.js\"\nexport default class AuthService {\n  constructor(props = {}) { this.token = null; }\n  async login(email, password) {\n    const res = await fetch('/api/login', { method: 'POST', /* ... */ });\n    if (!res.ok) { slice.logger.error('AuthService', 'Login failed'); return false; }\n    this.token = (await res.json()).token;\n    return true;\n  }\n}\n```\n\n```javascript title=\"Build and reuse a service\"\nconst auth = await slice.build('AuthService', { sliceId: 'AuthService' });\n// later, anywhere:\nconst same = slice.controller.getComponent('AuthService');\n```\n\n## Best Practices\n:::tip\nGenerate components with `npm run component:create` so files and `components.js` stay correct.\n:::\n\n:::tip\nPut DOM side effects in setters; reserve `init()` for async setup and `update()` for refreshes.\n:::\n\n## Gotchas\n:::warning\nThe DOM is empty until `slice.attachTemplate(this)` runs. Querying before it returns `null`.\n:::\n\n:::warning\nA component missing from `components.js`, or a wrong `paths.components` `path`/`type`, makes\n`slice.build()` return `null`. Run `npm run component:list` to resync.\n:::\n";
+    this.markdownContent = "---\ntitle: Component Anatomy\nroute: /Documentation/Component-Anatomy\nnavLabel: Component Anatomy\nsection: Components\ngroup: Component Model\norder: 10\ndescription: How to author a Slice component, generate it with the CLI, and register it.\ncomponent: ComponentAnatomy\ntags: [components, cli, anatomy, props]\n---\n\n# Component Anatomy\n\n## Overview\nA Slice component is a small folder. A **Visual** component (with UI) has three files; a\n**Service** component (logic only) has one. This page shows how to generate a component with the\nCLI, what each file is for, and how the constructor, props, and registration work.\n\n## Generate components with the CLI\nDo not create component files by hand — let the CLI scaffold them and register them for you.\nPass the **name** and **`--category`** to run with no prompts:\n\n```bash title=\"Non-interactive (recommended for scripts and agents)\"\nnpm run component:create -- UserCard --category AppComponents\nnpm run component:create -- AuthService -c Service\n```\n\nOmit them to be prompted instead (only the missing pieces are asked):\n\n```bash title=\"Interactive\"\nnpm run component:create                  # prompts for name + category\nnpm run component:create -- UserCard      # prompts only for category\n```\n\nEither way, the CLI:\n- creates `src/Components/<Category>/<Name>/` with the right files, and\n- adds the component to `src/Components/components.js` so it is loadable immediately.\n\nThe category must exist in `paths.components` (see below). Through the npm script, separate the\nargs with `--`: `npm run component:create -- UserCard --category Visual`.\n\n```javascript title=\"Generated Visual component (skeleton)\"\nexport default class MyButton extends HTMLElement {\n  static props = {\n    // Define your public props here, e.g.\n    // value: { type: 'string', default: 'Button', required: false }\n  };\n\n  constructor(props) {\n    super();\n    slice.attachTemplate(this);\n    slice.controller.setComponentProps(this, props);\n  }\n\n  init() {\n    // One-time async setup (optional)\n  }\n\n  update() {\n    // Refresh when reused by routing (optional)\n  }\n}\n\ncustomElements.define('slice-mybutton', MyButton);\n```\n\nIf you ever add or move component folders by hand, run `npm run component:list` to regenerate\n`components.js`.\n\n## The three files of a Visual component\n```text title=\"src/Components/AppComponents/UserCard/\"\nUserCard.js     # the class: props, constructor, lifecycle, setters\nUserCard.html   # the template (inner markup only)\nUserCard.css    # the styles\n```\n\n- **`.html`** contains only the **inner** markup — no `<template>` wrapper and no root element\n  matching the tag. Slice injects it as **light-DOM children** of the custom element. Slice does\n  not use Shadow DOM; do not call `attachShadow()`.\n- **`.css`** should reference theme variables (`var(--...)`) instead of hardcoded colors, so theme\n  switching keeps working. Use BEM-style class names (`block__element--modifier`) to avoid clashes.\n\n## The constructor\nEvery Visual component's constructor does three things, in order:\n\n```javascript title=\"UserCard.js\"\nexport default class UserCard extends HTMLElement {\n  static props = {\n    name:     { type: 'string',   default: '' },\n    onSelect: { type: 'function', default: null }\n  };\n\n  constructor(props) {\n    super();\n    slice.attachTemplate(this);                        // 1. inject the .html\n    this.$name = this.querySelector('.user-card__name'); // 2. cache refs (works now)\n    this.$root = this.querySelector('.user-card');\n    this.$root.addEventListener('click', () => this._onSelect?.());\n    slice.controller.setComponentProps(this, props);   // 3. apply props (fires setters) — LAST\n  }\n\n  async init() {\n    // async-only work: fetch, build children with await slice.build(...)\n  }\n\n  set name(value) { this._name = value || ''; this.$name.textContent = this._name; }\n  set onSelect(fn) { this._onSelect = typeof fn === 'function' ? fn : null; }\n}\n\ncustomElements.define('slice-user-card', UserCard);\n```\n\nKey rules:\n- The DOM exists **only after** `slice.attachTemplate(this)`. Before it, `querySelector` returns\n  `null`; after it, queries work in the constructor.\n- Call `slice.controller.setComponentProps(this, props)` **last**.\n\n### Where to cache DOM references\nTwo valid patterns:\n- **In the constructor**, after `attachTemplate` (shown above, as the official components do).\n  Setters can update the DOM directly with no extra guards.\n- **In `init()`** instead. Because `setComponentProps` runs in the constructor (before `init()`),\n  setters fire before those references exist — so guard their DOM access with `?.`:\n\n```javascript title=\"Caching refs in init()\"\nconstructor(props) {\n  super();\n  slice.attachTemplate(this);\n  slice.controller.setComponentProps(this, props);\n}\nasync init() {\n  this.$name = this.querySelector('.user-card__name');\n  this.applyName();\n}\nset name(v) { this._name = v || ''; this.applyName?.(); }   // ?. — setter may run before init\napplyName() { if (this.$name) this.$name.textContent = this._name; }\n```\n\n## static props and setters\n`static props` is the component's public contract. Each entry has a `type` and an optional\n`default` or `required: true`.\n\n```javascript title=\"static props\"\nstatic props = {\n  value:    { type: 'string',   default: 'Click me' },\n  disabled: { type: 'boolean',  default: false },\n  items:    { type: 'array',    default: [] },\n  onClick:  { type: 'function', default: null },\n  userId:   { type: 'string',   required: true }   // no default → required\n};\n```\n\nTypes: `string`, `number`, `boolean`, `array`, `object`, `function`. At **build**,\n`setComponentProps` applies defaults, validates in development, and assigns each prop **through its\nsetter** (`this[prop] = value`); defaults pass through setters too. On an already-built component it\n**refreshes** instead (see *Refreshing a built component* below). Because of this, **side effects\nbelong in setters** — assigning a prop is all the rest of your code needs to do, and the Debugger\ncan change props live through the same path. Keep internal state (cached data, timers) on `this`,\nnot in `static props`.\n\n## Refreshing a built component\nAfter a component is built, refresh it by **assigning a prop** (its setter runs) or, to apply\nseveral at once, with `slice.setComponentProps(component, props)`. It is the **same** function the\nconstructor uses — it detects build vs refresh automatically:\n\n| Context | What it does |\n| --- | --- |\n| Constructor (not yet registered) | Applies `static props` defaults, validates `required`, fires every setter. |\n| Built component (refresh) | Assigns only the props you pass — **no defaults, no `required` check** — and respects setter diff-guards, so unchanged values don't re-touch the DOM. |\n\n```javascript title=\"Refresh in place\"\nconst card = slice.getComponent('user-1');\ncard.name = 'Ada';                                            // one prop: the setter runs\nslice.setComponentProps(card, { name: 'Ada', role: 'Admin' }); // several at once, omitted props kept\n```\n\nThe key property: omitting a prop on refresh **leaves it as-is** — it is not reset to its default.\nThat is what makes refreshing surviving instances safe.\n\nCheck whether an instance is still the live registered one (not destroyed or replaced by a rebuild)\nwith `slice.isComponentAlive(component)`.\n\n## customElements.define\nRegister the custom element once at the bottom of the file:\n\n```javascript\ncustomElements.define('slice-user-card', UserCard);\n```\n\nThe tag must contain a hyphen. You rarely write the tag in HTML — `await slice.build('UserCard',\nprops)` instantiates it for you.\n\n## Component categories and registration\nTwo things make a component loadable:\n\n1. **`components.js`** maps each component name to a **category**:\n   ```javascript title=\"src/Components/components.js (auto-generated)\"\n   const components = {\n     \"UserCard\": \"AppComponents\",\n     \"Button\":   \"Visual\",\n     \"AuthService\": \"Service\"\n   };\n   export default components;\n   ```\n2. **`sliceConfig.json` → `paths.components`** defines each category's folder (`path`) and how to\n   load it (`type`: `Visual` loads `.js`+`.html`+`.css`; `Service` loads only `.js`). See\n   sliceConfig.json for the full explanation.\n\nWhen you call `slice.build('UserCard')`, Slice reads the category from `components.js`, finds the\nmatching `paths.components` entry, and loads the files from `<path>/UserCard/`. `slice component\ncreate` keeps both in sync; if a component is missing from `components.js`, `slice.build()` returns\n`null`.\n\n## Service components\nA Service is a plain class — no `HTMLElement`, no `static props`, no lifecycle, no\n`customElements.define`. Put it in a `Service`-type category and build it the same way:\n\n```javascript title=\"AuthService.js\"\nexport default class AuthService {\n  constructor(props = {}) { this.token = null; }\n  async login(email, password) {\n    const res = await fetch('/api/login', { method: 'POST', /* ... */ });\n    if (!res.ok) { slice.logger.error('AuthService', 'Login failed'); return false; }\n    this.token = (await res.json()).token;\n    return true;\n  }\n}\n```\n\n```javascript title=\"Build and reuse a service\"\nconst auth = await slice.build('AuthService', { sliceId: 'AuthService' });\n// later, anywhere:\nconst same = slice.controller.getComponent('AuthService');\n```\n\n## Best Practices\nGenerate components with `npm run component:create` so files and `components.js` stay correct.\n\n:::tip\nPut DOM side effects in setters; reserve `init()` for async setup and `update()` for refreshes.\n:::\n\n## Gotchas\n:::warning\nThe DOM is empty until `slice.attachTemplate(this)` runs. Querying before it returns `null`.\n:::\n\n:::warning\nA component missing from `components.js`, or a wrong `paths.components` `path`/`type`, makes\n`slice.build()` return `null`. Run `npm run component:list` to resync.\n:::\n";
     this.setupRouterLinks();
     if (true) {
       await this.setupCopyButton();
@@ -76,21 +76,6 @@ export default class ComponentAnatomy extends HTMLElement {
       {
          const container = this.querySelector('[data-block-id="doc-block-5"]');
          if (container) {
-            const body = document.createElement('div');
-            body.className = 'doc-callout-body';
-            body.innerHTML = "<p>If you ever add or move component folders by hand, run <code>npm run component:list</code> to regenerate <code>components.js</code>.</p>";
-            const callout = await slice.build('Callout', {
-               tone: "success",
-               variant: "soft",
-               title: "Tip",
-               content: Array.from(body.childNodes)
-            });
-            container.appendChild(callout || body);
-         }
-      }
-      {
-         const container = this.querySelector('[data-block-id="doc-block-6"]');
-         if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "UserCard.js     # the class: props, constructor, lifecycle, setters\nUserCard.html   # the template (inner markup only)\nUserCard.css    # the styles",
                language: "text"
@@ -105,7 +90,7 @@ export default class ComponentAnatomy extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-7"]');
+         const container = this.querySelector('[data-block-id="doc-block-6"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "export default class UserCard extends HTMLElement {\n  static props = {\n    name:     { type: 'string',   default: '' },\n    onSelect: { type: 'function', default: null }\n  };\n\n  constructor(props) {\n    super();\n    slice.attachTemplate(this);                        // 1. inject the .html\n    this.$name = this.querySelector('.user-card__name'); // 2. cache refs (works now)\n    this.$root = this.querySelector('.user-card');\n    this.$root.addEventListener('click', () => this._onSelect?.());\n    slice.controller.setComponentProps(this, props);   // 3. apply props (fires setters) — LAST\n  }\n\n  async init() {\n    // async-only work: fetch, build children with await slice.build(...)\n  }\n\n  set name(value) { this._name = value || ''; this.$name.textContent = this._name; }\n  set onSelect(fn) { this._onSelect = typeof fn === 'function' ? fn : null; }\n}\n\ncustomElements.define('slice-user-card', UserCard);",
@@ -121,7 +106,7 @@ export default class ComponentAnatomy extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-8"]');
+         const container = this.querySelector('[data-block-id="doc-block-7"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "constructor(props) {\n  super();\n  slice.attachTemplate(this);\n  slice.controller.setComponentProps(this, props);\n}\nasync init() {\n  this.$name = this.querySelector('.user-card__name');\n  this.applyName();\n}\nset name(v) { this._name = v || ''; this.applyName?.(); }   // ?. — setter may run before init\napplyName() { if (this.$name) this.$name.textContent = this._name; }",
@@ -137,7 +122,7 @@ export default class ComponentAnatomy extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-9"]');
+         const container = this.querySelector('[data-block-id="doc-block-8"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "static props = {\n  value:    { type: 'string',   default: 'Click me' },\n  disabled: { type: 'boolean',  default: false },\n  items:    { type: 'array',    default: [] },\n  onClick:  { type: 'function', default: null },\n  userId:   { type: 'string',   required: true }   // no default → required\n};",
@@ -153,7 +138,7 @@ export default class ComponentAnatomy extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-10"]');
+         const container = this.querySelector('[data-block-id="doc-block-9"]');
          if (container) {
             const table = await slice.build('Table', {
                headers: ["Context","What it does"],
@@ -165,7 +150,7 @@ export default class ComponentAnatomy extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-11"]');
+         const container = this.querySelector('[data-block-id="doc-block-10"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "const card = slice.getComponent('user-1');\ncard.name = 'Ada';                                            // one prop: the setter runs\nslice.setComponentProps(card, { name: 'Ada', role: 'Admin' }); // several at once, omitted props kept",
@@ -181,22 +166,7 @@ export default class ComponentAnatomy extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-12"]');
-         if (container) {
-            const body = document.createElement('div');
-            body.className = 'doc-callout-body';
-            body.innerHTML = "<p>Check whether an instance is still the live registered one (not destroyed or replaced by a rebuild) with <code>slice.isComponentAlive(component)</code>.</p>";
-            const callout = await slice.build('Callout', {
-               tone: "success",
-               variant: "soft",
-               title: "Tip",
-               content: Array.from(body.childNodes)
-            });
-            container.appendChild(callout || body);
-         }
-      }
-      {
-         const container = this.querySelector('[data-block-id="doc-block-13"]');
+         const container = this.querySelector('[data-block-id="doc-block-11"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "customElements.define('slice-user-card', UserCard);",
@@ -212,7 +182,7 @@ export default class ComponentAnatomy extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-14"]');
+         const container = this.querySelector('[data-block-id="doc-block-12"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "export default class AuthService {\n  constructor(props = {}) { this.token = null; }\n  async login(email, password) {\n    const res = await fetch('/api/login', { method: 'POST', /* ... */ });\n    if (!res.ok) { slice.logger.error('AuthService', 'Login failed'); return false; }\n    this.token = (await res.json()).token;\n    return true;\n  }\n}",
@@ -228,7 +198,7 @@ export default class ComponentAnatomy extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-15"]');
+         const container = this.querySelector('[data-block-id="doc-block-13"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "const auth = await slice.build('AuthService', { sliceId: 'AuthService' });\n// later, anywhere:\nconst same = slice.controller.getComponent('AuthService');",
@@ -244,22 +214,7 @@ export default class ComponentAnatomy extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-16"]');
-         if (container) {
-            const body = document.createElement('div');
-            body.className = 'doc-callout-body';
-            body.innerHTML = "<p>Generate components with <code>npm run component:create</code> so files and <code>components.js</code> stay correct.</p>";
-            const callout = await slice.build('Callout', {
-               tone: "success",
-               variant: "soft",
-               title: "Tip",
-               content: Array.from(body.childNodes)
-            });
-            container.appendChild(callout || body);
-         }
-      }
-      {
-         const container = this.querySelector('[data-block-id="doc-block-17"]');
+         const container = this.querySelector('[data-block-id="doc-block-14"]');
          if (container) {
             const body = document.createElement('div');
             body.className = 'doc-callout-body';
@@ -274,7 +229,7 @@ export default class ComponentAnatomy extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-18"]');
+         const container = this.querySelector('[data-block-id="doc-block-15"]');
          if (container) {
             const body = document.createElement('div');
             body.className = 'doc-callout-body';
@@ -289,7 +244,7 @@ export default class ComponentAnatomy extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-19"]');
+         const container = this.querySelector('[data-block-id="doc-block-16"]');
          if (container) {
             const body = document.createElement('div');
             body.className = 'doc-callout-body';

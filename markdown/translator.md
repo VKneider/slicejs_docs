@@ -85,11 +85,9 @@ is shown as `orders.title` and reported once in development.
 writes to the lower layer that never overrides the app's dictionaries — that is how a component
 library ships its own texts without taking control of the dictionary.
 
-:::note
 `slice build` copies `src/locales` into `dist/locales`, and the server serves the folder at
 `translator.path` in development and in production. If you move the dictionaries, change `path`; do not
 put them under `public/`.
-:::
 
 ## Library components: `texts()`
 
@@ -120,11 +118,9 @@ which is the text the component showed before. Built-in texts are marked with `d
 through `texts()`; a text passed as a prop uses `slice.t.ref('slice.modal.close')`. The authoring contract is
 `COMPONENT_API_STANDARDS.md` §16 of the components library.
 
-:::note
 Every visual component ships en/es defaults for its own chrome (`slice.table.*`,
 `slice.modal.*`, `slice.validation.*`, …). Its text prop (`texts`, `labels`, `closeLabel`…) still wins,
 and an app dictionary always wins over both.
-:::
 
 ## Messages
 

@@ -45,9 +45,7 @@ Slice resolves the package with esbuild — the same resolver in development and
 - **`slice dev`**: no app bundling. Bare specifiers in your served modules are rewritten to a virtual `/@slice-modules/<package>` URL, and each package is pre-bundled on demand and cached (on disk under `node_modules/.slice-deps`, keyed by version). Your components still load as native ES modules.
 - **`slice build` / `slice start`**: each package is bundled once and registered in the production bundle. A package used by two or more route bundles is extracted into a single shared `slice-bundle.vendor-shared.js` (no duplication).
 
-:::tip
 Because dev and build share the same esbuild resolver, a package that works in `slice dev` works the same way after `slice build`. There is no separate dev-only shim to keep in sync.
-:::
 
 ### Module formats and assets
 Resolution and interop are handled by esbuild, so the following all work:

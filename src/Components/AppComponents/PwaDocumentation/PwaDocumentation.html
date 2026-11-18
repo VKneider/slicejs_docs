@@ -37,7 +37,7 @@
 <div class="code-block" data-block-id="doc-block-5"></div>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout-block" data-block-id="doc-block-6"></div>
-<div class="callout-block" data-block-id="doc-block-7"></div>
+<p>Keep <code>PRECACHE</code> small — just the shell and what the first screen needs. Everything else is cached on demand by the cache-first <code>fetch</code> handler.</p>
 <h2 id="static-export">Static export</h2>
 <p><code>service-worker.js</code> is published at the export root, so the same worker works on a static host. Two export-specific rules:</p>
 <ul><li>Every path in <code>PRECACHE</code> must exist in <code>dist-static/</code>. The shell in this example is <code>/</code> and <code>/manifest.json</code>; if you precache <code>/App/index.html</code>, that file is present too.</li><li>Do <strong>not</strong> precache <code>/Components/...</code> in a static export: the exporter prunes <code>Components/</code> by default. Use bundle URLs or public assets instead.</li></ul>
@@ -45,9 +45,9 @@
 <h2 id="backend-routes">Backend routes</h2>
 <p>A service worker cannot add a backend. If your PWA calls <code>/api/*</code>, deploy the app with <code>slice start</code> (Express) instead of <code>slice export</code>, or keep the static frontend and point it at a separate API origin through <code>SLICE_PUBLIC_API_URL</code>.</p>
 <h2 id="gotchas">Gotchas</h2>
+<div class="callout-block" data-block-id="doc-block-7"></div>
 <div class="callout-block" data-block-id="doc-block-8"></div>
-<div class="callout-block" data-block-id="doc-block-9"></div>
 <h2 id="faq">FAQ</h2>
+<div class="details-block" data-block-id="doc-block-9"></div>
 <div class="details-block" data-block-id="doc-block-10"></div>
-<div class="details-block" data-block-id="doc-block-11"></div>
 </div>

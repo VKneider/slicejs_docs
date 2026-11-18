@@ -142,10 +142,8 @@ every category. `Visual` and `Service` are registry categories: `slice get` inst
 their guides point to the remote component docs. App categories document their own components in a
 co-located `README.md`. See [Documentation & AGENTS.md](/Documentation/Documentation-System).
 
-:::tip
 You normally do not edit folders by hand — `slice component create` scaffolds a component in the
 right category and updates `components.js` for you. See Component Anatomy.
-:::
 
 :::warning
 If a category's `path` or `type` is wrong, `slice.build()` returns `null` with a misleading
@@ -320,19 +318,13 @@ const publicEnv = slice.getPublicEnv();
 ```
 
 ## Best Practices
-:::tip
 Keep `paths` accurate or component loading will fail.
-:::
 
-:::tip
 Load shared styles through `stylesManager.requestedStyles`.
-:::
 
 ## Gotchas
 :::warning
 If `themeManager.enabled` is true and `defaultTheme` is missing, theme loading will fail.
 :::
 
-:::warning
 `events` and `context` are optional. If disabled, Slice.js provides no-op stubs.
-:::

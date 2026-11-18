@@ -121,12 +121,8 @@ nav.appendChild(link);
 ```
 
 ## Best Practices
-:::tip
 Use `sliceId` when you need global access to a service instance.
-:::
 
-:::tip
 Pair services with EventManager for notifications or ContextManager for shared state.
-:::
 
 ## Gotchas

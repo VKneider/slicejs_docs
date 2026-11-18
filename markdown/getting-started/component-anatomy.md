@@ -65,10 +65,8 @@ export default class MyButton extends HTMLElement {
 customElements.define('slice-mybutton', MyButton);
 ```
 
-:::tip
 If you ever add or move component folders by hand, run `npm run component:list` to regenerate
 `components.js`.
-:::
 
 ## The three files of a Visual component
 ```text title="src/Components/AppComponents/UserCard/"
@@ -180,10 +178,8 @@ slice.setComponentProps(card, { name: 'Ada', role: 'Admin' }); // several at onc
 The key property: omitting a prop on refresh **leaves it as-is** — it is not reset to its default.
 That is what makes refreshing surviving instances safe.
 
-:::tip
 Check whether an instance is still the live registered one (not destroyed or replaced by a rebuild)
 with `slice.isComponentAlive(component)`.
-:::
 
 ## customElements.define
 Register the custom element once at the bottom of the file:
@@ -239,9 +235,7 @@ const same = slice.controller.getComponent('AuthService');
 ```
 
 ## Best Practices
-:::tip
 Generate components with `npm run component:create` so files and `components.js` stay correct.
-:::
 
 :::tip
 Put DOM side effects in setters; reserve `init()` for async setup and `update()` for refreshes.

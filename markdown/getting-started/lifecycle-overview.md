@@ -129,9 +129,7 @@ export default class UserList extends HTMLElement {
 ```
 
 ## Best Practices
-:::tip
 Keep `init()` focused on one-time setup and cache DOM references there.
-:::
 
 :::tip
 Refresh lists **in place**: reuse children by a stable `sliceId` (build new, update existing,

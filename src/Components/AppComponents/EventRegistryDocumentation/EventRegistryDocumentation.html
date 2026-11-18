@@ -53,13 +53,13 @@
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout-block" data-block-id="doc-block-12"></div>
 <div class="callout-block" data-block-id="doc-block-13"></div>
-<div class="callout-block" data-block-id="doc-block-14"></div>
-<div class="callout-block" data-block-id="doc-block-15"></div>
+<p>Register all catalogs from one place (your <code>Providers</code>/composition root). One file is standardization; many <code>register()</code> calls is modularization — both work with the same API.</p>
+<p>After adding events or emit/subscribe sites, run <code>slice docs generate types</code> for the typed contract and <code>slice docs generate events</code> for the human catalog. <code>slice docs check</code> catches drift.</p>
 <h2 id="gotchas">Gotchas</h2>
-<div class="callout-block" data-block-id="doc-block-16"></div>
-<div class="callout-block" data-block-id="doc-block-17"></div>
+<div class="callout-block" data-block-id="doc-block-14"></div>
+<p>Events emitted with a computed name (<code>emit(\</code>user:${id}\<code>)</code>) cannot be typed or documented statically. Use literal names where you want the contract; the runtime tracer still shows them under dynamic sites.</p>
 <h2 id="faq">FAQ</h2>
-<div class="details-block" data-block-id="doc-block-18"></div>
-<div class="details-block" data-block-id="doc-block-19"></div>
-<div class="details-block" data-block-id="doc-block-20"></div>
+<div class="details-block" data-block-id="doc-block-15"></div>
+<div class="details-block" data-block-id="doc-block-16"></div>
+<div class="details-block" data-block-id="doc-block-17"></div>
 </div>

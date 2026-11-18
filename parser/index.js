@@ -49,8 +49,7 @@ const readAllMarkdownFiles = (dir) => {
   return files;
 };
 
-const readAllAppComponents = (dir) => {
-  if (!fs.existsSync(dir)) return [];
+const readAllAppComponents = (dir) => {  if (!fs.existsSync(dir)) return [];
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   const files = [];
 
@@ -66,7 +65,68 @@ const readAllAppComponents = (dir) => {
   return files;
 };
 
+// The shared contract keeps a page to at most three callouts: a fourth tip in
+// a row is usually a table, a Details block, a compare or plain prose. Both
+// docs sites follow the same budget, so a page cannot drift from the contract.
+const CALLOUT_BUDGET = 3;
+const CALLOUT_DIRECTIVES = new Set(['tip', 'warning', 'note', 'info', 'success', 'danger', 'callout']);
+
+const lintCalloutBudget = (markdownSource, filePath) => {
+  if (!markdownSource || typeof markdownSource !== 'string') {
+    return [];
+  }
+
+  const lines = markdownSource.split(/\r?\n/);
+  const found = [];
+  let inFence = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.startsWith('```')) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence) continue;
+    const name = line.match(/^:::([a-zA-Z-]+)/)?.[1]?.toLowerCase();
+    if (name && CALLOUT_DIRECTIVES.has(name)) {
+      found.push(i + 1);
+    }
+  }
+
+  if (found.length <= CALLOUT_BUDGET) {
+    return [];
+  }
+
+  return [
+    `[${filePath}] ${found.length} callouts (lines ${found.join(', ')}); the contract allows ${CALLOUT_BUDGET}. ` +
+      'Turn the rest into prose, :::compare, :::details or :::related.'
+  ];
+};
+
+const lintMarkdown = () => {
+  const errors = [];
+  for (const filePath of readAllMarkdownFiles(MARKDOWN_DIR)) {
+    const parsed = parseMarkdownFile(filePath);
+    if (!parsed.frontMatter) continue;
+    const relative = path.relative(ROOT, filePath).replace(/\\/g, '/');
+    errors.push(...lintCalloutBudget(parsed.frontMatter.markdownSource || '', relative));
+  }
+  return errors;
+};
+
 const run = () => {
+  const lintOnly = process.argv.includes('--lint-only');
+  const lintErrors = lintMarkdown();
+  if (lintErrors.length > 0) {
+    console.error('Markdown lint failed:');
+    for (const error of lintErrors) console.error(`- ${error}`);
+    process.exit(1);
+  }
+  if (lintOnly) {
+    console.log('Markdown lint completed successfully.');
+    return;
+  }
+
   const markdownFiles = readAllMarkdownFiles(MARKDOWN_DIR);
   console.log(`Found ${markdownFiles.length} markdown files`);
 
@@ -139,4 +199,9 @@ const run = () => {
   console.log('Report written to parser/report.json');
 };
 
-run();
+const isMain = process.argv[1] && path.resolve(process.argv[1]) === __filename;
+if (isMain) {
+  run();
+}
+
+export { lintCalloutBudget };

@@ -317,9 +317,7 @@ automatically. `src/` and `api/` are still required: the server entrypoint is `a
 | --- | --- | --- | --- |
 | `-p, --port` | `number` | `3000` | Priority: `--port` → `sliceConfig.server.port` → `3000`. Falls back to port+1 if the requested port is busy. |
 
-:::tip
 Production serves static assets from `src/public/` (copied into `dist/`) at the root URL - e.g. `/Themes`, `/Styles`, `/images`.
-:::
 
 Production does **not** expose `/Components`, the `/dist` tree, source maps, `.d.ts`, `.env`,
 `package.json` or `node_modules`. Only `/dist/bundles/` remains as a legacy mirror for older assets;
@@ -338,10 +336,8 @@ It also writes `dist/slice-env.json` (the shared public env payload) and
 `dist/slice-env.generated.js` (the ESM shim the runtime imports). There is no env endpoint in
 production; `slice dev` keeps the live `/slice-env.json` provider.
 
-:::tip
 Production builds include **Structural framework components** in bundles to avoid runtime fetches.
 These entries are stored as `Framework/Structural/<ComponentName>` in bundle config.
-:::
 
 ```bash title="Build production output"
 npm run build
@@ -804,17 +800,7 @@ project has none, and keeps that config pointed at the generated declarations. `
 want the human event catalog and AGENTS inventories.
 
 ## Best Practices
-:::tip
-Prefer package scripts (`pnpm run ...` / `npm run ...`) for project commands.
-:::
-
-:::tip
-Use `npx slicejs-cli <command>` for bootstrapping and recovery (for example before scripts exist).
-:::
-
-:::tip
-Run `npm run dev` in one terminal and use another for component commands.
-:::
+Prefer package scripts (`pnpm run ...` / `npm run ...`) for project commands, and `npx slicejs-cli <command>` for bootstrapping and recovery (for example before scripts exist). Run `npm run dev` in one terminal and use another for component commands.
 
 ## Gotchas
 :::warning

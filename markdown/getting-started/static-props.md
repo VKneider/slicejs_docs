@@ -167,9 +167,7 @@ Slice validates your `static props` definitions in two places, so a malformed pr
 Define only public props in `static props` and use internal fields for private state.
 :::
 
-:::tip
 Use defaults to keep components predictable and reduce boilerplate.
-:::
 
 ## Gotchas
 :::warning

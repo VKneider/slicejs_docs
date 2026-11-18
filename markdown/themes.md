@@ -47,9 +47,7 @@ Every theme MUST define these 15 variables. The Theme Creator reads them, and Vi
 | `--medium-color` | Neutral mid-tone color |
 | `--disabled-color` | Disabled / inactive color |
 
-:::tip
 Optional but recommended extras include `--primary-color-rgb`, `--secondary-color-rgb`, `--success-contrast`, `--warning-contrast`, `--danger-contrast`, `--medium-contrast`, and `--accent-color`. The `*-rgb` tokens let you derive translucent borders with `rgba(var(--primary-color-rgb), 0.2)`.
-:::
 
 ## LIGHT Theme
 
@@ -191,9 +189,7 @@ Use the CSS variables inside component styles so components stay themeable acros
 
 ## Troubleshooting
 
-:::tip
 If a component looks off, check that your background and font tokens are present and readable in the active theme.
-:::
 
 :::warning
 Avoid hard-coded hex values in component CSS when a theme token exists. Hard-coded colors will not adapt when switching between LIGHT and DARK.

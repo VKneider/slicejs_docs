@@ -172,16 +172,12 @@ Declare catalogs as plain object literals (or imported literals) and pass them t
 be typed.
 :::
 
-:::tip
 Register all catalogs from one place (your `Providers`/composition root). One file is
 standardization; many `register()` calls is modularization — both work with the same API.
-:::
 
-:::tip
 After adding events or emit/subscribe sites, run `slice docs generate types` for the typed
 contract and `slice docs generate events` for the human catalog. `slice docs check` catches
 drift.
-:::
 
 ## Gotchas
 :::warning
@@ -189,11 +185,9 @@ Validation only activates after the first `register()`. Until then the EventMana
 in loose mode with no warnings — declaring the catalog is what opts you in.
 :::
 
-:::warning
 Events emitted with a computed name (`emit(\`user:${id}\`)`) cannot be typed or documented
 statically. Use literal names where you want the contract; the runtime tracer still shows
 them under dynamic sites.
-:::
 
 ## FAQ
 :::details title="Is the registry required?"

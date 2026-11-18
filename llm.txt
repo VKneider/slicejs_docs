@@ -417,9 +417,7 @@ automatically. `src/` and `api/` are still required: the server entrypoint is `a
 | --- | --- | --- | --- |
 | `-p, --port` | `number` | `3000` | Priority: `--port` → `sliceConfig.server.port` → `3000`. Falls back to port+1 if the requested port is busy. |
 
-:::tip
 Production serves static assets from `src/public/` (copied into `dist/`) at the root URL - e.g. `/Themes`, `/Styles`, `/images`.
-:::
 
 Production does **not** expose `/Components`, the `/dist` tree, source maps, `.d.ts`, `.env`,
 `package.json` or `node_modules`. Only `/dist/bundles/` remains as a legacy mirror for older assets;
@@ -438,10 +436,8 @@ It also writes `dist/slice-env.json` (the shared public env payload) and
 `dist/slice-env.generated.js` (the ESM shim the runtime imports). There is no env endpoint in
 production; `slice dev` keeps the live `/slice-env.json` provider.
 
-:::tip
 Production builds include **Structural framework components** in bundles to avoid runtime fetches.
 These entries are stored as `Framework/Structural/<ComponentName>` in bundle config.
-:::
 
 ```bash title="Build production output"
 npm run build
@@ -904,17 +900,7 @@ project has none, and keeps that config pointed at the generated declarations. `
 want the human event catalog and AGENTS inventories.
 
 ## Best Practices
-:::tip
-Prefer package scripts (`pnpm run ...` / `npm run ...`) for project commands.
-:::
-
-:::tip
-Use `npx slicejs-cli <command>` for bootstrapping and recovery (for example before scripts exist).
-:::
-
-:::tip
-Run `npm run dev` in one terminal and use another for component commands.
-:::
+Prefer package scripts (`pnpm run ...` / `npm run ...`) for project commands, and `npx slicejs-cli <command>` for bootstrapping and recovery (for example before scripts exist). Run `npm run dev` in one terminal and use another for component commands.
 
 ## Gotchas
 :::warning
@@ -1833,16 +1819,12 @@ Declare catalogs as plain object literals (or imported literals) and pass them t
 be typed.
 :::
 
-:::tip
 Register all catalogs from one place (your `Providers`/composition root). One file is
 standardization; many `register()` calls is modularization — both work with the same API.
-:::
 
-:::tip
 After adding events or emit/subscribe sites, run `slice docs generate types` for the typed
 contract and `slice docs generate events` for the human catalog. `slice docs check` catches
 drift.
-:::
 
 ## Gotchas
 :::warning
@@ -1850,11 +1832,9 @@ Validation only activates after the first `register()`. Until then the EventMana
 in loose mode with no warnings — declaring the catalog is what opts you in.
 :::
 
-:::warning
 Events emitted with a computed name (`emit(\`user:${id}\`)`) cannot be typed or documented
 statically. Use literal names where you want the contract; the runtime tracer still shows
 them under dynamic sites.
-:::
 
 ## FAQ
 :::details title="Is the registry required?"
@@ -1911,9 +1891,7 @@ Slice resolves the package with esbuild — the same resolver in development and
 - **`slice dev`**: no app bundling. Bare specifiers in your served modules are rewritten to a virtual `/@slice-modules/<package>` URL, and each package is pre-bundled on demand and cached (on disk under `node_modules/.slice-deps`, keyed by version). Your components still load as native ES modules.
 - **`slice build` / `slice start`**: each package is bundled once and registered in the production bundle. A package used by two or more route bundles is extracted into a single shared `slice-bundle.vendor-shared.js` (no duplication).
 
-:::tip
 Because dev and build share the same esbuild resolver, a package that works in `slice dev` works the same way after `slice build`. There is no separate dev-only shim to keep in sync.
-:::
 
 ### Module formats and assets
 Resolution and interop are handled by esbuild, so the following all work:
@@ -2361,10 +2339,8 @@ export default class MyButton extends HTMLElement {
 customElements.define('slice-mybutton', MyButton);
 ```
 
-:::tip
 If you ever add or move component folders by hand, run `npm run component:list` to regenerate
 `components.js`.
-:::
 
 ## The three files of a Visual component
 ```text title="src/Components/AppComponents/UserCard/"
@@ -2476,10 +2452,8 @@ slice.setComponentProps(card, { name: 'Ada', role: 'Admin' }); // several at onc
 The key property: omitting a prop on refresh **leaves it as-is** — it is not reset to its default.
 That is what makes refreshing surviving instances safe.
 
-:::tip
 Check whether an instance is still the live registered one (not destroyed or replaced by a rebuild)
 with `slice.isComponentAlive(component)`.
-:::
 
 ## customElements.define
 Register the custom element once at the bottom of the file:
@@ -2535,9 +2509,7 @@ const same = slice.controller.getComponent('AuthService');
 ```
 
 ## Best Practices
-:::tip
 Generate components with `npm run component:create` so files and `components.js` stay correct.
-:::
 
 :::tip
 Put DOM side effects in setters; reserve `init()` for async setup and `update()` for refreshes.
@@ -4023,16 +3995,12 @@ Keep the Leak Inspector enabled in development and exercise your navigation/list
 open — accumulation leaks show up as a `growing ▲` trend across route changes.
 :::
 
-:::tip
 For your own off-DOM caches, register a `registerLeakExclusion` predicate (or set
 `component.__sliceCached = true`) so the inspector doesn't flag intentional retention.
-:::
 
 ## Gotchas
-:::warning
 The Leak Inspector diagnoses; it does not fix. A per-row destroy is a manual probe — the real
 fix is calling `destroyComponent` / `destroyByContainer` before clearing the DOM.
-:::
 
 :::warning
 It is dev-only. Don't rely on it in production; rely on correct cleanup. The panel never
@@ -4170,9 +4138,7 @@ export default class UserList extends HTMLElement {
 ```
 
 ## Best Practices
-:::tip
 Keep `init()` focused on one-time setup and cache DOM references there.
-:::
 
 :::tip
 Refresh lists **in place**: reuse children by a stable `sliceId` (build new, update existing,
@@ -4771,29 +4737,25 @@ When events are enabled, `router:change` is **auto-declared** in the
 [Event Registry](/Documentation/Structural/EventRegistry), so you can subscribe without
 `register()`-ing it first.
 
-:::warning
 Prefer the event's `to` payload over reading `slice.router.activeRoute` inside the handler.
 `activeRoute` does reflect the new route by the time `router:change` fires, but the payload is the
 guaranteed source and keeps your listener decoupled from router internals. If you only need the
 current URL, `window.location.pathname` is always trustworthy the instant the event fires.
-:::
 
 ## Best Practices
-:::tip
 Call `start()` after registering guards to avoid missing the first navigation.
-:::
 
-:::tip
 Use metadata flags to keep guard logic declarative and centralized.
-:::
 
 ## Gotchas
 :::warning
 `navigate()` is async. Await it when you depend on the next route being ready.
 :::
 
-:::warning
-Dynamic params use `${param}` syntax, not `:param`.
+:::compare left="Slice Router" right="Express-style"
+The Router matches `/orders/${id}`: the `${param}` syntax, passed to `matchPath`.
+---
+A `:param` is not matched, so the route never resolves and the deep link falls through to `/404`.
 :::
 
 === markdown/getting-started/services.md ===
@@ -4908,13 +4870,9 @@ nav.appendChild(link);
 ```
 
 ## Best Practices
-:::tip
 Use `sliceId` when you need global access to a service instance.
-:::
 
-:::tip
 Pair services with EventManager for notifications or ContextManager for shared state.
-:::
 
 ## Gotchas
 
@@ -5076,9 +5034,7 @@ Slice validates your `static props` definitions in two places, so a malformed pr
 Define only public props in `static props` and use internal fields for private state.
 :::
 
-:::tip
 Use defaults to keep components predictable and reduce boilerplate.
-:::
 
 ## Gotchas
 :::warning
@@ -6689,10 +6645,8 @@ Bump the `CACHE` string on every deploy. The `activate` handler deletes old cach
 so users get the new assets instead of a stale shell.
 :::
 
-:::tip
 Keep `PRECACHE` small — just the shell and what the first screen needs. Everything
 else is cached on demand by the cache-first `fetch` handler.
-:::
 
 ## Static export
 `service-worker.js` is published at the export root, so the same worker works on
@@ -6870,10 +6824,8 @@ every category. `Visual` and `Service` are registry categories: `slice get` inst
 their guides point to the remote component docs. App categories document their own components in a
 co-located `README.md`. See [Documentation & AGENTS.md](/Documentation/Documentation-System).
 
-:::tip
 You normally do not edit folders by hand — `slice component create` scaffolds a component in the
 right category and updates `components.js` for you. See Component Anatomy.
-:::
 
 :::warning
 If a category's `path` or `type` is wrong, `slice.build()` returns `null` with a misleading
@@ -7048,22 +7000,16 @@ const publicEnv = slice.getPublicEnv();
 ```
 
 ## Best Practices
-:::tip
 Keep `paths` accurate or component loading will fail.
-:::
 
-:::tip
 Load shared styles through `stylesManager.requestedStyles`.
-:::
 
 ## Gotchas
 :::warning
 If `themeManager.enabled` is true and `defaultTheme` is missing, theme loading will fail.
 :::
 
-:::warning
 `events` and `context` are optional. If disabled, Slice.js provides no-op stubs.
-:::
 
 === markdown/slicejs-mcp.md ===
 # Slice.js MCP
@@ -7245,9 +7191,7 @@ Every theme MUST define these 15 variables. The Theme Creator reads them, and Vi
 | `--medium-color` | Neutral mid-tone color |
 | `--disabled-color` | Disabled / inactive color |
 
-:::tip
 Optional but recommended extras include `--primary-color-rgb`, `--secondary-color-rgb`, `--success-contrast`, `--warning-contrast`, `--danger-contrast`, `--medium-contrast`, and `--accent-color`. The `*-rgb` tokens let you derive translucent borders with `rgba(var(--primary-color-rgb), 0.2)`.
-:::
 
 ## LIGHT Theme
 
@@ -7389,9 +7333,7 @@ Use the CSS variables inside component styles so components stay themeable acros
 
 ## Troubleshooting
 
-:::tip
 If a component looks off, check that your background and font tokens are present and readable in the active theme.
-:::
 
 :::warning
 Avoid hard-coded hex values in component CSS when a theme token exists. Hard-coded colors will not adapt when switching between LIGHT and DARK.
@@ -7473,11 +7415,9 @@ is shown as `orders.title` and reported once in development.
 writes to the lower layer that never overrides the app's dictionaries — that is how a component
 library ships its own texts without taking control of the dictionary.
 
-:::note
 `slice build` copies `src/locales` into `dist/locales`, and the server serves the folder at
 `translator.path` in development and in production. If you move the dictionaries, change `path`; do not
 put them under `public/`.
-:::
 
 ## Library components: `texts()`
 
@@ -7508,11 +7448,9 @@ which is the text the component showed before. Built-in texts are marked with `d
 through `texts()`; a text passed as a prop uses `slice.t.ref('slice.modal.close')`. The authoring contract is
 `COMPONENT_API_STANDARDS.md` §16 of the components library.
 
-:::note
 Every visual component ships en/es defaults for its own chrome (`slice.table.*`,
 `slice.modal.*`, `slice.validation.*`, …). Its text prop (`texts`, `labels`, `closeLabel`…) still wins,
 and an app dictionary always wins over both.
-:::
 
 ## Messages
 

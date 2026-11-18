@@ -54,11 +54,11 @@
 <div class="code-block" data-block-id="doc-block-13"></div>
 <div class="code-block" data-block-id="doc-block-14"></div>
 <p>When events are enabled, <code>router:change</code> is <strong>auto-declared</strong> in the <a href="/Documentation/Structural/EventRegistry" data-route>Event Registry</a>, so you can subscribe without <code>register()</code>-ing it first.</p>
-<div class="callout-block" data-block-id="doc-block-15"></div>
+<p>Prefer the event's <code>to</code> payload over reading <code>slice.router.activeRoute</code> inside the handler. <code>activeRoute</code> does reflect the new route by the time <code>router:change</code> fires, but the payload is the guaranteed source and keeps your listener decoupled from router internals. If you only need the current URL, <code>window.location.pathname</code> is always trustworthy the instant the event fires.</p>
 <h2 id="best-practices">Best Practices</h2>
-<div class="callout-block" data-block-id="doc-block-16"></div>
-<div class="callout-block" data-block-id="doc-block-17"></div>
+<p>Call <code>start()</code> after registering guards to avoid missing the first navigation.</p>
+<p>Use metadata flags to keep guard logic declarative and centralized.</p>
 <h2 id="gotchas">Gotchas</h2>
-<div class="callout-block" data-block-id="doc-block-18"></div>
-<div class="callout-block" data-block-id="doc-block-19"></div>
+<div class="callout-block" data-block-id="doc-block-15"></div>
+<div class="compare-block" data-block-id="doc-block-16"></div>
 </div>

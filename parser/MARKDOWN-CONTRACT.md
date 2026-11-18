@@ -87,7 +87,9 @@ A quiet aside. `note` is a neutral ghost callout, not another tip.
 ```
 
 **Budget:** 1–3 callouts per page. A fourth tip in a row is usually a table, a `Details` block, or
-plain prose. Warnings are reserved for risk, not preferences.
+plain prose. Warnings are reserved for risk, not preferences. `docs:lint` (and `docs:generate`)
+fails above three, and `:::compare`, `:::details`, `:::steps` and `:::related` do not count toward
+the budget — they are what the rest becomes.
 
 ### Compare
 

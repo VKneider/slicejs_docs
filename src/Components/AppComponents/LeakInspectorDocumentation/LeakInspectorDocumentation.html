@@ -38,11 +38,11 @@
 <p>See <a href="/Documentation/LifeCycle-Methods/beforeDestroy" data-route>beforeDestroy()</a> for the full cleanup contract, and <a href="/Documentation/DevTools" data-route>DevTools</a> for the other runtime panels.</p>
 <h2 id="best-practices">Best Practices</h2>
 <div class="callout-block" data-block-id="doc-block-8"></div>
-<div class="callout-block" data-block-id="doc-block-9"></div>
+<p>For your own off-DOM caches, register a <code>registerLeakExclusion</code> predicate (or set <code>component.__sliceCached = true</code>) so the inspector doesn't flag intentional retention.</p>
 <h2 id="gotchas">Gotchas</h2>
-<div class="callout-block" data-block-id="doc-block-10"></div>
-<div class="callout-block" data-block-id="doc-block-11"></div>
+<p>The Leak Inspector diagnoses; it does not fix. A per-row destroy is a manual probe — the real fix is calling <code>destroyComponent</code> / <code>destroyByContainer</code> before clearing the DOM.</p>
+<div class="callout-block" data-block-id="doc-block-9"></div>
 <h2 id="faq">FAQ</h2>
-<div class="details-block" data-block-id="doc-block-12"></div>
-<div class="details-block" data-block-id="doc-block-13"></div>
+<div class="details-block" data-block-id="doc-block-10"></div>
+<div class="details-block" data-block-id="doc-block-11"></div>
 </div>

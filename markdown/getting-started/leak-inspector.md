@@ -114,16 +114,12 @@ Keep the Leak Inspector enabled in development and exercise your navigation/list
 open — accumulation leaks show up as a `growing ▲` trend across route changes.
 :::
 
-:::tip
 For your own off-DOM caches, register a `registerLeakExclusion` predicate (or set
 `component.__sliceCached = true`) so the inspector doesn't flag intentional retention.
-:::
 
 ## Gotchas
-:::warning
 The Leak Inspector diagnoses; it does not fix. A per-row destroy is a manual probe — the real
 fix is calling `destroyComponent` / `destroyByContainer` before clearing the DOM.
-:::
 
 :::warning
 It is dev-only. Don't rely on it in production; rely on correct cleanup. The panel never
