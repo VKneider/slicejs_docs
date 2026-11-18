@@ -124,7 +124,9 @@ export default class InitMethodDocumentation extends HTMLElement {
                const card = await slice.build('Card', {
                   title: item.title,
                   text: item.text || '',
-                  icon: { name: 'arrow-right', iconStyle: 'outlined' },
+                  // The small mark beside the title, not the banner: a page
+                  // of four related links should not be four big arrows.
+                  headerIcon: 'arrow-right',
                   interactive: true,
                   onClick: () => {
                      if (/^https?:/i.test(item.path)) {

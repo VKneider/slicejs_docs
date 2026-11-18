@@ -1,21 +1,15 @@
-<div class="card-overlay"></div>
-<div class="card-media">
-  <div class="card-media-content"></div>
-  <div class="card-badge"></div>
+<div class="slice-card__media" hidden></div>
+<div class="slice-card__main">
+  <div class="slice-card__header">
+    <span class="slice-card__mark" hidden></span>
+    <div class="slice-card__heading">
+      <div class="slice-card__title" role="heading" aria-level="3" hidden></div>
+      <div class="slice-card__subtitle" hidden></div>
+    </div>
+    <span class="slice-card__badge" hidden></span>
+  </div>
+  <p class="slice-card__text" hidden></p>
+  <div class="slice-card__content" hidden></div>
+  <div class="slice-card__skeleton" aria-hidden="true" hidden><span></span><span></span><span></span></div>
 </div>
-<div class="card-content">
-  <div class="card-header">
-    <h3 class="card-title"></h3>
-    <button class="card-toggle" aria-label="Toggle card details">
-      <slice-icon name="chevron-down" iconStyle="outlined"></slice-icon>
-    </button>
-  </div>
-  <div class="card-body">
-    <p class="card-text"></p>
-    <div class="card-text-tooltip"></div>
-  </div>
-  <div class="card-details">
-    <div class="card-details-content"></div>
-  </div>
-</div>
-<div class="card-actions"></div>
+<div class="slice-card__footer" hidden></div>

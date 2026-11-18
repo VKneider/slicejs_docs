@@ -74,19 +74,35 @@ export interface CalloutProps {
 export interface CardProps {
   [key: string]: unknown;
   actions?: unknown[];
-  badge?: string;
+  actionsAlign?: string;
+  ariaLabel?: string;
+  badge?: unknown;
+  content?: unknown;
   customColor?: Record<string, unknown>;
-  details?: string;
+  details?: unknown;
   disabled?: boolean;
-  icon?: Record<string, unknown>;
+  headerIcon?: unknown;
+  headingLevel?: number;
+  href?: string;
+  icon?: unknown;
   image?: string;
+  imageAlt?: string;
   interactive?: boolean;
   isOpen?: boolean;
+  layout?: string;
+  loading?: boolean;
+  mediaRatio?: string;
   onClick?: (...args: unknown[]) => unknown;
+  onSelect?: (...args: unknown[]) => unknown;
   open?: boolean;
+  selectable?: boolean;
+  selected?: boolean;
+  size?: string;
+  subtitle?: string;
+  target?: string;
   text?: string;
   title?: string;
-  variant?: 'default' | 'elevated' | 'outlined' | 'minimal';
+  variant?: string;
 }
 
 export interface CardDocumentationProps {
