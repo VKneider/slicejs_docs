@@ -78,6 +78,14 @@ export default class TreeView extends HTMLElement {
          default: '',
          required: false
       },
+      // Keep the tree's scroll position when the active row changes (for
+      // example a click that navigates the page). Keyboard navigation still
+      // scrolls the focused row into view.
+      preserveScroll: {
+         type: 'boolean',
+         default: false,
+         required: false
+      },
       // Keep `activePath` in step with slice.router and back / forward.
       followRoute: {
          type: 'boolean',
@@ -246,6 +254,9 @@ export default class TreeView extends HTMLElement {
       this._nodes = new Map();          // key → node
       this._byItem = new WeakMap();     // item object → node
       this._expandedKeys = new Set();
+      this._preserveScroll = false;
+      this._detachedScrollTop = null;
+      this._savedScrollTop = 0;
       this._checked = new Set();
       this._selectedKey = null;
       this._activeKey = null;
@@ -286,6 +297,28 @@ export default class TreeView extends HTMLElement {
       this.$searchInput.addEventListener('input', this._handleSearchInput);
 
       slice.controller.setComponentProps(this, props);
+   }
+
+   // A router that re-inserts the page moves the whole subtree, and moving a
+   // scroll container resets its scrollTop without firing a scroll event (the
+   // "blink" seen when a row navigates). Remember the position on the way out
+   // and put it back before the next paint.
+   disconnectedCallback() {
+      const top = this.$treeView ? this.$treeView.scrollTop : 0;
+      // The browser may have zeroed the position already; keep the last one
+      // seen by the scroll listener in that case.
+      this._detachedScrollTop = top > 0 ? top : this._savedScrollTop;
+   }
+
+   connectedCallback() {
+      const top = this._detachedScrollTop;
+      if (!top) return;
+      this._detachedScrollTop = null;
+      const restore = () => {
+         if (this.$treeView && this.$treeView.scrollTop !== top) this.$treeView.scrollTop = top;
+      };
+      restore();
+      requestAnimationFrame(restore);
    }
 
    async init() {
@@ -362,6 +395,9 @@ export default class TreeView extends HTMLElement {
          this._render();
       }
    }
+
+   get preserveScroll() { return this._preserveScroll === true; }
+   set preserveScroll(value) { this._preserveScroll = value === true; }
 
    get followRoute() { return this._followRoute !== false; }
    set followRoute(value) { this._followRoute = value !== false; }
@@ -611,7 +647,7 @@ export default class TreeView extends HTMLElement {
       const node = this._resolve(target);
       if (!node) return;
       this._activeKey = node.key;
-      this._render();
+      this._paintActive();
    }
 
    async setTreeItems(items) {
@@ -942,6 +978,7 @@ export default class TreeView extends HTMLElement {
       if (!this._inited) return;
       // Coalesce: one render per frame-ish burst, the newest state wins.
       const token = ++this._renderToken;
+      const preserveTop = this._preserveScroll ? this.$treeView.scrollTop : null;
       const { list, query } = this._computeVisible();
       this._visible = list;
       this._lastQuery = query;
@@ -1013,8 +1050,11 @@ export default class TreeView extends HTMLElement {
          }
       }
       this._place(wanted);
+      if (preserveTop !== null) this.$treeView.scrollTop = preserveTop;
       this.$empty.hidden = list.length > 0 || (this._items.length === 0 && !query);
-      if (hadFocus && !this.$treeView.contains(document.activeElement)) this._focusRow(this._focusKey);
+      if (hadFocus && !this.$treeView.contains(document.activeElement)) {
+         this._focusRow(this._focusKey, !this._preserveScroll);
+      }
    }
 
    // Insert / move only what changed, so the focused row is never detached.
@@ -1232,6 +1272,20 @@ export default class TreeView extends HTMLElement {
       row.classList.toggle('is-loading', !!node.loading && !node.loaded);
    }
 
+   // Active changes do not need a full re-render: update the rows that are
+   // already on screen. A re-render moves rows and can reset the tree's
+   // scrollTop (the "blink" on every navigation).
+   _paintActive() {
+      for (const [key, row] of this._rows) {
+         const node = this._nodes.get(key);
+         if (!node) continue;
+         const active = node.key === this._activeKey;
+         row.classList.toggle('is-active', active);
+         if (active) row.setAttribute('aria-current', 'page');
+         else row.removeAttribute('aria-current');
+      }
+   }
+
    _loadingRow(entry) {
       const row = document.createElement('div');
       row.className = 'slice_treeview_row slice_treeview_row--loading';
@@ -1259,12 +1313,12 @@ export default class TreeView extends HTMLElement {
       row.remove();
    }
 
-   _focusRow(key) {
+   _focusRow(key, scroll = true) {
       if (key === null || key === undefined) return;
       const row = this._rows.get(key);
       if (row && row.isConnected) {
          row.focus({ preventScroll: true });
-         this._scrollIntoView(key);
+         if (scroll) this._scrollIntoView(key);
       }
    }
 
@@ -1314,13 +1368,15 @@ export default class TreeView extends HTMLElement {
    // row with a path becomes the current page. onClick always hears it.
    async _activate(node, row, event) {
       if (this._isDisabled(node)) return;
+      // Remember where the list is before anything can re-mount it.
+      this._savedScrollTop = this.$treeView.scrollTop;
       const branch = this._hasChildren(node);
       if (branch && !node.path) await this._setExpanded(node, !this._expandedKeys.has(node.key));
       if (this._selection === 'single') this._select(node);
       else if (this._selection === 'multiple' && !branch && !node.path) this._toggleCheck(node);
       if (node.path) {
          this._activeKey = node.key;
-         this._render();
+         this._paintActive();
       }
       if (this._onClick) await this._onClick(row, event);
       if (this._navigate && node.path && typeof slice?.router?.navigate === 'function') {
@@ -1431,6 +1487,9 @@ export default class TreeView extends HTMLElement {
    }
 
    _handleScroll() {
+      // Ignore the phantom event a detach can queue: it reports 0 and would
+      // overwrite the position the tree restores on the way back in.
+      if (this.isConnected && this.$treeView) this._savedScrollTop = this.$treeView.scrollTop;
       if (!this._virtual || this._scrollFrame) return;
       this._scrollFrame = requestAnimationFrame(() => {
          this._scrollFrame = 0;
@@ -1448,8 +1507,17 @@ export default class TreeView extends HTMLElement {
       const path = slice.path;
       const node = [...this._nodes.values()].find((candidate) => candidate.path === path);
       if (!node) return;
+
+      const needsOpen = (() => {
+         for (let parent = node.parent; parent; parent = parent.parent) {
+            if (!this._expandedKeys.has(parent.key)) return true;
+         }
+         return false;
+      })();
+
       this._activateByPath(path, true);
-      this._render();
+      if (needsOpen || !this._visible.some((entry) => entry.node.key === node.key)) this._render();
+      else this._paintActive();
    }
 
    // ------------------------------------------------------------ drag & drop

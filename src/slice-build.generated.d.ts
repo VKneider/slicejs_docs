@@ -616,6 +616,7 @@ export interface TreeViewProps {
   onSelect?: (...args: unknown[]) => unknown;
   onSelectionChange?: (...args: unknown[]) => unknown;
   onToggle?: (...args: unknown[]) => unknown;
+  preserveScroll?: boolean;
   rowHeight?: number;
   searchable?: boolean;
   searchPlaceholder?: string;
