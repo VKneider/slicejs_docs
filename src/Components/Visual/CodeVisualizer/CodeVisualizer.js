@@ -143,16 +143,23 @@ export default class CodeVisualizer extends HTMLElement {
       extractTokens(new RegExp(`\\b(${builtins.join('|')})\\b`, 'g'), 'code-builtin');
       
       // 6. Métodos y llamadas a funciones (esto debe ir después de extraer las palabras clave)
-      extractTokens(/(\.)([a-zA-Z_$][\w$]*)\s*(?=\()/g, 'code-method');
+      // A name already turned into a placeholder (`.slice(` became
+      // `.__TOKEN_27__(` as a builtin) is not a method name: skipping it keeps
+      // a placeholder from ending up inside another token, where it leaked
+      // into the page as "__TOKEN_27__".
+      extractTokens(/(\.)(?!__TOKEN_)([a-zA-Z_$][\w$]*)\s*(?=\()/g, 'code-method');
       
-      // Reemplazar los tokens con el HTML resaltado
-      tokens.forEach(token => {
+      // Reemplazar los tokens con el HTML resaltado. Replacer de función para no
+      // interpretar `$` del código como patrón especial de reemplazo. Newest
+      // first, so a token whose content holds an older placeholder still gets
+      // that placeholder replaced afterwards.
+      [...tokens].reverse().forEach(token => {
          tokenizedCode = tokenizedCode.replace(
-            token.id, 
-            `<span class="${token.className}">${token.content}</span>`
+            token.id,
+            () => `<span class="${token.className}">${token.content}</span>`
          );
       });
-      
+
       return tokenizedCode;
    }
 
@@ -161,57 +168,58 @@ export default class CodeVisualizer extends HTMLElement {
       let tokenizedCode = code;
       const tokens = [];
       const generateTokenId = (index) => `__TOKEN_${index}__`;
-      
-      const extractTokens = (regex, className) => {
-         tokenizedCode = tokenizedCode.replace(regex, (match) => {
+
+      // `classNameOrBuilder` is either a class-name string (the whole match is
+      // wrapped in a <span>), or a builder function `(match, ...groups) => html`
+      // that returns the final markup for the match. (The previous version only
+      // accepted a string, so the tag/attribute builders below were silently
+      // ignored and their function source leaked into the output.)
+      const extractTokens = (regex, classNameOrBuilder) => {
+         tokenizedCode = tokenizedCode.replace(regex, (match, ...groups) => {
             const tokenId = generateTokenId(tokens.length);
-            tokens.push({ id: tokenId, content: match, className });
+            const content = typeof classNameOrBuilder === 'function'
+               ? classNameOrBuilder(match, ...groups)
+               : `<span class="${classNameOrBuilder}">${match}</span>`;
+            tokens.push({ id: tokenId, content });
             return tokenId;
          });
       };
-      
+
       // Extraer tokens HTML en orden
-      
+
       // 1. Comentarios HTML
       extractTokens(/&lt;!--[\s\S]*?--&gt;/g, 'code-comment');
-      
+
       // 2. Etiquetas HTML
-      extractTokens(/(&lt;\/?[a-zA-Z0-9-]+)(\s|&gt;)/g, (match, tag, end) => {
-         const tokenId = generateTokenId(tokens.length);
-         tokens.push({ 
-            id: tokenId, 
-            content: `<span class="code-tag">${tag}</span>${end}`,
-            className: 'no-class' // Ya incluye su propio elemento span
-         });
-         return tokenId;
-      });
-      
+      extractTokens(
+         /(&lt;\/?[a-zA-Z0-9-]+)(\s|&gt;)/g,
+         (match, tag, end) => `<span class="code-tag">${tag}</span>${end}`
+      );
+
       // 3. Atributos HTML
-      extractTokens(/\s([a-zA-Z0-9-]+)=(&quot;|')/g, (match, attr, quote) => {
-         const tokenId = generateTokenId(tokens.length);
-         tokens.push({ 
-            id: tokenId, 
-            content: ` <span class="code-attribute">${attr}</span>=${quote}`,
-            className: 'no-class' // Ya incluye su propio elemento span
-         });
-         return tokenId;
+      extractTokens(
+         /\s([a-zA-Z0-9-]+)=(&quot;|')/g,
+         (match, attr, quote) => ` <span class="code-attribute">${attr}</span>=${quote}`
+      );
+
+      // Reemplazar los marcadores por su contenido final. Usamos un replacer de
+      // función para que cualquier `$` del código no se interprete como patrón
+      // especial de reemplazo ($&, $1, $$...).
+      tokens.forEach((token) => {
+         tokenizedCode = tokenizedCode.replace(token.id, () => token.content);
       });
-      
-      // Reemplazar los tokens con el HTML resaltado
-      tokens.forEach(token => {
-         tokenizedCode = tokenizedCode.replace(
-            token.id, 
-            token.className === 'no-class' ? token.content : `<span class="${token.className}">${token.content}</span>`
-         );
-      });
-      
+
       return tokenizedCode;
    }
 
    highlightCss(code) {
       // Los tokens placeholder (__TOKEN_N__) pueden ser capturados por
       // expresiones regulares posteriores (como selectores) y terminar
-      // filtrándose al HTML. Procesamos los comentarios inline primero.
+      // filtrándose al HTML. Para evitarlo, procesamos los comentarios
+      // inline primero (sin pasar por el sistema de tokens), y solo
+      // usamos tokens para el resto.
+
+      // 1. Comentarios CSS → reemplazo inline directo
       let tokenizedCode = code.replace(
          /\/\*[\s\S]*?\*\//g,
          (match) => `<span class="code-comment">${match}</span>`
@@ -229,11 +237,11 @@ export default class CodeVisualizer extends HTMLElement {
          });
       };
       
-      // Selectores CSS
-      extractTokens(/([^\{\}]+)(?=\{)/g, 'code-selector');
+      // 2. Selectores CSS
+      extractTokens(/([^{}]+)(?=\{)/g, 'code-selector');
       
-      // Propiedad y valor CSS
-      tokenizedCode = tokenizedCode.replace(/(\s*)([a-zA-Z-]+)(\s*):(\s*)([^;\{\}]+)(?=;)/g, (match, space1, prop, space2, space3, value) => {
+      // 3. Propiedad y valor CSS
+      tokenizedCode = tokenizedCode.replace(/(\s*)([a-zA-Z-]+)(\s*):(\s*)([^;{}]+)(?=;)/g, (match, space1, prop, space2, space3, value) => {
          const propTokenId = generateTokenId(tokens.length);
          tokens.push({ id: propTokenId, content: prop, className: 'code-property' });
          
@@ -243,14 +251,15 @@ export default class CodeVisualizer extends HTMLElement {
          return `${space1}<span class="code-property">${prop}</span>${space2}:${space3}<span class="code-value">${value}</span>`;
       });
       
-      // Colores CSS
+      // 4. Colores CSS
       extractTokens(/#([a-fA-F0-9]{3,6})\b/g, 'code-color');
       
-      // Reemplazar los tokens restantes
+      // Reemplazar los tokens restantes. Replacer de función para no interpretar
+      // `$` del código como patrón especial de reemplazo.
       tokens.forEach(token => {
          if (token.className !== 'no-replace') {
             tokenizedCode = tokenizedCode.replace(
-               token.id, 
+               token.id,
                () => `<span class="${token.className}">${token.content}</span>`
             );
          }
