@@ -2,10 +2,10 @@
 title: beforeDestroy()
 route: /Documentation/LifeCycle-Methods/beforeDestroy
 navLabel: beforeDestroy()
-section: Getting Started
-group: Components
-order: 43
-description: Cleanup hooks to avoid memory leaks in Slice.js.
+section: Components
+group: Lifecycle
+order: 40
+description: Cleanup hooks for timers, listeners, requests and Services that outlive the component.
 component: BeforeDestroyDocumentation
 tags: [lifecycle, destroy, cleanup]
 ---
@@ -13,31 +13,41 @@ tags: [lifecycle, destroy, cleanup]
 # beforeDestroy()
 
 ## Overview
-`beforeDestroy()` runs right before a component is destroyed by the controller. Use it for
-cleanup: timers, listeners, subscriptions, and pending async work.
+`beforeDestroy()` runs right before a component is destroyed by the controller. Use it for cleanup:
+timers, listeners, subscriptions, pending async work, and Services you built by hand.
 
 The controller does not await this method, so keep it synchronous or fire-and-forget.
 
-Two shapes look like cleanup but never run, and `slice doctor` reports both: a method named
-`destroy()`, `dispose()` or `teardown()` (the controller only calls `beforeDestroy()`), and a
-`window`/`document` listener added without a matching `removeEventListener` in the same file unless it
-uses `{ once: true }` or `{ signal }`.
+A method named `destroy()`, `dispose()` or `teardown()` looks like cleanup but never runs — the
+controller only calls `beforeDestroy()`. `slice doctor` reports that, and it reports a
+`window`/`document` listener added without a matching `removeEventListener` in the same file unless
+it uses `{ once: true }` or `{ signal }`.
 
+## What is already cleaned up?
+
+:::compare left="Slice cleans up for you" right="Your job in beforeDestroy"
+Component-bound events (`slice.events.bind(this)`), Context watchers registered with `this`, child Visual components built inside this one, and listeners on the component's own DOM node.
+---
+Intervals and timeouts; an `AbortController` for fetches; `window`/`document` listeners; third-party instances (charts, maps); and every Service built with `slice.build`.
+:::
+
+The split matters: the parent destroy cascade reaches Visual children, but a Service has no DOM, so
+nothing discovers it.
 
 ## API
 | Method | Signature | Returns | Notes |
 | --- | --- | --- | --- |
 | `beforeDestroy` | `beforeDestroy()` | `void` | Called right before the component is removed. |
 
-## Ideal Use Cases
-- Clear intervals and timeouts
-- Abort pending fetch requests
-- Remove global event listeners
-- Dispose third-party instances (charts, maps, etc.)
-- **Destroy child Services you built with `slice.build`** — a Service has no DOM, so it is never
-  auto-cleaned by the parent's destroy cascade or by `destroyByContainer`. Destroy it here.
+## Ideal use cases
+- Clear intervals and timeouts.
+- Abort pending fetch requests.
+- Remove global event listeners.
+- Dispose third-party instances (charts, maps, etc.).
+- **Destroy child Services you built with `slice.build`**.
 
 ## Example
+
 ```javascript title="Cleanup in beforeDestroy()"
 export default class LiveChart extends HTMLElement {
   constructor(props) {
@@ -73,27 +83,18 @@ beforeDestroy() {
 }
 ```
 
-## Best Practices
-:::tip
-Keep `beforeDestroy()` idempotent so it can be called safely.
-:::
-
-:::tip
-Use `AbortController` for fetch cleanup.
-:::
-
-## Gotchas
 :::warning
-If you add global listeners in `init()`, remove them in `beforeDestroy()`.
+A Service built with `slice.build` is **not** destroyed when its owner is. Call
+`slice.controller.destroyComponent(...)` on it in `beforeDestroy()`, or it stays registered and its
+own `beforeDestroy` never runs. See [Service Patterns](/Documentation/Architecture/Service-Patterns).
 :::
 
-:::warning
-Do not rely on `await` inside `beforeDestroy()`.
-:::
+Keep `beforeDestroy()` idempotent: it can be called more than once in a teardown sequence, and every
+cleanup inside it must tolerate that.
 
-:::warning
-A Service built with `slice.build` is **not** destroyed when its owner is — it has no DOM, so neither
-the destroy cascade nor `destroyByContainer` finds it. Call `slice.controller.destroyComponent(...)` on
-it here, or it leaks (it stays registered and its own `beforeDestroy` never runs). See
-[Service Patterns](/Documentation/Architecture/Service-Patterns).
+:::related
+- [Refreshing Component Data](/Documentation/Architecture/Refreshing-Component-Data) - Reconcile lists instead of rebuilding them.
+- [Service Patterns](/Documentation/Architecture/Service-Patterns) - Why Services never cascade.
+- [update()](/Documentation/LifeCycle-Methods/update) - Refresh on cached route revisits.
+- [Events](/Documentation/Structural/EventManager) - Component-bound subscriptions that auto-clean.
 :::

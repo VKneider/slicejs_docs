@@ -7,7 +7,9 @@ slice-copymarkdownmenu {
 slice-copymarkdownmenu .copy-md-menu {
   position: absolute;
   top: calc(100% + 8px);
-  left: 0;
+  right: 0;
+  left: auto;
+  max-width: calc(100vw - 24px);
   background: var(--primary-background-color);
   border: 1px solid var(--primary-color-shade);
   border-radius: var(--border-radius-slice);
@@ -22,7 +24,8 @@ slice-copymarkdownmenu .copy-md-menu {
 
 @media (max-width: 768px) {
   slice-copymarkdownmenu .copy-md-menu {
-    left: 0;
+    right: 0;
+    left: auto;
   }
 }
 

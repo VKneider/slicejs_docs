@@ -2,9 +2,9 @@
 title: External Dependencies
 route: /Documentation/External-Dependencies
 navLabel: External Dependencies
-section: Getting Started
-group: Tooling
-order: 25
+section: Configuration
+group: ''
+order: 50
 description: Use npm packages in Slice.js — bare imports resolved from node_modules, or files served from src/public/.
 component: ExternalDependenciesDocumentation
 tags: [dependencies, external, public, bundling, node_modules]

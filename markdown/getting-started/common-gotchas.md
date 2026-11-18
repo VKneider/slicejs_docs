@@ -3,8 +3,8 @@ title: Common Gotchas
 route: /Documentation/Common-Gotchas
 navLabel: Common Gotchas
 section: Getting Started
-group: First Steps
-order: 28
+group: ''
+order: 80
 description: The traps Slice.js developers hit first — DOM timing, cleanup, routing, props — and how to avoid each one.
 component: CommonGotchasDocumentation
 tags: [gotchas, troubleshooting, errors, cleanup]
@@ -96,3 +96,10 @@ const id = Number(params.id);   // it's a string — convert if you need a numbe
 Refreshing a built component with `slice.setComponentProps(comp, { a })` updates `a` and **leaves
 the rest as-is** — omitted props are not reset to their defaults. To reset one, pass its value
 explicitly. (Defaults only apply at build.)
+
+:::related
+- [Component Anatomy](/Documentation/Component-Anatomy) - The lifecycle order these gotchas come from.
+- [LifeCycle Methods](/Documentation/LifeCycle-Methods) - `init()`, `update()` and `beforeDestroy()`.
+- [Service Patterns](/Documentation/Architecture/Service-Patterns) - Why Services are never cascaded.
+- [Refreshing Component Data](/Documentation/Architecture/Refreshing-Component-Data) - Reconcile lists instead of rebuilding.
+:::

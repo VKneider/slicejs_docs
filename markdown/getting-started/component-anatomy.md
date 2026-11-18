@@ -2,9 +2,9 @@
 title: Component Anatomy
 route: /Documentation/Component-Anatomy
 navLabel: Component Anatomy
-section: Getting Started
-group: Components
-order: 29
+section: Components
+group: Component Model
+order: 10
 description: How to author a Slice component, generate it with the CLI, and register it.
 component: ComponentAnatomy
 tags: [components, cli, anatomy, props]

@@ -1,0 +1,196 @@
+/* Badge — a status, a count or a mark. Tone = meaning, variant = loudness. */
+
+slice-badge {
+  /* Per tone: the colour, the readable shade of it (text on its tint), and
+     how strong the tint is. Set below by [data-tone]. */
+  --slice-badge-color: var(--medium-color, #8a8799);
+  --slice-badge-ink: var(--font-primary-color, #1d1b29);
+  --slice-badge-tint: 12%;
+  --slice-badge-height: 24px;
+  --slice-badge-font: 0.78rem;
+  --slice-badge-pad: 9px;
+  --slice-badge-gap: 5px;
+  --slice-badge-dot: 7px;
+
+  display: inline-flex;
+  /* Centred on the text beside it: `middle` alone sits 2-3px low, because it
+     aligns to the parent's x-height, not to the text's optical centre. */
+  vertical-align: middle;
+  position: relative;
+  top: -0.1em;
+  flex: none;
+}
+
+/* An author display beats the browser's [hidden] rule, so restate it. */
+slice-badge[hidden] {
+  display: none;
+}
+
+slice-badge[data-size='sm'] {
+  --slice-badge-height: 20px;
+  --slice-badge-font: 0.7rem;
+  --slice-badge-pad: 7px;
+  --slice-badge-gap: 4px;
+  --slice-badge-dot: 6px;
+}
+
+slice-badge[data-size='lg'] {
+  --slice-badge-height: 30px;
+  --slice-badge-font: 0.875rem;
+  --slice-badge-pad: 12px;
+  --slice-badge-gap: 6px;
+  --slice-badge-dot: 8px;
+}
+
+/* ── Tones ──────────────────────────────────────────────────────────
+   The text is a READABLE shade of the tone, not the tone itself: the light
+   status colours measured 3.2-3.8:1 as text, under the 4.5:1 AA bar. A theme
+   can set the shade as --<status>-color-readable (it has to LIGHTEN in a dark
+   theme); the value after the comma is the light-theme fallback, which is
+   what a fresh app (whose theme only has the standard tokens) gets. */
+
+slice-badge[data-tone='accent'] {
+  --slice-badge-color: var(--primary-color, #7c3aed);
+  --slice-badge-ink: var(--primary-color-readable, color-mix(in srgb, var(--primary-color, #7c3aed) 88%, #000));
+}
+
+slice-badge[data-tone='success'] {
+  --slice-badge-color: var(--success-color, #16a34a);
+  --slice-badge-ink: var(--success-color-readable, color-mix(in srgb, var(--success-color, #16a34a) 72%, #000));
+  --slice-badge-tint: 13%;
+}
+
+slice-badge[data-tone='warning'] {
+  --slice-badge-color: var(--warning-color, #d97706);
+  --slice-badge-ink: var(--warning-color-readable, color-mix(in srgb, var(--warning-color, #d97706) 66%, #000));
+  --slice-badge-tint: 16%;
+}
+
+slice-badge[data-tone='danger'] {
+  --slice-badge-color: var(--danger-color, #dc2626);
+  --slice-badge-ink: var(--danger-color-readable, color-mix(in srgb, var(--danger-color, #dc2626) 84%, #000));
+}
+
+slice-badge[data-tone='info'] {
+  --slice-badge-color: var(--info-color, #0284c7);
+  --slice-badge-ink: var(--info-color-readable, color-mix(in srgb, var(--info-color, #0284c7) 64%, #000));
+  --slice-badge-tint: 13%;
+}
+
+/* A colour of your own: its readable shade leans toward the page's text. */
+slice-badge.has-color {
+  --slice-badge-ink: color-mix(in srgb, var(--slice-badge-color) 62%, var(--font-primary-color, #1d1b29));
+  --slice-badge-tint: 14%;
+}
+
+/* ── The pill ───────────────────────────────────────────────────── */
+
+slice-badge .slice-badge__body {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--slice-badge-gap);
+  box-sizing: border-box;
+  height: var(--slice-badge-height);
+  min-width: var(--slice-badge-height);
+  padding: 0 var(--slice-badge-pad);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-family: var(--font-family, inherit);
+  font-size: var(--slice-badge-font);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+slice-badge[data-shape='rounded'] .slice-badge__body {
+  border-radius: 6px;
+}
+
+/* Counts: a circle for one digit, a pill for more, never a cramped oval. */
+slice-badge.is-count .slice-badge__body {
+  padding: 0 calc(var(--slice-badge-pad) - 3px);
+  font-variant-numeric: tabular-nums;
+}
+
+/* soft (default): a tint of the tone, a hairline of it, readable text. */
+slice-badge[data-variant='soft'] .slice-badge__body {
+  color: var(--slice-badge-ink);
+  background: color-mix(in srgb, var(--slice-badge-color) var(--slice-badge-tint), transparent);
+  border-color: color-mix(in srgb, var(--slice-badge-color) calc(var(--slice-badge-tint) * 2.2), transparent);
+}
+
+/* filled: the readable shade as the fill, the page colour as the text. The
+   shade is tuned to contrast with the page, so the pair stays above AA in
+   both themes, where white on the raw status colour did not. */
+slice-badge[data-variant='filled'] .slice-badge__body {
+  color: var(--primary-background-color, #fff);
+  background: var(--slice-badge-ink);
+}
+
+/* outlined: just a line, for many badges side by side. */
+slice-badge[data-variant='outlined'] .slice-badge__body {
+  color: var(--slice-badge-ink);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--slice-badge-color) 60%, transparent);
+}
+
+/* ── Parts ──────────────────────────────────────────────────────── */
+
+slice-badge .slice-badge__indicator {
+  flex: none;
+  width: var(--slice-badge-dot);
+  height: var(--slice-badge-dot);
+  border-radius: 50%;
+  background: var(--slice-badge-color);
+}
+
+slice-badge[data-variant='filled'] .slice-badge__indicator {
+  background: currentColor;
+}
+
+slice-badge .slice-badge__icon {
+  display: inline-flex;
+  margin-inline-start: -2px;
+}
+
+slice-badge .slice-badge__indicator[hidden],
+slice-badge .slice-badge__icon[hidden],
+slice-badge .slice-badge__text[hidden] {
+  display: none;
+}
+
+/* Only a dot: no text, a status you can see. Its name is the label. */
+slice-badge.is-dot .slice-badge__body {
+  width: calc(var(--slice-badge-dot) + 4px);
+  min-width: 0;
+  height: calc(var(--slice-badge-dot) + 4px);
+  padding: 0;
+  border: 0;
+  background: var(--slice-badge-color);
+}
+
+slice-badge.is-dot[data-variant='outlined'] .slice-badge__body {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--slice-badge-color);
+}
+
+/* pulse: a ring that breathes out from the dot, for "live". */
+slice-badge.is-pulsing .slice-badge__indicator,
+slice-badge.is-pulsing.is-dot .slice-badge__body {
+  animation: slice-badge-pulse 1.8s ease-out infinite;
+}
+
+@keyframes slice-badge-pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--slice-badge-color) 55%, transparent); }
+  70% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--slice-badge-color) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  slice-badge.is-pulsing .slice-badge__indicator,
+  slice-badge.is-pulsing.is-dot .slice-badge__body {
+    animation: none;
+  }
+}

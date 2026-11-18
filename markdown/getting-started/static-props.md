@@ -2,8 +2,8 @@
 title: Static Props
 route: /Documentation/Static-Props
 navLabel: Static Props
-section: Getting Started
-group: Components
+section: Components
+group: Component Model
 order: 30
 description: Define and validate component props in Slice.js.
 component: StaticPropsDocumentation

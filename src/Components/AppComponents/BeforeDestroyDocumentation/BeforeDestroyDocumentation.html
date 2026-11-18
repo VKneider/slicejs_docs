@@ -1,31 +1,32 @@
 <div class="documentation-content beforedestroydocumentation">
 
+<div class="doc-page-meta">
+  <div class="doc-breadcrumb" data-block-id="doc-block-1"></div>
+  <span class="doc-reading-time">2 min read</span>
+</div>
+
 <div class="doc-title-bar">
   <h1 id="beforedestroy">
     <span class="doc-title-text">beforeDestroy()</span>
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
+<p class="doc-lede">Cleanup hooks for timers, listeners, requests and Services that outlive the component.</p>
 <h2 id="overview">Overview</h2>
-<p><code>beforeDestroy()</code> runs right before a component is destroyed by the controller. Use it for cleanup: timers, listeners, subscriptions, and pending async work.</p>
+<p><code>beforeDestroy()</code> runs right before a component is destroyed by the controller. Use it for cleanup: timers, listeners, subscriptions, pending async work, and Services you built by hand.</p>
 <p>The controller does not await this method, so keep it synchronous or fire-and-forget.</p>
-<p>Two shapes look like cleanup but never run, and <code>slice doctor</code> reports both: a method named <code>destroy()</code>, <code>dispose()</code> or <code>teardown()</code> (the controller only calls <code>beforeDestroy()</code>), and a <code>window</code>/<code>document</code> listener added without a matching <code>removeEventListener</code> in the same file unless it uses <code>{ once: true }</code> or <code>{ signal }</code>.</p>
+<p>A method named <code>destroy()</code>, <code>dispose()</code> or <code>teardown()</code> looks like cleanup but never runs — the controller only calls <code>beforeDestroy()</code>. <code>slice doctor</code> reports that, and it reports a <code>window</code>/<code>document</code> listener added without a matching <code>removeEventListener</code> in the same file unless it uses <code>{ once: true }</code> or <code>{ signal }</code>.</p>
+<h2 id="what-is-already-cleaned-up">What is already cleaned up?</h2>
+<div class="compare-block" data-block-id="doc-block-2"></div>
+<p>The split matters: the parent destroy cascade reaches Visual children, but a Service has no DOM, so nothing discovers it.</p>
 <h2 id="api">API</h2>
-<div class="table-block" data-block-id="doc-block-1"></div>
-<h2 id="ideal-use-cases">Ideal Use Cases</h2>
-<ul><li>Clear intervals and timeouts</li><li>Abort pending fetch requests</li><li>Remove global event listeners</li><li>Dispose third-party instances (charts, maps, etc.)</li><li><strong>Destroy child Services you built with <code>slice.build</code></strong> — a Service has no DOM, so it is never</li></ul>
-<p>auto-cleaned by the parent's destroy cascade or by <code>destroyByContainer</code>. Destroy it here.</p>
+<div class="table-block" data-block-id="doc-block-3"></div>
+<h2 id="ideal-use-cases">Ideal use cases</h2>
+<ul><li>Clear intervals and timeouts.</li><li>Abort pending fetch requests.</li><li>Remove global event listeners.</li><li>Dispose third-party instances (charts, maps, etc.).</li><li><strong>Destroy child Services you built with <code>slice.build</code></strong>.</li></ul>
 <h2 id="example">Example</h2>
-<div class="code-block" data-block-id="doc-block-2"></div>
-<div class="code-block" data-block-id="doc-block-3"></div>
-<h2 id="best-practices">Best Practices</h2>
-<div class="callout callout-tip">Keep <code>beforeDestroy()</code> idempotent so it can be called safely.</div>
-<div class="callout callout-tip">Use <code>AbortController</code> for fetch cleanup.</div>
-<h2 id="gotchas">Gotchas</h2>
-<div class="callout callout-warning">If you add global listeners in <code>init()</code>, remove them in <code>beforeDestroy()</code>.</div>
-<div class="callout callout-warning">Do not rely on <code>await</code> inside <code>beforeDestroy()</code>.</div>
-<div class="callout callout-warning">A Service built with <code>slice.build</code> is <strong>not</strong> destroyed when its owner is — it has no DOM, so neither
-the destroy cascade nor <code>destroyByContainer</code> finds it. Call <code>slice.controller.destroyComponent(...)</code> on
-it here, or it leaks (it stays registered and its own <code>beforeDestroy</code> never runs). See
-[Service Patterns](/Documentation/Architecture/Service-Patterns).</div>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<div class="callout-block" data-block-id="doc-block-6"></div>
+<p>Keep <code>beforeDestroy()</code> idempotent: it can be called more than once in a teardown sequence, and every cleanup inside it must tolerate that.</p>
+<div class="related-block" data-block-id="doc-block-7"></div>
 </div>

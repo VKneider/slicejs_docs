@@ -3,28 +3,34 @@ slice-inputsearchdocs {
 }
 
 slice-inputsearchdocs .inputsearchdocs {
-position: sticky;
-top: 0;
-padding: 12px 14px 12px;
-background: var(--primary-background-color);
-z-index: 2;
+  position: sticky;
+  top: 0;
+  padding: 10px 10px 8px;
+  background: var(--primary-background-color);
+  z-index: 2;
 }
 
 slice-inputsearchdocs .search-input {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 8px;
-  border: 1px solid var(--primary-color-shade);
-  border-radius: 12px;
-  padding: 8px 10px;
+  gap: 7px;
+  border: 1px solid color-mix(in srgb, var(--primary-color-shade) 80%, transparent);
+  border-radius: 9px;
+  padding: 6px 9px;
   background: var(--secondary-background-color);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+slice-inputsearchdocs .search-input:focus-within {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 12%, transparent);
 }
 
 slice-inputsearchdocs .search-icon {
   color: var(--font-secondary-color);
   font-size: 0.9rem;
+  line-height: 1;
 }
 
 slice-inputsearchdocs input {
@@ -32,7 +38,7 @@ slice-inputsearchdocs input {
   background: transparent;
   width: 100%;
   color: var(--font-primary-color);
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   outline: none;
 }
 
@@ -40,20 +46,22 @@ slice-inputsearchdocs .search-clear {
   border: none;
   background: transparent;
   color: var(--font-secondary-color);
-  font-size: 1.1rem;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
   cursor: pointer;
 }
 
 slice-inputsearchdocs .search-panel {
-  margin-top: 10px;
+  margin-top: 7px;
   display: none;
   flex-direction: column;
-  gap: 10px;
+  gap: 7px;
   background: var(--primary-background-color);
-  border-radius: 12px;
-  border: 1px solid var(--primary-color-shade);
-  padding: 10px;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--primary-color-shade) 75%, transparent);
+  padding: 8px;
+  box-shadow: 0 10px 23px rgba(0, 0, 0, 0.08);
 }
 
 slice-inputsearchdocs .search-panel.open {
@@ -68,13 +76,13 @@ slice-inputsearchdocs .search-panel-toggle {
   width: 100%;
   border: none;
   background: transparent;
-  color: var(--font-primary-color);
+  color: var(--font-secondary-color);
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  font-size: 0.68rem;
   cursor: pointer;
-  padding: 4px 2px;
+  padding: 2px 2px 4px;
+  text-align: left;
 }
 
 slice-inputsearchdocs .search-panel-arrow {
@@ -88,9 +96,31 @@ slice-inputsearchdocs .search-panel.closed .search-panel-arrow {
 slice-inputsearchdocs .search-results {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-height: 260px;
+  gap: 5px;
+  max-height: min(52vh, 420px);
   overflow-y: auto;
+  padding-right: 1px;
+}
+
+slice-inputsearchdocs .search-count {
+  display: block;
+  padding: 0 2px 2px;
+  color: var(--font-secondary-color);
+  font-size: 0.68rem;
+  line-height: 1.35;
+}
+
+slice-inputsearchdocs .search-count[hidden] {
+  display: none;
+}
+
+slice-inputsearchdocs .search-section-label {
+  padding: 0 2px;
+  color: var(--font-secondary-color);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 slice-inputsearchdocs .search-panel.closed .search-results {
@@ -98,47 +128,86 @@ slice-inputsearchdocs .search-panel.closed .search-results {
 }
 
 slice-inputsearchdocs .search-item {
-  border: 1px solid var(--primary-color-shade);
+  border: 1px solid color-mix(in srgb, var(--primary-color-shade) 70%, transparent);
   background: var(--primary-background-color);
-  padding: 10px 12px;
-  border-radius: 10px;
+  padding: 7px 9px;
+  border-radius: 8px;
   text-align: left;
   cursor: pointer;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
 slice-inputsearchdocs .search-item:hover,
 slice-inputsearchdocs .search-item.active {
   border-color: var(--primary-color);
-  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--primary-color) 6%, var(--primary-background-color));
 }
 
 slice-inputsearchdocs .search-title {
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--primary-color);
-  margin-bottom: 4px;
+  line-height: 1.3;
+  margin-bottom: 2px;
 }
 
 slice-inputsearchdocs .search-meta {
-  font-size: 0.75rem;
+  font-size: 0.61rem;
   color: var(--font-secondary-color);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: 4px;
+  line-height: 1.3;
+  margin-bottom: 3px;
 }
 
 slice-inputsearchdocs .search-desc {
-  font-size: 0.85rem;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 0.73rem;
+  line-height: 1.35;
   color: var(--font-secondary-color);
 }
 
 slice-inputsearchdocs .search-empty {
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   color: var(--font-secondary-color);
+  padding: 4px 2px;
+}
+
+slice-inputsearchdocs .search-empty-title {
+  margin: 0 0 4px;
+  color: var(--font-primary-color);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+slice-inputsearchdocs .search-empty-hint {
+  margin: 0 0 7px;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+slice-inputsearchdocs .search-clear-recent {
+  align-self: flex-start;
+  border: none;
+  background: transparent;
+  color: var(--primary-color);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 4px 2px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+slice-inputsearchdocs .search-clear-recent:hover {
+  color: var(--primary-color-shade);
 }
 
 @media only screen and (max-width: 770px) {
   slice-inputsearchdocs .inputsearchdocs {
-    padding-top: 80px;
+    padding-top: 10px;
   }
 }

@@ -2,9 +2,9 @@
 title: Leak Inspector
 route: /Documentation/LeakInspector
 navLabel: Leak Inspector
-section: Getting Started
-group: Diagnostics
-order: 43
+section: Tooling
+group: ''
+order: 50
 description: Dev-only panel that surfaces components left registered but detached from the DOM.
 component: LeakInspectorDocumentation
 tags: [diagnostics, leaks, cleanup, lifecycle, devtools]

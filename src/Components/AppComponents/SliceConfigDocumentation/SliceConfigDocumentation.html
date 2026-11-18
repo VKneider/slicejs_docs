@@ -1,105 +1,103 @@
 <div class="documentation-content sliceconfigdocumentation">
 
+<div class="doc-page-meta">
+  <div class="doc-breadcrumb" data-block-id="doc-block-1"></div>
+  <span class="doc-reading-time">6 min read</span>
+</div>
+
 <div class="doc-title-bar">
   <h1 id="sliceconfigjson">
     <span class="doc-title-text">sliceConfig.json</span>
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
+<p class="doc-lede">How Slice.js loads and uses sliceConfig.json.</p>
 <h2 id="overview">Overview</h2>
 <p><code>sliceConfig.json</code> configures Slice.js at startup. It is fetched from <code>/sliceConfig.json</code> and used to initialize the main <code>slice</code> instance and structural components.</p>
 <p>The configuration controls debugging, logging, themes, global styles, routing, and optional structural services like EventManager and ContextManager.</p>
 <h2 id="how-slicejs-loads-config">How Slice.js Loads Config</h2>
 <p>Slice.js fetches the file in <code>Slice/ Slice.js</code> and creates the global <code>slice</code> instance:</p>
-<div class="code-block" data-block-id="doc-block-1"></div>
+<div class="code-block" data-block-id="doc-block-2"></div>
 <h2 id="intellisense-json-schema">IntelliSense (JSON Schema)</h2>
 <p>You can enable editor IntelliSense by adding a <code>$schema</code> reference and using the official schema.</p>
-<div class="code-block" data-block-id="doc-block-2"></div>
+<div class="code-block" data-block-id="doc-block-3"></div>
 <p>Place <code>sliceConfig.schema.json</code> at the project root so it is served by your dev server.</p>
 <p>Once loaded, Slice.js initializes structural components based on config:</p>
 <ul><li>Logger and Debugger (if enabled)</li><li>EventManager and ContextManager (if enabled)</li><li>Loading component (if enabled)</li><li>StylesManager + ThemeManager</li><li>Router (routes loaded from <code>paths.routesFile</code>)</li></ul>
 <h2 id="root-schema">Root Schema</h2>
-<div class="table-block" data-block-id="doc-block-3"></div>
-<h2 id="debugger">debugger</h2>
 <div class="table-block" data-block-id="doc-block-4"></div>
-<h2 id="stylesmanager">stylesManager</h2>
+<h2 id="debugger">debugger</h2>
 <div class="table-block" data-block-id="doc-block-5"></div>
-<h2 id="thememanager">themeManager</h2>
+<h2 id="stylesmanager">stylesManager</h2>
 <div class="table-block" data-block-id="doc-block-6"></div>
-<h2 id="logger">logger</h2>
+<h2 id="thememanager">themeManager</h2>
 <div class="table-block" data-block-id="doc-block-7"></div>
-<h3 id="loggerui">logger.ui</h3>
+<h2 id="logger">logger</h2>
 <div class="table-block" data-block-id="doc-block-8"></div>
-<h2 id="paths">paths</h2>
+<h3 id="loggerui">logger.ui</h3>
 <div class="table-block" data-block-id="doc-block-9"></div>
+<h2 id="paths">paths</h2>
+<div class="table-block" data-block-id="doc-block-10"></div>
 <h3 id="pathscomponents">paths.components</h3>
 <p>This is how Slice.js knows <strong>where your components live and how to load them</strong>. Each key is a <strong>component category</strong>, and its value tells the framework two things:</p>
-<div class="table-block" data-block-id="doc-block-10"></div>
+<div class="table-block" data-block-id="doc-block-11"></div>
 <p>The <code>type</code> controls loading:</p>
-<ul><li><strong><code>Visual</code></strong> — the component has a UI, so Slice loads three files per component:</li></ul>
-<p><code>&lt;Name&gt;.js</code> + <code>&lt;Name&gt;.html</code> (template) + <code>&lt;Name&gt;.css</code> (styles).</p>
-<ul><li><strong><code>Service</code></strong> — logic only, no UI, so Slice loads just <code>&lt;Name&gt;.js</code>.</li></ul>
+<ul><li><strong><code>Visual</code></strong> — the component has a UI, so Slice loads three files per component: <code>&lt;Name&gt;.js</code> + <code>&lt;Name&gt;.html</code> (template) + <code>&lt;Name&gt;.css</code> (styles).</li><li><strong><code>Service</code></strong> — logic only, no UI, so Slice loads just <code>&lt;Name&gt;.js</code>.</li></ul>
 <p>A default project ships three categories:</p>
-<div class="code-block" data-block-id="doc-block-11"></div>
-<ul><li><strong><code>Visual</code></strong> holds reusable UI components (often the official registry components).</li><li><strong><code>AppComponents</code></strong> is also a <code>Visual</code> category, reserved for your app-specific screens and</li></ul>
-<p>sections (for example <code>AppShell</code>, <code>HomeSection</code>). Same three-file pattern as <code>Visual</code>.</p>
-<ul><li><strong><code>Service</code></strong> holds plain logic classes (API clients, storage helpers).</li></ul>
+<div class="code-block" data-block-id="doc-block-12"></div>
+<ul><li><strong><code>Visual</code></strong> holds reusable UI components (often the official registry components).</li><li><strong><code>AppComponents</code></strong> is also a <code>Visual</code> category, reserved for your app-specific screens and sections (for example <code>AppShell</code>, <code>HomeSection</code>). Same three-file pattern as <code>Visual</code>.</li><li><strong><code>Service</code></strong> holds plain logic classes (API clients, storage helpers).</li></ul>
 <p>When you call <code>slice.build('Name')</code>, Slice looks up the component's category in <code>components.js</code>, finds the matching <code>paths.components</code> entry, and loads the files from <code>&lt;path&gt;/&lt;Name&gt;/</code> using the rules for that <code>type</code>. You can add your own categories here (each needs a <code>path</code> and a <code>type</code>).</p>
-<p><code>slice init</code> and <code>slice docs generate agents</code> create a <code>src/Components/&lt;Category&gt;/AGENTS.md</code> for every category. <code>Visual</code> and <code>Service</code> are registry categories: <code>slice get</code> installs there, and their guides point to the remote component docs. App categories document their own components in a co-located <code>README.md</code>. See [Documentation &amp; AGENTS.md](/Documentation/Documentation-System).</p>
-<div class="callout callout-tip">You normally do not edit folders by hand — <code>slice component create</code> scaffolds a component in the
-right category and updates <code>components.js</code> for you. See Component Anatomy.</div>
-<div class="callout callout-warning">If a category's <code>path</code> or <code>type</code> is wrong, <code>slice.build()</code> returns <code>null</code> with a misleading
-"component not found" error. A <code>Service</code> folder marked <code>Visual</code> will fail trying to fetch a
-missing <code>.html</code>.</div>
+<p><code>slice init</code> and <code>slice docs generate agents</code> create a <code>src/Components/&lt;Category&gt;/AGENTS.md</code> for every category. <code>Visual</code> and <code>Service</code> are registry categories: <code>slice get</code> installs there, and their guides point to the remote component docs. App categories document their own components in a co-located <code>README.md</code>. See <a href="/Documentation/Documentation-System" data-route>Documentation &amp; AGENTS.md</a>.</p>
+<div class="callout-block" data-block-id="doc-block-13"></div>
+<div class="callout-block" data-block-id="doc-block-14"></div>
 <h2 id="translator">translator</h2>
-<div class="table-block" data-block-id="doc-block-12"></div>
-<p>Full guide: [Translating an app](/Documentation/Translator).</p>
-<h2 id="router">router</h2>
-<div class="table-block" data-block-id="doc-block-13"></div>
-<h2 id="loading">loading</h2>
-<div class="table-block" data-block-id="doc-block-14"></div>
-<h2 id="events">events</h2>
 <div class="table-block" data-block-id="doc-block-15"></div>
-<h3 id="eventsui">events.ui</h3>
+<p>Full guide: <a href="/Documentation/Translator" data-route>Translating an app</a>.</p>
+<h2 id="router">router</h2>
 <div class="table-block" data-block-id="doc-block-16"></div>
-<h2 id="context">context</h2>
+<h2 id="loading">loading</h2>
 <div class="table-block" data-block-id="doc-block-17"></div>
-<h3 id="contextui">context.ui</h3>
+<h2 id="events">events</h2>
 <div class="table-block" data-block-id="doc-block-18"></div>
-<h2 id="production">production</h2>
+<h3 id="eventsui">events.ui</h3>
 <div class="table-block" data-block-id="doc-block-19"></div>
+<h2 id="context">context</h2>
+<div class="table-block" data-block-id="doc-block-20"></div>
+<h3 id="contextui">context.ui</h3>
+<div class="table-block" data-block-id="doc-block-21"></div>
+<h2 id="production">production</h2>
+<div class="table-block" data-block-id="doc-block-22"></div>
 <h2 id="static-assets-the-public-folder">Static assets — the <code>public/</code> folder</h2>
 <p>Put static assets under <strong><code>src/public/</code></strong>; everything there is served at the root URL and copied into the build — no configuration needed. <code>Themes</code>, <code>Styles</code> and <code>images</code> live under <code>public/</code>, and their URLs (<code>/Themes</code>, <code>/Styles</code>, <code>/images</code>) match their paths.</p>
 <p>Import resolution:</p>
-<ul><li><strong>Relative imports</strong> (<code>./</code>, <code>../</code>) and <strong>bare npm packages</strong> (<code>import 'pkg'</code>) are supported — see [External Dependencies](/Documentation/External-Dependencies).</li><li><strong>Absolute imports</strong> (<code>/libs/x.js</code>) are preserved when the file exists under <code>src/public/</code>, in both development and production.</li></ul>
+<ul><li><strong>Relative imports</strong> (<code>./</code>, <code>../</code>) and <strong>bare npm packages</strong> (<code>import 'pkg'</code>) are supported — see <a href="/Documentation/External-Dependencies" data-route>External Dependencies</a>.</li><li><strong>Absolute imports</strong> (<code>/libs/x.js</code>) are preserved when the file exists under <code>src/public/</code>, in both development and production.</li></ul>
 <p>Structural framework components are bundled automatically during <code>slice build</code> based on which features are enabled in <code>sliceConfig.json</code> (e.g. <code>logger.enabled</code>, <code>events.enabled</code>).</p>
 <h2 id="server">server</h2>
-<div class="table-block" data-block-id="doc-block-20"></div>
+<div class="table-block" data-block-id="doc-block-23"></div>
 <h2 id="public-browser-environment-slicepublic">Public Browser Environment (<code>SLICE_PUBLIC_*</code>)</h2>
 <p>Slice.js can expose selected environment variables to the browser runtime.</p>
 <p>Only variables that start with <code>SLICE_PUBLIC_</code> are included in the browser payload. Any variable without this prefix stays server-only and is not exposed through the runtime env endpoint.</p>
-<div class="callout callout-warning">All values exposed with <code>SLICE_PUBLIC_*</code> are public and readable by any user in the browser.
-Never place secrets, tokens, private keys, or credentials in these variables.</div>
+<div class="callout-block" data-block-id="doc-block-24"></div>
 <h3 id="naming-contract">Naming Contract</h3>
-<div class="table-block" data-block-id="doc-block-21"></div>
+<div class="table-block" data-block-id="doc-block-25"></div>
 <h3 id="build-time-artifact-slice-envgeneratedjs">Build-time Artifact (<code>slice-env.generated.js</code>)</h3>
 <p><code>slice build</code> writes browser-safe runtime environment data into <code>dist/</code>:</p>
 <ul><li><code>slice-env.json</code> — the shared payload (<code>{ mode, env }</code>).</li><li><code>slice-env.generated.js</code> — an ESM shim that exports the same object.</li></ul>
 <p>The runtime imports <code>/slice-env.generated.js</code> at boot; production has no env endpoint. <code>slice dev</code> keeps the live <code>/slice-env.json</code> provider so <code>.env</code> edits do not require a build.</p>
 <p>Payload shape:</p>
-<div class="code-block" data-block-id="doc-block-22"></div>
-<div class="table-block" data-block-id="doc-block-23"></div>
+<div class="code-block" data-block-id="doc-block-26"></div>
+<div class="table-block" data-block-id="doc-block-27"></div>
 <p>In production the payload is frozen at build time. <code>slice export</code> copies both files to the static root; <code>slice start</code> serves them as static assets.</p>
 <h3 id="runtime-api-access">Runtime API Access</h3>
 <p>After Slice.js initializes, use these runtime helpers:</p>
-<div class="table-block" data-block-id="doc-block-24"></div>
-<div class="code-block" data-block-id="doc-block-25"></div>
+<div class="table-block" data-block-id="doc-block-28"></div>
+<div class="code-block" data-block-id="doc-block-29"></div>
 <h2 id="example">Example</h2>
-<div class="code-block" data-block-id="doc-block-26"></div>
+<div class="code-block" data-block-id="doc-block-30"></div>
 <h2 id="best-practices">Best Practices</h2>
-<div class="callout callout-tip">Keep <code>paths</code> accurate or component loading will fail.</div>
-<div class="callout callout-tip">Load shared styles through <code>stylesManager.requestedStyles</code>.</div>
+<div class="callout-block" data-block-id="doc-block-31"></div>
+<div class="callout-block" data-block-id="doc-block-32"></div>
 <h2 id="gotchas">Gotchas</h2>
-<div class="callout callout-warning">If <code>themeManager.enabled</code> is true and <code>defaultTheme</code> is missing, theme loading will fail.</div>
-<div class="callout callout-warning"><code>events</code> and <code>context</code> are optional. If disabled, Slice.js provides no-op stubs.</div>
+<div class="callout-block" data-block-id="doc-block-33"></div>
+<div class="callout-block" data-block-id="doc-block-34"></div>
 </div>

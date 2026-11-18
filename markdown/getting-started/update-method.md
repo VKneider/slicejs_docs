@@ -2,9 +2,9 @@
 title: update()
 route: /Documentation/LifeCycle-Methods/update
 navLabel: update()
-section: Getting Started
-group: Components
-order: 42
+section: Components
+group: Lifecycle
+order: 30
 description: Refresh dynamic UI in Slice.js components.
 component: UpdateMethodDocumentation
 tags: [lifecycle, update]
@@ -83,25 +83,28 @@ async update(state = {}) {
 }
 ```
 
-## Best Practices
-:::tip
-Prefer a **prop setter** for single-value changes — see
-[Refreshing Component Data](/Documentation/Architecture/Refreshing-Component-Data). Reach for
-`update()` when the refresh needs logic: rebuilding children, an async fetch, or several props.
+## Setter or update()?
+
+:::compare left="A prop setter" right="update()"
+One value changed and the setter can express it. Immediate, synchronous, no async work and no child rebuild.
+---
+Several props, an async fetch, a child rebuild, or a cached-route revisit. The framework serializes and coalesces calls, so rapid refreshes are safe.
 :::
 
-:::tip
-Reuse by `sliceId` for lists. The framework serializes your `update()`, so streaming and rapid
-calls are safe without writing any guards yourself.
+For a variable-length list, [`DomService.reconcile`](https://components.slicejs.com/docs/services/dom-service)
+is the loop above generalized: it refreshes survivors, builds new items, prunes the gone and reorders
+with the fewest moves.
+
+:::details title="Two traps"
+- Clearing `innerHTML` alone does not destroy Slice components. Use `destroyComponent` /
+  `destroyByContainer` so `beforeDestroy` runs and the registry is cleaned.
+- `update()` is for refreshes **after** `init()`. The framework does not call it on first build;
+  `init()` does the first paint.
 :::
 
-## Gotchas
-:::warning
-Clearing `innerHTML` alone does not destroy Slice components — use `destroyComponent` /
-`destroyByContainer` so `beforeDestroy` runs and the registry is cleaned.
-:::
-
-:::warning
-`update()` is for refreshes **after** `init()`. The framework does not call it on first build —
-`init()` does the first paint.
+:::related
+- [Refreshing Component Data](/Documentation/Architecture/Refreshing-Component-Data) - Setter, update, reconcile or rebuild.
+- [DomService](https://components.slicejs.com/docs/services/dom-service) - Reconcile a list without leaking.
+- [beforeDestroy()](/Documentation/LifeCycle-Methods/beforeDestroy) - Cleanup when a refreshed subtree goes away.
+- [init()](/Documentation/LifeCycle-Methods/init) - The first paint.
 :::

@@ -2,9 +2,9 @@
 title: Documentation & AGENTS.md
 route: /Documentation/Documentation-System
 navLabel: Documentation & AGENTS
-section: Getting Started
-group: Tooling
-order: 16
+section: Tooling
+group: ''
+order: 30
 description: How Slice projects document components, categories, events and decisions, and how coding agents read that documentation.
 component: DocumentationAndAgentsDocumentation
 tags: [documentation, agents, agents-md, claude, events, cli, categories]

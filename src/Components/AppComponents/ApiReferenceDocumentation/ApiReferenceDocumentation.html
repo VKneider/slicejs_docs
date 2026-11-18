@@ -1,37 +1,43 @@
 <div class="documentation-content apireferencedocumentation">
 
+<div class="doc-page-meta">
+  <div class="doc-breadcrumb" data-block-id="doc-block-1"></div>
+  <span class="doc-reading-time">3 min read</span>
+</div>
+
 <div class="doc-title-bar">
   <h1 id="quick-api-reference">
     <span class="doc-title-text">Quick API Reference</span>
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
+<p class="doc-lede">Every public slice.* method at a glance — build, props, cleanup, router, context, events, logger, env.</p>
 <p>The public <code>slice.*</code> surface in one page. Each section links to its full guide. Method names use <code>arg?</code> for optional arguments and <code>→</code> for the return.</p>
 <h2 id="components-props">Components &amp; props</h2>
-<div class="table-block" data-block-id="doc-block-1"></div>
-<p>See [Component Anatomy](/Documentation/Component-Anatomy) and [The build method](/Documentation/The-build-method).</p>
+<div class="table-block" data-block-id="doc-block-2"></div>
+<p>See <a href="/Documentation/Component-Anatomy" data-route>Component Anatomy</a> and <a href="/Documentation/The-build-method" data-route>The build method</a>.</p>
 <p><strong>Reserved props</strong> (stripped before your setters run): <code>id</code> (HTML id), <code>sliceId</code> (registry id, auto-generated if omitted), <code>singleton</code> (Service-only get-or-create).</p>
 <h2 id="cleanup">Cleanup</h2>
-<div class="table-block" data-block-id="doc-block-2"></div>
-<p>Destroying runs <code>beforeDestroy()</code> and cleans the registry — see [Common Gotchas](/Documentation/Common-Gotchas).</p>
-<h2 id="router">Router</h2>
 <div class="table-block" data-block-id="doc-block-3"></div>
-<p>Route params use <code>${param}</code> (not <code>:param</code>); each captures <strong>one</strong> segment and arrives as a string. See [Routing](/Documentation/Routing) and [Route Guards](/Documentation/Routing/Guards).</p>
-<p>Components read the current page from the shortcuts, never from <code>window.location</code>:</p>
+<p>Destroying runs <code>beforeDestroy()</code> and cleans the registry — see <a href="/Documentation/Common-Gotchas" data-route>Common Gotchas</a>.</p>
+<h2 id="router">Router</h2>
 <div class="table-block" data-block-id="doc-block-4"></div>
-<h2 id="translator">Translator</h2>
+<p>Route params use <code>${param}</code> (not <code>:param</code>); each captures <strong>one</strong> segment and arrives as a string. See <a href="/Documentation/Routing" data-route>Routing</a> and <a href="/Documentation/Routing/Guards" data-route>Route Guards</a>.</p>
+<p>Components read the current page from the shortcuts, never from <code>window.location</code>:</p>
 <div class="table-block" data-block-id="doc-block-5"></div>
-<p>See [Translating an app](/Documentation/Translator).</p>
-<h2 id="context-shared-state">Context (shared state)</h2>
+<h2 id="translator">Translator</h2>
 <div class="table-block" data-block-id="doc-block-6"></div>
-<p>See [ContextManager](/Documentation/Structural/ContextManager) and [Context vs Events](/Documentation/Structural/Context-vs-Events).</p>
-<h2 id="events-pubsub">Events (pub/sub)</h2>
+<p>See <a href="/Documentation/Translator" data-route>Translating an app</a>.</p>
+<h2 id="context-shared-state">Context (shared state)</h2>
 <div class="table-block" data-block-id="doc-block-7"></div>
-<p>See [EventManager](/Documentation/Structural/EventManager).</p>
-<h2 id="logger">Logger</h2>
+<p>See <a href="/Documentation/Structural/ContextManager" data-route>ContextManager</a> and <a href="/Documentation/Structural/Context-vs-Events" data-route>Context vs Events</a>.</p>
+<h2 id="events-pubsub">Events (pub/sub)</h2>
 <div class="table-block" data-block-id="doc-block-8"></div>
-<p>The old <code>logError</code> / <code>logWarning</code> / <code>logInfo</code> names still work but are <strong>deprecated</strong> — prefer <code>error</code> / <code>warn</code> / <code>info</code>. See [Logger](/Documentation/Structural/Logger).</p>
-<h2 id="environment-theme">Environment &amp; theme</h2>
+<p>See <a href="/Documentation/Structural/EventManager" data-route>EventManager</a>.</p>
+<h2 id="logger">Logger</h2>
 <div class="table-block" data-block-id="doc-block-9"></div>
-<p>See [Environment Variables](/Documentation/Configuration/environment-variables) and [Themes](/Documentation/Themes).</p>
+<p>The old <code>logError</code> / <code>logWarning</code> / <code>logInfo</code> names still work but are <strong>deprecated</strong> — prefer <code>error</code> / <code>warn</code> / <code>info</code>. See <a href="/Documentation/Structural/Logger" data-route>Logger</a>.</p>
+<h2 id="environment-theme">Environment &amp; theme</h2>
+<div class="table-block" data-block-id="doc-block-10"></div>
+<p>See <a href="/Documentation/Configuration/environment-variables" data-route>Environment Variables</a> and <a href="/Documentation/Themes" data-route>Themes</a>.</p>
 </div>

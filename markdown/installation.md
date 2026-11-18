@@ -2,9 +2,9 @@
 title: Installation
 route: /Documentation/Installation
 navLabel: Installation
-section: Introduction
-group: Overview
-order: 3
+section: Getting Started
+group: ''
+order: 20
 description: Install the CLI, initialize a project, and start the dev server.
 component: Installation
 tags: [installation, cli, setup]

@@ -3,8 +3,8 @@ title: Your First Page
 route: /Documentation/First-Page
 navLabel: Your First Page
 section: Getting Started
-group: First Steps
-order: 12
+group: ''
+order: 50
 description: Edit a section and add a new one in the App Shell starter, end to end.
 component: FirstPage
 tags: [getting-started, components, routing]

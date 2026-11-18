@@ -2,9 +2,9 @@
 title: ContextManager
 route: /Documentation/Structural/ContextManager
 navLabel: ContextManager
-section: Getting Started
-group: State
-order: 30
+section: State & Routing
+group: ''
+order: 50
 description: Shared state with watchers, selectors, and persistence.
 component: ContextManagerDocumentation
 tags: [context, state, persistence]
@@ -144,9 +144,7 @@ slice.context.setState('cart', { discount: 0.1 }); // ❌ replaces → items/tot
 slice.context.patch('cart', { discount: 0.1 });    // ✅ merges → keeps the rest
 ```
 
-:::tip
-The classic bug is updating one field with a plain object and silently wiping the rest of the context. Reach for `patch` (or the functional `setState`) whenever you update part of a multi-field context.
-:::
+**Rule:** if the context has more than one field, update it with `patch` (or a functional `setState`); a bare object replaces the whole state and drops the other fields.
 
 ## Context Handles (`use`)
 `slice.context.use(name)` returns a handle bound to a single context, so you stop repeating the name. It exposes `get`, `set`, `patch`, `watch`, `bind`, `has`, and `destroy`.
@@ -185,28 +183,25 @@ export default class GameScreen extends HTMLElement {
 }
 ```
 
-## Best Practices
-:::tip
-Keep contexts small and focused by domain.
+## Guidelines
+
+| Practice | Why |
+| --- | --- |
+| Keep contexts small and focused by domain | A context is a shared contract; a giant one becomes an untyped global. |
+| Use selectors for watchers | The selector decides when the callback runs; without one, every `setState` notifies. |
+| Store serializable state only | Persistence and debugging assume plain data; class instances and functions break both. |
+| Use a Service for shared read/write logic | Components keep their rendering; the Service owns the domain rules. |
+
+:::details title="Limits and gotchas"
+- `watch()` requires a component with a `sliceId`; without one it returns `null`.
+- Persist only small, serializable state. `localStorage` is synchronous and shared across tabs.
+- `setState` replaces; `patch` merges one level. Nesting a partial object inside `setState` still
+  replaces the rest.
 :::
 
-:::tip
-Use selectors to reduce unnecessary updates.
-:::
-
-:::tip
-Prefer serializable state only. Avoid storing class instances or functions.
-:::
-
-:::tip
-Use a service singleton to encapsulate context reads/writes when multiple components share the same domain state.
-:::
-
-## Gotchas
-:::warning
-`watch()` requires a component with a `sliceId`. Otherwise it returns `null`.
-:::
-
-:::warning
-Persist only small, serializable state.
+:::related
+- [Context vs Events](/Documentation/Structural/Context-vs-Events) - State vs signal.
+- [Events](/Documentation/Structural/EventManager) - The pub/sub layer underneath.
+- [Refreshing Component Data](/Documentation/Architecture/Refreshing-Component-Data) - When a watcher should refresh.
+- [Service Patterns](/Documentation/Architecture/Service-Patterns) - Where shared domain logic lives.
 :::

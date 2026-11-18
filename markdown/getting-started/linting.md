@@ -2,9 +2,9 @@
 title: Linting
 route: /Documentation/Linting
 navLabel: Linting
-section: Getting Started
-group: Diagnostics
-order: 44
+section: Tooling
+group: ''
+order: 20
 description: Set up ESLint with the shared Slice config, and know what it does not check.
 component: LintingDocumentation
 tags: [linting, eslint, tooling]

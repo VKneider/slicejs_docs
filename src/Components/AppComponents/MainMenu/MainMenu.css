@@ -1,28 +1,29 @@
 slice-mainmenu {
-  position: fixed;
-  top: var(--docs-navbar-height, 72px);
+  position: sticky;
+  top: var(--docs-navbar-height, 74px);
   left: 0;
   font-family: var(--font-family);
   background-color: var(--primary-background-color);
   border-right: 1px solid color-mix(in srgb, var(--primary-color-shade) 65%, transparent);
   display: flex;
   align-items: flex-start;
-  height: calc(100% - var(--docs-navbar-height, 72px));
-  width: 17%;
-  transition: transform 0.3s ease, width 0.3s ease;
+  height: calc(100% - var(--docs-navbar-height, 74px));
+  width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
   z-index: 90;
 }
+
 .slice_menu {
   position: relative;
   z-index: 200;
-  margin-top: 8px;
+  margin-top: 0;
   width: 100%;
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 8px;
+  padding: 8px 10px 24px;
+  box-sizing: border-box;
 }
 
 .slice_menu_tree_host {
@@ -31,11 +32,11 @@ slice-mainmenu {
 
 .slice_menu_empty {
   margin: 8px 0;
-  padding: 8px 10px;
+  padding: 7px 9px;
   border-radius: 8px;
-  color: var(--font-primary-color);
-  background: color-mix(in srgb, var(--secondary-background-color) 65%, transparent);
-  opacity: 0.8;
+  color: var(--font-secondary-color);
+  background: color-mix(in srgb, var(--secondary-background-color) 55%, transparent);
+  font-size: 0.82rem;
 }
 
 .slice_menu_button {
@@ -72,7 +73,7 @@ slice-mainmenu {
 
 .slice_menu_overlay {
   position: fixed;
-  top: var(--docs-navbar-height, 72px);
+  top: var(--docs-navbar-height, 74px);
   right: 0;
   bottom: 0;
   left: 0;
@@ -92,20 +93,21 @@ slice-treeview .simple_treeview::-webkit-scrollbar,
 slice-mainmenu::-webkit-scrollbar {
   width: 0px;
 }
+
 slice-treeview .simple_treeview::-webkit-scrollbar:horizontal,
-slice-mainmenu::-webkit-scrollbar:horizontal  {
+slice-mainmenu::-webkit-scrollbar:horizontal {
   height: 0px;
 }
 
 @media only screen and (max-width: 770px) {
   slice-mainmenu {
-    top: var(--docs-navbar-height, 72px);
+    top: var(--docs-navbar-height, 74px);
     position: fixed;
     z-index: 95;
     display: flex;
     width: 80%;
     max-width: 360px;
-    height: calc(100% - var(--docs-navbar-height, 72px));
+    height: calc(100% - var(--docs-navbar-height, 74px));
     background-color: var(--primary-background-color);
     transform: translateX(-100%);
     transition: transform 0.3s ease;

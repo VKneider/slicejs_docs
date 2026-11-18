@@ -1,3 +1,29 @@
+/**
+ * Map a consumer's tree item onto TreeItem's props.
+ *
+ * `children` and `text` are accepted as aliases for `items` and `value`.
+ * Not as a nicety: `children` is a getter-only property on `HTMLElement`, so
+ * spreading an item that carries one made `setComponentProps` throw
+ * `Cannot set property children`, the instance was never created, and a whole
+ * branch of the tree vanished with nothing on screen but one console ERROR.
+ *
+ * Only the keys TreeItem declares are forwarded, so no future data shape can
+ * clobber a native DOM property the same way.
+ */
+function treeItemProps(item, onClick) {
+   const children = item.items ?? item.children;
+   const props = {
+      value: item.value ?? item.text ?? item.label ?? '',
+      path: item.path ?? '',
+   };
+
+   if (Array.isArray(children) && children.length > 0) props.items = children;
+   if (typeof onClick === 'function') props.onClick = onClick;
+   else if (typeof item.onClick === 'function') props.onClick = item.onClick;
+
+   return props;
+}
+
 const _sliceDeprecated = new Set();
 function deprecate(oldName, newName) {
    if (_sliceDeprecated.has(oldName)) return;
@@ -31,7 +57,7 @@ export default class TreeItem extends HTMLElement {
          type: 'array',
          default: [],
          required: false
-      }
+      },
    };
 
    constructor(props) {
@@ -64,7 +90,7 @@ export default class TreeItem extends HTMLElement {
    }
 
    async init() {
-      if (this._items) {
+      if (this._items?.length) {
          for (let i = 0; i < this._items.length; i++) {
             await this.setItem(this._items[i], this.$container);
          }
@@ -93,6 +119,8 @@ export default class TreeItem extends HTMLElement {
 
    set items(values) {
       this._items = values;
+      if (!values?.length) return;
+      this.classList.add('is-branch');
       const caret = document.createElement('div');
       caret.classList.add('caret');
       // Crear un contenedor para items
@@ -134,7 +162,10 @@ export default class TreeItem extends HTMLElement {
          localStorage.setItem(this.getContainerKey(), isOpen ? 'open' : 'closed');
       };
       
-      caret.addEventListener('click', toggleContainer);
+      caret.addEventListener('click', (event) => {
+         event.stopPropagation();
+         toggleContainer();
+      });
 
       if (!this.path) {
          this.$item.addEventListener('click', toggleContainer);
@@ -160,12 +191,37 @@ export default class TreeItem extends HTMLElement {
       }
    }
 
-   async setItem(value, addTo) {
-      if (this._onClick) {
-         value.onClick = this._onClick;
-      }
+   /**
+    * Open or close this branch programmatically.
+    *
+    * Public because a parent that has to show a tree expanded has no other
+    * lever: the label's click handler is only wired for branches with no
+    * `path`, and the caret is a 10px triangle.
+    */
+   setExpanded(open) {
+      if (!this.$container) return;
 
-      const item = await slice.build('TreeItem', value);
+      const caret = this.$item.querySelector('.caret');
+      const wantOpen = open === true;
+
+      if (caret) caret.classList.toggle('caret_open', wantOpen);
+      this.$container.classList.toggle('container_open', wantOpen);
+      // height:auto rather than a pixel value: descendants that expand later
+      // would otherwise be clipped, the same reason openBranch does it.
+      this.$container.style.height = wantOpen ? 'auto' : '0px';
+
+      localStorage.setItem(this.getContainerKey(), wantOpen ? 'open' : 'closed');
+   }
+
+   setActive(active) {
+      this.$item.classList.toggle('is-active', active);
+   }
+
+  async setItem(value, addTo) {
+      // Normalised, not spread, and not mutated in place: the old code did
+      // `value.onClick = this._onClick`, which wrote the handler onto the
+      // caller's own data object and shared it with every later branch.
+      const item = await slice.build('TreeItem', treeItemProps(value, this._onClick));
       addTo.appendChild(item);
    }
 }

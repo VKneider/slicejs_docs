@@ -41,3 +41,46 @@ test('the dead /Docum/ pattern is gone', () => {
     assert.ok(!route.startsWith('/Docum/'), `unexpected legacy route: ${route}`);
   }
 });
+
+test('navigation stays within the documented IA budget', () => {
+  const sections = documentationRoutes.sections;
+  assert.equal(sections.length, 7, 'the docs should have seven top-level sections');
+
+  let leaves = 0;
+  let maxDepth = 1;
+
+  const walk = (items, depth, section) => {
+    for (const item of items || []) {
+      if (item.items) {
+        walk(item.items, depth + 1, section);
+      } else if (item.path) {
+        leaves += 1;
+        maxDepth = Math.max(maxDepth, depth);
+        assert.ok(
+          leaves <= 60,
+          'the navigation has more pages than the IA budget; split or regroup a section'
+        );
+        assert.ok(item.component, `navigation item without component: ${item.path}`);
+      }
+    }
+  };
+
+  for (const section of sections) {
+    let sectionLeaves = 0;
+    const count = (items) => {
+      for (const item of items || []) {
+        if (item.items) count(item.items);
+        else if (item.path) sectionLeaves += 1;
+      }
+    };
+    count(section.items);
+    assert.ok(
+      sectionLeaves <= 12,
+      `section "${section.title}" has ${sectionLeaves} pages; split it before it becomes a junk drawer`
+    );
+    walk(section.items, 2, section.title);
+  }
+
+  assert.equal(leaves, 46, 'the docs should expose 46 pages in the tree');
+  assert.ok(maxDepth <= 3, `navigation depth is ${maxDepth}; keep it at 3 or less`);
+});

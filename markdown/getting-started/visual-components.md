@@ -2,9 +2,9 @@
 title: Visual
 route: /Documentation/Visual
 navLabel: Visual
-section: Getting Started
-group: Components
-order: 32
+section: Components
+group: Component Model
+order: 40
 description: Official visual component documentation entrypoint for Slice.js.
 component: VisualDocumentation
 tags: [visual, components, docs]

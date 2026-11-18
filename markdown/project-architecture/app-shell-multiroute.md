@@ -2,9 +2,9 @@
 title: App Shell + MultiRoute
 route: /Documentation/Architecture/App-Shell-MultiRoute
 navLabel: App Shell + MultiRoute
-section: Project Architecture
-group: Styles and Patterns
-order: 2
+section: Guides
+group: ''
+order: 20
 description: Build section-based apps with a persistent shell and route-driven content switching.
 component: AppShellMultiRouteDocumentation
 tags: [architecture, multiroute, routing, layout]
@@ -67,18 +67,26 @@ export default class AppShell extends HTMLElement {
 customElements.define('slice-app-shell', AppShell);
 ```
 
-## Data Flow Tips
-- Keep global UI state (theme/user/session) in `slice.context`.
-- Keep section-local data inside each section component.
-- Use route params/query only when URL should reflect the current state.
+## Who owns what
 
-## Common Mistakes
-:::warning
-Do not duplicate global layout per route. Keep one shell and switch only inner content.
+| Owner | What lives there |
+| --- | --- |
+| Shell | The layout frame: navbar, side menu, footer, theme selector, global UI state (theme/user/session), and the route table. |
+| Section | Its own data, child components and section-specific UI. |
+| URL | State that must survive a refresh or be shareable: route params and query. |
+
+:::details title="Common mistakes"
+- Duplicating the global layout per route. Keep one shell and switch only the inner content with
+  `MultiRoute`.
+- Putting every tiny piece of state in query params. Use the URL only when deep-linking matters;
+  local state belongs in the section.
 :::
 
-:::warning
-Do not put every tiny state in query params. Use URL state only when deep-linking matters.
+:::related
+- [Single-View SPA](/Documentation/Architecture/Single-View-SPA) - The alternative for one focused experience.
+- [Choosing a Project Style](/Documentation/Architecture) - The decision matrix.
+- [Routing and Data Passing](/Documentation/Architecture/Routing-Data) - Params and route metadata.
+- [Layout](https://components.slicejs.com/docs/layout/layout) - The registry layout component.
 :::
 
 ## Upgrade Trigger

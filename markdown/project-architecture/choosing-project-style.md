@@ -2,9 +2,9 @@
 title: Choosing a Project Style
 route: /Documentation/Architecture
 navLabel: Choosing a Project Style
-section: Project Architecture
-group: Styles and Patterns
-order: 1
+section: Guides
+group: ''
+order: 10
 description: Decide whether your Slice app should use App Shell + MultiRoute or a Single-View SPA.
 component: ProjectArchitectureDocumentation
 tags: [architecture, project-structure, multiroute, spa]
@@ -58,12 +58,17 @@ src/
     Service/
 ```
 
-## Rule of Thumb
-:::tip
-If your navigation is user-visible and URL-driven, use App Shell + MultiRoute. If your transitions are state-machine-driven inside one experience, use Single-View SPA.
+## Rule of thumb
+
+:::compare left="App Shell + MultiRoute" right="Single-View SPA" leftTone="info" rightTone="accent"
+Navigation is user-visible and URL-driven: sections, deep links, back button, shared navbar/sidebar. The shell persists and `MultiRoute` swaps the section.
+---
+Transitions are state-machine-driven inside one experience: a game, a wizard, a kiosk. One route, one root view, internal state/context decides what renders.
 :::
 
-## Next Guides
-- App Shell + MultiRoute: `/Documentation/Architecture/App-Shell-MultiRoute`
-- Single-View SPA: `/Documentation/Architecture/Single-View-SPA`
-- Routing and Data Passing: `/Documentation/Architecture/Routing-Data`
+:::related
+- [App Shell + MultiRoute](/Documentation/Architecture/App-Shell-MultiRoute) - The persistent-shell pattern in full.
+- [Single-View SPA](/Documentation/Architecture/Single-View-SPA) - One route, internal transitions.
+- [Routing and Data Passing](/Documentation/Architecture/Routing-Data) - Params and route metadata.
+- [Project Anatomy](/Documentation/Project-Anatomy) - Where each folder lives.
+:::

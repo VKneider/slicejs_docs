@@ -1,50 +1,54 @@
 <div class="documentation-content staticpropsdocumentation">
 
+<div class="doc-page-meta">
+  <div class="doc-breadcrumb" data-block-id="doc-block-1"></div>
+  <span class="doc-reading-time">3 min read</span>
+</div>
+
 <div class="doc-title-bar">
   <h1 id="static-props">
     <span class="doc-title-text">Static Props</span>
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
+<p class="doc-lede">Define and validate component props in Slice.js.</p>
 <h2 id="overview">Overview</h2>
 <p>Static Props define a component's public API. They provide defaults, development-only validation, and consistent prop behavior across Slice.js. They also power the debugger by describing which props are available and used.</p>
 <h2 id="static-props-schema">Static Props Schema</h2>
-<div class="table-block" data-block-id="doc-block-1"></div>
+<div class="table-block" data-block-id="doc-block-2"></div>
 <h2 id="how-props-are-applied">How Props Are Applied</h2>
 <p>When a component is built:</p>
 <ul><li>Defaults are applied for missing props.</li><li>Unknown props produce warnings in development.</li><li>Missing required props produce errors in development.</li><li>Props are assigned to the instance (<code>component[prop]</code>) and tracked internally.</li></ul>
-<div class="code-block" data-block-id="doc-block-2"></div>
-<h2 id="defaults-and-required-fields">Defaults and Required Fields</h2>
 <div class="code-block" data-block-id="doc-block-3"></div>
+<h2 id="defaults-and-required-fields">Defaults and Required Fields</h2>
+<div class="code-block" data-block-id="doc-block-4"></div>
 <h2 id="validation-development-only">Validation (Development Only)</h2>
 <p>Slice warns about unknown props and errors on missing required props in development mode. In production, validation is skipped for performance.</p>
 <p>When <code>allowedValues</code> is defined, Slice validates values using strict equality (<code>===</code>) in development.</p>
-<div class="code-block" data-block-id="doc-block-4"></div>
+<div class="code-block" data-block-id="doc-block-5"></div>
 <h2 id="nested-props-contract">Nested Props Contract</h2>
 <p>For nested shapes, use this contract:</p>
 <ul><li><code>schema</code> for object props (<code>type: 'object'</code>)</li><li><code>items</code> for array props (<code>type: 'array'</code>)</li></ul>
-<div class="code-block" data-block-id="doc-block-5"></div>
+<div class="code-block" data-block-id="doc-block-6"></div>
 <h2 id="type-generation-npm-run-slicetypes">Type Generation (<code>npm run slice:types</code>)</h2>
 <p>You can generate declaration files from <code>static props</code> so editor IntelliSense and checks follow the same contract.</p>
-<div class="code-block" data-block-id="doc-block-6"></div>
-<p>Then validate in JS projects with:</p>
 <div class="code-block" data-block-id="doc-block-7"></div>
+<p>Then validate in JS projects with:</p>
+<div class="code-block" data-block-id="doc-block-8"></div>
 <p>The generated types include:</p>
 <ul><li>union types from homogeneous <code>allowedValues</code> (for example <code>'a'</code> or <code>'b'</code>, or <code>1</code> or <code>2</code>) — <strong>but only when the array is written literally in the prop definition.</strong> The generator reads the AST of your component and does not resolve variables, so <code>allowedValues: SIZE_VALUES</code> is not seen at all and the prop silently degrades to plain <code>string</code>. Write the list inline, and read it back from <code>this.constructor.props.&lt;prop&gt;</code> in the setter rather than keeping a second copy of it.</li><li>nested object/array types from <code>schema/items</code></li><li>component prop map support for <code>slice.build(...)</code></li></ul>
 <p>The same literal rule applies to the whole metadata: <code>type</code>, <code>allowedValues</code>, <code>schema</code>, <code>items</code> are read from the AST, so a constant (<code>type: TYPE_STRING</code>, <code>schema: SHARED_SCHEMA</code>, or <code>static props = SHARED</code>) is invisible and the prop falls back to <code>any</code>. <code>slice types generate</code> now warns when it finds one, and <code>slice build</code> / <code>slice doctor</code> report it as an advisory naming the property.</p>
 <h2 id="usage-patterns">Usage Patterns</h2>
-<div class="code-block" data-block-id="doc-block-8"></div>
 <div class="code-block" data-block-id="doc-block-9"></div>
 <div class="code-block" data-block-id="doc-block-10"></div>
+<div class="code-block" data-block-id="doc-block-11"></div>
 <h2 id="validation">Validation</h2>
 <p>Slice validates your <code>static props</code> definitions in two places, so a malformed prop is caught before it ships:</p>
-<ul><li><strong><code>slice doctor</code></strong> reports every issue (errors and style warnings).</li><li><strong><code>slice build</code></strong> blocks the build on definition errors — an unknown <code>type</code>, a <code>schema</code> on a non-<code>object</code> prop, an <code>items</code> on a non-<code>array</code> prop, or <code>allowedValues</code> that don't match the <code>type</code>. Style issues (<code>type: "any"</code>, a <code>required</code> prop without a default) warn but don't block. See [CLI commands](/Documentation/CLI).</li></ul>
+<ul><li><strong><code>slice doctor</code></strong> reports every issue (errors and style warnings).</li><li><strong><code>slice build</code></strong> blocks the build on definition errors — an unknown <code>type</code>, a <code>schema</code> on a non-<code>object</code> prop, an <code>items</code> on a non-<code>array</code> prop, or <code>allowedValues</code> that don't match the <code>type</code>. Style issues (<code>type: "any"</code>, a <code>required</code> prop without a default) warn but don't block. See <a href="/Documentation/CLI" data-route>CLI commands</a>.</li></ul>
 <h2 id="best-practices">Best Practices</h2>
-<div class="callout callout-tip">Define only public props in <code>static props</code> and use internal fields for private state.</div>
-<div class="callout callout-tip">Use defaults to keep components predictable and reduce boilerplate.</div>
+<div class="callout-block" data-block-id="doc-block-12"></div>
+<div class="callout-block" data-block-id="doc-block-13"></div>
 <h2 id="gotchas">Gotchas</h2>
-<div class="callout callout-warning">Static Props validation runs only in development; validate critical data yourself.</div>
-<div class="callout callout-warning"><code>id</code>, <code>sliceId</code>, and <code>singleton</code> are <strong>reserved build directives</strong>, not props. Never declare them in
-<code>static props</code> — <code>build</code> strips them before Static Props are applied, so such an entry is dead and its
-setter never fires. See [Reserved build keys](/Documentation/The-build-method).</div>
+<div class="callout-block" data-block-id="doc-block-14"></div>
+<div class="callout-block" data-block-id="doc-block-15"></div>
 </div>

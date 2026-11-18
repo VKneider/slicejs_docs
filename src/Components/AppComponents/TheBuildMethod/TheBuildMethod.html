@@ -1,39 +1,41 @@
 <div class="documentation-content thebuildmethod">
 
+<div class="doc-page-meta">
+  <div class="doc-breadcrumb" data-block-id="doc-block-1"></div>
+  <span class="doc-reading-time">2 min read</span>
+</div>
+
 <div class="doc-title-bar">
   <h1 id="the-build-method">
     <span class="doc-title-text">The build method</span>
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
+<p class="doc-lede">Use slice.build to create components.</p>
 <h2 id="overview">Overview</h2>
 <p><code>slice.build(componentName, props)</code> creates a component instance, applies Static Props, runs <code>init()</code>, and registers the component with the controller. It returns a ready-to-append component instance.</p>
 <p>This is the standard way to create Visual, App, and Service components in Slice.js.</p>
 <h2 id="api">API</h2>
-<div class="table-block" data-block-id="doc-block-1"></div>
 <div class="table-block" data-block-id="doc-block-2"></div>
+<div class="table-block" data-block-id="doc-block-3"></div>
 <h2 id="lifecycle-steps">Lifecycle Steps</h2>
 <ol><li>Validate component name.</li><li>Load template, class, and CSS (visual components only).</li><li>Instantiate component and apply props.</li><li>Call <code>init()</code> if present.</li><li>Register component in the controller and component tree.</li></ol>
 <h2 id="basic-usage">Basic Usage</h2>
-<div class="code-block" data-block-id="doc-block-3"></div>
-<h2 id="props-and-defaults">Props and Defaults</h2>
 <div class="code-block" data-block-id="doc-block-4"></div>
+<h2 id="props-and-defaults">Props and Defaults</h2>
+<div class="code-block" data-block-id="doc-block-5"></div>
 <h2 id="reserved-build-keys-id-sliceid-singleton">Reserved build keys: id, sliceId, singleton</h2>
 <p><code>id</code>, <code>sliceId</code>, and <code>singleton</code> are <strong>build directives</strong>, not component props. They are read by <code>build</code> to control how the instance is created/registered and are removed from the props object before Static Props are applied — so they never reach your setters.</p>
-<div class="code-block" data-block-id="doc-block-5"></div>
-<ul><li><code>id</code> — sets the host element's HTML <code>id</code> (Visual components only).</li><li><code>sliceId</code> — the registry key used by <code>getComponent</code> and as the singleton identity.</li><li><code>singleton</code> — <code>true</code> get-or-creates one shared instance (Service components only). See</li></ul>
-<p>[Services](/Documentation/Service).</p>
-<div class="callout callout-warning"><code>id</code>, <code>sliceId</code>, and <code>singleton</code> are <strong>reserved names</strong>. Do not declare them in <code>static props</code> and
-do not use them as real props — they will be consumed by <code>build</code> and never set on your component.
-A <code>static props</code> entry named <code>singleton</code>, <code>sliceId</code>, or <code>id</code> is effectively dead.</div>
-<h2 id="nested-components">Nested Components</h2>
 <div class="code-block" data-block-id="doc-block-6"></div>
+<ul><li><code>id</code> — sets the host element's HTML <code>id</code> (Visual components only).</li><li><code>sliceId</code> — the registry key used by <code>getComponent</code> and as the singleton identity.</li><li><code>singleton</code> — <code>true</code> get-or-creates one shared instance (Service components only). See <a href="/Documentation/Service" data-route>Services</a>.</li></ul>
+<div class="callout-block" data-block-id="doc-block-7"></div>
+<h2 id="nested-components">Nested Components</h2>
+<div class="code-block" data-block-id="doc-block-8"></div>
 <h2 id="error-cases">Error Cases</h2>
 <ul><li>Missing or non-string component name</li><li>Component not listed in <code>components.js</code></li><li>Structural components cannot be built</li></ul>
-<h2 id="best-practices">Best Practices</h2>
-<div class="callout callout-tip">Always await <code>slice.build()</code> to ensure templates, CSS, and <code>init()</code> are finished.</div>
-<div class="callout callout-tip">Use <code>sliceId</code> only when you need to retrieve a component later.</div>
-<h2 id="gotchas">Gotchas</h2>
-<div class="callout callout-warning">Building a component can return <code>null</code> if the component is missing or fails to load.</div>
-<div class="callout callout-warning">Structural components are created by the framework and cannot be built directly.</div>
+<h2 id="build-vs-refresh">Build vs refresh</h2>
+<div class="compare-block" data-block-id="doc-block-9"></div>
+<p>Both paths preserve what matters: build creates identity, refresh keeps state, focus and children. For a variable-length list, <a href="https://components.slicejs.com/docs/services/dom-service" target="_blank" rel="noopener noreferrer"><code>DomService.reconcile</code></a> decides per item which of the two to do.</p>
+<div class="details-block" data-block-id="doc-block-10"></div>
+<div class="related-block" data-block-id="doc-block-11"></div>
 </div>

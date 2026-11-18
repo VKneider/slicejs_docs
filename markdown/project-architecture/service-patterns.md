@@ -2,11 +2,12 @@
 title: Service Patterns
 route: /Documentation/Architecture/Service-Patterns
 navLabel: Service Patterns
-section: Project Architecture
-group: Styles and Patterns
-order: 6
+section: Guides
+group: ''
+order: 50
 description: Where state and logic should live in a Slice app — instance fields, plain helpers, singleton services, providers — and how cleanup actually works.
 component: ServicePatternsDocumentation
+status: new
 tags: [architecture, services, singleton, state, cleanup]
 ---
 
@@ -105,3 +106,10 @@ Tearing a subtree down with `innerHTML = ''` does **not** run `beforeDestroy` an
 - ❌ Scattering `build({ singleton: true })` across call sites for an app-wide service — centralize it in the composition root and `getComponent` it.
 - ❌ Storing service instances or functions in `slice.context` — keep only serializable state (and note `setState` **replaces** the value, it does not merge).
 - ❌ Declaring `id`, `sliceId`, or `singleton` in `static props` — reserved build directives, consumed by `build` before your setters run. See [Reserved build keys](/Documentation/The-build-method).
+
+:::related
+- [DomService](https://components.slicejs.com/docs/services/dom-service) - Reconcile lists without leaking.
+- [Refreshing Component Data](/Documentation/Architecture/Refreshing-Component-Data) - When to refresh, reconcile or rebuild.
+- [beforeDestroy()](/Documentation/LifeCycle-Methods/beforeDestroy) - The cleanup contract for Services.
+- [The build method](/Documentation/The-build-method) - `singleton`, `sliceId` and reserved keys.
+:::

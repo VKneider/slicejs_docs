@@ -4,16 +4,29 @@ export default class Installation extends HTMLElement {
     slice.attachTemplate(this);
     slice.controller.setComponentProps(this, props);
     this.debuggerProps = [];
+    this._contentClick = null;
   }
 
   async init() {
     this.markdownPath = "installation.md";
-    this.markdownContent = "---\ntitle: Installation\nroute: /Documentation/Installation\nnavLabel: Installation\nsection: Introduction\ngroup: Overview\norder: 3\ndescription: Install the CLI, initialize a project, and start the dev server.\ncomponent: Installation\ntags: [installation, cli, setup]\ngenerate: true\n---\n\n# Installation\n\n## Requirements\n- Node.js 20+\n- npm or pnpm\n\n## Initialize a Project\n\n`slice init` creates the project folder for you — no `mkdir`, no `npm init` needed.\nEverything (package.json, node_modules, lockfile, `src/`, `api/`) lives **inside**\nthe new folder.\n\nWith npm:\n\n```bash\nnpx slicejs-cli init\n```\n\nWith pnpm:\n\n```bash\npnpm dlx slicejs-cli init\n```\n\nIf the `slice` launcher is already available in your PATH:\n\n```bash\nslice init\n```\n\nThe prompt asks for a project name (and for a package manager when more than one\nis available — pass `--pm npm` or `--pm pnpm` to skip the question). Then init:\n\n- Creates the project folder and its `package.json` (with the chosen package\n  manager pinned in the `packageManager` field).\n- Installs `slicejs-web-framework` as a dependency and `slicejs-cli` as a\n  devDependency — both inside the project folder.\n- Creates the `src/` and `api/` structure and installs the starter Visual and\n  Service components from the registry.\n- Configures package scripts (`dev`, `build`, `start`, `get`, `browse`, `sync`, ...).\n\nNon-interactive form:\n\n```bash\nnpx slicejs-cli init -y my-app --pm pnpm\n```\n\n:::tip\n**pnpm:** init is pnpm-friendly: it never pins a just-published version, so hardened pnpm\nsetups (e.g. `minimumReleaseAge` quarantine) resolve the newest version allowed\nby your policy. With `ignore-scripts` enabled, no postinstall step is required —\ninit configures the scripts itself.\n\nFor pnpm v10+, builds are controlled by `allowBuilds` in `pnpm-workspace.yaml`.\n`slice init --pm pnpm` writes `allowBuilds.slicejs-cli: true` automatically so the\nCLI postinstall can run without a manual `pnpm approve-builds` step.\n:::\n\n## Start Dev Server\n```bash\ncd my-app\nnpm run dev     # or: pnpm run dev\n```\n\nInside the project, prefer package scripts so execution is always pinned to your\nlocal `package.json` scripts:\n\n```bash\npnpm run dev\n```\n\nIf you prefer direct execution from the local dependency, `pnpm exec` is also valid:\n\n```bash\npnpm exec slice dev\n```\n\nIf the CLI is installed globally, you can run the binary directly from PATH:\n\n```bash\nslice dev\n```\n\nIf scripts were not configured (for example with hardened `ignore-scripts` setups),\nrun `npx slicejs-cli postinstall` once to add them.\n\nIf your policy blocks builds in an existing project, you can still approve manually:\n\n```bash\npnpm approve-builds slicejs-cli\n```\n\n## Install the Launcher (Optional)\n\nYou can install the CLI globally to expose the `slice` command everywhere:\n\n```bash\nnpm install -g slicejs-cli      # or: pnpm add -g slicejs-cli\n```\n\nThe launcher always delegates to the project-local `node_modules/slicejs-cli`\nwhen one exists, so each project keeps its pinned CLI version.\n\nTo bypass local delegation for one command:\n\n```bash\nSLICE_NO_LOCAL_DELEGATION=1 slice version\n```\n\n## Next Steps\n- Explore CLI commands: /Documentation/CLI\n- Configure `sliceConfig.json`: /Documentation/Configuration/sliceConfig\n- Build your first component: /Documentation/The-build-method\n";
+    this.markdownContent = "---\ntitle: Installation\nroute: /Documentation/Installation\nnavLabel: Installation\nsection: Getting Started\ngroup: ''\norder: 20\ndescription: Install the CLI, initialize a project, and start the dev server.\ncomponent: Installation\ntags: [installation, cli, setup]\ngenerate: true\n---\n\n# Installation\n\n## Requirements\n- Node.js 20+\n- npm or pnpm\n\n## Initialize a Project\n\n`slice init` creates the project folder for you — no `mkdir`, no `npm init` needed.\nEverything (package.json, node_modules, lockfile, `src/`, `api/`) lives **inside**\nthe new folder.\n\nWith npm:\n\n```bash\nnpx slicejs-cli init\n```\n\nWith pnpm:\n\n```bash\npnpm dlx slicejs-cli init\n```\n\nIf the `slice` launcher is already available in your PATH:\n\n```bash\nslice init\n```\n\nThe prompt asks for a project name (and for a package manager when more than one\nis available — pass `--pm npm` or `--pm pnpm` to skip the question). Then init:\n\n- Creates the project folder and its `package.json` (with the chosen package\n  manager pinned in the `packageManager` field).\n- Installs `slicejs-web-framework` as a dependency and `slicejs-cli` as a\n  devDependency — both inside the project folder.\n- Creates the `src/` and `api/` structure and installs the starter Visual and\n  Service components from the registry.\n- Configures package scripts (`dev`, `build`, `start`, `get`, `browse`, `sync`, ...).\n\nNon-interactive form:\n\n```bash\nnpx slicejs-cli init -y my-app --pm pnpm\n```\n\n:::tip\n**pnpm:** init is pnpm-friendly: it never pins a just-published version, so hardened pnpm\nsetups (e.g. `minimumReleaseAge` quarantine) resolve the newest version allowed\nby your policy. With `ignore-scripts` enabled, no postinstall step is required —\ninit configures the scripts itself.\n\nFor pnpm v10+, builds are controlled by `allowBuilds` in `pnpm-workspace.yaml`.\n`slice init --pm pnpm` writes `allowBuilds.slicejs-cli: true` automatically so the\nCLI postinstall can run without a manual `pnpm approve-builds` step.\n:::\n\n## Start Dev Server\n```bash\ncd my-app\nnpm run dev     # or: pnpm run dev\n```\n\nInside the project, prefer package scripts so execution is always pinned to your\nlocal `package.json` scripts:\n\n```bash\npnpm run dev\n```\n\nIf you prefer direct execution from the local dependency, `pnpm exec` is also valid:\n\n```bash\npnpm exec slice dev\n```\n\nIf the CLI is installed globally, you can run the binary directly from PATH:\n\n```bash\nslice dev\n```\n\nIf scripts were not configured (for example with hardened `ignore-scripts` setups),\nrun `npx slicejs-cli postinstall` once to add them.\n\nIf your policy blocks builds in an existing project, you can still approve manually:\n\n```bash\npnpm approve-builds slicejs-cli\n```\n\n## Install the Launcher (Optional)\n\nYou can install the CLI globally to expose the `slice` command everywhere:\n\n```bash\nnpm install -g slicejs-cli      # or: pnpm add -g slicejs-cli\n```\n\nThe launcher always delegates to the project-local `node_modules/slicejs-cli`\nwhen one exists, so each project keeps its pinned CLI version.\n\nTo bypass local delegation for one command:\n\n```bash\nSLICE_NO_LOCAL_DELEGATION=1 slice version\n```\n\n## Next Steps\n- Explore CLI commands: /Documentation/CLI\n- Configure `sliceConfig.json`: /Documentation/Configuration/sliceConfig\n- Build your first component: /Documentation/The-build-method\n";
+    this.setupRouterLinks();
     if (true) {
-      this.setupCopyButton();
+      await this.setupCopyButton();
     }
       {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
+         if (container) {
+            const breadcrumbs = await slice.build('Breadcrumbs', {
+               items: [{"text":"Docs","path":"/Documentation"},{"text":"Getting Started"}]
+            });
+            if (breadcrumbs) {
+               container.appendChild(breadcrumbs);
+            }
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-2"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "npx slicejs-cli init",
@@ -29,7 +42,7 @@ export default class Installation extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-2"]');
+         const container = this.querySelector('[data-block-id="doc-block-3"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "pnpm dlx slicejs-cli init",
@@ -45,7 +58,7 @@ export default class Installation extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-3"]');
+         const container = this.querySelector('[data-block-id="doc-block-4"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "slice init",
@@ -61,7 +74,7 @@ export default class Installation extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-4"]');
+         const container = this.querySelector('[data-block-id="doc-block-5"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "npx slicejs-cli init -y my-app --pm pnpm",
@@ -77,7 +90,22 @@ export default class Installation extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-5"]');
+         const container = this.querySelector('[data-block-id="doc-block-6"]');
+         if (container) {
+            const body = document.createElement('div');
+            body.className = 'doc-callout-body';
+            body.innerHTML = "<p><strong>pnpm:</strong> init is pnpm-friendly: it never pins a just-published version, so hardened pnpm setups (e.g. <code>minimumReleaseAge</code> quarantine) resolve the newest version allowed by your policy. With <code>ignore-scripts</code> enabled, no postinstall step is required — init configures the scripts itself.</p><p>For pnpm v10+, builds are controlled by <code>allowBuilds</code> in <code>pnpm-workspace.yaml</code>. <code>slice init --pm pnpm</code> writes <code>allowBuilds.slicejs-cli: true</code> automatically so the CLI postinstall can run without a manual <code>pnpm approve-builds</code> step.</p>";
+            const callout = await slice.build('Callout', {
+               tone: "success",
+               variant: "soft",
+               title: "Tip",
+               content: Array.from(body.childNodes)
+            });
+            container.appendChild(callout || body);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-7"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "cd my-app\nnpm run dev     # or: pnpm run dev",
@@ -93,7 +121,7 @@ export default class Installation extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-6"]');
+         const container = this.querySelector('[data-block-id="doc-block-8"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "pnpm run dev",
@@ -109,7 +137,7 @@ export default class Installation extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-7"]');
+         const container = this.querySelector('[data-block-id="doc-block-9"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "pnpm exec slice dev",
@@ -125,7 +153,7 @@ export default class Installation extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-8"]');
+         const container = this.querySelector('[data-block-id="doc-block-10"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "slice dev",
@@ -141,7 +169,7 @@ export default class Installation extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-9"]');
+         const container = this.querySelector('[data-block-id="doc-block-11"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "pnpm approve-builds slicejs-cli",
@@ -157,7 +185,7 @@ export default class Installation extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-10"]');
+         const container = this.querySelector('[data-block-id="doc-block-12"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "npm install -g slicejs-cli      # or: pnpm add -g slicejs-cli",
@@ -173,7 +201,7 @@ export default class Installation extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-11"]');
+         const container = this.querySelector('[data-block-id="doc-block-13"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "SLICE_NO_LOCAL_DELEGATION=1 slice version",
@@ -195,7 +223,51 @@ export default class Installation extends HTMLElement {
   }
 
   beforeDestroy() {
-    // Cleanup timers, listeners, or pending work here
+    if (this._contentClick) {
+      this.removeEventListener('click', this._contentClick);
+      this._contentClick = null;
+    }
+  }
+
+  // Internal markdown links are plain anchors with data-route. One delegated
+  // handler keeps them inside the SPA, including "/page#section" links, without
+  // building a component for every link on the page.
+  setupRouterLinks() {
+    this._contentClick = (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return;
+      }
+      const target = event.target instanceof Element ? event.target : null;
+      const anchor = target?.closest?.('a[data-route]');
+      if (!anchor) return;
+
+      const href = anchor.getAttribute('href') || '';
+      if (href.startsWith('#')) {
+        event.preventDefault();
+        this.scrollToHash(href.slice(1));
+        return;
+      }
+      if (!href.startsWith('/') || href.startsWith('//')) return;
+
+      event.preventDefault();
+      const hashIndex = href.indexOf('#');
+      const path = hashIndex === -1 ? href : href.slice(0, hashIndex);
+      const hash = hashIndex === -1 ? '' : href.slice(hashIndex + 1);
+      Promise.resolve(slice.router.navigate(path)).then(() => {
+        if (hash) requestAnimationFrame(() => this.scrollToHash(hash));
+      });
+    };
+    this.addEventListener('click', this._contentClick);
+  }
+
+  scrollToHash(hash) {
+    let id = hash;
+    try {
+      id = decodeURIComponent(hash);
+    } catch {
+      id = hash;
+    }
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   async setupCopyButton() {

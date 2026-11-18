@@ -1,28 +1,31 @@
 <div class="documentation-content initmethoddocumentation">
 
+<div class="doc-page-meta">
+  <div class="doc-breadcrumb" data-block-id="doc-block-1"></div>
+  <span class="doc-reading-time">2 min read</span>
+</div>
+
 <div class="doc-title-bar">
   <h1 id="init">
     <span class="doc-title-text">init()</span>
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
+<p class="doc-lede">One-time async setup for Slice.js components.</p>
 <h2 id="overview">Overview</h2>
 <p><code>init()</code> runs once, right after the component is constructed. By this point the constructor has already attached the template with <code>slice.attachTemplate(this)</code> and applied props, so the DOM is ready. Use <code>init()</code> for one-time setup that should not repeat during updates.</p>
-<p><code>slice.build()</code> awaits <code>init()</code> before returning the component instance, so <code>init()</code> is the place for <strong>async</strong> work the constructor cannot do — fetching data and building children with <code>await slice.build(...)</code>. See Component Anatomy for the constructor and the two ways to cache DOM references.</p>
+<p><code>slice.build()</code> awaits <code>init()</code> before returning the component instance, so <code>init()</code> is the place for <strong>async</strong> work the constructor cannot do — fetching data and building children with <code>await slice.build(...)</code>. See <a href="/Documentation/Component-Anatomy" data-route>Component Anatomy</a> for the constructor and the two ways to cache DOM references.</p>
 <h2 id="api">API</h2>
-<div class="table-block" data-block-id="doc-block-1"></div>
-<h2 id="ideal-use-cases">Ideal Use Cases</h2>
-<ul><li>Cache DOM references</li><li>Attach event listeners for the component lifetime</li><li>Fetch initial data</li><li>Build static child components</li></ul>
+<div class="table-block" data-block-id="doc-block-2"></div>
+<h2 id="ideal-use-cases">Ideal use cases</h2>
+<ul><li>Cache DOM references.</li><li>Attach event listeners for the component lifetime.</li><li>Fetch initial data.</li><li>Build static child components.</li></ul>
 <h2 id="example">Example</h2>
-<div class="code-block" data-block-id="doc-block-2"></div>
-<h2 id="patterns">Patterns</h2>
 <div class="code-block" data-block-id="doc-block-3"></div>
-<h2 id="best-practices">Best Practices</h2>
-<div class="callout callout-tip">The template is attached in the constructor by <code>slice.attachTemplate(this)</code>, so <code>querySelector</code>
-works there too. You can cache DOM references in the constructor (after <code>attachTemplate</code>, as the
-official components do) or in <code>init()</code>. Reserve <code>init()</code> for async work — fetching and building
-children — which the synchronous constructor cannot perform.</div>
-<div class="callout callout-tip">Build static child components here. Dynamic lists belong in <code>update()</code>.</div>
-<h2 id="gotchas">Gotchas</h2>
-<div class="callout callout-warning">Avoid building dynamic lists in <code>init()</code> if the list needs to refresh.</div>
+<h2 id="constructor-vs-init">Constructor vs init()</h2>
+<div class="compare-block" data-block-id="doc-block-4"></div>
+<p>The constructor and <code>init()</code> are not interchangeable: the constructor cannot await, and <code>init()</code> is the only place where <code>slice.build()</code> is already safe for async children.</p>
+<h2 id="patterns">Patterns</h2>
+<div class="code-block" data-block-id="doc-block-5"></div>
+<div class="details-block" data-block-id="doc-block-6"></div>
+<div class="related-block" data-block-id="doc-block-7"></div>
 </div>

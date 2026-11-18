@@ -2,9 +2,9 @@
 title: Make Your App a PWA
 route: /Documentation/Configuration/PWA
 navLabel: PWA
-section: Getting Started
-group: Configuration
-order: 22
+section: Configuration
+group: ''
+order: 60
 description: Manually turn a Slice app into an installable PWA with a manifest and a service worker.
 component: PwaDocumentation
 tags: [pwa, manifest, service-worker, offline, configuration]

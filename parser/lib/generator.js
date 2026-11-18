@@ -17,7 +17,7 @@ const safeComponentName = (frontMatter) => {
 
 const defaultCss = (tagName) => {
   return `/* Generated documentation styles */
-/* Keep shared styles in src/Styles/DocumentationBase.css */
+/* Keep shared styles in src/public/Styles/DocumentationBase.css */
 `;
 };
 
@@ -29,7 +29,7 @@ ${html}
 };
 
 const generateJs = (componentClass, jsBlocks, tagName, markdownPath = '', markdownContent = '', enableCopy = true) => {
-  const buildCodeBlocks = jsBlocks
+  const buildBlocks = jsBlocks
     .map((block) => {
       if (block.type === 'code') {
         return `      {
@@ -49,12 +49,133 @@ const generateJs = (componentClass, jsBlocks, tagName, markdownPath = '', markdo
          }
       }`;
       }
+      if (block.type === 'breadcrumb') {
+        return `      {
+         const container = this.querySelector('[data-block-id="${block.id}"]');
+         if (container) {
+            const breadcrumbs = await slice.build('Breadcrumbs', {
+               items: ${JSON.stringify(block.items)}
+            });
+            if (breadcrumbs) {
+               container.appendChild(breadcrumbs);
+            }
+         }
+      }`;
+      }
+      if (block.type === 'status') {
+        return `      {
+         const container = this.querySelector('[data-block-id="${block.id}"]');
+         if (container) {
+            const presets = {
+               new: { label: 'New', tone: 'accent' },
+               updated: { label: 'Updated', tone: 'info' },
+               deprecated: { label: 'Deprecated', tone: 'warning' },
+               beta: { label: 'Beta', tone: 'info' },
+               experimental: { label: 'Experimental', tone: 'neutral' }
+            };
+            const key = String(${JSON.stringify(block.status)}).toLowerCase();
+            const preset = presets[key] || { label: ${JSON.stringify(block.status)}, tone: 'neutral' };
+            const badge = await slice.build('Badge', {
+               label: preset.label,
+               tone: preset.tone,
+               variant: 'soft',
+               size: 'sm',
+               shape: 'rounded'
+            });
+            if (badge) container.appendChild(badge);
+         }
+      }`;
+      }
+      if (block.type === 'compare') {
+        return `      {
+         const container = this.querySelector('[data-block-id="${block.id}"]');
+         if (container) {
+            const grid = await slice.build('Grid', { columns: 2, rows: 1, gap: '14px' });
+            const buildSide = async (side) => {
+               const body = document.createElement('div');
+               body.className = 'doc-callout-body';
+               body.innerHTML = side.html;
+               const callout = await slice.build('Callout', {
+                  tone: side.tone,
+                  title: side.title,
+                  content: Array.from(body.childNodes)
+               });
+               return callout || body;
+            };
+            const left = await buildSide(${JSON.stringify(block.left)});
+            const right = await buildSide(${JSON.stringify(block.right)});
+            if (grid) {
+               await grid.setItem(left);
+               await grid.setItem(right);
+               container.appendChild(grid);
+            } else {
+               container.appendChild(left);
+               container.appendChild(right);
+            }
+         }
+      }`;
+      }
+      if (block.type === 'related') {
+        return `      {
+         const container = this.querySelector('[data-block-id="${block.id}"]');
+         if (container) {
+            const items = ${JSON.stringify(block.items)};
+            const grid = await slice.build('Grid', {
+               columns: items.length === 4 ? 2 : Math.min(3, Math.max(1, items.length)),
+               rows: 1,
+               gap: '14px'
+            });
+            for (const item of items) {
+               const card = await slice.build('Card', {
+                  title: item.title,
+                  text: item.text || '',
+                  icon: { name: 'arrow-right', iconStyle: 'outlined' },
+                  interactive: true,
+                  onClick: () => {
+                     if (/^https?:/i.test(item.path)) {
+                        window.open(item.path, '_blank', 'noopener,noreferrer');
+                     } else {
+                        slice.router.navigate(item.path);
+                     }
+                  }
+               });
+               if (card && grid) await grid.setItem(card);
+            }
+            if (grid) container.appendChild(grid);
+         }
+      }`;
+      }
+      if (block.type === 'callout') {
+        return `      {
+         const container = this.querySelector('[data-block-id="${block.id}"]');
+         if (container) {
+            const body = document.createElement('div');
+            body.className = 'doc-callout-body';
+            body.innerHTML = ${JSON.stringify(block.html)};
+            const callout = await slice.build('Callout', {
+               tone: "${block.tone}",
+               variant: "${block.variant}",
+               title: ${JSON.stringify(block.title)},
+               content: Array.from(body.childNodes)
+            });
+            container.appendChild(callout || body);
+         }
+      }`;
+      }
       if (block.type === 'details') {
         return `      {
          const container = this.querySelector('[data-block-id="${block.id}"]');
          if (container) {
-            const details = await slice.build('Details', { title: ${JSON.stringify(block.title)}, text: ${JSON.stringify(block.content)} });
-            container.appendChild(details);
+            const details = await slice.build('Details', { title: ${JSON.stringify(block.title)} });
+            const body = document.createElement('div');
+            body.className = 'doc-details-body';
+            body.innerHTML = ${JSON.stringify(block.html)};
+            if (details) {
+               details.addDetail(body);
+               container.appendChild(details);
+            } else {
+               container.appendChild(body);
+            }
          }
       }`;
       }
@@ -71,7 +192,9 @@ const generateJs = (componentClass, jsBlocks, tagName, markdownPath = '', markdo
                }
             }
             const component = await slice.build('${block.component}', props);
-            container.appendChild(component);
+            if (component) {
+               container.appendChild(component);
+            }
          }
       }`;
       }
@@ -79,63 +202,13 @@ const generateJs = (componentClass, jsBlocks, tagName, markdownPath = '', markdo
         return `      {
          const container = this.querySelector('[data-block-id="${block.id}"]');
          if (container) {
-            const lines = ${JSON.stringify(block.rows)};
-            const clean = (line) => {
-               let value = line.trim();
-               if (value.startsWith('|')) {
-                  value = value.slice(1);
-               }
-               if (value.endsWith('|')) {
-                  value = value.slice(0, -1);
-               }
-               return value.split('|').map((cell) => cell.trim());
-            };
-
-            const formatCell = (text) => {
-               let output = text
-                  .replace(/&/g, '&amp;')
-                  .replace(/</g, '&lt;')
-                  .replace(/>/g, '&gt;');
-
-               const applyBold = (input) => {
-                  let result = '';
-                  let index = 0;
-                  while (index < input.length) {
-                     const start = input.indexOf('**', index);
-                     if (start === -1) {
-                        result += input.slice(index);
-                        break;
-                     }
-                     const end = input.indexOf('**', start + 2);
-                     if (end === -1) {
-                        result += input.slice(index);
-                        break;
-                     }
-                     result += input.slice(index, start) + '<strong>' + input.slice(start + 2, end) + '</strong>';
-                     index = end + 2;
-                  }
-                  return result;
-               };
-
-               const applyInlineCode = (input) => {
-                  const parts = input.split(String.fromCharCode(96));
-                  if (parts.length === 1) return input;
-                  return parts
-                     .map((part, idx) => (idx % 2 === 1 ? '<code>' + part + '</code>' : part))
-                     .join('');
-               };
-
-               output = applyBold(output);
-               output = applyInlineCode(output);
-               return output;
-            };
-
-            const headers = lines.length > 0 ? clean(lines[0]) : [];
-            // Cells carry trusted inline markup (code/bold) from the parser, so
-            // they use Table's explicit { html } opt-in (Table escapes plain strings).
-            const rows = lines.slice(2).map((line) => clean(line).map((cell) => ({ html: formatCell(cell) })));
-            const table = await slice.build('Table', { headers, rows });
-            container.appendChild(table);
+            const table = await slice.build('Table', {
+               headers: ${JSON.stringify(block.headers)},
+               rows: ${JSON.stringify(block.rows)}
+            });
+            if (table) {
+               container.appendChild(table);
+            }
          }
       }`;
       }
@@ -160,15 +233,17 @@ const generateJs = (componentClass, jsBlocks, tagName, markdownPath = '', markdo
     slice.attachTemplate(this);
     slice.controller.setComponentProps(this, props);
     this.debuggerProps = [];
+    this._contentClick = null;
   }
 
   async init() {
     this.markdownPath = ${enableCopy ? JSON.stringify(markdownPath) : "''"};
     this.markdownContent = ${enableCopy ? JSON.stringify(markdownContent) : "''"};
+    this.setupRouterLinks();
     if (${enableCopy ? 'true' : 'false'}) {
-      this.setupCopyButton();
+      await this.setupCopyButton();
     }
-${buildCodeBlocks || '    // No dynamic blocks'}
+${buildBlocks || '    // No dynamic blocks'}
   }
 
   async update() {
@@ -176,7 +251,51 @@ ${buildCodeBlocks || '    // No dynamic blocks'}
   }
 
   beforeDestroy() {
-    // Cleanup timers, listeners, or pending work here
+    if (this._contentClick) {
+      this.removeEventListener('click', this._contentClick);
+      this._contentClick = null;
+    }
+  }
+
+  // Internal markdown links are plain anchors with data-route. One delegated
+  // handler keeps them inside the SPA, including "/page#section" links, without
+  // building a component for every link on the page.
+  setupRouterLinks() {
+    this._contentClick = (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return;
+      }
+      const target = event.target instanceof Element ? event.target : null;
+      const anchor = target?.closest?.('a[data-route]');
+      if (!anchor) return;
+
+      const href = anchor.getAttribute('href') || '';
+      if (href.startsWith('#')) {
+        event.preventDefault();
+        this.scrollToHash(href.slice(1));
+        return;
+      }
+      if (!href.startsWith('/') || href.startsWith('//')) return;
+
+      event.preventDefault();
+      const hashIndex = href.indexOf('#');
+      const path = hashIndex === -1 ? href : href.slice(0, hashIndex);
+      const hash = hashIndex === -1 ? '' : href.slice(hashIndex + 1);
+      Promise.resolve(slice.router.navigate(path)).then(() => {
+        if (hash) requestAnimationFrame(() => this.scrollToHash(hash));
+      });
+    };
+    this.addEventListener('click', this._contentClick);
+  }
+
+  scrollToHash(hash) {
+    let id = hash;
+    try {
+      id = decodeURIComponent(hash);
+    } catch {
+      id = hash;
+    }
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   async setupCopyButton() {

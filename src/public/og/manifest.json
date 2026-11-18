@@ -16,387 +16,379 @@
       "kind": "page"
     },
     "/Documentation": {
-      "path": "/og/documentation-c3a0e2a89a.jpg",
+      "path": "/og/documentation-b1ec3cb862.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 93947,
+      "bytes": 77243,
       "kind": "page"
     },
     "/Documentation/API-Reference": {
-      "path": "/og/documentation-api-reference-3b9071050b.jpg",
+      "path": "/og/documentation-api-reference-99d8d09e52.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 89333,
+      "bytes": 82943,
       "kind": "page"
     },
     "/Documentation/Architecture": {
-      "path": "/og/documentation-architecture-ed1f7d096b.jpg",
+      "path": "/og/documentation-architecture-008d60a398.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 96431,
+      "bytes": 91634,
       "kind": "page"
     },
     "/Documentation/Architecture/App-Shell-MultiRoute": {
-      "path": "/og/documentation-architecture-app-shell-multiroute-12d2fcbd49.jpg",
+      "path": "/og/documentation-architecture-app-shell-multiroute-454bd09815.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 84234,
+      "bytes": 80503,
       "kind": "page"
     },
     "/Documentation/Architecture/Component-Styles": {
-      "path": "/og/documentation-architecture-component-styles-ffc854126c.jpg",
+      "path": "/og/documentation-architecture-component-styles-42c6d69105.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 105879,
+      "bytes": 92286,
       "kind": "page"
     },
     "/Documentation/Architecture/Refreshing-Component-Data": {
-      "path": "/og/documentation-architecture-refreshing-component-data-a298dbe788.jpg",
+      "path": "/og/documentation-architecture-refreshing-component-data-450e4f43b3.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 98028,
+      "bytes": 95254,
       "kind": "page"
     },
     "/Documentation/Architecture/Routing-Data": {
-      "path": "/og/documentation-architecture-routing-data-8647abc807.jpg",
+      "path": "/og/documentation-architecture-routing-data-4de7410aca.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 92302,
+      "bytes": 90071,
       "kind": "page"
     },
     "/Documentation/Architecture/SEO": {
-      "path": "/og/documentation-architecture-seo-1de9af3511.jpg",
+      "path": "/og/documentation-architecture-seo-4ec3164511.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 100020,
+      "bytes": 100800,
       "kind": "page"
     },
     "/Documentation/Architecture/Server-Entrypoint": {
-      "path": "/og/documentation-architecture-server-entrypoint-f522d8786d.jpg",
+      "path": "/og/documentation-architecture-server-entrypoint-1d82353906.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 88674,
+      "bytes": 76529,
       "kind": "page"
     },
     "/Documentation/Architecture/Service-Patterns": {
-      "path": "/og/documentation-architecture-service-patterns-d6ab4cba75.jpg",
+      "path": "/og/documentation-architecture-service-patterns-c1bf0f0100.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 96661,
+      "bytes": 91949,
       "kind": "page"
     },
     "/Documentation/Architecture/Single-View-SPA": {
-      "path": "/og/documentation-architecture-single-view-spa-ab859e101f.jpg",
+      "path": "/og/documentation-architecture-single-view-spa-1d206f9d62.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 85019,
+      "bytes": 79359,
       "kind": "page"
     },
     "/Documentation/CLI": {
-      "path": "/og/documentation-cli-677e78274c.jpg",
+      "path": "/og/documentation-cli-fc7aac0b94.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 72346,
+      "bytes": 76814,
       "kind": "page"
     },
     "/Documentation/Common-Gotchas": {
-      "path": "/og/documentation-common-gotchas-6c18190741.jpg",
+      "path": "/og/documentation-common-gotchas-8da9c43190.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 88118,
+      "bytes": 85275,
       "kind": "page"
     },
     "/Documentation/Component-Anatomy": {
-      "path": "/og/documentation-component-anatomy-daf581124c.jpg",
+      "path": "/og/documentation-component-anatomy-282324735d.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 85715,
-      "kind": "page"
-    },
-    "/Documentation/Components": {
-      "path": "/og/documentation-components-4894764522.jpg",
-      "width": 1200,
-      "height": 630,
-      "type": "image/jpeg",
-      "bytes": 70026,
+      "bytes": 95062,
       "kind": "page"
     },
     "/Documentation/Configuration/PWA": {
-      "path": "/og/documentation-configuration-pwa-0db0ae67dd.jpg",
+      "path": "/og/documentation-configuration-pwa-2b351ebd7a.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 103095,
+      "bytes": 99379,
       "kind": "page"
     },
     "/Documentation/Configuration/environment-variables": {
-      "path": "/og/documentation-configuration-environment-variables-558881de14.jpg",
+      "path": "/og/documentation-configuration-environment-variables-222dc28278.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 80261,
+      "bytes": 78099,
       "kind": "page"
     },
     "/Documentation/Configuration/sliceConfig": {
-      "path": "/og/documentation-configuration-sliceconfig-c7c21ee077.jpg",
+      "path": "/og/documentation-configuration-sliceconfig-80c5f2505c.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 82918,
+      "bytes": 82513,
       "kind": "page"
     },
     "/Documentation/Deployment": {
-      "path": "/og/documentation-deployment-d38133405d.jpg",
+      "path": "/og/documentation-deployment-814cacea37.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 73037,
+      "bytes": 73023,
       "kind": "page"
     },
     "/Documentation/DevTools": {
-      "path": "/og/documentation-devtools-027ed1ba05.jpg",
+      "path": "/og/documentation-devtools-1eb1dcd605.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 77461,
+      "bytes": 81594,
       "kind": "page"
     },
     "/Documentation/Development-Workflow": {
-      "path": "/og/documentation-development-workflow-b1e7724176.jpg",
+      "path": "/og/documentation-development-workflow-9b5ace1332.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 82695,
+      "bytes": 90216,
       "kind": "page"
     },
     "/Documentation/Documentation-System": {
-      "path": "/og/documentation-documentation-system-db9ceb08e5.jpg",
+      "path": "/og/documentation-documentation-system-93c03941f4.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 91166,
+      "bytes": 91577,
       "kind": "page"
     },
     "/Documentation/External-Dependencies": {
-      "path": "/og/documentation-external-dependencies-166252abec.jpg",
+      "path": "/og/documentation-external-dependencies-00996bbb23.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 86456,
+      "bytes": 85412,
       "kind": "page"
     },
     "/Documentation/First-Page": {
-      "path": "/og/documentation-first-page-a3b5ce544b.jpg",
+      "path": "/og/documentation-first-page-4a28dd5adc.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 77404,
+      "bytes": 76777,
       "kind": "page"
     },
     "/Documentation/Installation": {
-      "path": "/og/documentation-installation-6773284390.jpg",
+      "path": "/og/documentation-installation-985364285a.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 67599,
+      "bytes": 69499,
       "kind": "page"
     },
     "/Documentation/LeakInspector": {
-      "path": "/og/documentation-leakinspector-7a0e2d2314.jpg",
+      "path": "/og/documentation-leakinspector-fa018a7653.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 95691,
+      "bytes": 94758,
       "kind": "page"
     },
     "/Documentation/LifeCycle-Methods": {
-      "path": "/og/documentation-lifecycle-methods-78502f6ee0.jpg",
+      "path": "/og/documentation-lifecycle-methods-4dde906d9a.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 82843,
+      "bytes": 80646,
       "kind": "page"
     },
     "/Documentation/LifeCycle-Methods/beforeDestroy": {
-      "path": "/og/documentation-lifecycle-methods-beforedestroy-6fe22b5aaa.jpg",
+      "path": "/og/documentation-lifecycle-methods-beforedestroy-1caace1ced.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 87208,
+      "bytes": 90409,
       "kind": "page"
     },
     "/Documentation/LifeCycle-Methods/init": {
-      "path": "/og/documentation-lifecycle-methods-init-17480e6007.jpg",
+      "path": "/og/documentation-lifecycle-methods-init-5eed67e1c7.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 86663,
+      "bytes": 82550,
       "kind": "page"
     },
     "/Documentation/LifeCycle-Methods/update": {
-      "path": "/og/documentation-lifecycle-methods-update-30394e95f1.jpg",
+      "path": "/og/documentation-lifecycle-methods-update-34b3361aff.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 91830,
+      "bytes": 86412,
       "kind": "page"
     },
     "/Documentation/Linting": {
-      "path": "/og/documentation-linting-aa166e80df.jpg",
+      "path": "/og/documentation-linting-ba41acf44f.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 88099,
+      "bytes": 80106,
       "kind": "page"
     },
     "/Documentation/Project-Anatomy": {
-      "path": "/og/documentation-project-anatomy-d9c44149f5.jpg",
+      "path": "/og/documentation-project-anatomy-8d0df0811e.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 82479,
+      "bytes": 82994,
       "kind": "page"
     },
     "/Documentation/Routing": {
-      "path": "/og/documentation-routing-cd0984c3c9.jpg",
+      "path": "/og/documentation-routing-7deb5502ba.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 94891,
+      "bytes": 91261,
       "kind": "page"
     },
     "/Documentation/Routing/Guards": {
-      "path": "/og/documentation-routing-guards-79f9b043ad.jpg",
+      "path": "/og/documentation-routing-guards-e34c0dacd7.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 79942,
+      "bytes": 80861,
       "kind": "page"
     },
     "/Documentation/Service": {
-      "path": "/og/documentation-service-048c578d6a.jpg",
+      "path": "/og/documentation-service-ceaf44d7cd.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 72294,
+      "bytes": 73941,
       "kind": "page"
     },
     "/Documentation/Slice": {
-      "path": "/og/documentation-slice-92f433fa39.jpg",
+      "path": "/og/documentation-slice-ee603ffa31.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 98037,
+      "bytes": 91851,
       "kind": "page"
     },
     "/Documentation/Slice-MCP": {
-      "path": "/og/documentation-slice-mcp-d44a6a5a58.jpg",
+      "path": "/og/documentation-slice-mcp-9d2f5123bc.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 77025,
+      "bytes": 77213,
       "kind": "page"
     },
     "/Documentation/Static-Props": {
-      "path": "/og/documentation-static-props-1f0552deae.jpg",
+      "path": "/og/documentation-static-props-f93d7e2383.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 72857,
+      "bytes": 76786,
       "kind": "page"
     },
     "/Documentation/Structural": {
-      "path": "/og/documentation-structural-8dcbe00a08.jpg",
+      "path": "/og/documentation-structural-595110b747.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 74295,
+      "bytes": 79529,
       "kind": "page"
     },
     "/Documentation/Structural/Context-vs-Events": {
-      "path": "/og/documentation-structural-context-vs-events-599f9eca79.jpg",
+      "path": "/og/documentation-structural-context-vs-events-0398f90661.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 82154,
+      "bytes": 82750,
       "kind": "page"
     },
     "/Documentation/Structural/ContextManager": {
-      "path": "/og/documentation-structural-contextmanager-7acbe883d9.jpg",
+      "path": "/og/documentation-structural-contextmanager-62d10167dd.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 75275,
+      "bytes": 76038,
       "kind": "page"
     },
     "/Documentation/Structural/EventManager": {
-      "path": "/og/documentation-structural-eventmanager-d83f28b975.jpg",
+      "path": "/og/documentation-structural-eventmanager-0983cb9ebe.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 75143,
+      "bytes": 82252,
       "kind": "page"
     },
     "/Documentation/Structural/EventRegistry": {
-      "path": "/og/documentation-structural-eventregistry-93e29e4455.jpg",
+      "path": "/og/documentation-structural-eventregistry-81612e5659.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 88802,
+      "bytes": 94112,
       "kind": "page"
     },
     "/Documentation/Structural/Logger": {
-      "path": "/og/documentation-structural-logger-9ce76072ce.jpg",
+      "path": "/og/documentation-structural-logger-b9e40d9647.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 67978,
+      "bytes": 63963,
       "kind": "page"
     },
     "/Documentation/The-build-method": {
-      "path": "/og/documentation-the-build-method-b61f06927f.jpg",
+      "path": "/og/documentation-the-build-method-b33aa3d9cd.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 80858,
+      "bytes": 78869,
       "kind": "page"
     },
     "/Documentation/Themes": {
-      "path": "/og/documentation-themes-454853b80a.jpg",
+      "path": "/og/documentation-themes-f3dee284f8.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 93876,
+      "bytes": 82807,
       "kind": "page"
     },
     "/Documentation/Translator": {
-      "path": "/og/documentation-translator-c29938b0e0.jpg",
+      "path": "/og/documentation-translator-8c0ee6d793.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 90860,
+      "bytes": 89167,
       "kind": "page"
     },
     "/Documentation/Visual": {
-      "path": "/og/documentation-visual-0b14901c9b.jpg",
+      "path": "/og/documentation-visual-6205534c3b.jpg",
       "width": 1200,
       "height": 630,
       "type": "image/jpeg",
-      "bytes": 62176,
+      "bytes": 54076,
       "kind": "page"
     },
     "/about": {

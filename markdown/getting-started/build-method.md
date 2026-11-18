@@ -2,9 +2,9 @@
 title: The build method
 route: /Documentation/The-build-method
 navLabel: The build method
-section: Getting Started
-group: Components
-order: 31
+section: Components
+group: Component Model
+order: 20
 description: Use slice.build to create components.
 component: TheBuildMethod
 tags: [build, components]
@@ -101,20 +101,29 @@ this.appendChild(grid);
 - Component not listed in `components.js`
 - Structural components cannot be built
 
-## Best Practices
-:::tip
-Always await `slice.build()` to ensure templates, CSS, and `init()` are finished.
+## Build vs refresh
+
+:::compare left="Build once" right="Refresh in place"
+`await slice.build()` applies defaults, runs `init()`, registers the instance and returns it. Use it when the component does not exist yet.
+---
+Assign a prop, call a method, `slice.setComponentProps` or `update()`. Defaults are not re-applied and omitted props are kept. Use it when the instance already exists.
 :::
 
-:::tip
-Use `sliceId` only when you need to retrieve a component later.
+Both paths preserve what matters: build creates identity, refresh keeps state, focus and children.
+For a variable-length list, [`DomService.reconcile`](https://components.slicejs.com/docs/services/dom-service)
+decides per item which of the two to do.
+
+:::details title="What can go wrong"
+- A missing entry in `components.js` (or a wrong `paths.components` path/type) makes `build` resolve
+  to `null` instead of throwing. Guard the result.
+- Structural components (Router, EventManager, ContextManager, Logger, Debugger) are created by the
+  framework; you cannot `slice.build` them.
+- Without `await`, you get a Promise instead of a node, and `init()` has not run yet.
 :::
 
-## Gotchas
-:::warning
-Building a component can return `null` if the component is missing or fails to load.
-:::
-
-:::warning
-Structural components are created by the framework and cannot be built directly.
+:::related
+- [Component Anatomy](/Documentation/Component-Anatomy) - How the three files fit together.
+- [Static Props](/Documentation/Static-Props) - Typed props, defaults and validation.
+- [LifeCycle Methods](/Documentation/LifeCycle-Methods) - What runs after `slice.build()`.
+- [Refreshing Component Data](/Documentation/Architecture/Refreshing-Component-Data) - Setter, update, reconcile or rebuild.
 :::

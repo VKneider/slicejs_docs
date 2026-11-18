@@ -1,44 +1,44 @@
 <div class="documentation-content devtoolsdocumentation">
 
+<div class="doc-page-meta">
+  <div class="doc-breadcrumb" data-block-id="doc-block-1"></div>
+  <span class="doc-reading-time">3 min read</span>
+</div>
+
 <div class="doc-title-bar">
   <h1 id="devtools">
     <span class="doc-title-text">DevTools</span>
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
+<p class="doc-lede">The component inspector and the events and context panels, and how live editing works.</p>
 <h2 id="overview">Overview</h2>
 <p>Slice ships four runtime panels for inspecting a live app — a <strong>component inspector</strong>, an <strong>events</strong> panel, a <strong>context</strong> panel, and a <strong>translator</strong> panel. They are built with Slice's own primitives (custom elements, the lifecycle, and setters), so they double as a reference for what the framework can do.</p>
 <h2 id="the-component-inspector">The component inspector</h2>
 <p>Enable it in <code>sliceConfig.json</code>, then click a component (right-click by default) to open the panel:</p>
-<div class="code-block" data-block-id="doc-block-1"></div>
-<ul><li><strong>Props tab</strong> — every <code>static props</code> entry with its current value. Values are <strong>editable</strong>: change</li></ul>
-<p>one and the UI updates instantly.</p>
-<ul><li><strong>Info tab</strong> — <code>sliceId</code>, class name, category, and connection status.</li></ul>
+<div class="code-block" data-block-id="doc-block-2"></div>
+<ul><li><strong>Props tab</strong> — every <code>static props</code> entry with its current value. Values are <strong>editable</strong>: change one and the UI updates instantly.</li><li><strong>Info tab</strong> — <code>sliceId</code>, class name, category, and connection status.</li></ul>
 <h3 id="how-live-editing-works">How live editing works</h3>
 <p>The inspector reads the component's <code>static props</code>, and when you edit a field it simply assigns the new value back to the component:</p>
-<div class="code-block" data-block-id="doc-block-2"></div>
+<div class="code-block" data-block-id="doc-block-3"></div>
 <p>Because Slice applies every prop through its <strong>setter</strong> (see Static Props), that single assignment fires the setter — which updates the DOM. There is no special data-binding layer: editing in the inspector is the exact same code path as a prop changing anywhere else in your app. This is why a component with well-written setters is instantly inspectable and tweakable.</p>
 <h2 id="events-and-context-panels">Events and context panels</h2>
 <p>Enable them (and their keyboard shortcuts) in <code>sliceConfig.json</code>:</p>
-<div class="code-block" data-block-id="doc-block-3"></div>
+<div class="code-block" data-block-id="doc-block-4"></div>
 <h2 id="translator-panel">Translator panel</h2>
 <p>With <code>slice.translator</code> enabled, the same pattern opens a panel for translations:</p>
-<div class="code-block" data-block-id="doc-block-4"></div>
+<div class="code-block" data-block-id="doc-block-5"></div>
 <p>It shows the active locale, a switcher, the <strong>keys on this page that are missing</strong> in the active locale (and those answered by the fallback), and a <strong>keys</strong> switch that calls <code>slice.translator.setShowKeys(true)</code> — every mark on the page shows its key instead of its text. Use it to find hardcoded strings and keys that never made it to a dictionary.</p>
-<ul><li><strong>Events</strong> (<code>alt+shift+e</code>) — three tabs: <strong>Subscribers</strong> (every event with live subscriber details,</li></ul>
-<p>an emit counter ⚡, and the emitters that fired it), <strong>Registry</strong> (the declared catalog grouped by   namespace with payload shapes and the static emit/listen graph — see   [Event Registry](/Documentation/Structural/EventRegistry)), and <strong>History</strong> (reverse-chronological   feed of all <code>emit()</code> calls with their origin and relative timestamps). Use it for "my listener isn't   firing", "it fires twice", or "who emitted what and when".</p>
-<ul><li><strong>Context</strong> (<code>alt+shift+c</code>) — every context, its key count, and a live JSON preview of its state.</li></ul>
-<p>Updates <strong>in real time</strong> on every <code>setState</code> / <code>patch</code> and auto-discovers newly created contexts.   Use it for "my watcher isn't firing" or "persisted state didn't survive a refresh".</p>
-<div class="callout callout-tip">Keep these panels enabled in development and turn off the <code>ui</code> blocks for production.</div>
+<ul><li><strong>Events</strong> (<code>alt+shift+e</code>) — three tabs: <strong>Subscribers</strong> (every event with live subscriber details, an emit counter ⚡, and the emitters that fired it), <strong>Registry</strong> (the declared catalog grouped by namespace with payload shapes and the static emit/listen graph — see <a href="/Documentation/Structural/EventRegistry" data-route>Event Registry</a>), and <strong>History</strong> (reverse-chronological feed of all <code>emit()</code> calls with their origin and relative timestamps). Use it for "my listener isn't firing", "it fires twice", or "who emitted what and when".</li><li><strong>Context</strong> (<code>alt+shift+c</code>) — every context, its key count, and a live JSON preview of its state. Updates <strong>in real time</strong> on every <code>setState</code> / <code>patch</code> and auto-discovers newly created contexts. Use it for "my watcher isn't firing" or "persisted state didn't survive a refresh".</li></ul>
+<div class="callout-block" data-block-id="doc-block-6"></div>
 <h2 id="leak-inspector">Leak Inspector</h2>
 <p>A fourth dev-only panel surfaces components left <strong>registered but detached from the DOM</strong> — the silent leak from clearing <code>slice.build</code>'d children without <code>destroyComponent</code>. Enable it under <code>debugger</code> and open it with its shortcut:</p>
-<div class="code-block" data-block-id="doc-block-5"></div>
-<p>It lists each orphan with its retain chain and a per-row destroy probe, and flags a <code>growing ▲</code> trend when <code>activeComponents</code> accumulates across navigations. Cached <code>Route</code>/<code>MultiRoute</code> views are excluded. Full details in [Leak Inspector](/Documentation/LeakInspector).</p>
+<div class="code-block" data-block-id="doc-block-7"></div>
+<p>It lists each orphan with its retain chain and a per-row destroy probe, and flags a <code>growing ▲</code> trend when <code>activeComponents</code> accumulates across navigations. Cached <code>Route</code>/<code>MultiRoute</code> views are excluded. Full details in <a href="/Documentation/LeakInspector" data-route>Leak Inspector</a>.</p>
 <h2 id="built-with-slice-try-it-yourself">Built with Slice — try it yourself</h2>
 <p>The inspector's "edit a prop, see it update" trick is small enough to build yourself. The <code>MiniInspector</code> component (in the visual library) does exactly that in ~80 lines:</p>
-<div class="code-block" data-block-id="doc-block-6"></div>
+<div class="code-block" data-block-id="doc-block-8"></div>
 <p><code>MiniInspector</code> reads <code>target.constructor.props</code>, builds an input per prop, and writes <code>target[prop] = value</code> on change. Read its source to see the pattern, then read the built-in DevTools (<code>Slice/Components/Structural/Debugger</code>, <code>.../EventManager/EventManagerDebugger</code>, <code>.../ContextManager/ContextManagerDebugger</code>) to see the full version.</p>
 <h2 id="gotchas">Gotchas</h2>
-<div class="callout callout-warning">A prop only updates the UI if its <strong>setter</strong> does the DOM work. If editing a value in the inspector
-changes nothing, the bug is in that prop's setter, not the inspector.</div>
+<div class="callout-block" data-block-id="doc-block-9"></div>
 </div>

@@ -7,19 +7,23 @@ This repo is the **Slice.js documentation site** — itself a Slice app (`src/`,
 ## ⚠️ Edit the Markdown source, not the generated pages
 - **Source of truth:** `markdown/**/*.md` (folders: `getting-started/`, `project-architecture/`,
   `components/`).
+- **Markdown contract:** [`parser/MARKDOWN-CONTRACT.md`](parser/MARKDOWN-CONTRACT.md) defines the
+  shared syntax and registry components. `parser/tests/markdown-contract.test.js` guards it.
 - The parser (`node parser/index.js`, script **`docs:generate`**) reads `markdown/` and **generates**
-  the page components, `docsIndex.js`, `seo.json` and `sitemap.xml`. The two client route tables —
-  `src/routes.js` and `src/Components/AppComponents/DocumentationPage/documentationRoutes.js` — are
-  **hand-maintained** and are not rewritten by the parser. When you add a page, update both tables in
-  the same change; `parser/tests/routes.test.js` fails if a `docsIndex` route is missing from either.
+  the page components, `docsIndex.js`, `documentationRoutes.js`, `seo.json` and `sitemap.xml`.
+  `documentationRoutes.js` is generated from the front matter (`section`, `group`, `order`); edit the
+  page's front matter, not the tree. `src/routes.js` remains **hand-maintained**.
+- When you add a page, add it to `src/routes.js`; `parser/tests/routes.test.js` fails if a
+  `docsIndex` route is missing from either the client route table or the generated tree.
 
 ## Workflow for a doc change
-1. Edit / add the `.md` under `markdown/`.
-2. Run `docs:generate` (regenerates pages, `docsIndex.js`, `seo.json`, `sitemap.xml`; it does not edit
-   `routes.js` or `documentationRoutes.js`).
+1. Edit / add the `.md` under `markdown/`. Set `section`, `group` and `order` to place it in the
+   navigation; the section order lives in `parser/lib/navConfig.js`.
+2. Run `docs:generate` (regenerates pages, `docsIndex.js`, `documentationRoutes.js`, `seo.json`,
+   `sitemap.xml` and `DocumentationBase.css` from `parser/templates/`).
 3. Run `docs:llm` (rebuilds `llm.txt`) if the change should appear in the LLM context dump.
 4. `dev` to preview.
-5. `pnpm test` for the SEO drift guard (sitemap ↔ manifest).
+5. `pnpm test` for the SEO drift guard (sitemap ↔ manifest) and route/navigation guards.
 6. `pnpm og:generate` when pages were added/renamed; `pnpm og:check` is the gate.
 
 ## SEO artifacts (generated — never hand-edit)
@@ -50,22 +54,32 @@ if the repos are not siblings.
 title: Service Patterns
 route: /Documentation/Architecture/Service-Patterns   # also the cross-link target
 navLabel: Service Patterns
-section: Project Architecture
-group: Styles and Patterns
-order: 6
+section: Guides
+group: ''
+order: 50
 description: One-line summary.
 component: ServicePatternsDocumentation                # UNIQUE generated class name
 tags: [architecture, services]
 ---
 ```
 - `component` must be unique (it becomes a generated class). `generate: false` skips generation for a
-  hand-authored page (e.g. `routing.md`).
+  hand-authored page (e.g. `themes.md`).
 - Cross-link other docs with their `route` value (e.g. `[Services](/Documentation/Service)`).
 
 ## Notes
 - Like every Slice app, this serves the framework runtime from `node_modules/slicejs-web-framework` —
   framework source edits in the `slice.js` repo are not reflected here until published.
-- Recently added docs that still need a `docs:generate` pass to wire up:
-  `project-architecture/service-patterns.md` (new). Editing existing pages
-  (`getting-started/services.md`, `before-destroy.md`, `the-build-method`, `static-props.md`,
-  `visual-components.md`) also requires regeneration.
+- `section`, `group` and `order` drive the generated navigation. The section order and group order
+  live in `parser/lib/navConfig.js`; do not edit `documentationRoutes.js` by hand.
+- The markdown contract (links, callouts, compare, related, status, tables) lives in
+  [`parser/MARKDOWN-CONTRACT.md`](parser/MARKDOWN-CONTRACT.md).
+
+## Component categories
+
+<!-- slice:generated:categories:start -->
+| Category | Type | Path | Components | Guide |
+| --- | --- | --- | --- | --- |
+| AppComponents | Visual | `src/Components/AppComponents` | 74 | [AGENTS.md](src/Components/AppComponents/AGENTS.md) |
+| Service | Service | `src/Components/Service` | 3 | [AGENTS.md](src/Components/Service/AGENTS.md) |
+| Visual | Visual | `src/Components/Visual` | 27 | [AGENTS.md](src/Components/Visual/AGENTS.md) |
+<!-- slice:generated:categories:end -->

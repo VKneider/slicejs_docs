@@ -69,6 +69,16 @@ Use a consistent layout:
 5) Gotchas
 6) FAQ (optional)
 
+## Automatic Page Chrome
+The parser adds these from front matter, so authors do not write them:
+
+- **Breadcrumb** — built from `section` and `group`, rendered with the registry `Breadcrumbs`
+  component.
+- **Reading time** — estimated from the body text.
+- **Title bar and lede** — the first `#` heading plus the front matter `description`.
+- **Copy markdown** — the button in the title bar.
+- **Status badge** — from an optional `status` field.
+
 ## Supported Blocks
 The parser recognizes the following constructs.
 
@@ -78,7 +88,13 @@ Markdown headings (`#`, `##`, `###`) are supported and used for anchors.
 ### Paragraphs
 Plain text becomes paragraphs with inline formatting:
 - `**bold**`
+- `*italic*`
 - `` `inline code` ``
+- `[label](/Documentation/Service)` — internal links use the Slice router
+- `[label](https://example.com)` — external links open in a new tab
+- `![alt](/images/diagram.png)` — images are lazy-loaded
+
+Links and inline code also work inside table cells.
 
 ### Lists
 - Unordered lists with `- ` or `* `
@@ -98,7 +114,7 @@ Supported attributes:
 
 ### Tables
 Tables are detected by a header row followed by a `---` separator.
-They render using the `Table` component.
+They render using the `Table` component. Cells support bold, inline code and links.
 
 ```
 | Field | Type | Notes |
@@ -106,8 +122,18 @@ They render using the `Table` component.
 | path | string | Route path |
 ```
 
+### Blockquotes
+Lines starting with `>` render as a styled blockquote. Use them for a single emphasized aside, not as
+a second callout system.
+
+```
+> Design your components so that assigning a prop drives the DOM update.
+```
+
 ### Callouts
-Use `:::tip` and `:::warning` for callouts.
+Use `:::tip`, `:::warning` and `:::note` for callouts. They render with the registry `Callout`
+component, so the tone and icon stay consistent with the component library. `:::info`, `:::success`
+and `:::danger` are aliases for the matching tone.
 
 ```
 :::tip
@@ -117,15 +143,68 @@ Use this for recommendations.
 :::warning
 Use this for pitfalls.
 :::
+
+:::note
+Use this for a short aside that is not advice or risk.
+:::
 ```
 
+A custom tone and title are available when the three defaults are not the right fit:
+
+```
+:::callout tone="accent" variant="ghost" title="Why this matters"
+The body is still markdown.
+:::
+```
+
+**Callout budget:** a callout is for something the reader would miss if it were a normal paragraph.
+Keep 1–3 per page. If a section needs five tips in a row, it is probably a table, a `Details` block,
+or plain prose. Use `:::warning` only for a real risk (data loss, a destructive step, a security
+mistake); using it for preferences trains readers to skip warnings.
+
 ### Details
-`:::details` renders an expandable Details component.
+`:::details` renders an expandable `Details` component. The body is parsed as markdown (paragraphs,
+lists, code, links), not as plain text.
 
 ```
 :::details title="Why use bind()?"
 Bind creates a component-scoped API for auto-cleanup.
 :::
+```
+
+### Compare (Do / Don't)
+`:::compare` renders two `Callout`s side by side in a `Grid`. Use it when the point is a contrast
+rather than a single warning; it absorbs pairs of tip/warning callouts.
+
+```
+:::compare left="Do" right="Don't"
+Assign a prop and let the setter update the DOM.
+---
+Destroy the component and rebuild the whole subtree for one changed field.
+:::
+```
+
+`left`/`right` are the titles; `leftTone`/`rightTone` change the tones if success/danger is not the
+right pair.
+
+### Related pages
+`:::related` renders a `Grid` of `Card`s at the end of a page. Each line is a link plus an optional
+description after ` - `.
+
+```
+:::related
+- [Component Anatomy](/Documentation/Component-Anatomy) - How the three files fit together.
+- [Static Props](/Documentation/Static-Props) - Typed props, defaults and validation.
+:::
+```
+
+### Status badge
+Add `status` to the front matter to put a `Badge` next to the page title. Supported values:
+`new`, `updated`, `deprecated`, `beta`, `experimental`. Any other value renders as a neutral badge
+with that label.
+
+```yaml
+status: new
 ```
 
 ### Steps

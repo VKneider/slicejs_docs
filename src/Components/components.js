@@ -1,9 +1,12 @@
 const components = {
   "ApiReferenceDocumentation": "AppComponents",
   "AppShellMultiRouteDocumentation": "AppComponents",
+  "Badge": "Visual",
   "BeforeDestroyDocumentation": "AppComponents",
+  "Breadcrumbs": "Visual",
   "Button": "Visual",
   "ButtonDocumentation": "AppComponents",
+  "Callout": "Visual",
   "Card": "Visual",
   "CardDocumentation": "AppComponents",
   "Checkbox": "Visual",

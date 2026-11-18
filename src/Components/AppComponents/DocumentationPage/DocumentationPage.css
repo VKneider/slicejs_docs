@@ -1,64 +1,104 @@
-.visualComponents p span {
-  color: var(--primary-color);
-}
 :root {
-  --docs-width: 64%;
-}
-slice-documentation-page slice-route,
-slice-documentation-page slice-multi-route {
-  display: flex;
-  justify-content: center;
+  --docs-navbar-height: 74px;
+  --docs-sidebar-width: clamp(228px, 18vw, 272px);
+  --docs-aside-width: clamp(196px, 15vw, 232px);
+  --docs-content-max: 820px;
 }
 
-slice-mainmenu{
-  position: fixed;
-  top: 0;
-  left: 0;
+slice-documentation-page {
+  display: block;
   font-family: var(--font-family);
-  background-color: var(--primary-background-color);
-  border-right: 1px solid var(--primary-color-shade);
-  /* box-shadow: 10px 0 10px 0px #00000020; */
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
+  color: var(--font-primary-color);
+}
+
+/* The docs frame: tree · article · table of contents. The navbar is fixed by
+   the Navbar component; the three columns start below it. */
+slice-documentation-page > slice-layout {
+  display: grid;
+  grid-template-columns: var(--docs-sidebar-width) minmax(0, 1fr) var(--docs-aside-width);
+  align-items: start;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--primary-background-color);
+}
+
+slice-documentation-page slice-multi-route {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  padding: calc(var(--docs-navbar-height) + 22px) clamp(18px, 3.2vw, 42px) 64px;
+}
+
+slice-documentation-page slice-mainmenu {
+  grid-column: 1;
+  grid-row: 1;
+  margin-top: var(--docs-navbar-height);
+  position: sticky;
+  top: var(--docs-navbar-height);
+  height: calc(100vh - var(--docs-navbar-height));
+  height: calc(100dvh - var(--docs-navbar-height));
+  width: 100%;
+  box-sizing: border-box;
+  border-right: 1px solid color-mix(in srgb, var(--primary-color-shade) 65%, transparent);
+  background: var(--primary-background-color);
+  overflow: hidden;
+}
+
+slice-documentation-page slice-mainmenu .slice_menu {
   height: 100%;
-  width: 17%;
-  transition: transform 0.3s ease, width 0.3s ease;
+  overflow-y: auto;
   overflow-x: hidden;
 }
 
-p {
-  text-align: justify;
+slice-documentation-page slice-mynavigation {
+  grid-column: 3;
+  grid-row: 1;
+  margin-top: var(--docs-navbar-height);
+  position: sticky;
+  top: var(--docs-navbar-height);
+  height: calc(100vh - var(--docs-navbar-height));
+  height: calc(100dvh - var(--docs-navbar-height));
+  width: 100%;
+  box-sizing: border-box;
+  border-left: 1px solid color-mix(in srgb, var(--primary-color-shade) 65%, transparent);
+  background: var(--primary-background-color);
+  overflow: hidden;
 }
-h1 {
-  padding-top: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--secondary-background-color);
+
+slice-documentation-page .documentation-content {
+  max-width: var(--docs-content-max);
+  margin: 0 auto;
 }
-h2 {
-  padding-top: 10px;
+
+slice-mainmenu slice-treeview .simple_treeview {
+  max-height: none;
+  overflow: visible;
 }
-.grid-container {
-  overflow-x: auto;
-}
-@media only screen and (max-width: 770px) {
-  :root {
-    --docs-width: 100%;
+
+/* Below this width the table of contents costs more than it gives: hide it and
+   give the article the space. */
+@media (max-width: 1180px) {
+  slice-documentation-page > slice-layout {
+    grid-template-columns: var(--docs-sidebar-width) minmax(0, 1fr);
+  }
+
+  slice-documentation-page slice-mynavigation {
+    display: none;
   }
 }
-* {
-  font-family: var(--font-family);
-}
 
-slice-multi-route > :first-child {
-  margin-top: 60px;
-  color: var(--font-primary-color);
-  margin-top: 60px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  width: var(--docs-width);
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-bottom: 25px;
-}
+@media (max-width: 770px) {
+  slice-documentation-page > slice-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
 
+  slice-documentation-page slice-multi-route {
+    grid-column: 1;
+    padding: calc(var(--docs-navbar-height) + 18px) 16px 48px;
+  }
+
+  slice-documentation-page slice-mainmenu {
+    grid-column: 1;
+    margin-top: 0;
+  }
+}

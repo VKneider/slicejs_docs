@@ -4,16 +4,29 @@ export default class CommonGotchasDocumentation extends HTMLElement {
     slice.attachTemplate(this);
     slice.controller.setComponentProps(this, props);
     this.debuggerProps = [];
+    this._contentClick = null;
   }
 
   async init() {
     this.markdownPath = "getting-started/common-gotchas.md";
-    this.markdownContent = "---\ntitle: Common Gotchas\nroute: /Documentation/Common-Gotchas\nnavLabel: Common Gotchas\nsection: Getting Started\ngroup: First Steps\norder: 28\ndescription: The traps Slice.js developers hit first — DOM timing, cleanup, routing, props — and how to avoid each one.\ncomponent: CommonGotchasDocumentation\ntags: [gotchas, troubleshooting, errors, cleanup]\n---\n\n# Common Gotchas\n\nThe handful of surprises that trip up most newcomers. Each one is the symptom, the cause, and the\nfix — skim it once and save yourself the debugging.\n\n## The DOM is empty until `attachTemplate`\n`querySelector` returns `null` if you call it before `slice.attachTemplate(this)`. The template is\ninjected by that call.\n\n```javascript title=\"✅ cache refs after attachTemplate\"\nconstructor(props) {\n  super();\n  slice.attachTemplate(this);                 // template is now in the DOM\n  this.$title = this.querySelector('.title'); // works\n  slice.controller.setComponentProps(this, props);\n}\n```\n\n## `slice.build()` returns `null` when the component isn't registered\nA missing entry in `components.js` (or a wrong `paths.components` path/type) makes `build` resolve\nto `null` — not throw. Always guard, and resync the registry.\n\n```javascript title=\"Guard the result\"\nconst node = await slice.build('UserCard', props);\nif (node) container.appendChild(node);   // null = not registered → run `npm run component:list`\n```\n\n## A computed name in `slice.build()` isn't bundled\nThe bundler links a component into its bundle by reading the name you pass to `slice.build` **statically**. A string literal, a template with no expressions, or a constant/config value that resolves to one all get bundled. A **truly dynamic** name (`slice.build(props.name)`) can't be resolved — `slice build` prints a `⚠️ Dynamic slice.build(...)` warning and the component still works, but loads individually at runtime (no bundle optimization). Prefer a literal or a resolvable constant.\n\n```javascript title=\"Bundled vs. not\"\nawait slice.build('UserCard', props);          // ✅ bundled (literal)\nconst NAME = 'UserCard'; await slice.build(NAME); // ✅ bundled (resolvable constant)\nawait slice.build(props.componentName, props);  // ⚠️ warned, loads individually\n```\n\n## Clearing `innerHTML` does NOT destroy components\n`container.innerHTML = ''` removes the DOM but leaves the Slice instances registered — a leak, and\ntheir `beforeDestroy` never runs.\n\n:::warning\nDestroy through the framework so `beforeDestroy` runs and the registry is cleaned:\n`slice.controller.destroyComponent(sliceId)` for one, or\n`slice.controller.destroyByContainer(node)` for a subtree.\n:::\n\n## Components built with `slice.build` are NOT auto-destroyed\nA parent does not automatically destroy children you built with `slice.build`. Destroy them\nexplicitly (or via `destroyByContainer`) when you tear down or refresh a region.\n\n## Services have no DOM — clean them up yourself\nA Service is never cascaded by a parent's destroy (it has no DOM). Release its timers, listeners,\nand subscriptions in `beforeDestroy()`. See\n[Service Patterns](/Documentation/Architecture/Service-Patterns).\n\n## `beforeDestroy()` is not awaited\nIt runs synchronously right before destruction. Keep it synchronous or fire-and-forget — do not\nrely on an `await` inside it completing.\n\n## Setters can run before `init()`\n`setComponentProps` runs in the **constructor**, before `init()`. If you cache DOM refs in\n`init()`, a setter may fire before they exist — guard with `?.`.\n\n```javascript title=\"Guard refs cached in init()\"\nset name(v) { this._name = v; this.applyName?.(); }   // setter may run before init()\nasync init() { this.$name = this.querySelector('.name'); this.applyName(); }\napplyName() { if (this.$name) this.$name.textContent = this._name; }\n```\n\n## `update()` is not called on first build\nThe framework calls `update()` only for **refreshes** (cached-route revisits, or when you call it).\n`init()` does the first paint. See [LifeCycle Methods](/Documentation/LifeCycle-Methods).\n\n## Route params are strings, one per segment\nA `${param}` captures a **single** URL segment and arrives as a **string**. For multiple values use\nseveral segments or query params, and parse types yourself.\n\n```javascript title=\"Params are strings\"\n// route: /user/${id}\nconst id = Number(params.id);   // it's a string — convert if you need a number\n```\n\n## A refresh keeps the props you don't pass\nRefreshing a built component with `slice.setComponentProps(comp, { a })` updates `a` and **leaves\nthe rest as-is** — omitted props are not reset to their defaults. To reset one, pass its value\nexplicitly. (Defaults only apply at build.)\n";
+    this.markdownContent = "---\ntitle: Common Gotchas\nroute: /Documentation/Common-Gotchas\nnavLabel: Common Gotchas\nsection: Getting Started\ngroup: ''\norder: 80\ndescription: The traps Slice.js developers hit first — DOM timing, cleanup, routing, props — and how to avoid each one.\ncomponent: CommonGotchasDocumentation\ntags: [gotchas, troubleshooting, errors, cleanup]\n---\n\n# Common Gotchas\n\nThe handful of surprises that trip up most newcomers. Each one is the symptom, the cause, and the\nfix — skim it once and save yourself the debugging.\n\n## The DOM is empty until `attachTemplate`\n`querySelector` returns `null` if you call it before `slice.attachTemplate(this)`. The template is\ninjected by that call.\n\n```javascript title=\"✅ cache refs after attachTemplate\"\nconstructor(props) {\n  super();\n  slice.attachTemplate(this);                 // template is now in the DOM\n  this.$title = this.querySelector('.title'); // works\n  slice.controller.setComponentProps(this, props);\n}\n```\n\n## `slice.build()` returns `null` when the component isn't registered\nA missing entry in `components.js` (or a wrong `paths.components` path/type) makes `build` resolve\nto `null` — not throw. Always guard, and resync the registry.\n\n```javascript title=\"Guard the result\"\nconst node = await slice.build('UserCard', props);\nif (node) container.appendChild(node);   // null = not registered → run `npm run component:list`\n```\n\n## A computed name in `slice.build()` isn't bundled\nThe bundler links a component into its bundle by reading the name you pass to `slice.build` **statically**. A string literal, a template with no expressions, or a constant/config value that resolves to one all get bundled. A **truly dynamic** name (`slice.build(props.name)`) can't be resolved — `slice build` prints a `⚠️ Dynamic slice.build(...)` warning and the component still works, but loads individually at runtime (no bundle optimization). Prefer a literal or a resolvable constant.\n\n```javascript title=\"Bundled vs. not\"\nawait slice.build('UserCard', props);          // ✅ bundled (literal)\nconst NAME = 'UserCard'; await slice.build(NAME); // ✅ bundled (resolvable constant)\nawait slice.build(props.componentName, props);  // ⚠️ warned, loads individually\n```\n\n## Clearing `innerHTML` does NOT destroy components\n`container.innerHTML = ''` removes the DOM but leaves the Slice instances registered — a leak, and\ntheir `beforeDestroy` never runs.\n\n:::warning\nDestroy through the framework so `beforeDestroy` runs and the registry is cleaned:\n`slice.controller.destroyComponent(sliceId)` for one, or\n`slice.controller.destroyByContainer(node)` for a subtree.\n:::\n\n## Components built with `slice.build` are NOT auto-destroyed\nA parent does not automatically destroy children you built with `slice.build`. Destroy them\nexplicitly (or via `destroyByContainer`) when you tear down or refresh a region.\n\n## Services have no DOM — clean them up yourself\nA Service is never cascaded by a parent's destroy (it has no DOM). Release its timers, listeners,\nand subscriptions in `beforeDestroy()`. See\n[Service Patterns](/Documentation/Architecture/Service-Patterns).\n\n## `beforeDestroy()` is not awaited\nIt runs synchronously right before destruction. Keep it synchronous or fire-and-forget — do not\nrely on an `await` inside it completing.\n\n## Setters can run before `init()`\n`setComponentProps` runs in the **constructor**, before `init()`. If you cache DOM refs in\n`init()`, a setter may fire before they exist — guard with `?.`.\n\n```javascript title=\"Guard refs cached in init()\"\nset name(v) { this._name = v; this.applyName?.(); }   // setter may run before init()\nasync init() { this.$name = this.querySelector('.name'); this.applyName(); }\napplyName() { if (this.$name) this.$name.textContent = this._name; }\n```\n\n## `update()` is not called on first build\nThe framework calls `update()` only for **refreshes** (cached-route revisits, or when you call it).\n`init()` does the first paint. See [LifeCycle Methods](/Documentation/LifeCycle-Methods).\n\n## Route params are strings, one per segment\nA `${param}` captures a **single** URL segment and arrives as a **string**. For multiple values use\nseveral segments or query params, and parse types yourself.\n\n```javascript title=\"Params are strings\"\n// route: /user/${id}\nconst id = Number(params.id);   // it's a string — convert if you need a number\n```\n\n## A refresh keeps the props you don't pass\nRefreshing a built component with `slice.setComponentProps(comp, { a })` updates `a` and **leaves\nthe rest as-is** — omitted props are not reset to their defaults. To reset one, pass its value\nexplicitly. (Defaults only apply at build.)\n\n:::related\n- [Component Anatomy](/Documentation/Component-Anatomy) - The lifecycle order these gotchas come from.\n- [LifeCycle Methods](/Documentation/LifeCycle-Methods) - `init()`, `update()` and `beforeDestroy()`.\n- [Service Patterns](/Documentation/Architecture/Service-Patterns) - Why Services are never cascaded.\n- [Refreshing Component Data](/Documentation/Architecture/Refreshing-Component-Data) - Reconcile lists instead of rebuilding.\n:::\n";
+    this.setupRouterLinks();
     if (true) {
-      this.setupCopyButton();
+      await this.setupCopyButton();
     }
       {
          const container = this.querySelector('[data-block-id="doc-block-1"]');
+         if (container) {
+            const breadcrumbs = await slice.build('Breadcrumbs', {
+               items: [{"text":"Docs","path":"/Documentation"},{"text":"Getting Started"}]
+            });
+            if (breadcrumbs) {
+               container.appendChild(breadcrumbs);
+            }
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-2"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "constructor(props) {\n  super();\n  slice.attachTemplate(this);                 // template is now in the DOM\n  this.$title = this.querySelector('.title'); // works\n  slice.controller.setComponentProps(this, props);\n}",
@@ -29,7 +42,7 @@ export default class CommonGotchasDocumentation extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-2"]');
+         const container = this.querySelector('[data-block-id="doc-block-3"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "const node = await slice.build('UserCard', props);\nif (node) container.appendChild(node);   // null = not registered → run `npm run component:list`",
@@ -45,7 +58,7 @@ export default class CommonGotchasDocumentation extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-3"]');
+         const container = this.querySelector('[data-block-id="doc-block-4"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "await slice.build('UserCard', props);          // ✅ bundled (literal)\nconst NAME = 'UserCard'; await slice.build(NAME); // ✅ bundled (resolvable constant)\nawait slice.build(props.componentName, props);  // ⚠️ warned, loads individually",
@@ -61,7 +74,22 @@ export default class CommonGotchasDocumentation extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-4"]');
+         const container = this.querySelector('[data-block-id="doc-block-5"]');
+         if (container) {
+            const body = document.createElement('div');
+            body.className = 'doc-callout-body';
+            body.innerHTML = "<p>Destroy through the framework so <code>beforeDestroy</code> runs and the registry is cleaned: <code>slice.controller.destroyComponent(sliceId)</code> for one, or <code>slice.controller.destroyByContainer(node)</code> for a subtree.</p>";
+            const callout = await slice.build('Callout', {
+               tone: "warning",
+               variant: "soft",
+               title: "Warning",
+               content: Array.from(body.childNodes)
+            });
+            container.appendChild(callout || body);
+         }
+      }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-6"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "set name(v) { this._name = v; this.applyName?.(); }   // setter may run before init()\nasync init() { this.$name = this.querySelector('.name'); this.applyName(); }\napplyName() { if (this.$name) this.$name.textContent = this._name; }",
@@ -77,7 +105,7 @@ export default class CommonGotchasDocumentation extends HTMLElement {
          }
       }
       {
-         const container = this.querySelector('[data-block-id="doc-block-5"]');
+         const container = this.querySelector('[data-block-id="doc-block-7"]');
          if (container) {
             const code = await slice.build('CodeVisualizer', {
                value: "// route: /user/${id}\nconst id = Number(params.id);   // it's a string — convert if you need a number",
@@ -92,6 +120,34 @@ export default class CommonGotchasDocumentation extends HTMLElement {
             container.appendChild(code);
          }
       }
+      {
+         const container = this.querySelector('[data-block-id="doc-block-8"]');
+         if (container) {
+            const items = [{"title":"Component Anatomy","path":"/Documentation/Component-Anatomy","text":"The lifecycle order these gotchas come from."},{"title":"LifeCycle Methods","path":"/Documentation/LifeCycle-Methods","text":"init(), update() and beforeDestroy()."},{"title":"Service Patterns","path":"/Documentation/Architecture/Service-Patterns","text":"Why Services are never cascaded."},{"title":"Refreshing Component Data","path":"/Documentation/Architecture/Refreshing-Component-Data","text":"Reconcile lists instead of rebuilding."}];
+            const grid = await slice.build('Grid', {
+               columns: items.length === 4 ? 2 : Math.min(3, Math.max(1, items.length)),
+               rows: 1,
+               gap: '14px'
+            });
+            for (const item of items) {
+               const card = await slice.build('Card', {
+                  title: item.title,
+                  text: item.text || '',
+                  icon: { name: 'arrow-right', iconStyle: 'outlined' },
+                  interactive: true,
+                  onClick: () => {
+                     if (/^https?:/i.test(item.path)) {
+                        window.open(item.path, '_blank', 'noopener,noreferrer');
+                     } else {
+                        slice.router.navigate(item.path);
+                     }
+                  }
+               });
+               if (card && grid) await grid.setItem(card);
+            }
+            if (grid) container.appendChild(grid);
+         }
+      }
   }
 
   async update() {
@@ -99,7 +155,51 @@ export default class CommonGotchasDocumentation extends HTMLElement {
   }
 
   beforeDestroy() {
-    // Cleanup timers, listeners, or pending work here
+    if (this._contentClick) {
+      this.removeEventListener('click', this._contentClick);
+      this._contentClick = null;
+    }
+  }
+
+  // Internal markdown links are plain anchors with data-route. One delegated
+  // handler keeps them inside the SPA, including "/page#section" links, without
+  // building a component for every link on the page.
+  setupRouterLinks() {
+    this._contentClick = (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return;
+      }
+      const target = event.target instanceof Element ? event.target : null;
+      const anchor = target?.closest?.('a[data-route]');
+      if (!anchor) return;
+
+      const href = anchor.getAttribute('href') || '';
+      if (href.startsWith('#')) {
+        event.preventDefault();
+        this.scrollToHash(href.slice(1));
+        return;
+      }
+      if (!href.startsWith('/') || href.startsWith('//')) return;
+
+      event.preventDefault();
+      const hashIndex = href.indexOf('#');
+      const path = hashIndex === -1 ? href : href.slice(0, hashIndex);
+      const hash = hashIndex === -1 ? '' : href.slice(hashIndex + 1);
+      Promise.resolve(slice.router.navigate(path)).then(() => {
+        if (hash) requestAnimationFrame(() => this.scrollToHash(hash));
+      });
+    };
+    this.addEventListener('click', this._contentClick);
+  }
+
+  scrollToHash(hash) {
+    let id = hash;
+    try {
+      id = decodeURIComponent(hash);
+    } catch {
+      id = hash;
+    }
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   async setupCopyButton() {

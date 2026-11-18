@@ -1,58 +1,57 @@
 <div class="documentation-content deploymentdocumentation">
 
+<div class="doc-page-meta">
+  <div class="doc-breadcrumb" data-block-id="doc-block-1"></div>
+  <span class="doc-reading-time">9 min read</span>
+</div>
+
 <div class="doc-title-bar">
   <h1 id="deployment">
     <span class="doc-title-text">Deployment</span>
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
+<p class="doc-lede">Host a Slice app with Express (slice start) or as a static site (slice export), including GitHub Pages, Vercel, nginx and S3.</p>
 <h2 id="overview">Overview</h2>
 <p>A Slice app can be served in two ways:</p>
-<div class="table-block" data-block-id="doc-block-1"></div>
+<div class="table-block" data-block-id="doc-block-2"></div>
 <p>Both start from the same production build. <code>slice build</code> compiles the app into <code>dist/</code>; <code>slice export</code> reads that build and writes a flattened, host-ready copy to <code>dist-static/</code>.</p>
 <p>Use <strong>Express</strong> when you need server middleware, <code>/api/*</code> routes, server-side headers, or a long-running Node process. Use <strong>static</strong> when the app is entirely client-side and you want Cloudflare Pages, Netlify, Vercel, nginx, GitHub Pages or S3 + CloudFront.</p>
-<div class="callout callout-tip">The export is <strong>root-only</strong>. Serve it at the root of a domain
-(<code>https://example.com/</code>) or a subdomain (<code>https://app.example.com/</code>). Subpath
-hosting (<code>https://user.github.io/repo/</code>) is not supported.</div>
+<div class="callout-block" data-block-id="doc-block-3"></div>
 <h2 id="build-once-deploy-twice">Build once, deploy twice</h2>
-<div class="code-block" data-block-id="doc-block-2"></div>
+<div class="code-block" data-block-id="doc-block-4"></div>
 <p><code>dist/</code> is the Express/serverless layout:</p>
-<div class="code-block" data-block-id="doc-block-3"></div>
+<div class="code-block" data-block-id="doc-block-5"></div>
 <p><code>slice export</code> flattens <code>dist/public/*</code> to the root, creates <code>index.html</code> and <code>404.html</code>, prerenders routes when SEO is configured, copies the env pair, and writes host rules. <code>dist-static/</code> is the folder you upload.</p>
-<p>Why not a single <code>dist</code>? <code>dist/</code> must keep the shape Express serves (<code>App/</code> at <code>/App</code>, <code>public/</code> at <code>/</code>, explicit root files). A static host needs a different shape (<code>public/*</code> at <code>/</code>, root <code>index.html</code>, <code>404.html</code>). Keeping the artifacts separate makes the upload boundary explicit and avoids breaking <code>slice start</code>. See [Static export](#static-export) below.</p>
+<p>Why not a single <code>dist</code>? <code>dist/</code> must keep the shape Express serves (<code>App/</code> at <code>/App</code>, <code>public/</code> at <code>/</code>, explicit root files). A static host needs a different shape (<code>public/*</code> at <code>/</code>, root <code>index.html</code>, <code>404.html</code>). Keeping the artifacts separate makes the upload boundary explicit and avoids breaking <code>slice start</code>. See <a href="#static-export">Static export</a> below.</p>
 <p>New projects get <code>dist-static/</code> in <code>.gitignore</code>. If your project predates the export command, add it yourself.</p>
 <h2 id="express-hosting">Express hosting</h2>
-<div class="code-block" data-block-id="doc-block-4"></div>
+<div class="code-block" data-block-id="doc-block-6"></div>
 <p><code>slice start</code>:</p>
-<ul><li>requires <code>src/</code> and <code>api/</code> (the server entrypoint lives in <code>api/index.js</code>),</li><li>serves <code>dist/</code> in production,</li><li>runs <code>slice build</code> automatically if <code>dist/</code> or</li></ul>
-<p><code>dist/bundles/bundle.config.json</code> is missing,</p>
-<ul><li>resolves the port as <code>--port</code> → <code>sliceConfig.server.port</code> → <code>3000</code>; if that</li></ul>
-<p>port is busy it tries <code>port + 1</code>,</p>
-<ul><li>keeps <code>slice dev</code> for development (<code>src/</code>, HMR).</li></ul>
+<ul><li>requires <code>src/</code> and <code>api/</code> (the server entrypoint lives in <code>api/index.js</code>),</li><li>serves <code>dist/</code> in production,</li><li>runs <code>slice build</code> automatically if <code>dist/</code> or <code>dist/bundles/bundle.config.json</code> is missing,</li><li>resolves the port as <code>--port</code> → <code>sliceConfig.server.port</code> → <code>3000</code>; if that port is busy it tries <code>port + 1</code>,</li><li>keeps <code>slice dev</code> for development (<code>src/</code>, HMR).</li></ul>
 <p>Production exposes only:</p>
 <ul><li><code>dist/public/*</code> at <code>/</code> (Themes, Styles, images, PWA),</li><li><code>/App/*</code>,</li><li><code>/routes.js</code> and <code>/sliceConfig.json</code>,</li><li><code>/bundles/*</code> and the legacy <code>/dist/bundles/*</code> mirror,</li><li><code>/Slice/Slice.js</code>,</li><li><code>/slice-env.json</code> and <code>/slice-env.generated.js</code>,</li><li><code>/service-worker.js</code> and <code>/manifest.json</code>,</li><li>translator dictionaries under their configured folder.</li></ul>
-<p>It does <strong>not</strong> expose <code>/Components</code>, the rest of the <code>/dist</code> tree, <code>.map</code>, <code>.d.ts</code>, <code>.env</code>, <code>package.json</code> or <code>node_modules</code>. A real <code>404</code> requires SEO; see [SEO and Share Cards](/Documentation/Architecture/SEO). Without SEO the fallback returns the shell with <code>200</code> (a soft 404).</p>
+<p>It does <strong>not</strong> expose <code>/Components</code>, the rest of the <code>/dist</code> tree, <code>.map</code>, <code>.d.ts</code>, <code>.env</code>, <code>package.json</code> or <code>node_modules</code>. A real <code>404</code> requires SEO; see <a href="/Documentation/Architecture/SEO" data-route>SEO and Share Cards</a>. Without SEO the fallback returns the shell with <code>200</code> (a soft 404).</p>
+<div class="callout-block" data-block-id="doc-block-7"></div>
 <h2 id="static-export">Static export</h2>
-<div class="callout callout-warning"><code>slice export</code> is <strong>experimental</strong>. The output layout, flags and host presets
-may change between releases; <code>slice start</code> remains the stable Express path.</div>
-<div class="code-block" data-block-id="doc-block-5"></div>
+<div class="callout-block" data-block-id="doc-block-8"></div>
+<div class="code-block" data-block-id="doc-block-9"></div>
 <p>Or let the exporter build first:</p>
-<div class="code-block" data-block-id="doc-block-6"></div>
+<div class="code-block" data-block-id="doc-block-10"></div>
 <p><code>--from-dist</code> is useful in CI when the build already ran and was cached.</p>
 <h3 id="output">Output</h3>
-<div class="code-block" data-block-id="doc-block-7"></div>
+<div class="code-block" data-block-id="doc-block-11"></div>
 <p><code>Components/</code> is pruned by default: every component used at runtime is in a bundle, and Express production also 404s <code>/Components</code>. <code>--keep-components</code> is a debugging escape and the CLI warns that component source becomes fetchable.</p>
 <p>The export is an allowlist. It never publishes <code>utils/</code>, <code>AppConfig.js</code>, generated <code>.d.ts</code>, <code>.map</code>, <code>.map.br</code>, <code>.map.gz</code>, <code>.env*</code>, <code>package.json</code>, lockfiles, <code>node_modules</code> or <code>.git</code>. If a file is not in the allowlist, it is not uploaded.</p>
 <p><code>slice-events.generated.js</code> is the exception: the event debugger dynamically imports it, so it is published only when <code>events.ui.enabled</code> is true. With the debugger UI off, neither <code>slice export</code> nor <code>slice start</code> serves it.</p>
 <p>If <code>translator.path</code> is not <code>/locales</code> (for example <code>/i18n</code>), the export copies that folder at the configured path. If <code>src/public</code> contains a host rule file the selected preset writes (<code>_headers</code>, <code>_redirects</code>, <code>vercel.json</code> or <code>nginx.conf</code>), the export stops instead of silently replacing your CSP or redirects; merge those rules into the generated file or move them out of <code>public/</code>.</p>
 <h3 id="options">Options</h3>
-<div class="table-block" data-block-id="doc-block-8"></div>
+<div class="table-block" data-block-id="doc-block-12"></div>
 <h3 id="404-and-redirects">404 and redirects</h3>
 <p>With SEO:</p>
-<ul><li>every literal route is prerendered to <code>&lt;route&gt;/index.html</code>,</li><li><code>404.html</code> is a real not-found page with <code>noindex</code>,</li><li>there is no catch-all, so unknown routes get a real 404,</li><li>locale redirects are written as host rules (<code>_redirects</code>, <code>vercel.json</code>,</li></ul>
-<p>nginx <code>location</code>) or as portable HTML <code>meta refresh</code> pages for hosts without   server rules (GitHub Pages, S3, <code>--host none</code>).</p>
+<ul><li>every literal route is prerendered to <code>&lt;route&gt;/index.html</code>,</li><li><code>404.html</code> is a real not-found page with <code>noindex</code>,</li><li>there is no catch-all, so unknown routes get a real 404,</li><li>locale redirects are written as host rules (<code>_redirects</code>, <code>vercel.json</code>, nginx <code>location</code>) or as portable HTML <code>meta refresh</code> pages for hosts without server rules (GitHub Pages, S3, <code>--host none</code>).</li></ul>
 <p><code>--spa</code> restores the client-router fallback, but the mechanics depend on the host:</p>
-<div class="table-block" data-block-id="doc-block-9"></div>
+<div class="table-block" data-block-id="doc-block-13"></div>
 <p>Use <code>--spa</code> only when the router must handle deep links that were not prerendered.</p>
 <p>Without SEO the shell is the only page and the SPA fallback is on by default.</p>
 <h3 id="dynamic-routes">Dynamic routes</h3>
@@ -61,74 +60,64 @@ may change between releases; <code>slice start</code> remains the stable Express
 <p>``<code>json    {      "routes": {        "/projects/${slug}": {          "sitemap": { "paths": ["alpha", "beta"] }        }      }    }    </code>``</p>
 <ol><li>Pass <code>--spa</code> and let the client router resolve the route.</li></ol>
 <h2 id="backend-routes-api">Backend routes (<code>/api</code>)</h2>
-<p>A static export is just files: **there is no Express and no <code>/api/*</code>**. Do not point <code>/api</code> at the SPA fallback; it returns HTML, not JSON.</p>
+<p>A static export is just files: <strong>there is no Express and no <code>/api/*</code></strong>. Do not point <code>/api</code> at the SPA fallback; it returns HTML, not JSON.</p>
 <p>If the app needs backend routes, use the Express server that ships with Slice:</p>
-<div class="code-block" data-block-id="doc-block-10"></div>
+<div class="code-block" data-block-id="doc-block-14"></div>
 <p>Add your routes in <code>api/index.js</code>, before <code>start()</code> mounts the terminal fallback:</p>
-<div class="code-block" data-block-id="doc-block-11"></div>
+<div class="code-block" data-block-id="doc-block-15"></div>
 <p>Deploy it on a Node host (Render, Fly, Railway, a VPS, Docker, or a serverless adapter). A serverless adapter that imports the app instead of running it should mount <code>sliceFallback()</code> and <code>sliceErrorHandler()</code> by hand, as Conclave does.</p>
 <p>The static and Express modes are not mutually exclusive: you can keep the frontend static and call a separate API origin with <code>SLICE_PUBLIC_API_URL</code>.</p>
 <h2 id="service-worker">Service worker</h2>
 <p><code>service-worker.js</code> is app-owned: Slice serves it and copies it into the build, but it does not generate the caching policy. For a static export:</p>
-<ul><li>every <code>PRECACHE</code> path must exist in <code>dist-static/</code>;</li><li>do not precache <code>/Components/...</code> (the exporter prunes it by default);</li><li>bump the cache name on every deploy, or use <code>--hash-filenames</code>;</li><li>if you want a new worker to take over immediately, call <code>skipWaiting()</code> in</li></ul>
-<p><code>install</code> and <code>clients.claim()</code> in <code>activate</code> (the PWA guide shows the   pattern);</p>
-<ul><li>do not cache <code>/api/*</code> responses in a static export, because there is no API.</li></ul>
-<p>See [Make Your App a PWA](/Documentation/Configuration/PWA) for the full worker example.</p>
+<ul><li>every <code>PRECACHE</code> path must exist in <code>dist-static/</code>;</li><li>do not precache <code>/Components/...</code> (the exporter prunes it by default);</li><li>bump the cache name on every deploy, or use <code>--hash-filenames</code>;</li><li>if you want a new worker to take over immediately, call <code>skipWaiting()</code> in <code>install</code> and <code>clients.claim()</code> in <code>activate</code> (the PWA guide shows the pattern);</li><li>do not cache <code>/api/*</code> responses in a static export, because there is no API.</li></ul>
+<p>See <a href="/Documentation/Configuration/PWA" data-route>Make Your App a PWA</a> for the full worker example.</p>
 <h2 id="preview-locally">Preview locally</h2>
-<div class="code-block" data-block-id="doc-block-12"></div>
+<div class="code-block" data-block-id="doc-block-16"></div>
 <p>This respects <code>404.html</code> and the prerendered route files. Do <strong>not</strong> use <code>npx serve -s</code> to validate the 404: the <code>-s</code> flag forces an SPA fallback and hides the real <code>404.html</code>. Use <code>npx serve -s</code> only when you intentionally want to test <code>--spa</code> behavior.</p>
 <p><code>slice start</code> serves <code>dist/</code>, not <code>dist-static/</code>; there is no built-in static preview command.</p>
 <h2 id="host-matrix">Host matrix</h2>
 <h3 id="cloudflare-pages-netlify">Cloudflare Pages / Netlify</h3>
-<div class="code-block" data-block-id="doc-block-13"></div>
+<div class="code-block" data-block-id="doc-block-17"></div>
 <p>Upload <code>dist-static/</code>. The exporter writes <code>_redirects</code> and <code>_headers</code>:</p>
 <ul><li>locale redirects,</li><li>security headers,</li><li><code>Cache-Control: no-store</code> for <code>/bundles/*</code> and the env pair.</li></ul>
 <p>Cloudflare Pages has no SPA catch-all in <code>_redirects</code>: it rejects <code>/* /index.html 200</code> as an infinite loop, and <code>/* / 200</code> intercepts assets. <code>--spa</code> therefore <strong>omits <code>404.html</code></strong>, which enables Cloudflare's automatic SPA mode. If you need a real 404, do not use <code>--spa</code>.</p>
 <p>Netlify uses the same files plus <code>/*  /index.html  200</code> when <code>--spa</code> is used.</p>
 <h3 id="vercel">Vercel</h3>
-<div class="code-block" data-block-id="doc-block-14"></div>
+<div class="code-block" data-block-id="doc-block-18"></div>
 <p>Upload <code>dist-static/</code> and let Vercel read <code>vercel.json</code> (redirects, optional rewrite, cache headers). Set the project output directory to <code>dist-static</code> if you deploy from a Git repository.</p>
 <p>Locale redirects use <code>statusCode: 301|302</code>; Vercel's <code>permanent</code> boolean maps to <strong>308/307</strong>, not 301/302. The <code>/(.*)</code> rewrite only applies when there is no file at the requested path, so bundles and assets are served normally.</p>
 <p><code>vercel.json</code> also carries the three security headers (<code>X-Content-Type-Options</code>, <code>X-Frame-Options</code>, <code>Referrer-Policy</code>) and <code>Cache-Control: no-store</code> for bundles and the env pair.</p>
 <h3 id="nginx">nginx</h3>
-<div class="code-block" data-block-id="doc-block-15"></div>
+<div class="code-block" data-block-id="doc-block-19"></div>
 <p>Copy <code>dist-static/</code> to the server and include <code>nginx.conf</code> (or merge it into your site config). It maps <code>404</code> to <code>/404.html</code>, sets <code>no-store</code> on bundles and env files, and adds the three security headers with <code>always</code> (so 404 responses keep them).</p>
 <h3 id="github-pages">GitHub Pages</h3>
 <p>Root-only. Two supported shapes:</p>
-<div class="table-block" data-block-id="doc-block-16"></div>
-<div class="code-block" data-block-id="doc-block-17"></div>
+<div class="table-block" data-block-id="doc-block-20"></div>
+<div class="code-block" data-block-id="doc-block-21"></div>
 <p>Publish <code>dist-static/</code> to the <code>gh-pages</code> branch (or <code>/docs</code>) and configure the custom domain in <strong>Settings → Pages</strong>. <code>.nojekyll</code> is written automatically.</p>
 <p>GitHub Pages has no server redirects and no custom headers. Locale redirects become HTML <code>meta refresh</code> pages; there is no CSP/HSTS control. If the app depends on <code>/api/*</code>, GitHub Pages is not enough: use a separate backend or a host with functions.</p>
 <p><code>--spa</code> on GitHub writes the shell as <code>404.html</code>, so unknown routes render the app but GitHub still returns <code>404</code>. A <code>200</code> fallback is not possible on Pages.</p>
 <h3 id="s3-cloudfront">S3 + CloudFront</h3>
-<div class="code-block" data-block-id="doc-block-18"></div>
+<div class="code-block" data-block-id="doc-block-22"></div>
 <p>Upload <code>dist-static/</code> with <code>index.html</code> as the default root document and <code>404.html</code> as the error document. Locale redirects become HTML redirect pages. <code>--spa</code> writes the shell as <code>404.html</code> (soft 404, status 404). For a true <code>200</code> fallback, use a CloudFront function to rewrite navigation requests to <code>/index.html</code>; <code>CustomErrorResponses</code> alone keeps the 404 status.</p>
 <h3 id="-host-none"><code>--host none</code></h3>
 <p>No host rules. The folder is portable: <code>index.html</code>, prerendered routes, <code>404.html</code>, env files and client redirect pages. Use it for a custom server or a host the exporter does not model.</p>
 <h2 id="validate-before-upload">Validate before upload</h2>
-<div class="code-block" data-block-id="doc-block-19"></div>
+<div class="code-block" data-block-id="doc-block-23"></div>
 <p><code>--check</code> writes nothing and fails when:</p>
-<ul><li>a required runtime file is missing (<code>index.html</code>, <code>404.html</code>, <code>routes.js</code>,</li></ul>
-<p><code>sliceConfig.json</code>, the env pair, <code>bundles/bundle.config.json</code>,   <code>Slice/Slice.js</code>),</p>
-<ul><li><code>Components/</code> is present without <code>--keep-components</code>,</li><li><code>public/</code> was not flattened,</li><li><code>utils/</code>, <code>src/</code>, <code>api/</code>, <code>node_modules/</code>, <code>.git/</code>, <code>AppConfig.js</code> or a</li></ul>
-<p>generated <code>.d.ts</code> is present,</p>
-<ul><li>any <code>.map</code>, <code>.map.br</code>, <code>.map.gz</code>, <code>.d.ts</code>, <code>.env*</code>, <code>package.json</code>, lockfile,</li></ul>
-<p><code>node_modules</code> or <code>.git</code> is present,</p>
-<ul><li>an exported <code>.js</code> contains <code>sourceMappingURL=</code>,</li><li>host rules are incoherent (<code>_redirects</code> without <code>_headers</code>, invalid</li></ul>
-<p><code>vercel.json</code>, nginx without <code>error_page 404 /404.html</code>, explicit GitHub host   without <code>.nojekyll</code>),</p>
-<ul><li>a literal route has no prerendered page and the export has no SPA fallback.</li></ul>
+<ul><li>a required runtime file is missing (<code>index.html</code>, <code>404.html</code>, <code>routes.js</code>, <code>sliceConfig.json</code>, the env pair, <code>bundles/bundle.config.json</code>, <code>Slice/Slice.js</code>),</li><li><code>Components/</code> is present without <code>--keep-components</code>,</li><li><code>public/</code> was not flattened,</li><li><code>utils/</code>, <code>src/</code>, <code>api/</code>, <code>node_modules/</code>, <code>.git/</code>, <code>AppConfig.js</code> or a generated <code>.d.ts</code> is present,</li><li>any <code>.map</code>, <code>.map.br</code>, <code>.map.gz</code>, <code>.d.ts</code>, <code>.env*</code>, <code>package.json</code>, lockfile, <code>node_modules</code> or <code>.git</code> is present,</li><li>an exported <code>.js</code> contains <code>sourceMappingURL=</code>,</li><li>host rules are incoherent (<code>_redirects</code> without <code>_headers</code>, invalid <code>vercel.json</code>, nginx without <code>error_page 404 /404.html</code>, explicit GitHub host without <code>.nojekyll</code>),</li><li>a literal route has no prerendered page and the export has no SPA fallback.</li></ul>
 <p><code>--check</code> does <strong>not</strong> enumerate <code>${param}</code> routes or verify every referenced asset. It warns when a bundle calls <code>fetch("/api/...")</code>, because a static host cannot serve Express routes.</p>
 <p>Run it in CI before uploading:</p>
-<div class="code-block" data-block-id="doc-block-20"></div>
+<div class="code-block" data-block-id="doc-block-24"></div>
 <h2 id="environment-variables">Environment variables</h2>
 <p><code>slice build</code> writes <code>dist/slice-env.json</code> and <code>dist/slice-env.generated.js</code>. The runtime imports the shim, so there is no production env endpoint. Values are frozen at build time: rebuild after changing <code>.env</code> or <code>SLICE_PUBLIC_*</code>.</p>
-<p>Only <code>SLICE_PUBLIC_*</code> keys reach the browser. See [Environment Variables](/Documentation/Configuration/environment-variables).</p>
+<p>Only <code>SLICE_PUBLIC_*</code> keys reach the browser. See <a href="/Documentation/Configuration/environment-variables" data-route>Environment Variables</a>.</p>
 <h2 id="what-is-public">What is public</h2>
 <p>These files are served by design and must not contain secrets:</p>
-<div class="table-block" data-block-id="doc-block-21"></div>
+<div class="table-block" data-block-id="doc-block-25"></div>
 <p>Everything else is either in a bundle or pruned.</p>
 <h2 id="troubleshooting">Troubleshooting</h2>
-<div class="table-block" data-block-id="doc-block-22"></div>
+<div class="table-block" data-block-id="doc-block-26"></div>
 <h2 id="related-docs">Related docs</h2>
-<ul><li>[CLI Commands](/Documentation/CLI) — <code>build</code>, <code>start</code>, <code>export</code>.</li><li>[Environment Variables](/Documentation/Configuration/environment-variables).</li><li>[Project Anatomy](/Documentation/Project-Anatomy).</li><li>[Server Entrypoint](/Documentation/Architecture/Server-Entrypoint).</li></ul>
+<ul><li><a href="/Documentation/CLI" data-route>CLI Commands</a> — <code>build</code>, <code>start</code>, <code>export</code>.</li><li><a href="/Documentation/Configuration/environment-variables" data-route>Environment Variables</a>.</li><li><a href="/Documentation/Project-Anatomy" data-route>Project Anatomy</a>.</li><li><a href="/Documentation/Architecture/Server-Entrypoint" data-route>Server Entrypoint</a>.</li></ul>
 </div>

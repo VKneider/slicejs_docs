@@ -61,9 +61,15 @@ const themeSelector = await slice.build('ThemeSelector');
       const treeviewItems = createTreeViewItems(routesConfig);
       const treeview = await slice.build('TreeView', {
          items: treeviewItems,
-         onClick: async (item) => {
-            if (item.path) {
-               await slice.router.navigate(item.path);
+         activePath: slice.path,
+         navigate: true,
+         followRoute: true,
+         stateKey: 'docs-nav',
+         size: 'sm',
+         indicator: 'tint',
+         ariaLabel: 'Documentation',
+         onClick: async (row) => {
+            if (row?.path) {
                window.scrollTo({ top: 0, behavior: 'smooth' });
                if (typeof mainMenu.handleCloseMenu === 'function') {
                   mainMenu.handleCloseMenu();

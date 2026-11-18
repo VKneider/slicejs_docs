@@ -1,36 +1,44 @@
 <div class="documentation-content servicepatternsdocumentation">
 
+<div class="doc-page-meta">
+  <div class="doc-breadcrumb" data-block-id="doc-block-1"></div>
+  <span class="doc-reading-time">3 min read</span>
+</div>
+
 <div class="doc-title-bar">
   <h1 id="service-patterns">
     <span class="doc-title-text">Service Patterns</span>
+    <span class="doc-status" data-block-id="doc-block-2"></span>
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
+<p class="doc-lede">Where state and logic should live in a Slice app — instance fields, plain helpers, singleton services, providers — and how cleanup actually works.</p>
 <p>Where state and shared logic live decides whether your app leaks. One rule, a decision table, and the cleanup contract.</p>
 <h2 id="the-one-rule">The one rule</h2>
-<p>&gt; <strong>Anything built with <code>slice.build(...)</code> is registered and must be cleaned up. Plain instance fields and plain objects are not — the GC frees them with their owner.</strong></p>
-<p><code>slice.build</code> keeps a strong reference in <code>slice.controller.activeComponents</code> until you <code>destroyComponent</code> it. A value on <code>this</code> (<code>new MyClass()</code>, an array) is freed automatically. So ask: *does this need to be registered (shared / discoverable), or not?*</p>
+<blockquote><p><strong>Anything built with <code>slice.build(...)</code> is registered and must be cleaned up. Plain instance fields and plain objects are not — the GC frees them with their owner.</strong></p></blockquote>
+<p><code>slice.build</code> keeps a strong reference in <code>slice.controller.activeComponents</code> until you <code>destroyComponent</code> it. A value on <code>this</code> (<code>new MyClass()</code>, an array) is freed automatically. So ask: <em>does this need to be registered (shared / discoverable), or not?</em></p>
 <h2 id="where-should-it-live">Where should it live?</h2>
-<div class="table-block" data-block-id="doc-block-1"></div>
+<div class="table-block" data-block-id="doc-block-3"></div>
 <h2 id="instance-state-plain-fields">Instance state → plain fields</h2>
-<div class="code-block" data-block-id="doc-block-2"></div>
+<div class="code-block" data-block-id="doc-block-4"></div>
 <p>Big state logic → wrap in a <strong>plain class</strong> and <code>new</code> it (still no registration, still GC'd):</p>
-<div class="code-block" data-block-id="doc-block-3"></div>
+<div class="code-block" data-block-id="doc-block-5"></div>
 <h2 id="app-wide-singletons-a-composition-root">App-wide singletons → a composition root</h2>
 <p>Build app-wide singletons in <strong>one place</strong> — a Service (e.g. <code>AppServices</code> / <code>Providers</code>) whose <code>init()</code> builds the rest and seeds context. Everywhere else, <strong>recover</strong> with <code>slice.getComponent(name)</code>.</p>
-<div class="code-block" data-block-id="doc-block-4"></div>
-<div class="code-block" data-block-id="doc-block-5"></div>
-<div class="callout callout-tip"><strong>Default: build once + <code>getComponent</code></strong> — one owner creates, consumers only read. Use <strong><code>slice.build('X', { singleton: true })</code></strong> (Service only — get-or-create) when a service can be built from <strong>more than one entry point</strong> (e.g. an <code>AuthService</code> needed by both the composition root and a standalone <code>/login</code> route): it returns the shared instance with no <code>getComponent(x) || build(x)</code> guard and no duplicate-<code>sliceId</code> race. <code>props</code> apply only on the first (creating) call.</div>
-<div class="callout callout-warning"><code>slice.build</code> <strong>awaits the component's <code>init()</code></strong> — building a service already ran it. Calling <code>init()</code> again runs it twice (and re-building a child with the same <code>sliceId</code> throws "already registered"). Make <code>init()</code> idempotent: <code>if (this._ready) return this;</code>.</div>
+<div class="code-block" data-block-id="doc-block-6"></div>
+<div class="code-block" data-block-id="doc-block-7"></div>
+<div class="callout-block" data-block-id="doc-block-8"></div>
+<div class="callout-block" data-block-id="doc-block-9"></div>
 <p>App-lifetime singletons are never destroyed, so there is nothing to clean up.</p>
 <h2 id="global-ui-a-provider-service">Global UI → a Provider Service</h2>
 <p><code>singleton: true</code> works only for Services, because a DOM node lives in <strong>one place at a time</strong> — a shared Visual would teleport between mount points. So "one global widget" means "a <strong>Provider Service</strong> that owns the Visual." That is how <code>ToastProvider</code> / <code>ToolTipProvider</code> work: the provider is the singleton; the toasts/tooltips it creates are ephemeral.</p>
 <h2 id="cleanup">Cleanup</h2>
-<p>&gt; <strong><code>destroyComponent(parent)</code> cascades to nested Visual children, but NOT to Services. Destroy any Service you built by hand, in <code>beforeDestroy()</code>.</strong></p>
-<p>A Service has no DOM node, so nothing can discover it — not the parent cascade, not <code>destroyByContainer</code>. Same for a Visual child appended *after* <code>init()</code> (too late to be linked).</p>
-<div class="code-block" data-block-id="doc-block-6"></div>
+<blockquote><p><strong><code>destroyComponent(parent)</code> cascades to nested Visual children, but NOT to Services. Destroy any Service you built by hand, in <code>beforeDestroy()</code>.</strong></p></blockquote>
+<p>A Service has no DOM node, so nothing can discover it — not the parent cascade, not <code>destroyByContainer</code>. Same for a Visual child appended <em>after</em> <code>init()</code> (too late to be linked).</p>
+<div class="code-block" data-block-id="doc-block-10"></div>
 <p>To tear down a region: <strong><code>slice.controller.destroyByContainer(node)</code></strong> (destroys every Visual inside a DOM subtree) <strong>then</strong> clear. <code>innerHTML = ''</code> alone skips <code>beforeDestroy</code> and leaks.</p>
-<div class="callout callout-warning">Tearing a subtree down with <code>innerHTML = ''</code> does <strong>not</strong> run <code>beforeDestroy</code> and does <strong>not</strong> unregister anything — listeners stay bound and registry entries leak. Always <code>destroyByContainer(node)</code> <strong>then</strong> clear.</div>
+<div class="callout-block" data-block-id="doc-block-11"></div>
 <h2 id="anti-patterns">Anti-patterns</h2>
-<ul><li>❌ A stateful per-instance Service via <code>slice.build</code> relied on to auto-clean — it won't. Destroy it explicitly, or (if it is pure per-instance state) use a plain <code>new</code>.</li><li>❌ Scattering <code>build({ singleton: true })</code> across call sites for an app-wide service — centralize it in the composition root and <code>getComponent</code> it.</li><li>❌ Storing service instances or functions in <code>slice.context</code> — keep only serializable state (and note <code>setState</code> <strong>replaces</strong> the value, it does not merge).</li><li>❌ Declaring <code>id</code>, <code>sliceId</code>, or <code>singleton</code> in <code>static props</code> — reserved build directives, consumed by <code>build</code> before your setters run. See [Reserved build keys](/Documentation/The-build-method).</li></ul>
+<ul><li>❌ A stateful per-instance Service via <code>slice.build</code> relied on to auto-clean — it won't. Destroy it explicitly, or (if it is pure per-instance state) use a plain <code>new</code>.</li><li>❌ Scattering <code>build({ singleton: true })</code> across call sites for an app-wide service — centralize it in the composition root and <code>getComponent</code> it.</li><li>❌ Storing service instances or functions in <code>slice.context</code> — keep only serializable state (and note <code>setState</code> <strong>replaces</strong> the value, it does not merge).</li><li>❌ Declaring <code>id</code>, <code>sliceId</code>, or <code>singleton</code> in <code>static props</code> — reserved build directives, consumed by <code>build</code> before your setters run. See <a href="/Documentation/The-build-method" data-route>Reserved build keys</a>.</li></ul>
+<div class="related-block" data-block-id="doc-block-12"></div>
 </div>

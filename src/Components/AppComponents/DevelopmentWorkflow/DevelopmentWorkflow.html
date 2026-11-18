@@ -1,37 +1,49 @@
 <div class="documentation-content developmentworkflow">
 
+<div class="doc-page-meta">
+  <div class="doc-breadcrumb" data-block-id="doc-block-1"></div>
+  <span class="doc-reading-time">3 min read</span>
+</div>
+
 <div class="doc-title-bar">
   <h1 id="the-development-loop">
     <span class="doc-title-text">The Development Loop</span>
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
-<h2 id="overview">Overview</h2>
-<p>Day-to-day Slice development is a short loop: run the dev server, create and edit components, register them, and iterate. When you are ready, build for production and serve the output.</p>
-<h2 id="the-three-commands">The three commands</h2>
-<div class="table-block" data-block-id="doc-block-1"></div>
-<div class="code-block" data-block-id="doc-block-2"></div>
-<p>These scripts are created by <code>slice init</code>; if your project uses pnpm, run them as <code>pnpm run dev</code>, <code>pnpm run build</code>, <code>pnpm run start</code> — they are identical.</p>
-<p>The dev port comes from <code>sliceConfig.json</code> (<code>server.port</code>, default <code>3001</code>) and falls back to the next free port if it is taken.</p>
-<p><code>slice dev</code> also regenerates the project documentation (AGENTS inventories, types and <code>docs/events/</code>) before it starts watching. <code>slice build</code> checks those generated files for projects that already have the scaffold. Run <code>npx slicejs-cli docs generate</code> (or <code>pnpm exec slice docs generate</code>) for a manual refresh and <code>... docs check</code> in CI; see [Documentation &amp; AGENTS.md](/Documentation/Documentation-System).</p>
-<h2 id="where-your-code-lives">Where your code lives</h2>
-<div class="table-block" data-block-id="doc-block-3"></div>
-<h2 id="creating-and-registering-components">Creating and registering components</h2>
+<p class="doc-lede">The day-to-day loop: start the dev server, edit, create components, run the fast checks, document, build and serve.</p>
+<p>Day-to-day Slice work is a short loop: start the dev server, change a component, see it reload, and run the fast checks before you build. The same loop applies to a new project and to one that has been running for months.</p>
+<h2 id="the-loop-at-a-glance">The loop at a glance</h2>
+<div class="table-block" data-block-id="doc-block-2"></div>
+<ol class="steps"><li>Start the dev server with <code>slice dev</code>.</li><li>Create or edit the component and let the dev server reload it.</li><li>Assign a prop, call a method, or use <code>update()</code> — do not rebuild for a prop change.</li><li>Run <code>slice doctor</code>, <code>slice lint</code> and <code>slice typecheck</code>.</li><li>Run <code>slice build</code>, then <code>slice start</code> to verify the production output.</li></ol>
+<h2 id="1-start-slice-dev">1. Start: <code>slice dev</code></h2>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<p><code>slice dev</code> serves the app from <code>src/</code> with hot reload. Changes to <code>.js</code>, <code>.html</code> and <code>.css</code> reload the page; changes to <code>sliceConfig.json</code> may need a restart. Before watching, it regenerates the project documentation (AGENTS inventory, declarations and <code>docs/events/</code>).</p>
+<ul><li><strong>Port:</strong> <code>server.port</code> in <code>sliceConfig.json</code>, or <code>slice dev -p 4000</code>. The default is <code>3000</code>; if it is taken, the CLI falls back to the next free port.</li><li><strong>Debug panels:</strong> <code>alt+shift+e</code> (events) and <code>alt+shift+c</code> (context) when <code>events.ui.enabled</code> / <code>context.ui.enabled</code> are on.</li><li><strong>Inspect props:</strong> right-click a component when <code>debugger.enabled</code> is on.</li></ul>
+<p>If you use <code>package.json</code> scripts, <code>pnpm run dev</code> / <code>npm run dev</code> are the same command pinned to the project's local CLI.</p>
+<h2 id="2-create-or-reuse-a-component">2. Create or reuse a component</h2>
 <div class="code-block" data-block-id="doc-block-4"></div>
-<p>Components must be listed in <code>src/Components/components.js</code> (name → category) to be loadable. <code>component:create</code> updates it for you. If you ever add or move component folders by hand, resync:</p>
+<p>Components must be listed in <code>src/Components/components.js</code> to be loadable. <code>component create</code> and <code>component list</code> update it for you:</p>
 <div class="code-block" data-block-id="doc-block-5"></div>
-<div class="callout callout-warning">A common cause of "component not found" / a <code>null</code> from <code>slice.build()</code> is a component missing
-from <code>components.js</code>. Run <code>npm run component:list</code> to fix it.</div>
-<h2 id="adding-registry-components">Adding registry components</h2>
+<p>To reuse something from the official registry:</p>
 <div class="code-block" data-block-id="doc-block-6"></div>
-<p>The starter ships only a small set of Visual components. Install the rest on demand so your project stays lean.</p>
-<h2 id="diagnostics-while-developing">Diagnostics while developing</h2>
-<ul><li>Enable the debug panels in <code>sliceConfig.json</code> and toggle them at runtime: <code>alt+shift+e</code></li></ul>
-<p>(events) and <code>alt+shift+c</code> (context).</p>
-<ul><li>Right-click a component (when <code>debugger.enabled</code>) to inspect and live-edit its props.</li><li>Use <code>slice doctor</code> when the project structure or config seems off.</li><li>Prefer <code>slice.logger.info / warn / error</code> over <code>console.log</code> — it respects the</li></ul>
-<p>configured levels and stays quiet in production.</p>
-<h2 id="production-build-briefly">Production build, briefly</h2>
-<p><code>npm run build</code> analyzes what your routes use, bundles and minifies into <code>/dist</code>, and copies <code>src/public/</code> to <code>dist/public</code> (the server serves it from the site root). The bundles, their route manifest and <code>bundle.config.json</code> live in <code>/dist/bundles</code>; the build never writes into <code>src/</code>. <code>npm run start</code> then serves <code>/dist</code>. Production mode disables dev-only runtime features (debug panels) for performance.</p>
-<div class="callout callout-tip">To import a vendored file in production, place it under <code>src/public/</code> (for example
-<code>src/public/libs/x.js</code>, imported as <code>/libs/x.js</code>) — npm packages (<code>import 'pkg'</code>) work everywhere.</div>
+<div class="callout-block" data-block-id="doc-block-7"></div>
+<p>The full flag list is in <a href="/Documentation/CLI" data-route>CLI Commands</a>.</p>
+<h2 id="3-check-before-you-build">3. Check before you build</h2>
+<div class="code-block" data-block-id="doc-block-8"></div>
+<ul><li><strong><code>slice doctor</code></strong> is the fast static check: config, component files, routes, prop definitions, imports, SEO and common lifecycle mistakes. It exits 0 with warnings and 1 on failures.</li><li><strong><code>slice lint</code></strong> runs ESLint with the shared Slice config.</li><li><strong><code>slice typecheck</code></strong> runs the project's own TypeScript against the generated declarations.</li></ul>
+<p>Doctor does not compile or bundle. It can prove the project is structurally sound; it cannot prove that esbuild resolves the whole graph. That is what <code>slice build</code> is for.</p>
+<div class="details-block" data-block-id="doc-block-9"></div>
+<h2 id="4-documentation-is-part-of-the-loop">4. Documentation is part of the loop</h2>
+<div class="code-block" data-block-id="doc-block-10"></div>
+<p><code>slice dev</code> regenerates before it starts watching, and <code>slice build</code> runs the drift check for a scaffolded project. Update the Markdown and the component <code>README.md</code> when behavior changes; see <a href="/Documentation/Documentation-System" data-route>Documentation &amp; AGENTS.md</a>.</p>
+<h2 id="5-build-and-serve">5. Build and serve</h2>
+<div class="code-block" data-block-id="doc-block-11"></div>
+<p><code>slice build</code> analyzes what the routes use, bundles and minifies into <code>dist/</code>, copies <code>src/public/</code> to <code>dist/public/</code>, checks the generated docs, and never writes into <code>src/</code>. <code>slice start</code> serves <code>dist/</code>; if the build is missing, it runs <code>slice build</code> first.</p>
+<div class="compare-block" data-block-id="doc-block-12"></div>
+<p>For a static host, <code>slice export</code> packages the build for <code>dist-static/</code> (experimental); see <a href="/Documentation/CLI" data-route>CLI Commands</a>.</p>
+<h2 id="where-your-code-lives">Where your code lives</h2>
+<div class="table-block" data-block-id="doc-block-13"></div>
+<h2 id="next-steps">Next steps</h2>
+<div class="related-block" data-block-id="doc-block-14"></div>
 </div>

@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { groupRank, sectionRank } from './navConfig.js';
 
 const escapeValue = (value) => {
   if (value === null || value === undefined) return '';
@@ -34,6 +35,7 @@ const normalizeFrontMatter = (frontMatter) => {
     group: frontMatter.group || '',
     order: Number(frontMatter.order) || 0,
     navLabel: frontMatter.navLabel || '',
+    component: frontMatter.component || '',
     tags
   };
 };
@@ -43,9 +45,16 @@ const buildDocsIndex = (entries) => {
     .map(normalizeFrontMatter)
     .filter((entry) => entry.title && entry.route)
     .sort((a, b) => {
+      // Follow the navigation IA, not the alphabet: the search panel's quick
+      // links take the first rows from this list.
+      const sectionDelta = sectionRank(a.section) - sectionRank(b.section);
+      if (sectionDelta !== 0) return sectionDelta;
       if (a.section !== b.section) return a.section.localeCompare(b.section);
+      const groupDelta = groupRank(a.section, a.group) - groupRank(b.section, b.group);
+      if (groupDelta !== 0) return groupDelta;
       if (a.group !== b.group) return a.group.localeCompare(b.group);
-      return a.order - b.order;
+      if (a.order !== b.order) return a.order - b.order;
+      return a.title.localeCompare(b.title);
     });
 
   const lines = [];
@@ -60,6 +69,7 @@ const buildDocsIndex = (entries) => {
     lines.push(`    group: '${escapeValue(entry.group)}',`);
     lines.push(`    order: ${entry.order},`);
     lines.push(`    navLabel: '${escapeValue(entry.navLabel)}',`);
+    lines.push(`    component: '${escapeValue(entry.component)}',`);
     lines.push(`    tags: [${tagsValue}]`);
     lines.push('  },');
   }

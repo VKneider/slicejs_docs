@@ -2,12 +2,12 @@
 title: EventManager
 route: /Documentation/Structural/EventManager
 navLabel: Events
-section: Getting Started
-group: Events
-order: 20
-description: Lightweight pub/sub for component and app events.
+section: State & Routing
+group: ''
+order: 30
+description: Lightweight pub/sub for component and app signals — not a state store.
 component: EventManagerDocumentation
-tags: [events, pubsub, lifecycle, cleanup]
+tags: [events, pubsub, lifecycle, cleanup, signals]
 ---
 
 # EventManager
@@ -17,14 +17,17 @@ EventManager provides a lightweight pub/sub system for Slice.js. It supports glo
 component-bound subscriptions with auto-cleanup, and one-time listeners. It is designed for
 cross-cutting signals and decoupled communication between components and services.
 
-## When to Use
-- App-level signals (app:ready, user:login, notification:show)
-- Decoupled UI updates (service emits, UI listens)
-- One-time bootstrap actions
+## Events vs Context
+Use an event when something **happened**; use Context when you need to know the **current state**.
 
-## When Not to Use
-- Shared, persistent state: use ContextManager instead
-- High-frequency real-time data: use dedicated data streams
+:::compare left="EventManager" right="ContextManager" leftTone="info" rightTone="accent"
+App-level signals (`app:ready`, `user:login`, `notification:show`), decoupled UI reactions, and one-time bootstrap actions. Emit and forget; there is no retained state.
+---
+Shared state that several components read and react to (`cart`, `session`, `filters`). `watch` / `setState` keep the value; components refresh when it changes.
+:::
+
+Pair them when both are true: keep the state in Context, and emit an event for a cross-domain side
+effect that is not a state change.
 
 ## Enable
 ```json
@@ -33,9 +36,7 @@ cross-cutting signals and decoupled communication between components and service
 }
 ```
 
-## Events UI (Optional)
-You can enable the EventManager debug panel with a keyboard shortcut.
-
+## Events UI (optional)
 ```json title="sliceConfig.json"
 {
   "events": {
@@ -53,10 +54,8 @@ You can enable the EventManager debug panel with a keyboard shortcut.
 - Subscriptions can be global or component-bound.
 - Component-bound subscriptions are auto-removed when the component is destroyed.
 
-:::tip
-Declare your events in the [Event Registry](/Documentation/Structural/EventRegistry) to get
-dev-time validation, typed `emit`/`subscribe`, and a documented graph of who emits and listens.
-:::
+Declare events with the [Event Registry](/Documentation/Structural/EventRegistry) to get dev-time
+validation, typed `emit`/`subscribe`, and a documented graph of who emits and who listens.
 
 ## Framework-emitted events
 Slice emits a few events itself; subscribe to them like any other:
@@ -69,12 +68,13 @@ Slice emits a few events itself; subscribe to them like any other:
 Both are **auto-declared** in the [Event Registry](/Documentation/Structural/EventRegistry) — you
 don't `register()` them, and subscribing works out of the box.
 
-:::warning
-This table assumes events are enabled. With `events.enabled: false`, `slice.events` is a no-op, so:
+:::details title="What happens when events are disabled?"
+With `events.enabled: false`, `slice.events` is a no-op:
+
 - `router:change` instead dispatches a `CustomEvent` on `window`
   (`window.addEventListener('router:change', e => e.detail)`) — see
   [Routing → Route Change Events](/Documentation/Routing).
-- the `context:<name>` signals aren't emitted at all, which means
+- the `context:<name>` signals are not emitted at all, so
   [`slice.context.watch()`/`bind()`](/Documentation/Structural/ContextManager) stop reacting to
   `setState` — context reactivity depends on EventManager being enabled.
 :::
@@ -95,6 +95,7 @@ This table assumes events are enabled. With `events.enabled: false`, `slice.even
 | `stopRecording` | `()` | Deactivate emit recording (called by debugger on close) |
 
 ## Usage Patterns
+
 ```javascript title="Component-bound subscription in init() (recommended)"
 export default class Navbar extends HTMLElement {
   constructor(props) {
@@ -136,15 +137,6 @@ export default class AppShell extends HTMLElement {
 }
 ```
 
-```javascript title="Global notification from a service"
-export default class NotificationService {
-  notify(message, type = "success") {
-    slice.events.emit("notification:show", { type, message });
-  }
-}
-```
-
-## Component Integration
 ```javascript title="Service emits, UI listens"
 export default class NotificationService {
   notify(message, type = "info") {
@@ -176,31 +168,21 @@ export default class Toasts extends HTMLElement {
 4. Use `subscribeOnce` for bootstrapping or single-run tasks.
 :::
 
-## Best Practices
-:::tip
-Use namespaced event names. Avoid generic names like `update` or `change`.
-:::
+## Guidelines
 
-:::tip
-Keep payloads small and serializable when possible.
-:::
-
-:::tip
-Prefer `bind()` for components. It prevents leaks by default.
-:::
-
-:::tip
-Use EventManager for signals, not for shared state. Pair with ContextManager when state must persist.
-:::
+| Do | Why |
+| --- | --- |
+| Namespace names (`cart:updated`, not `update`) | The namespace groups the catalog, the debugger and the generated types. |
+| Prefer `bind()` for components | The subscription is removed when the component is destroyed. |
+| Keep payloads small and serializable | Events are signals, not a data channel. |
+| Use the Event Registry for declared events | Dev validation, typed payloads and the static graph. |
+| Use Context for state that must persist | EventManager does not retain state; late subscribers miss what happened before. |
 
 ## Gotchas
-:::warning
-Clearing a container does not remove subscriptions. Use component-bound subscriptions or manual
-`unsubscribe` calls.
-:::
 
 :::warning
-Avoid using EventManager as a data store. It does not retain state.
+Clearing a container does **not** remove its subscriptions. Use `slice.events.bind(this)`,
+`{ component: this }`, or an explicit `unsubscribe`.
 :::
 
 ## Diagnostics
@@ -211,7 +193,6 @@ if (slice.events.hasSubscribers("cart:updated")) {
 ```
 
 ## Generated documentation
-
 `slice docs generate events` writes a committed event catalog under `docs/events/`: a summary
 index, one page per namespace, a Mermaid diagram and a self-contained HTML diagram. It uses the same
 static graph as the debugger Registry tab and excludes specs/tests/generated files. Run
@@ -219,20 +200,6 @@ static graph as the debugger Registry tab and excludes specs/tests/generated fil
 [Documentation & AGENTS.md](/Documentation/Documentation-System).
 
 ## Debugger panel
-Enable the EventManager UI to inspect subscriptions and recent emits in real time:
-
-```json title="sliceConfig.json"
-{
-  "events": {
-    "enabled": true,
-    "ui": {
-      "enabled": true,
-      "shortcut": "alt+shift+e"
-    }
-  }
-}
-```
-
 The panel has three tabs:
 
 - **Subscribers** — every event with its subscriber count, an **emit counter** (⚡), the
@@ -243,24 +210,18 @@ The panel has three tabs:
 - **History** — reverse-chronological feed of every `emit()` call with its origin and relative
   timestamps ("2s ago", "1m ago"). Use it to trace "who emitted what and when".
 
-Recording is **zero-overhead in production**: the emit log, counters, and emitter attribution
-are only active while the panel is open (`startRecording`/`stopRecording`).
+Recording is **zero-overhead in production**: the emit log, counters and emitter attribution are
+only active while the panel is open (`startRecording`/`stopRecording`).
 
 ## FAQ
-:::details title="Should I use EventManager for shared state?"
-No. Use ContextManager for shared state. EventManager is for ephemeral signals.
-:::
-
-:::details title="What happens if events are disabled?"
-Slice.js provides a no-op implementation so calls to `slice.events` are safe.
-:::
-
 :::details title="Do I need to unsubscribe manually?"
-Only if you are not using `bind()` or `options.component`. Component-bound subscriptions auto-clean.
+Only if the subscription is not component-bound. `slice.events.bind(this)` and
+`{ component: this }` auto-clean; a global `subscribe()` needs an `unsubscribe()`.
 :::
 
-:::details title="Can I debug event usage?"
-Open the EventManager debug panel (`alt+shift+e`). The **Subscribers** tab shows every event's
-listeners and emit count; the **History** tab shows a live feed of every `emit()` call. Recording
-is zero-overhead — it only activates while the panel is open.
+:::related
+- [Event Registry](/Documentation/Structural/EventRegistry) - Declare events, typed payloads and the static graph.
+- [ContextManager](/Documentation/Structural/ContextManager) - Shared state that persists.
+- [Context vs Events](/Documentation/Structural/Context-vs-Events) - The decision in one page.
+- [Routing](/Documentation/Routing) - `router:change` and route metadata.
 :::

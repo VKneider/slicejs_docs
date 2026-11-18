@@ -1,10 +1,496 @@
-/* Encapsulated under the custom element. */
+/* TreeView. Encapsulated under the element; colours from the theme tokens.
+
+   Every row is one flat element indented by its level (--tv-level, set by
+   TreeView.js). The guide lines are painted by the row itself: one line per
+   ancestor, lined up under that ancestor's chevron, so the lines run
+   unbroken down an open branch without any nesting in the DOM.
+
+   Sizes are implemented here, like the other components: the shared scale.css
+   is a shelved prototype no application loads. */
+
+slice-treeview {
+  --tv-indent: 18px;
+  --tv-font-size: 14px;
+  --tv-row-height: 34px;
+  --tv-toggle: 16px;
+  --tv-pad: 8px;
+  --tv-guide: color-mix(in srgb, var(--primary-color-shade, var(--primary-color)) 35%, transparent);
+  --tv-hover: color-mix(in srgb, var(--primary-color) 8%, transparent);
+  --tv-accent: var(--primary-color);
+
+  display: block;
+  font-family: var(--font-family);
+  font-size: var(--tv-font-size);
+  color: var(--font-primary-color);
+}
+
+slice-treeview[hidden] {
+  display: none;
+}
+
+slice-treeview[data-size='sm'] {
+  --tv-indent: 14px;
+  --tv-font-size: 13px;
+}
+
+slice-treeview[data-size='lg'] {
+  --tv-indent: 22px;
+  --tv-font-size: 15px;
+}
+
+/* -------------------------------------------------------------------- search */
+
+slice-treeview .slice_treeview_search {
+  position: relative;
+  margin-bottom: 8px;
+}
+
+slice-treeview .slice_treeview_search[hidden],
+slice-treeview .slice_treeview_empty[hidden] {
+  display: none;
+}
+
+slice-treeview .slice_treeview_search_input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 10px 8px 32px;
+  border: 1px solid var(--slice-border-raised, color-mix(in srgb, var(--font-primary-color) 18%, transparent));
+  border-radius: 8px;
+  background: var(--primary-background-color);
+  color: inherit;
+  font: inherit;
+}
+
+slice-treeview .slice_treeview_search_input:focus {
+  outline: 2px solid color-mix(in srgb, var(--primary-color) 55%, transparent);
+  outline-offset: 1px;
+}
+
+/* A drawn magnifier. */
+slice-treeview .slice_treeview_search_icon {
+  position: absolute;
+  top: 50%;
+  left: 11px;
+  width: 9px;
+  height: 9px;
+  margin-top: -6px;
+  border: 1.5px solid var(--font-secondary-color, currentColor);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+slice-treeview .slice_treeview_search_icon::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  bottom: -3px;
+  width: 1.5px;
+  height: 5px;
+  background: var(--font-secondary-color, currentColor);
+  transform: rotate(-45deg);
+}
+
+slice-treeview .slice_treeview_empty {
+  padding: 12px var(--tv-pad);
+  color: var(--font-secondary-color, currentColor);
+}
+
+/* ---------------------------------------------------------------------- tree */
 
 slice-treeview .simple_treeview {
-  font-family: var(--font-family);
   display: flex;
   flex-direction: column;
-  max-height: 100vh;
-  overflow-y: auto;
+  gap: 1px;
+  max-height: none;
   overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+slice-treeview.slice_treeview--virtual .simple_treeview {
+  display: block;
+  max-height: 400px;
+}
+
+slice-treeview .slice_treeview_spacer {
+  flex: none;
+}
+
+/* ---------------------------------------------------------------------- rows */
+
+slice-treeview .slice_treeview_row {
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex: none;
+  align-items: center;
+  width: 100%;
+  min-height: var(--tv-row-height);
+  padding-left: calc(var(--tv-pad) + var(--tv-level, 0) * var(--tv-indent));
+  border-radius: 8px;
+  color: inherit;
+  line-height: 1.3;
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+slice-treeview.slice_treeview--virtual .slice_treeview_row {
+  height: var(--tv-row-height);
+}
+
+/* One guide per ancestor, each under that ancestor's chevron. */
+slice-treeview.slice_treeview--guides .slice_treeview_row::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--tv-pad) + var(--tv-toggle) / 2);
+  width: calc(var(--tv-level, 0) * var(--tv-indent));
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--tv-guide) 0 1px,
+    transparent 1px var(--tv-indent)
+  );
+  pointer-events: none;
+}
+
+slice-treeview .slice_treeview_content {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 3px var(--tv-pad) 3px 0;
+}
+
+slice-treeview .slice_treeview_row:hover {
+  background-color: var(--tv-hover);
+}
+
+slice-treeview .slice_treeview_row:focus-visible {
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--tv-accent) 60%, transparent);
+}
+
+/* Branches read as headings, as they always have in this library. */
+slice-treeview .slice_treeview_row.is-branch .slice_treeview_label {
+  color: var(--tv-accent);
+  font-weight: 600;
+}
+
+/* Current page. */
+slice-treeview .slice_treeview_row.is-active {
+  color: var(--tv-accent);
+  font-weight: 600;
+}
+
+slice-treeview[data-indicator='tint'] .slice_treeview_row.is-active {
+  border-radius: 0;
+  background: linear-gradient(to right, color-mix(in srgb, var(--tv-accent) 16%, transparent), transparent);
+}
+
+slice-treeview[data-indicator='pill'] .slice_treeview_row.is-active {
+  background: color-mix(in srgb, var(--tv-accent) 14%, transparent);
+}
+
+slice-treeview[data-indicator='bar'] .slice_treeview_row.is-active {
+  border-radius: 0 8px 8px 0;
+  background: color-mix(in srgb, var(--tv-accent) 10%, transparent);
+  box-shadow: inset 3px 0 0 var(--tv-accent);
+}
+
+/* Selection ('single'). */
+slice-treeview .slice_treeview_row[aria-selected='true'] {
+  background: color-mix(in srgb, var(--tv-accent) 16%, transparent);
+}
+
+slice-treeview .slice_treeview_row[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+slice-treeview .slice_treeview_row[aria-disabled='true']:hover {
+  background: transparent;
+}
+
+/* ------------------------------------------------------------ row contents */
+
+/* The chevron: right when closed, down when open. */
+slice-treeview .slice_treeview_toggle {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--tv-toggle);
+  height: var(--tv-toggle);
+  border-radius: 4px;
+  color: var(--tv-accent);
+}
+
+slice-treeview .slice_treeview_toggle::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  margin-left: -2px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), margin 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+slice-treeview .slice_treeview_row[aria-expanded='true'] > .slice_treeview_content > .slice_treeview_toggle::before {
+  margin: -3px 0 0 0;
+  transform: rotate(45deg);
+}
+
+slice-treeview .slice_treeview_toggle:hover {
+  background: color-mix(in srgb, var(--tv-accent) 14%, transparent);
+}
+
+slice-treeview .slice_treeview_toggle--leaf {
+  visibility: hidden;
+}
+
+/* Checkbox ('multiple'): checked, unchecked or mixed. */
+slice-treeview .slice_treeview_check {
+  box-sizing: border-box;
+  position: relative;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid color-mix(in srgb, var(--font-primary-color) 45%, transparent);
+  border-radius: 4px;
+  background: var(--primary-background-color);
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+
+slice-treeview .slice_treeview_row[aria-checked='true'] .slice_treeview_check,
+slice-treeview .slice_treeview_row[aria-checked='mixed'] .slice_treeview_check {
+  border-color: var(--tv-accent);
+  background: var(--tv-accent);
+}
+
+slice-treeview .slice_treeview_row[aria-checked='true'] .slice_treeview_check::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border-right: 2px solid var(--primary-color-contrast, #fff);
+  border-bottom: 2px solid var(--primary-color-contrast, #fff);
+  transform: rotate(45deg);
+}
+
+slice-treeview .slice_treeview_row[aria-checked='mixed'] .slice_treeview_check::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  top: 6px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--primary-color-contrast, #fff);
+}
+
+slice-treeview .slice_treeview_icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: var(--font-secondary-color, currentColor);
+}
+
+slice-treeview .slice_treeview_row.is-active .slice_treeview_icon,
+slice-treeview .slice_treeview_row.is-branch .slice_treeview_icon {
+  color: var(--tv-accent);
+}
+
+slice-treeview .slice_treeview_text {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+
+slice-treeview .slice_treeview_label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+slice-treeview .slice_treeview_label mark {
+  padding: 0 1px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--tv-accent) 24%, transparent);
+  color: inherit;
+}
+
+slice-treeview .slice_treeview_description {
+  overflow: hidden;
+  color: var(--font-secondary-color, currentColor);
+  font-size: 0.86em;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+slice-treeview .slice_treeview_badge {
+  flex: none;
+  min-width: 18px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tv-accent) 14%, transparent);
+  color: var(--tv-accent);
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* The ⋯ menu: shown on hover / focus, or while open. */
+slice-treeview .slice_treeview_actions {
+  display: inline-flex;
+  flex: none;
+  margin-left: auto;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+slice-treeview .slice_treeview_row:hover .slice_treeview_actions,
+slice-treeview .slice_treeview_row:focus-within .slice_treeview_actions,
+slice-treeview .slice_treeview_actions:has(.slice_dropdown--open),
+slice-treeview .slice_treeview_actions slice-dropdown.slice_dropdown--open {
+  opacity: 1;
+}
+
+slice-treeview .slice_treeview_actions .slice_dropdown {
+  min-height: 24px;
+  min-width: 24px;
+}
+
+@media (hover: none) {
+  slice-treeview .slice_treeview_actions {
+    opacity: 1;
+  }
+}
+
+/* ------------------------------------------------------------ loading */
+
+slice-treeview .slice_treeview_row--loading {
+  color: var(--font-secondary-color, currentColor);
+  cursor: default;
+}
+
+slice-treeview .slice_treeview_row--loading:hover {
+  background: transparent;
+}
+
+slice-treeview .slice_treeview_spinner {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border: 2px solid color-mix(in srgb, var(--tv-accent) 30%, transparent);
+  border-top-color: var(--tv-accent);
+  border-radius: 50%;
+  animation: slice-treeview-spin 0.7s linear infinite;
+}
+
+@keyframes slice-treeview-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ------------------------------------------------------------ drag & drop */
+
+slice-treeview .slice_treeview_row.is-dragging {
+  opacity: 0.45;
+}
+
+slice-treeview .slice_treeview_row.is-drop-before {
+  box-shadow: inset 0 2px 0 var(--tv-accent);
+}
+
+slice-treeview .slice_treeview_row.is-drop-after {
+  box-shadow: inset 0 -2px 0 var(--tv-accent);
+}
+
+slice-treeview .slice_treeview_row.is-drop-inside {
+  background: color-mix(in srgb, var(--tv-accent) 14%, transparent);
+  box-shadow: inset 0 0 0 1.5px var(--tv-accent);
+}
+
+/* ------------------------------------------------------------ open / close
+   A row a branch reveals unfolds from nothing (height, fade, a short drop),
+   staggered down the branch; closing folds the rows back up before they go. */
+
+slice-treeview .slice_treeview_row.is-entering {
+  overflow: hidden;
+  animation: slice-treeview-unfold 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--tv-enter-index, 0) * 16ms);
+}
+
+slice-treeview .slice_treeview_row.is-leaving {
+  overflow: hidden;
+  pointer-events: none;
+  animation: slice-treeview-fold 0.18s cubic-bezier(0.4, 0, 0.6, 1) both;
+  animation-delay: calc(var(--tv-leave-index, 0) * 12ms);
+}
+
+@keyframes slice-treeview-unfold {
+  from {
+    min-height: 0;
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    min-height: var(--tv-row-height);
+    max-height: 72px;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slice-treeview-fold {
+  from {
+    min-height: var(--tv-row-height);
+    max-height: 72px;
+    opacity: 1;
+  }
+  to {
+    min-height: 0;
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* ------------------------------------------------------------ touch */
+
+@media (pointer: coarse) {
+  slice-treeview .slice_treeview_row {
+    min-height: max(var(--tv-row-height), 40px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  slice-treeview .slice_treeview_row,
+  slice-treeview .slice_treeview_toggle::before,
+  slice-treeview .slice_treeview_actions {
+    transition: none;
+  }
+
+  slice-treeview .slice_treeview_spinner,
+  slice-treeview .slice_treeview_row.is-entering,
+  slice-treeview .slice_treeview_row.is-leaving {
+    animation: none;
+  }
 }

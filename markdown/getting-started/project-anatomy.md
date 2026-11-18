@@ -3,8 +3,8 @@ title: Project Anatomy
 route: /Documentation/Project-Anatomy
 navLabel: Project Anatomy
 section: Getting Started
-group: First Steps
-order: 11
+group: ''
+order: 40
 description: What slice init creates and which files you actually edit.
 component: ProjectAnatomy
 tags: [getting-started, project, structure]

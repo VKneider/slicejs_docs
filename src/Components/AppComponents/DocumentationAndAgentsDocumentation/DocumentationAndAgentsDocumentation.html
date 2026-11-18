@@ -1,15 +1,21 @@
 <div class="documentation-content documentationandagentsdocumentation">
 
+<div class="doc-page-meta">
+  <div class="doc-breadcrumb" data-block-id="doc-block-1"></div>
+  <span class="doc-reading-time">4 min read</span>
+</div>
+
 <div class="doc-title-bar">
   <h1 id="documentation-agentsmd">
     <span class="doc-title-text">Documentation &amp; AGENTS.md</span>
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
+<p class="doc-lede">How Slice projects document components, categories, events and decisions, and how coding agents read that documentation.</p>
 <p>Slice projects ship documentation as part of the project, not as a follow-up. The goal is simple: an agent or a new teammate should know what a category is for, which component owns a behavior, which events cross a boundary, and what changed — without guessing.</p>
 <h2 id="what-slice-init-creates">What <code>slice init</code> creates</h2>
 <p>A fresh project gets the documentation scaffold next to the code:</p>
-<div class="code-block" data-block-id="doc-block-1"></div>
+<div class="code-block" data-block-id="doc-block-2"></div>
 <p><code>src/markdown/</code> is <strong>not</strong> part of an app project. That folder belongs to the Slice.js Components and Slice.js Docs sites, which generate pages from Markdown. Apps document the module next to the module.</p>
 <h2 id="read-order-for-agents">Read order for agents</h2>
 <p>Every coding agent should read, in this order:</p>
@@ -19,7 +25,7 @@
 <p>The root file is a router. It answers:</p>
 <ul><li>what this project is;</li><li>which commands to run;</li><li>which categories exist and where their guides live;</li><li>where component docs, event docs and changelogs live;</li><li>what “done” includes.</li></ul>
 <p>Its category table is generated between markers:</p>
-<div class="code-block" data-block-id="doc-block-2"></div>
+<div class="code-block" data-block-id="doc-block-3"></div>
 <p>Write freely around the markers. <code>slice docs generate agents</code> rewrites only the marked block.</p>
 <h2 id="category-agentsmd">Category <code>AGENTS.md</code></h2>
 <p>Every category in <code>sliceConfig.paths.components</code> has a guide. It explains the category, not just the files.</p>
@@ -30,7 +36,7 @@
 <p>Custom categories such as <code>Domain</code>, <code>Core</code>, <code>Providers</code> or <code>AppComponents</code> are app-owned. Their guide should cover:</p>
 <ul><li>what belongs here and what does not;</li><li>the local conventions and invariants;</li><li>the component inventory;</li><li>which events cross the boundary;</li><li>gotchas learned during implementation.</li></ul>
 <p>The generated inventory is only the table:</p>
-<div class="code-block" data-block-id="doc-block-3"></div>
+<div class="code-block" data-block-id="doc-block-4"></div>
 <p>A good guide is documentation, not boilerplate. “Components go here” is not enough.</p>
 <h2 id="component-readmemd">Component <code>README.md</code></h2>
 <p>An app-owned component documents itself next to its code:</p>
@@ -38,29 +44,25 @@
 <p>Registry components do not get a local copy of their docs. That would go stale; link to <code>slice docs get &lt;component&gt;</code> instead.</p>
 <h2 id="generated-documentation">Generated documentation</h2>
 <p><code>slice docs generate</code> writes the generated half:</p>
-<div class="code-block" data-block-id="doc-block-4"></div>
-<p><code>slice docs check</code> is the read-only counterpart. It exits non-zero when a generated file is stale:</p>
 <div class="code-block" data-block-id="doc-block-5"></div>
+<p><code>slice docs check</code> is the read-only counterpart. It exits non-zero when a generated file is stale:</p>
+<div class="code-block" data-block-id="doc-block-6"></div>
 <p><code>slice types generate</code> remains an alias of <code>slice docs generate types</code>.</p>
-<div class="table-block" data-block-id="doc-block-6"></div>
+<div class="table-block" data-block-id="doc-block-7"></div>
 <p>Never hand-edit <code>components.js</code>, <code>docs/events/*</code>, <code>src/slice-events.generated.js</code> or <code>*.generated.d.ts</code>.</p>
 <h2 id="event-documentation">Event documentation</h2>
 <p>The event catalog is generated from <code>slice.events.register(...)</code> and the static <code>emit</code> / <code>subscribe</code> call sites:</p>
-<div class="code-block" data-block-id="doc-block-7"></div>
-<p>Rules:</p>
-<ul><li>Event names are <code>namespace:action</code>.</li><li>Each namespace page lists payload, emitters, listeners, category and <code>file:line</code>.</li><li><code>index.md</code> lists declared-but-unused events, used-but-undeclared events, names without a</li></ul>
-<p>namespace, and dynamic sites.</p>
-<ul><li>The scanner excludes <code>*.spec.js</code>, <code>*.test.js</code>, <code>*.generated.js</code>, <code>src/public/</code> and</li></ul>
-<p><code>src/bundles/</code>.</p>
-<ul><li><code>diagram.html</code> opens offline; it has no CDN or JavaScript dependency.</li></ul>
-<p>Example namespace page:</p>
 <div class="code-block" data-block-id="doc-block-8"></div>
+<p>Rules:</p>
+<ul><li>Event names are <code>namespace:action</code>.</li><li>Each namespace page lists payload, emitters, listeners, category and <code>file:line</code>.</li><li><code>index.md</code> lists declared-but-unused events, used-but-undeclared events, names without a namespace, and dynamic sites.</li><li>The scanner excludes <code>*.spec.js</code>, <code>*.test.js</code>, <code>*.generated.js</code>, <code>src/public/</code> and <code>src/bundles/</code>.</li><li><code>diagram.html</code> opens offline; it has no CDN or JavaScript dependency.</li></ul>
+<p>Example namespace page:</p>
+<div class="code-block" data-block-id="doc-block-9"></div>
 <h2 id="changelog-is-optional">Changelog is optional</h2>
 <p>The scaffold does not force a changelog. If the project uses one:</p>
 <ul><li><code>CHANGELOG.md</code> root for release-level changes;</li><li><code>src/Components/&lt;Category&gt;/CHANGELOG.md</code> for category-level changes;</li><li>per-component changelogs only for components with their own release history.</li></ul>
 <p>A feature does not create a folder. It adds an entry to the changelog that already exists. If the project has no changelog, do not invent one unless the user asks.</p>
 <h2 id="what-to-update-for-each-change">What to update for each change</h2>
-<div class="table-block" data-block-id="doc-block-9"></div>
+<div class="table-block" data-block-id="doc-block-10"></div>
 <p>If none apply, say “No docs impact” and why. A test-only change or an internal refactor with no public behavior is a valid reason.</p>
 <h2 id="library-docs-are-different">Library docs are different</h2>
 <p><code>slicejs-components</code> and <code>slicejs_docs</code> are documentation sites. Their Markdown source lives in <code>src/markdown/</code> or <code>markdown/</code> and their parsers generate the pages. That pipeline does not apply to apps.</p>

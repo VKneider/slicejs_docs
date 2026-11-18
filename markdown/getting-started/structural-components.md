@@ -2,9 +2,9 @@
 title: Structural
 route: /Documentation/Structural
 navLabel: Structural
-section: Getting Started
-group: Components
-order: 33
+section: Components
+group: Component Model
+order: 60
 description: Structural components that power Slice.js.
 component: StructuralDocumentation
 tags: [structural, controller, router, styles]

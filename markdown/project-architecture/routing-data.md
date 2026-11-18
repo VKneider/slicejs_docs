@@ -2,9 +2,9 @@
 title: Routing and Data Passing
 route: /Documentation/Architecture/Routing-Data
 navLabel: Routing and Data Passing
-section: Project Architecture
-group: Styles and Patterns
-order: 4
+section: Guides
+group: ''
+order: 40
 description: Understand current Slice routing behavior, slug support, query usage, and route-to-route data strategies.
 component: RoutingDataDocumentation
 tags: [routing, params, query, context, events]

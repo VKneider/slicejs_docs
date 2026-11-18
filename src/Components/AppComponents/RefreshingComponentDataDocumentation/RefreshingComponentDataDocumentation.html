@@ -1,35 +1,56 @@
 <div class="documentation-content refreshingcomponentdatadocumentation">
 
+<div class="doc-page-meta">
+  <div class="doc-breadcrumb" data-block-id="doc-block-1"></div>
+  <span class="doc-reading-time">5 min read</span>
+</div>
+
 <div class="doc-title-bar">
   <h1 id="refreshing-component-data">
     <span class="doc-title-text">Refreshing Component Data</span>
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
+<p class="doc-lede">How to update what a component shows after it's built — prop setters, update(), list reconciliation, context, events, or destroy+recreate — and which to reach for.</p>
 <p>The data behind a component changed — how do you update what's on screen? Slice gives you several mechanisms, from the cheapest (set a prop) to the heaviest (destroy + recreate). <strong>Reach for the lightest one that fits</strong> — the heavier the mechanism, the more you throw away (instance state, focus, scroll, async cost).</p>
 <h2 id="which-one">Which one?</h2>
-<div class="table-block" data-block-id="doc-block-1"></div>
+<div class="table-block" data-block-id="doc-block-2"></div>
 <h2 id="1-set-a-prop-or-call-a-method-the-default">1. Set a prop or call a method (the default)</h2>
-<p>In Slice, props go through <strong>setters</strong> — so updating data is usually just *assigning a prop*. The setter updates the DOM; the instance (and its focus/scroll/internal state) is preserved.</p>
-<div class="code-block" data-block-id="doc-block-2"></div>
-<p>Components also expose <strong>methods</strong> for finer updates — same idea, just a call:</p>
+<p>In Slice, props go through <strong>setters</strong> — so updating data is usually just <em>assigning a prop</em>. The setter updates the DOM; the instance (and its focus/scroll/internal state) is preserved.</p>
 <div class="code-block" data-block-id="doc-block-3"></div>
-<p>&gt; Design your own components so that <strong>assigning a prop or calling a method drives the DOM update</strong> — that &gt; is what makes this the default refresh path.</p>
+<p>Components also expose <strong>methods</strong> for finer updates — same idea, just a call:</p>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<blockquote><p>Design your own components so that <strong>assigning a prop or calling a method drives the DOM update</strong> — that is what makes this the default refresh path.</p></blockquote>
 <h2 id="2-update-cached-route-revisits">2. <code>update()</code> — cached route revisits</h2>
 <p><code>MultiRoute</code> / <code>Route</code> <strong>cache</strong> instances. When you navigate away and back, Slice calls <strong><code>update()</code></strong>, not <code>init()</code> — so refresh route-level data there (and you can call it manually too).</p>
-<div class="code-block" data-block-id="doc-block-4"></div>
-<p>The framework <strong>serializes</strong> your <code>update()</code> — concurrent or rapid calls coalesce (last wins) — so it is safe under streaming or fast revisits without writing manual guards. For lists, refresh <strong>in place</strong>: reuse children by a stable <code>sliceId</code> instead of destroy + rebuild, so survivors keep their state. See [<code>update()</code>](/Documentation/LifeCycle-Methods/update). Keep it idempotent.</p>
-<h2 id="3-context-shared-state-many-components-react-to">3. Context — shared state many components react to</h2>
-<p>When several components depend on the <strong>same</strong> state, put it in [<code>slice.context</code>](/Documentation/Structural/ContextManager). Each component <code>watch</code>es it and refreshes when it changes; anyone calls <code>setState</code> to change it.</p>
 <div class="code-block" data-block-id="doc-block-5"></div>
-<p>Watchers registered with <code>this</code> are <strong>auto-cleaned</strong> on destroy — don't unwatch them by hand.</p>
-<h2 id="4-events-react-to-something-happened">4. Events — react to "something happened"</h2>
-<p>For cross-cutting "X happened, refresh" signals, use [<code>slice.events</code>](/Documentation/Structural/EventManager). A component subscribes; some other part of the app emits.</p>
+<p>The framework <strong>serializes</strong> your <code>update()</code> — concurrent or rapid calls coalesce (last wins) — so it is safe under streaming or fast revisits without writing manual guards. For lists, refresh <strong>in place</strong>; §3 shows the canonical way. See <a href="/Documentation/LifeCycle-Methods/update" data-route><code>update()</code></a>. Keep it idempotent.</p>
+<h2 id="3-lists-reconcile-instead-of-rebuild">3. Lists — reconcile instead of rebuild</h2>
+<p>When the data is a <strong>variable-length list</strong>, the change is not "set one prop": items are added, removed, filtered or reordered. The tempting code is:</p>
 <div class="code-block" data-block-id="doc-block-6"></div>
-<p>Subscriptions made via <code>slice.events.bind(this)</code> are <strong>auto-cleaned</strong> on destroy.</p>
-<p><strong>Context vs Events:</strong> ask *"what is the current state?"* → Context. Ask *"did something happen?"* → Events. Prefer Context for state, and add an Event when cross-domain side effects must react.</p>
-<h2 id="5-destroy-recreate-last-resort">5. Destroy + recreate (last resort)</h2>
-<p>Only when the component's <strong>structure</strong> changed so fundamentally that reconfiguring it would be more code than rebuilding. It is the heaviest option: you lose instance state, pay an async rebuild, and <strong>must clean up</strong> the old instance and its children first.</p>
+<p>That leaks every row's listeners, timers and registry entry, and throws away the state and focus of rows that did not change. Use the registry <a href="https://components.slicejs.com/docs/services/dom-service" target="_blank" rel="noopener noreferrer"><code>DomService</code></a> instead:</p>
 <div class="code-block" data-block-id="doc-block-7"></div>
-<p>Before reaching for this, check whether a setter/method (§1) can express the change instead — e.g. the <code>Table</code> reconfigures its pager by <strong>setting props</strong>, it never destroys and rebuilds it. And remember the cleanup rules: components built with <code>slice.build</code> are <strong>not</strong> auto-destroyed by a parent, and Services have no DOM so they are never cascaded — see [Service Patterns](/Documentation/Architecture/Service-Patterns).</p>
+<p><code>reconcile</code> does the three things the manual loop gets wrong:</p>
+<ol><li><strong>Refresh in place.</strong> A survivor is found by its stable key and updated through <code>slice.setComponentProps</code> (or your <code>refresh</code> callback). Its state, focus and children survive.</li><li><strong>Prune.</strong> A row whose data is gone is destroyed with <code>slice.controller.destroyComponent</code>, which runs <code>beforeDestroy()</code>.</li><li><strong>Reorder with the fewest moves.</strong> <code>insertBefore</code> moves a node instead of cloning it, so the constructor does not run again and focus/animations are not restarted.</li></ol>
+<p>It also queues renders per container and coalesces rapid calls, so a filter box that re-renders on every keystroke applies the last query, not every intermediate one. <code>await reconcile()</code> means the DOM is at least as fresh as that call.</p>
+<p><strong>Compose it with the other sections:</strong> call <code>reconcile</code> from a prop setter (§1), from <code>update()</code> (§2), from a Context watcher (§4) or from an Event handler (§5). It is the list-level refresh primitive, not a replacement for the trigger.</p>
+<div class="callout-block" data-block-id="doc-block-8"></div>
+<p><strong>When to skip <code>equals</code>:</strong> use <code>equals: Object.is</code> only with immutable data. If you mutate item objects in place, the mutated row will look unchanged and will not refresh.</p>
+<p><code>dom.destroyChildren(container)</code> tears down every registered child at once when the whole list goes away.</p>
+<h2 id="4-context-shared-state-many-components-react-to">4. Context — shared state many components react to</h2>
+<p>When several components depend on the <strong>same</strong> state, put it in <a href="/Documentation/Structural/ContextManager" data-route><code>slice.context</code></a>. Each component <code>watch</code>es it and refreshes when it changes; anyone calls <code>setState</code> to change it.</p>
+<div class="code-block" data-block-id="doc-block-9"></div>
+<p>Watchers registered with <code>this</code> are <strong>auto-cleaned</strong> on destroy — don't unwatch them by hand.</p>
+<h2 id="5-events-react-to-something-happened">5. Events — react to "something happened"</h2>
+<p>For cross-cutting "X happened, refresh" signals, use <a href="/Documentation/Structural/EventManager" data-route><code>slice.events</code></a>. A component subscribes; some other part of the app emits.</p>
+<div class="code-block" data-block-id="doc-block-10"></div>
+<p>Subscriptions made via <code>slice.events.bind(this)</code> are <strong>auto-cleaned</strong> on destroy.</p>
+<p><strong>Context vs Events:</strong> ask <em>"what is the current state?"</em> → Context. Ask <em>"did something happen?"</em> → Events. Prefer Context for state, and add an Event when cross-domain side effects must react.</p>
+<h2 id="6-destroy-recreate-last-resort">6. Destroy + recreate (last resort)</h2>
+<p>Only when the component's <strong>structure</strong> changed so fundamentally that reconfiguring it would be more code than rebuilding. It is the heaviest option: you lose instance state, pay an async rebuild, and <strong>must clean up</strong> the old instance and its children first.</p>
+<div class="code-block" data-block-id="doc-block-11"></div>
+<p>Before reaching for this, check whether a setter/method (§1) or <code>DomService.reconcile</code> (§3) can express the change instead — e.g. the <code>Table</code> reconfigures its pager by <strong>setting props</strong>, it never destroys and rebuilds it. And remember the cleanup rules: components built with <code>slice.build</code> are <strong>not</strong> auto-destroyed by a parent, and Services have no DOM so they are never cascaded — see <a href="/Documentation/Architecture/Service-Patterns" data-route>Service Patterns</a>.</p>
+<h2 id="choose-the-lightest-refresh">Choose the lightest refresh</h2>
+<div class="compare-block" data-block-id="doc-block-12"></div>
+<div class="related-block" data-block-id="doc-block-13"></div>
 </div>

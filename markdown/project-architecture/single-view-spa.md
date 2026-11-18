@@ -2,9 +2,9 @@
 title: Single-View SPA
 route: /Documentation/Architecture/Single-View-SPA
 navLabel: Single-View SPA
-section: Project Architecture
-group: Styles and Patterns
-order: 3
+section: Guides
+group: ''
+order: 30
 description: Build flow-driven apps with one route and internal state transitions.
 component: SingleViewSpaDocumentation
 tags: [architecture, spa, state-machine, game]

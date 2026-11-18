@@ -2,9 +2,9 @@
 title: Event Registry
 route: /Documentation/Structural/EventRegistry
 navLabel: Event Registry
-section: Getting Started
-group: Events
-order: 21
+section: State & Routing
+group: ''
+order: 40
 description: Declare a typed, namespaced catalog of events for dev validation, autocompletion, and pub/sub tracing.
 component: EventRegistryDocumentation
 tags: [events, registry, pubsub, types, tracing]
@@ -20,7 +20,7 @@ events into a **declared, typed, namespaced contract**.
 
 Declaring events buys you three things:
 - **Dev-time validation** — emitting or subscribing to an event you never declared warns once.
-- **Typed `emit`/`subscribe`** — `slice types generate` reads the catalog so payloads autocomplete and wrong shapes fail `tsc`.
+- **Typed `emit`/`subscribe`** — `slice docs generate types` reads the catalog so payloads autocomplete and wrong shapes fail `tsc`.
 - **A documented graph** — who emits and who listens to each event, both statically (from code) and live (this session).
 
 The registry is **opt-in and safe by default**: if you never call `register()`, the
@@ -80,7 +80,7 @@ In production all of this is silent and zero-overhead.
 Run the CLI to generate TypeScript declarations from the catalog:
 
 ```bash title="Generate types + the event graph manifest"
-slice types generate
+slice docs generate types
 ```
 
 This emits a `SliceEventRegistry` interface and types `slice.events.emit`/`subscribe`
@@ -109,10 +109,10 @@ other's blind spots:
 
 | Question | Layer | Source |
 | --- | --- | --- |
-| Who can emit this event? (documentation) | Static | `slice types generate` scans `emit`/`subscribe` call sites |
+| Who can emit this event? (documentation) | Static | `slice docs generate types` scans `emit`/`subscribe` call sites |
 | Who actually emitted it this session? | Runtime | Live attribution recorded while the debugger is open |
 
-**Static graph (documentation).** `slice types generate` writes
+**Static graph (documentation).** `slice docs generate types` writes
 `src/slice-events.generated.js`: per event, the emitter and listener call sites
 (`file:line` plus the enclosing component). It is complete because it reads code, not
 execution — an emit on a branch that never ran is still documented. Events emitted with

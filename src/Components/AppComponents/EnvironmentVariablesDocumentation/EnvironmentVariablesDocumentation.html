@@ -1,43 +1,49 @@
 <div class="documentation-content environmentvariablesdocumentation">
 
+<div class="doc-page-meta">
+  <div class="doc-breadcrumb" data-block-id="doc-block-1"></div>
+  <span class="doc-reading-time">2 min read</span>
+</div>
+
 <div class="doc-title-bar">
   <h1 id="environment-variables">
     <span class="doc-title-text">Environment Variables</span>
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
+<p class="doc-lede">Expose browser-safe env values with SLICE_PUBLIC_ and runtime helpers.</p>
 <h2 id="overview">Overview</h2>
 <p>Slice.js exposes browser-safe environment variables through:</p>
 <ul><li><code>GET /slice-env.json</code></li><li><code>slice.getEnv(key, fallback)</code></li><li><code>slice.getPublicEnv()</code></li></ul>
 <p>This is intended for public runtime configuration (for example API base URLs or feature flags).</p>
 <h2 id="public-vs-private-variables">Public vs Private Variables</h2>
 <p>Only variables prefixed with <code>SLICE_PUBLIC_</code> are exposed to the browser.</p>
-<div class="table-block" data-block-id="doc-block-1"></div>
-<div class="callout callout-warning">Everything sent to the browser is public. Never put secrets, private tokens, or credentials in <code>SLICE_PUBLIC_*</code> variables.</div>
+<div class="table-block" data-block-id="doc-block-2"></div>
+<div class="callout-block" data-block-id="doc-block-3"></div>
 <h2 id="define-variables">Define Variables</h2>
 <p>Create or update your <code>.env</code> file:</p>
-<div class="code-block" data-block-id="doc-block-2"></div>
+<div class="code-block" data-block-id="doc-block-4"></div>
 <h2 id="build-time-artifact">Build-time Artifact</h2>
 <p><code>slice build</code> writes two files into <code>dist/</code>:</p>
 <ul><li><code>slice-env.json</code> — the shared payload (<code>{ mode, env }</code>).</li><li><code>slice-env.generated.js</code> — a tiny ESM shim that exports the same object.</li></ul>
 <p>The runtime <strong>imports</strong> <code>/slice-env.generated.js</code> at boot. There is no env endpoint in production. <code>slice dev</code> keeps <code>/slice-env.json</code> live so <code>.env</code> edits do not require a build.</p>
-<div class="code-block" data-block-id="doc-block-3"></div>
+<div class="code-block" data-block-id="doc-block-5"></div>
 <h3 id="resolution-rules">Resolution Rules</h3>
 <ul><li><code>process.env</code> has priority over <code>.env</code> when both define the same key.</li><li>In development, values are resolved per request.</li><li>In production, values are frozen at build time. Rebuild after changing <code>.env</code> or <code>SLICE_PUBLIC_*</code>.</li><li><code>slice export</code> copies both files to the static output; <code>slice start</code> serves them as static assets.</li></ul>
 <h3 id="deployment-modes">Deployment Modes</h3>
-<div class="table-block" data-block-id="doc-block-4"></div>
+<div class="table-block" data-block-id="doc-block-6"></div>
 <h2 id="runtime-access-in-components">Runtime Access in Components</h2>
-<div class="code-block" data-block-id="doc-block-5"></div>
+<div class="code-block" data-block-id="doc-block-7"></div>
 <h2 id="typed-accessors-sliceenv">Typed Accessors (<code>slice.env</code>)</h2>
 <p><code>slice.getEnv</code> always returns a string (env values are strings). <code>slice.env.*</code> parses common shapes for you, so you stop re-writing <code>String(...).split(',')</code> and boolean checks across the app.</p>
-<div class="table-block" data-block-id="doc-block-6"></div>
-<div class="code-block" data-block-id="doc-block-7"></div>
+<div class="table-block" data-block-id="doc-block-8"></div>
+<div class="code-block" data-block-id="doc-block-9"></div>
 <p>Missing or empty values fall back: <code>bool</code>/<code>int</code>/<code>list</code> return the provided fallback (or <code>false</code> / <code>0</code> / <code>[]</code>).</p>
 <h2 id="recommended-workflow">Recommended Workflow</h2>
 <ol class="steps"><li>Define browser-safe keys using <code>SLICE_PUBLIC_</code>.</li><li>Keep secrets in non-public env keys.</li><li>Run <code>slice build</code> (or <code>slice export</code>) after changing public env values.</li><li>Read values with <code>slice.env.*</code> (or <code>slice.getEnv</code>) in runtime code.</li></ol>
 <h2 id="troubleshooting">Troubleshooting</h2>
-<div class="callout callout-tip">If a key is missing in browser runtime, verify the key starts with <code>SLICE_PUBLIC_</code>.</div>
-<div class="callout callout-tip">If production values do not update, restart the server process to refresh cached env payload.</div>
+<div class="callout-block" data-block-id="doc-block-10"></div>
+<div class="callout-block" data-block-id="doc-block-11"></div>
 <h2 id="related-docs">Related Docs</h2>
 <ul><li><code>sliceConfig.json</code>: <code>/Documentation/Configuration/sliceConfig</code></li></ul>
 </div>

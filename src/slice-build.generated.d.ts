@@ -8,8 +8,38 @@ export interface AppShellMultiRouteDocumentationProps {
   [key: string]: unknown;
 }
 
+export interface BadgeProps {
+  [key: string]: unknown;
+  color?: string;
+  dot?: boolean;
+  icon?: string;
+  indicator?: boolean;
+  label?: string;
+  max?: number;
+  pulse?: boolean;
+  shape?: string;
+  showZero?: boolean;
+  size?: string;
+  tone?: string;
+  value?: number;
+  variant?: string;
+}
+
 export interface BeforeDestroyDocumentationProps {
   [key: string]: unknown;
+}
+
+export interface BreadcrumbsProps {
+  [key: string]: unknown;
+  children?: { children?: unknown[]; path: string; text?: string; title?: string; }[];
+  currentPath?: string;
+  includeCurrent?: boolean;
+  items?: { path?: string; text: string; }[];
+  maxItems?: number;
+  onClick?: (...args: unknown[]) => unknown;
+  onClickCallback?: (...args: unknown[]) => unknown;
+  separator?: string;
+  texts?: Record<string, unknown>;
 }
 
 export interface ButtonProps {
@@ -28,6 +58,17 @@ export interface ButtonProps {
 
 export interface ButtonDocumentationProps {
   [key: string]: unknown;
+}
+
+export interface CalloutProps {
+  [key: string]: unknown;
+  content?: unknown;
+  icon?: unknown;
+  size?: 'sm' | 'md';
+  text?: string;
+  title?: string;
+  tone?: 'neutral' | 'accent' | 'info' | 'success' | 'warning' | 'danger';
+  variant?: 'soft' | 'outlined' | 'ghost';
 }
 
 export interface CardProps {
@@ -556,9 +597,34 @@ export interface TreeItemProps {
 
 export interface TreeViewProps {
   [key: string]: unknown;
+  activePath?: string;
+  ariaLabel?: string;
+  draggable?: boolean;
+  emptyMessage?: string;
+  expanded?: 'none' | 'all';
+  filter?: string;
+  followRoute?: boolean;
+  guides?: boolean;
+  indicator?: 'tint' | 'pill' | 'bar';
   items?: unknown[];
+  maxHeight?: string;
+  navigate?: boolean;
+  nodeActions?: (...args: unknown[]) => unknown;
   onClick?: (...args: unknown[]) => unknown;
   onClickCallback?: (...args: unknown[]) => unknown;
+  onMove?: (...args: unknown[]) => unknown;
+  onSelect?: (...args: unknown[]) => unknown;
+  onSelectionChange?: (...args: unknown[]) => unknown;
+  onToggle?: (...args: unknown[]) => unknown;
+  rowHeight?: number;
+  searchable?: boolean;
+  searchPlaceholder?: string;
+  selected?: unknown[];
+  selection?: 'none' | 'single' | 'multiple';
+  size?: 'sm' | 'md' | 'lg';
+  stateKey?: string;
+  texts?: Record<string, unknown>;
+  virtual?: boolean;
 }
 
 export interface TreeViewDocumentationProps {
@@ -584,9 +650,12 @@ export interface WhatIsSliceProps {
 export interface SliceComponentPropsMap {
   ApiReferenceDocumentation: ApiReferenceDocumentationProps;
   AppShellMultiRouteDocumentation: AppShellMultiRouteDocumentationProps;
+  Badge: BadgeProps;
   BeforeDestroyDocumentation: BeforeDestroyDocumentationProps;
+  Breadcrumbs: BreadcrumbsProps;
   Button: ButtonProps;
   ButtonDocumentation: ButtonDocumentationProps;
+  Callout: CalloutProps;
   Card: CardProps;
   CardDocumentation: CardDocumentationProps;
   Checkbox: CheckboxProps;

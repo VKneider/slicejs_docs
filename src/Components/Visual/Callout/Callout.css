@@ -1,0 +1,177 @@
+/* Callout — a highlighted passage inside content. Tone = meaning, variant = loudness.
+   Same tone tokens as Alert and Badge, so a theme that tunes one tunes all three. */
+
+slice-callout {
+  --slice-callout-color: var(--primary-color, #7c3aed);
+  --slice-callout-ink: var(--primary-color-readable, color-mix(in srgb, var(--primary-color, #7c3aed) 88%, #000));
+  --slice-callout-tint: 8%;
+  --slice-callout-bar: 4px;
+  --slice-callout-radius: 10px;
+  --slice-callout-pad-y: 14px;
+  --slice-callout-pad-x: 16px;
+  --slice-callout-gap: 12px;
+
+  display: block;
+  /* A content block takes its row, also inside a flex or grid parent (and a container
+     query needs a definite width). */
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--font-family, inherit);
+}
+
+slice-callout[hidden] {
+  display: none;
+}
+
+slice-callout[data-size='sm'] {
+  --slice-callout-pad-y: 10px;
+  --slice-callout-pad-x: 12px;
+  --slice-callout-gap: 10px;
+  --slice-callout-bar: 3px;
+}
+
+slice-callout[data-tone='neutral'] {
+  --slice-callout-color: var(--medium-color, #8a8799);
+  --slice-callout-ink: var(--font-primary-color, #1d1b29);
+  --slice-callout-tint: 6%;
+}
+
+slice-callout[data-tone='info'] {
+  --slice-callout-color: var(--info-color, #0284c7);
+  --slice-callout-ink: var(--info-color-readable, color-mix(in srgb, var(--info-color, #0284c7) 64%, #000));
+  --slice-callout-tint: 9%;
+}
+
+slice-callout[data-tone='success'] {
+  --slice-callout-color: var(--success-color, #16a34a);
+  --slice-callout-ink: var(--success-color-readable, color-mix(in srgb, var(--success-color, #16a34a) 72%, #000));
+  --slice-callout-tint: 9%;
+}
+
+slice-callout[data-tone='warning'] {
+  --slice-callout-color: var(--warning-color, #d97706);
+  --slice-callout-ink: var(--warning-color-readable, color-mix(in srgb, var(--warning-color, #d97706) 66%, #000));
+  --slice-callout-tint: 12%;
+}
+
+slice-callout[data-tone='danger'] {
+  --slice-callout-color: var(--danger-color, #dc2626);
+  --slice-callout-ink: var(--danger-color-readable, color-mix(in srgb, var(--danger-color, #dc2626) 84%, #000));
+}
+
+/* ── The box ────────────────────────────────────────────────────── */
+
+slice-callout .slice-callout__box {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--slice-callout-gap);
+  box-sizing: border-box;
+  padding: var(--slice-callout-pad-y) var(--slice-callout-pad-x);
+  border: 1px solid transparent;
+  border-inline-start: var(--slice-callout-bar) solid var(--slice-callout-color);
+  border-radius: var(--slice-callout-radius);
+  color: var(--font-primary-color, #1d1b29);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+slice-callout[data-size='sm'] .slice-callout__box {
+  font-size: 0.875rem;
+}
+
+/* soft (default): a tint of the tone and its bar. */
+slice-callout[data-variant='soft'] .slice-callout__box {
+  background: color-mix(in srgb, var(--slice-callout-color) var(--slice-callout-tint), var(--primary-background-color, #fff));
+}
+
+/* outlined: the page background, a hairline of the tone all around. */
+slice-callout[data-variant='outlined'] .slice-callout__box {
+  background: var(--primary-background-color, #fff);
+  border-color: color-mix(in srgb, var(--slice-callout-color) 40%, transparent);
+  border-inline-start-color: var(--slice-callout-color);
+}
+
+/* ghost: only the bar, for long texts where boxes would be too much. */
+slice-callout[data-variant='ghost'] .slice-callout__box {
+  background: transparent;
+  border-radius: 0;
+  padding-block: 2px;
+}
+
+/* ── Parts ──────────────────────────────────────────────────────── */
+
+slice-callout .slice-callout__icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  /* One line of text tall, so the icon sits on the first line. */
+  height: 1.55em;
+  color: var(--slice-callout-ink);
+}
+
+slice-callout .slice-callout__icon[hidden] {
+  display: none;
+}
+
+slice-callout .slice-callout__body {
+  display: grid;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+slice-callout .slice-callout__title {
+  margin: 0;
+  font-weight: 650;
+  color: var(--slice-callout-ink);
+}
+
+slice-callout .slice-callout__text,
+slice-callout .slice-callout__paragraph {
+  margin: 0;
+}
+
+slice-callout .slice-callout__content {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+slice-callout .slice-callout__title[hidden],
+slice-callout .slice-callout__text[hidden],
+slice-callout .slice-callout__content[hidden] {
+  display: none;
+}
+
+slice-callout .slice-callout__content a,
+slice-callout .slice-callout__text a {
+  color: var(--slice-callout-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* The content box spaces its children with `gap`; page margins on paragraphs and lists
+   would double it. */
+slice-callout .slice-callout__content > :is(p, ul, ol, pre, blockquote, figure) {
+  margin: 0;
+}
+
+slice-callout .slice-callout__content > :is(ul, ol) {
+  padding-inline-start: 1.25em;
+}
+
+slice-callout .slice-callout__content code {
+  font-family: var(--font-family-code, ui-monospace, monospace);
+  font-size: 0.9em;
+  padding: 0.1em 0.35em;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--slice-callout-color) 12%, transparent);
+}
+
+/* Controls in the content keep their own width (a grid would stretch them). */
+slice-callout .slice-callout__content > :is(slice-button, slice-badge, slice-chip, slice-link, a, button) {
+  justify-self: start;
+}

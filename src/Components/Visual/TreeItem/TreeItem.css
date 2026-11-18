@@ -1,38 +1,83 @@
-.slice_tree_item,
-.container_open .slice_tree_item {
-   color: var(--font-primary-color);
+slice-treeitem {
+   display: block;
+}
+
+slice-treeitem > .slice_tree_item {
    user-select: none;
    cursor: pointer;
    width: 100%;
+   /* Without border-box, `width: 100%` sizes the CONTENT box and the 10px of
+      horizontal padding lands on top: measured, every row rendered 488px inside
+      a 468px tree. `.simple_treeview` clips with overflow-x: hidden, so those
+      20px vanished with no scrollbar and nothing pointing at the cause —
+      hover backgrounds and the active gradient lost their right edge. */
+   box-sizing: border-box;
    display: flex;
    flex-direction: row-reverse;
    align-items: center;
    justify-content: flex-end;
    gap: 6px;
    padding: 7px 10px;
-   border-radius: 8px;
+   border-radius: 0;
+   font-weight: 400;
 }
-.slice_tree_item .caret {
+
+/* Branch headers (categories with children) */
+slice-treeitem.is-branch > .slice_tree_item {
+   color: var(--primary-color);
+   font-weight: 600;
+}
+
+/* The caret's own shape.
+   It used to come from a bare `.caret` rule in the app's global stylesheet
+   (src/public/Styles/sliceStyles.css), which this component does not ship. For
+   anyone who ran `slice get TreeItem` the div had no size at all: measured 0x0,
+   so the collapse affordance was neither visible nor clickable, and a branch
+   carrying a `path` could only be opened by knowing its label toggles it. The
+   component has to carry its own.
+
+   Closed rotates -90deg to point right and open 0deg to point down; the two
+   rules are same-specificity and in this order, so the open state always wins.
+   The global `.caret_open { rotate(180deg) }` is outranked by the rule below. */
+slice-treeitem > .slice_tree_item .caret {
+   flex: 0 0 auto;
+   width: 0;
+   height: 0;
+   cursor: pointer;
+   border-left: 5px solid transparent;
+   border-right: 5px solid transparent;
+   border-top: 6px solid;
    color: var(--primary-color);
    margin-right: 0;
+   transition: transform 0.3s ease;
    transform: rotate(-90deg);
 }
-.slice_tree_item .caret_open {
+slice-treeitem > .slice_tree_item .caret_open {
    transform: rotate(0deg);
 }
-.container {
+slice-treeitem > .container {
    margin-left: 10px;
-   border-left: 1px solid color-mix(in srgb, var(--primary-color-shade) 65%, transparent);
+   border-left: 1px solid color-mix(in srgb, var(--primary-color-shade) 40%, transparent);
    height: 0;
    overflow: hidden;
    transition: height 0.3s ease;
 }
 
-.container_open {
-   height: auto; /* Esto se ajustará después de la transición */
+slice-treeitem > .container_open {
+   height: auto;
 }
 
-.slice_tree_item:hover {
-   background-color: color-mix(in srgb, var(--secondary-background-color) 75%, transparent);
+slice-treeitem > .slice_tree_item:hover {
+   background-color: color-mix(in srgb, var(--primary-color) 12%, transparent);
+}
+
+/* Active item indicator */
+slice-treeitem > .slice_tree_item.is-active {
    color: var(--primary-color);
+   font-weight: 600;
+   background: linear-gradient(to right, color-mix(in srgb, var(--primary-color) 15%, transparent), transparent);
+   border-radius: 0;
+}
+slice-treeitem > .slice_tree_item.is-active:hover {
+   background: linear-gradient(to right, color-mix(in srgb, var(--primary-color) 20%, transparent), transparent);
 }

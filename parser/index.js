@@ -8,6 +8,7 @@ import { parseMarkdownFile } from './lib/markdownParser.js';
 import { writeComponentFiles } from './lib/generator.js';
 import { collectDocCandidates } from './lib/report.js';
 import { writeDocsIndex } from './lib/docsIndex.js';
+import { writeDocumentationRoutes } from './lib/tree.js';
 import { writeSeoArtifacts } from './lib/seo.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -16,6 +17,21 @@ const ROOT = path.resolve(__dirname, '..');
 const MARKDOWN_DIR = path.join(ROOT, 'markdown');
 const OUTPUT_DIR = path.join(ROOT, 'src', 'Components', 'AppComponents');
 const PUBLIC_DIR = path.join(ROOT, 'src', 'public');
+const STYLE_TEMPLATE = path.join(__dirname, 'templates', 'DocumentationBase.css');
+const STYLE_TARGET = path.join(PUBLIC_DIR, 'Styles', 'DocumentationBase.css');
+
+// The base documentation stylesheet is part of the shared markdown contract.
+// Keep the editable copy in parser/templates/ and let docs:generate publish it,
+// exactly like the component-docs parser does.
+const syncDocumentationBase = () => {
+  if (!fs.existsSync(STYLE_TEMPLATE)) return false;
+  const next = fs.readFileSync(STYLE_TEMPLATE, 'utf8');
+  const previous = fs.existsSync(STYLE_TARGET) ? fs.readFileSync(STYLE_TARGET, 'utf8') : '';
+  if (previous === next) return false;
+  fs.mkdirSync(path.dirname(STYLE_TARGET), { recursive: true });
+  fs.writeFileSync(STYLE_TARGET, next, 'utf8');
+  return true;
+};
 
 const readAllMarkdownFiles = (dir) => {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -105,9 +121,16 @@ const run = () => {
   const docsIndexPath = path.join(ROOT, 'src', 'Components', 'AppComponents', 'DocumentationPage', 'docsIndex.js');
   writeDocsIndex(indexEntries, docsIndexPath);
 
+  const treePath = path.join(ROOT, 'src', 'Components', 'AppComponents', 'DocumentationPage', 'documentationRoutes.js');
+  writeDocumentationRoutes(indexEntries, treePath);
+
   const seo = writeSeoArtifacts({ root: ROOT, publicDir: PUBLIC_DIR, entries: seoEntries });
   if (seo.changed.length > 0) {
     console.log(`SEO artifacts updated: ${seo.changed.join(', ')}`);
+  }
+
+  if (syncDocumentationBase()) {
+    console.log('DocumentationBase.css synced from parser/templates');
   }
 
   const reportPath = path.join(ROOT, 'parser', 'report.json');

@@ -6,7 +6,7 @@
                     "dev":  "node ./node_modules/slicejs-cli/client.js dev",
                     "build":  "node ./node_modules/slicejs-cli/client.js types generate \u0026\u0026 node ./node_modules/slicejs-cli/client.js build",
                     "start":  "node ./node_modules/slicejs-cli/client.js start",
-                    "test":  "node --test parser/tests/seo.test.js parser/tests/routes.test.js",
+                    "test":  "node --test parser/tests/seo.test.js parser/tests/routes.test.js parser/tests/markdown-contract.test.js parser/tests/markdown-frontmatter-crlf.test.js src/Components/AppComponents/DocumentationPage/documentationRoutes.test.js",
                     "slice:init":  "node ./node_modules/slicejs-cli/client.js init",
                     "slice:dev":  "node ./node_modules/slicejs-cli/client.js dev",
                     "slice:build":  "node ./node_modules/slicejs-cli/client.js build",

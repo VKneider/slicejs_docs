@@ -2,9 +2,9 @@
 title: SEO and Share Cards
 route: /Documentation/Architecture/SEO
 navLabel: SEO and Share Cards
-section: Project Architecture
-group: Runtime and Deployment
-order: 2
+section: Guides
+group: ''
+order: 80
 description: Per-route title, description, canonical, Open Graph and JSON-LD, real 404s, a committed sitemap, and titles that survive client-side navigation.
 component: SeoDocumentation
 tags: [seo, meta, canonical, open-graph, sitemap, 404, router]

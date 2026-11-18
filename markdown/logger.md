@@ -2,9 +2,9 @@
 title: Logger
 route: /Documentation/Structural/Logger
 navLabel: Logger
-section: Getting Started
-group: Diagnostics
-order: 40
+section: Tooling
+group: ''
+order: 60
 description: Structured logging and filters for Slice.js.
 component: LoggerDocumentation
 tags: [logger, diagnostics, debugging]

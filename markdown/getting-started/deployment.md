@@ -3,8 +3,8 @@ title: Deployment
 route: /Documentation/Deployment
 navLabel: Deployment
 section: Getting Started
-group: Deployment
-order: 12
+group: ''
+order: 70
 description: Host a Slice app with Express (slice start) or as a static site (slice export), including GitHub Pages, Vercel, nginx and S3.
 component: DeploymentDocumentation
 tags: [deployment, hosting, static, express, github-pages]

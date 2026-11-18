@@ -2,9 +2,9 @@
 title: LifeCycle Methods
 route: /Documentation/LifeCycle-Methods
 navLabel: LifeCycle Methods
-section: Getting Started
-group: Components
-order: 40
+section: Components
+group: Lifecycle
+order: 10
 description: Overview of init, update, and beforeDestroy in Slice.js.
 component: LifeCycleMethods
 tags: [lifecycle, init, update, destroy]

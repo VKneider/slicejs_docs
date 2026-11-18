@@ -2,9 +2,9 @@
 title: What is Slice.js?
 route: /Documentation/Slice
 navLabel: What is Slice.js?
-section: Introduction
-group: Overview
-order: 2
+section: Getting Started
+group: ''
+order: 10
 description: A quick introduction to Slice.js and its philosophy.
 component: WhatIsSlice
 tags: [introduction, overview]

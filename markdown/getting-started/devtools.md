@@ -2,9 +2,9 @@
 title: DevTools
 route: /Documentation/DevTools
 navLabel: DevTools
-section: Getting Started
-group: Diagnostics
-order: 42
+section: Tooling
+group: ''
+order: 40
 description: The component inspector and the events and context panels, and how live editing works.
 component: DevToolsDocumentation
 tags: [devtools, debugger, events, context, diagnostics]

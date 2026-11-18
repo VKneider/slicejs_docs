@@ -2,9 +2,9 @@
 title: Server Entrypoint
 route: /Documentation/Architecture/Server-Entrypoint
 navLabel: Server Entrypoint
-section: Project Architecture
-group: Runtime and Deployment
-order: 1
+section: Guides
+group: ''
+order: 90
 description: What api/index.js is, why the framework returns the app instead of listening, where your middleware goes, and the one rule that decides whether it runs at all.
 component: ServerEntrypointDocumentation
 tags: [server, api, middleware, express, deployment, fallback]

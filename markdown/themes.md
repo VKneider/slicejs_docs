@@ -2,9 +2,9 @@
 title: Themes
 route: /Documentation/Themes
 navLabel: Themes
-section: Getting Started
-group: Configuration
-order: 7
+section: Configuration
+group: ''
+order: 30
 description: Configure and switch Slice.js themes using CSS variables.
 component: ThemesDocumentation
 generate: false

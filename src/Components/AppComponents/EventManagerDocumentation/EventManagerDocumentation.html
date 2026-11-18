@@ -1,75 +1,57 @@
 <div class="documentation-content eventmanagerdocumentation">
 
+<div class="doc-page-meta">
+  <div class="doc-breadcrumb" data-block-id="doc-block-1"></div>
+  <span class="doc-reading-time">4 min read</span>
+</div>
+
 <div class="doc-title-bar">
   <h1 id="eventmanager">
     <span class="doc-title-text">EventManager</span>
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
+<p class="doc-lede">Lightweight pub/sub for component and app signals — not a state store.</p>
 <h2 id="overview">Overview</h2>
 <p>EventManager provides a lightweight pub/sub system for Slice.js. It supports global subscriptions, component-bound subscriptions with auto-cleanup, and one-time listeners. It is designed for cross-cutting signals and decoupled communication between components and services.</p>
-<h2 id="when-to-use">When to Use</h2>
-<ul><li>App-level signals (app:ready, user:login, notification:show)</li><li>Decoupled UI updates (service emits, UI listens)</li><li>One-time bootstrap actions</li></ul>
-<h2 id="when-not-to-use">When Not to Use</h2>
-<ul><li>Shared, persistent state: use ContextManager instead</li><li>High-frequency real-time data: use dedicated data streams</li></ul>
+<h2 id="events-vs-context">Events vs Context</h2>
+<p>Use an event when something <strong>happened</strong>; use Context when you need to know the <strong>current state</strong>.</p>
+<div class="compare-block" data-block-id="doc-block-2"></div>
+<p>Pair them when both are true: keep the state in Context, and emit an event for a cross-domain side effect that is not a state change.</p>
 <h2 id="enable">Enable</h2>
-<div class="code-block" data-block-id="doc-block-1"></div>
-<h2 id="events-ui-optional">Events UI (Optional)</h2>
-<p>You can enable the EventManager debug panel with a keyboard shortcut.</p>
-<div class="code-block" data-block-id="doc-block-2"></div>
+<div class="code-block" data-block-id="doc-block-3"></div>
+<h2 id="events-ui-optional">Events UI (optional)</h2>
+<div class="code-block" data-block-id="doc-block-4"></div>
 <h2 id="concepts">Concepts</h2>
 <ul><li>Event names are strings, typically namespaced (<code>domain:action</code>).</li><li>Subscriptions can be global or component-bound.</li><li>Component-bound subscriptions are auto-removed when the component is destroyed.</li></ul>
-<div class="callout callout-tip">Declare your events in the [Event Registry](/Documentation/Structural/EventRegistry) to get
-dev-time validation, typed <code>emit</code>/<code>subscribe</code>, and a documented graph of who emits and listens.</div>
+<p>Declare events with the <a href="/Documentation/Structural/EventRegistry" data-route>Event Registry</a> to get dev-time validation, typed <code>emit</code>/<code>subscribe</code>, and a documented graph of who emits and who listens.</p>
 <h2 id="framework-emitted-events">Framework-emitted events</h2>
 <p>Slice emits a few events itself; subscribe to them like any other:</p>
-<div class="table-block" data-block-id="doc-block-3"></div>
-<p>Both are <strong>auto-declared</strong> in the [Event Registry](/Documentation/Structural/EventRegistry) — you don't <code>register()</code> them, and subscribing works out of the box.</p>
-<div class="callout callout-warning">This table assumes events are enabled. With <code>events.enabled: false</code>, <code>slice.events</code> is a no-op, so:
-- <code>router:change</code> instead dispatches a <code>CustomEvent</code> on <code>window</code>
-  (<code>window.addEventListener('router:change', e =&gt; e.detail)</code>) — see
-  [Routing → Route Change Events](/Documentation/Routing).
-- the <code>context:&lt;name&gt;</code> signals aren't emitted at all, which means
-  [<code>slice.context.watch()</code>/<code>bind()</code>](/Documentation/Structural/ContextManager) stop reacting to
-  <code>setState</code> — context reactivity depends on EventManager being enabled.</div>
+<div class="table-block" data-block-id="doc-block-5"></div>
+<p>Both are <strong>auto-declared</strong> in the <a href="/Documentation/Structural/EventRegistry" data-route>Event Registry</a> — you don't <code>register()</code> them, and subscribing works out of the box.</p>
+<div class="details-block" data-block-id="doc-block-6"></div>
 <h2 id="api-reference">API Reference</h2>
-<div class="table-block" data-block-id="doc-block-4"></div>
+<div class="table-block" data-block-id="doc-block-7"></div>
 <h2 id="usage-patterns">Usage Patterns</h2>
-<div class="code-block" data-block-id="doc-block-5"></div>
-<div class="code-block" data-block-id="doc-block-6"></div>
-<div class="code-block" data-block-id="doc-block-7"></div>
 <div class="code-block" data-block-id="doc-block-8"></div>
-<h2 id="component-integration">Component Integration</h2>
 <div class="code-block" data-block-id="doc-block-9"></div>
+<div class="code-block" data-block-id="doc-block-10"></div>
+<div class="code-block" data-block-id="doc-block-11"></div>
 <h2 id="implementation-recipe">Implementation Recipe</h2>
 <ol class="steps"><li>Choose a namespaced event name (e.g., <code>cart:updated</code>).</li><li>Emit the event where the change happens.</li><li>Subscribe in the UI or other consumers using <code>bind()</code>.</li><li>Use <code>subscribeOnce</code> for bootstrapping or single-run tasks.</li></ol>
-<h2 id="best-practices">Best Practices</h2>
-<div class="callout callout-tip">Use namespaced event names. Avoid generic names like <code>update</code> or <code>change</code>.</div>
-<div class="callout callout-tip">Keep payloads small and serializable when possible.</div>
-<div class="callout callout-tip">Prefer <code>bind()</code> for components. It prevents leaks by default.</div>
-<div class="callout callout-tip">Use EventManager for signals, not for shared state. Pair with ContextManager when state must persist.</div>
+<h2 id="guidelines">Guidelines</h2>
+<div class="table-block" data-block-id="doc-block-12"></div>
 <h2 id="gotchas">Gotchas</h2>
-<div class="callout callout-warning">Clearing a container does not remove subscriptions. Use component-bound subscriptions or manual
-<code>unsubscribe</code> calls.</div>
-<div class="callout callout-warning">Avoid using EventManager as a data store. It does not retain state.</div>
+<div class="callout-block" data-block-id="doc-block-13"></div>
 <h2 id="diagnostics">Diagnostics</h2>
-<div class="code-block" data-block-id="doc-block-10"></div>
+<div class="code-block" data-block-id="doc-block-14"></div>
 <h2 id="generated-documentation">Generated documentation</h2>
-<p><code>slice docs generate events</code> writes a committed event catalog under <code>docs/events/</code>: a summary index, one page per namespace, a Mermaid diagram and a self-contained HTML diagram. It uses the same static graph as the debugger Registry tab and excludes specs/tests/generated files. Run <code>slice docs check events</code> in CI. Event names must be <code>namespace:action</code>. See [Documentation &amp; AGENTS.md](/Documentation/Documentation-System).</p>
+<p><code>slice docs generate events</code> writes a committed event catalog under <code>docs/events/</code>: a summary index, one page per namespace, a Mermaid diagram and a self-contained HTML diagram. It uses the same static graph as the debugger Registry tab and excludes specs/tests/generated files. Run <code>slice docs check events</code> in CI. Event names must be <code>namespace:action</code>. See <a href="/Documentation/Documentation-System" data-route>Documentation &amp; AGENTS.md</a>.</p>
 <h2 id="debugger-panel">Debugger panel</h2>
-<p>Enable the EventManager UI to inspect subscriptions and recent emits in real time:</p>
-<div class="code-block" data-block-id="doc-block-11"></div>
 <p>The panel has three tabs:</p>
-<ul><li><strong>Subscribers</strong> — every event with its subscriber count, an <strong>emit counter</strong> (⚡), the</li></ul>
-<p><strong>emitters</strong> that fired it this session, and expandable subscriber details (component name,   <code>sliceId</code>, and a <code>once</code> badge for one-time listeners).</p>
-<ul><li><strong>Registry</strong> — the declared catalog grouped by namespace, with payload shapes and the static</li></ul>
-<p>emitter/listener graph. See [Event Registry](/Documentation/Structural/EventRegistry).</p>
-<ul><li><strong>History</strong> — reverse-chronological feed of every <code>emit()</code> call with its origin and relative</li></ul>
-<p>timestamps ("2s ago", "1m ago"). Use it to trace "who emitted what and when".</p>
-<p>Recording is <strong>zero-overhead in production</strong>: the emit log, counters, and emitter attribution are only active while the panel is open (<code>startRecording</code>/<code>stopRecording</code>).</p>
+<ul><li><strong>Subscribers</strong> — every event with its subscriber count, an <strong>emit counter</strong> (⚡), the <strong>emitters</strong> that fired it this session, and expandable subscriber details (component name, <code>sliceId</code>, and a <code>once</code> badge for one-time listeners).</li><li><strong>Registry</strong> — the declared catalog grouped by namespace, with payload shapes and the static emitter/listener graph. See <a href="/Documentation/Structural/EventRegistry" data-route>Event Registry</a>.</li><li><strong>History</strong> — reverse-chronological feed of every <code>emit()</code> call with its origin and relative timestamps ("2s ago", "1m ago"). Use it to trace "who emitted what and when".</li></ul>
+<p>Recording is <strong>zero-overhead in production</strong>: the emit log, counters and emitter attribution are only active while the panel is open (<code>startRecording</code>/<code>stopRecording</code>).</p>
 <h2 id="faq">FAQ</h2>
-<div class="details-block" data-block-id="doc-block-12"></div>
-<div class="details-block" data-block-id="doc-block-13"></div>
-<div class="details-block" data-block-id="doc-block-14"></div>
 <div class="details-block" data-block-id="doc-block-15"></div>
+<div class="related-block" data-block-id="doc-block-16"></div>
 </div>

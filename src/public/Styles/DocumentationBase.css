@@ -1,8 +1,16 @@
-/* Base styles for documentation pages */
+/* Base styles for documentation pages.
+ *
+ * Source of truth: parser/templates/DocumentationBase.css.
+ * `docs:generate` copies this file to src/public/Styles/DocumentationBase.css.
+ *
+ * The contract is shared with the Slice.js Components documentation site: the
+ * same tokens, the same title bar, the same callout/details/table/code rhythm.
+ * Keep the two templates in step when either side changes.
+ */
 
 :root {
-  --doc-content-max-width: 1200px;
-  --doc-section-gap: 2em;
+  --doc-content-max-width: 820px;
+  --doc-section-gap: 1.75em;
   --doc-border-color: var(--primary-color-shade);
   --doc-code-bg: var(--secondary-background-color);
   --doc-radius: 8px;
@@ -12,95 +20,325 @@
   color: var(--font-primary-color);
   max-width: var(--doc-content-max-width);
   margin: 0 auto;
-  padding: 24px;
-  line-height: 1.7;
+  padding: 0;
+  font-family: var(--font-family);
+  font-size: 0.975rem;
+  line-height: 1.65;
 }
 
-.documentation-content h1,
-.documentation-content h2,
-.documentation-content h3,
-.documentation-content h4 {
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
+.documentation-content > *:first-child {
+  margin-top: 0;
 }
 
-.documentation-content h1 {
+/* A link to /Documentation/page#section scrolls the heading into view below
+ * the fixed navbar, not under it. */
+.documentation-content :is(h1, h2, h3, h4)[id] {
+  scroll-margin-top: calc(var(--docs-navbar-height, 74px) + 16px);
+}
+
+/* --- Page meta: breadcrumb + reading time --- */
+.doc-page-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 24px;
+  margin: 0 0 12px;
+}
+
+.doc-breadcrumb {
+  min-width: 0;
+  font-size: 0.78rem;
+}
+
+.doc-breadcrumb slice-breadcrumbs {
+  display: block;
+}
+
+.doc-breadcrumb .slice_breadcrumbs_list {
+  flex-wrap: wrap;
+  row-gap: 2px;
+}
+
+.doc-reading-time {
+  flex: none;
+  color: var(--font-secondary-color);
+  font-size: 0.72rem;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* --- Title --- */
+.documentation-content .doc-title-bar {
   text-align: center;
-  border-bottom: 3px solid var(--primary-color);
-  padding-bottom: 14px;
+  border-bottom: 2px solid color-mix(in srgb, var(--primary-color) 70%, transparent);
+  padding-bottom: 12px;
+}
+
+.documentation-content .doc-title-bar h1 {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  border-bottom: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: inherit;
+}
+
+.documentation-content > h1 {
+  text-align: center;
+  border-bottom: 2px solid color-mix(in srgb, var(--primary-color) 70%, transparent);
+  padding-bottom: 12px;
+  font-size: 2rem;
   font-weight: 700;
 }
 
+.documentation-content .doc-lede {
+  max-width: 64ch;
+  margin: 0.9rem auto 1.6rem;
+  color: var(--font-secondary-color);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.doc-status {
+  display: inline-flex;
+  margin-left: 0.45em;
+  vertical-align: middle;
+}
+
+.doc-status slice-badge {
+  display: inline-flex;
+}
+
+/* --- Headings and text --- */
+.documentation-content h2,
+.documentation-content h3,
+.documentation-content h4 {
+  color: var(--font-primary-color);
+  line-height: 1.3;
+}
+
 .documentation-content h2 {
+  margin: 2rem 0 0.55rem;
+  padding-bottom: 0.35rem;
   border-bottom: 1px solid var(--doc-border-color);
-  padding-bottom: 10px;
-  font-weight: 600;
+  font-size: 1.35rem;
+  font-weight: 650;
+}
+
+.documentation-content h3 {
+  margin: 1.45rem 0 0.4rem;
+  font-size: 1.12rem;
+  font-weight: 650;
+}
+
+.documentation-content h4 {
+  margin: 1.15rem 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 650;
 }
 
 .documentation-content p {
-  margin: 1.2em 0;
+  margin: 0.8rem 0;
+}
+
+.documentation-content a {
+  color: var(--primary-color);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+.documentation-content a:hover {
+  text-decoration: underline;
 }
 
 .documentation-content ul,
 .documentation-content ol {
-  margin: 1em 0;
-  padding-left: 2em;
+  margin: 0.7rem 0;
+  padding-left: 1.35rem;
 }
 
 .documentation-content li {
-  margin-bottom: 0.5em;
+  margin: 0.28rem 0;
+}
+
+.documentation-content li > ul,
+.documentation-content li > ol {
+  margin: 0.25rem 0;
 }
 
 .documentation-content code {
   font-family: "Cascadia Code", "Fira Code", "JetBrains Mono", monospace;
   background-color: var(--doc-code-bg);
-  padding: 0.2em 0.5em;
+  padding: 0.12em 0.35em;
   border-radius: 4px;
-  font-size: 0.88em;
+  font-size: 0.86em;
+  word-break: break-word;
 }
 
-.documentation-content .doc-block {
-  margin: 1.25em 0;
+.documentation-content blockquote {
+  margin: 1.1rem 0;
+  padding: 0.65rem 0.95rem;
+  border-left: 3px solid var(--primary-color);
+  border-radius: 0 6px 6px 0;
+  background: color-mix(in srgb, var(--secondary-background-color) 55%, transparent);
+  color: var(--font-primary-color);
 }
 
-.documentation-content .doc-callout,
-.documentation-content .callout {
-  background: var(--doc-code-bg);
-  border-left: 4px solid var(--primary-color);
-  padding: 14px 18px;
+.documentation-content blockquote p {
+  margin: 0.3rem 0;
+}
+
+.documentation-content blockquote p:first-child {
+  margin-top: 0;
+}
+
+.documentation-content blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.documentation-content hr {
+  margin: 1.6rem 0;
+  border: 0;
+  border-top: 1px solid var(--doc-border-color);
+}
+
+.documentation-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1rem auto;
   border-radius: 6px;
-  margin: 1.25em 0;
+}
+
+/* --- Callouts (registry Callout component) --- */
+.documentation-content .callout-block {
+  margin: 1rem 0;
+}
+
+.doc-callout-body p {
+  margin: 0.3rem 0;
+}
+
+.doc-callout-body p:first-child {
+  margin-top: 0;
+}
+
+.doc-callout-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* --- Compare (Do / Don't) --- */
+.documentation-content .compare-block {
+  margin: 1.1rem 0;
+}
+
+.documentation-content .compare-block slice-grid {
+  display: block;
+}
+
+.documentation-content .compare-block .grid-item {
+  min-width: 0;
+}
+
+/* --- Related cards (Next steps) --- */
+.documentation-content .related-block {
+  margin: 1.4rem 0 0.5rem;
+}
+
+.documentation-content .related-block slice-grid {
+  display: block;
+}
+
+.documentation-content .related-block .grid-item {
+  min-width: 0;
+}
+
+/* --- Steps --- */
+.documentation-content ol.steps {
+  list-style: none;
+  margin: 1rem 0;
+  padding-left: 0;
+  counter-reset: doc-step;
+}
+
+.documentation-content ol.steps li {
+  position: relative;
+  counter-increment: doc-step;
+  margin: 0.55rem 0;
+  padding-left: 2.15rem;
+}
+
+.documentation-content ol.steps li::before {
+  content: counter(doc-step);
+  position: absolute;
+  left: 0;
+  top: 0.1rem;
+  display: grid;
+  place-items: center;
+  width: 1.45rem;
+  height: 1.45rem;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: var(--primary-color-contrast);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.documentation-content ol.steps li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 0.72rem;
+  top: 1.7rem;
+  bottom: -0.55rem;
+  width: 1px;
+  background: var(--doc-border-color);
+}
+
+/* --- Details --- */
+.documentation-content .details-block {
+  margin: 0.9rem 0;
+}
+
+.doc-details-body {
+  color: var(--font-primary-color);
+  font-size: 0.95rem;
   line-height: 1.6;
 }
 
-.documentation-content .doc-callout.tip,
-.documentation-content .callout.callout-tip {
-  border-left-color: var(--success-color);
+.doc-details-body p {
+  margin: 0.6rem 0;
 }
 
-.documentation-content .doc-callout.warning,
-.documentation-content .callout.callout-warning {
-  border-left-color: var(--danger-color);
+.doc-details-body p:first-child {
+  margin-top: 0;
 }
 
-/* --- Tables --- */
+.doc-details-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* --- Tables (registry Table component) --- */
 .documentation-content .table-block {
   overflow-x: auto;
-  margin: 1.5em 0;
+  margin: 1.1rem 0;
 }
 
 .documentation-content slice-table {
   display: block;
-  border-collapse: collapse;
   width: 100%;
-  font-size: 0.92em;
 }
 
 .documentation-content table,
 .documentation-content .slice-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.92em;
+  font-size: 0.875rem;
+  line-height: 1.5;
 }
 
 .documentation-content slice-table table {
@@ -108,114 +346,99 @@
   border-collapse: collapse;
 }
 
-.documentation-content slice-table th,
-.documentation-content table th {
+.documentation-content th,
+.documentation-content slice-table th {
   background-color: var(--secondary-background-color);
   color: var(--font-primary-color);
-  font-weight: 600;
+  font-weight: 650;
   text-align: left;
-  padding: 10px 14px;
-  border-bottom: 2px solid var(--primary-color-shade);
-  font-size: 0.93em;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--doc-border-color);
+  white-space: nowrap;
 }
 
-.documentation-content slice-table td,
-.documentation-content table td {
-  padding: 9px 14px;
-  border-bottom: 1px solid var(--primary-color-shade);
+.documentation-content td,
+.documentation-content slice-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid color-mix(in srgb, var(--doc-border-color) 70%, transparent);
   vertical-align: top;
 }
 
-.documentation-content slice-table tr:last-child td,
-.documentation-content table tr:last-child td {
+.documentation-content tr:last-child td {
   border-bottom: none;
 }
 
-.documentation-content slice-table tr:hover td,
-.documentation-content table tr:hover td {
-  background-color: color-mix(in srgb, var(--primary-background-color) 97%, var(--secondary-color));
+.documentation-content tbody tr:hover td {
+  background-color: color-mix(in srgb, var(--primary-background-color) 96%, var(--primary-color));
 }
 
-.documentation-content slice-table code,
 .documentation-content table code {
   word-break: break-word;
 }
 
-/* --- Code blocks --- */
-.code-block-title {
-  font-size: 0.85em;
-  font-weight: 600;
+/* --- Code blocks (registry CodeVisualizer component) --- */
+.documentation-content .code-block {
+  margin: 0.9rem 0;
+}
+
+.documentation-content .code-block-title {
+  margin-bottom: 4px;
   color: var(--font-secondary-color);
-  margin-bottom: 6px;
+  font-size: 0.7rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-/* --- Prop scenarios --- */
-.doc-script-scenarios {
-  margin-top: 1.5em;
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-}
-
-.doc-script-subtitle {
-  margin-top: 4px;
-  margin-bottom: 14px;
-  color: var(--font-secondary-color);
-  font-size: 0.9em;
-}
-
-.doc-script-scenarios > :first-child {
-  margin-top: 0;
-}
-
-.doc-script-error {
-  margin-top: 6px;
-  margin-bottom: 0;
-  color: var(--danger-color);
-  font-size: 0.85rem;
-}
-
-/* --- Details blocks --- */
-.documentation-content .details-block {
-  margin: 1.25em 0;
-}
-
-/* --- Props summary table (collapsible) --- */
-.props-summary {
-  margin: 1.5em 0;
-}
-
-.props-summary summary {
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 1.1em;
-  color: var(--primary-color);
-  padding: 8px 12px;
-  border-radius: 6px;
-  background: var(--secondary-background-color);
-  user-select: none;
-  transition: background 0.2s;
-}
-
-.props-summary summary:hover {
-  background: color-mix(in srgb, var(--secondary-background-color) 85%, var(--primary-color));
-}
-
-.props-summary .table-block {
-  margin-top: 12px;
 }
 
 /* --- Inline component blocks --- */
-.component-block {
-  margin: 1.25em 0;
+.documentation-content .component-block {
+  margin: 1rem 0;
+}
+
+.documentation-content .script-block {
+  margin: 0.9rem 0;
+}
+
+.documentation-content .doc-directive {
+  margin: 1rem 0;
 }
 
 /* --- Responsive --- */
 @media (max-width: 768px) {
   .documentation-content {
-    padding: 16px;
+    font-size: 0.95rem;
+  }
+
+  .documentation-content .doc-title-bar h1,
+  .documentation-content > h1 {
+    font-size: 1.65rem;
+  }
+
+  .documentation-content .doc-lede {
+    font-size: 0.9rem;
+    text-align: left;
+  }
+
+  .doc-page-meta {
+    flex-wrap: wrap;
+  }
+
+  .documentation-content h2 {
+    font-size: 1.22rem;
+  }
+
+  .documentation-content h3 {
+    font-size: 1.06rem;
+  }
+
+  .documentation-content .compare-block .grid-container,
+  .documentation-content .related-block .grid-container {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .documentation-content * {
+    scroll-behavior: auto !important;
   }
 }

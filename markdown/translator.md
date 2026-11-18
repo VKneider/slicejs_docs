@@ -2,9 +2,9 @@
 title: Translating an app
 route: /Documentation/Translator
 navLabel: Translator
-section: Getting Started
-group: Configuration
-order: 8
+section: Configuration
+group: ''
+order: 40
 description: slice.translator — dictionaries, data-t in templates, t.ref() for props, locale-aware URLs and formatting.
 component: TranslatorDocumentation
 tags: [translator, i18n, locales, routing]

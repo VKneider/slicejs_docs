@@ -2,9 +2,9 @@
 title: Environment Variables
 route: /Documentation/Configuration/environment-variables
 navLabel: Environment Variables
-section: Getting Started
-group: Configuration
-order: 21
+section: Configuration
+group: ''
+order: 20
 description: Expose browser-safe env values with SLICE_PUBLIC_ and runtime helpers.
 component: EnvironmentVariablesDocumentation
 tags: [config, env, security]

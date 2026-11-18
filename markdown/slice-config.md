@@ -2,9 +2,9 @@
 title: sliceConfig.json
 route: /Documentation/Configuration/sliceConfig
 navLabel: sliceConfig.json
-section: Getting Started
-group: Configuration
-order: 20
+section: Configuration
+group: ''
+order: 10
 description: How Slice.js loads and uses sliceConfig.json.
 component: SliceConfigDocumentation
 tags: [config, setup]

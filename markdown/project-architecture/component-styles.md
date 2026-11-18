@@ -2,9 +2,9 @@
 title: Component Styles
 route: /Documentation/Architecture/Component-Styles
 navLabel: Component Styles
-section: Project Architecture
-group: Styles and Patterns
-order: 7
+section: Guides
+group: ''
+order: 60
 description: How to write a component's CSS so it stays encapsulated — scope every selector under the component tag, declare an explicit host display, and prefix keyframes.
 component: ComponentStylesDocumentation
 tags: [css, styles, scoping, encapsulation, display, keyframes]

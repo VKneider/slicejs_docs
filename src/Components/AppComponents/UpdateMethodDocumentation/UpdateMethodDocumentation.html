@@ -1,32 +1,32 @@
 <div class="documentation-content updatemethoddocumentation">
 
+<div class="doc-page-meta">
+  <div class="doc-breadcrumb" data-block-id="doc-block-1"></div>
+  <span class="doc-reading-time">2 min read</span>
+</div>
+
 <div class="doc-title-bar">
   <h1 id="update">
     <span class="doc-title-text">update()</span>
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
+<p class="doc-lede">Refresh dynamic UI in Slice.js components.</p>
 <h2 id="overview">Overview</h2>
 <p><code>update()</code> refreshes a component <strong>in place</strong> after <code>init()</code> — same instance, no destroy, no flicker. The router calls it when a cached <code>Route</code> / <code>MultiRoute</code> is revisited; a parent, the component itself, or a <code>slice.context</code> watcher can call it too. Define it only when a refresh needs logic beyond a prop setter — rebuilding child components, an async fetch, or applying several props at once.</p>
 <p>The framework <strong>wraps your <code>update()</code></strong>: calls are <strong>serialized and coalesced</strong> (last wins). An <code>async update()</code> driven rapidly — streaming tokens, fast state changes — never overlaps itself or tears the DOM. You write a plain <code>update()</code>; no manual tokens, queues, or guards.</p>
 <h2 id="api">API</h2>
-<div class="table-block" data-block-id="doc-block-1"></div>
+<div class="table-block" data-block-id="doc-block-2"></div>
 <h2 id="refresh-in-place-reuse-dont-rebuild">Refresh in place — reuse, don't rebuild</h2>
 <p>When the data changed but the entities persist, <strong>reuse instances by a stable <code>sliceId</code></strong> and let each one refresh itself. Survivors are never recreated, so scroll, focus, and internal state are preserved.</p>
-<div class="code-block" data-block-id="doc-block-2"></div>
+<div class="code-block" data-block-id="doc-block-3"></div>
 <p><code>slice.setComponentProps(comp, props)</code> applies a bag of props to a component. On a built component it <strong>refreshes</strong>: re-runs the setters, does <strong>not</strong> re-apply defaults, and won't clobber the props you omit. (At construction time the same call applies defaults — it detects the mode.)</p>
 <h2 id="total-replacement-build-then-swap">Total replacement — build-then-swap</h2>
 <p>When the new data shares nothing with the old (e.g. a different conversation), build the replacement <strong>off-DOM first</strong>, then swap in one operation — no empty frame.</p>
-<div class="code-block" data-block-id="doc-block-3"></div>
-<h2 id="best-practices">Best Practices</h2>
-<div class="callout callout-tip">Prefer a <strong>prop setter</strong> for single-value changes — see
-[Refreshing Component Data](/Documentation/Architecture/Refreshing-Component-Data). Reach for
-<code>update()</code> when the refresh needs logic: rebuilding children, an async fetch, or several props.</div>
-<div class="callout callout-tip">Reuse by <code>sliceId</code> for lists. The framework serializes your <code>update()</code>, so streaming and rapid
-calls are safe without writing any guards yourself.</div>
-<h2 id="gotchas">Gotchas</h2>
-<div class="callout callout-warning">Clearing <code>innerHTML</code> alone does not destroy Slice components — use <code>destroyComponent</code> /
-<code>destroyByContainer</code> so <code>beforeDestroy</code> runs and the registry is cleaned.</div>
-<div class="callout callout-warning"><code>update()</code> is for refreshes <strong>after</strong> <code>init()</code>. The framework does not call it on first build —
-<code>init()</code> does the first paint.</div>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<h2 id="setter-or-update">Setter or update()?</h2>
+<div class="compare-block" data-block-id="doc-block-5"></div>
+<p>For a variable-length list, <a href="https://components.slicejs.com/docs/services/dom-service" target="_blank" rel="noopener noreferrer"><code>DomService.reconcile</code></a> is the loop above generalized: it refreshes survivors, builds new items, prunes the gone and reorders with the fewest moves.</p>
+<div class="details-block" data-block-id="doc-block-6"></div>
+<div class="related-block" data-block-id="doc-block-7"></div>
 </div>

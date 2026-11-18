@@ -2,9 +2,9 @@
 title: Quick API Reference
 route: /Documentation/API-Reference
 navLabel: API Reference
-section: Introduction
-group: Reference
-order: 4
+section: Reference
+group: ''
+order: 10
 description: Every public slice.* method at a glance — build, props, cleanup, router, context, events, logger, env.
 component: ApiReferenceDocumentation
 tags: [api, reference]

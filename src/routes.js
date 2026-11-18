@@ -142,10 +142,6 @@ const routes = [
               component: 'ServerEntrypointDocumentation',
            },
           {
-             path: '/Components',
-             component: 'VisualDocumentation'
-          },
-          {
              path: '/Project-Anatomy',
              component: 'ProjectAnatomy',
           },

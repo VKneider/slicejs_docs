@@ -2,9 +2,9 @@
 title: Context vs Events
 route: /Documentation/Structural/Context-vs-Events
 navLabel: Context vs Events
-section: Getting Started
-group: Components
-order: 56
+section: State & Routing
+group: ''
+order: 60
 description: When to reach for ContextManager and when for EventManager — the one decision that keeps shared state clean.
 component: ContextVsEventsDocumentation
 tags: [context, events, state, architecture]

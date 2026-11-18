@@ -2,10 +2,10 @@
 title: Slice.js MCP
 route: /Documentation/Slice-MCP
 navLabel: MCP
-section: Getting Started
-group: Tools
-order: 21
-description: Model Context Protocol server for accessing Slice.js documentation via npx or local development.
+section: Tooling
+group: ''
+order: 70
+description: Model Context Protocol server for querying the framework and Components documentation from an AI assistant.
 component: SliceMCPDocumentation
 tags: [mcp, documentation, ai, tools]
 ---
@@ -13,17 +13,24 @@ tags: [mcp, documentation, ai, tools]
 # Slice.js MCP
 
 ## Overview
-Slice.js provides an MCP (Model Context Protocol) server that allows AI assistants and development tools to access Slice.js documentation programmatically. This enables seamless integration with AI-powered coding assistants for real-time documentation queries during development.
+Slice.js provides an MCP (Model Context Protocol) server that lets AI assistants and development
+tools query the framework and Components documentation. It runs as a stdio service, so the client
+launches it on demand and speaks MCP over stdin/stdout.
 
 ## Installation
 
-### Using npx (No Installation Required)
+### Using npx (no install)
 ```bash
 npx slicejs-mcp
 ```
 
-### Local Development
-Clone the repository, install dependencies, build, and run locally:
+### Global install
+```bash
+npm install -g slicejs-mcp
+slicejs-mcp
+```
+
+### Local development
 ```bash
 git clone https://github.com/VKneider/slicejs-mcp.git
 cd slicejs-mcp
@@ -32,13 +39,21 @@ npm run build
 node dist/index.js
 ```
 
-## Usage
-The MCP server runs as a stdio-based service, perfect for integration with MCP-compatible clients and AI assistants.
+:::details title="Client configuration (Claude Desktop, Cursor)"
+Add the server to the client's MCP settings. The command/args are the same for any stdio-capable
+client; VS Code uses its own MCP settings file.
 
-### Basic Usage
-```bash
-npx @vkneider/slicejs-mcp
+```json
+{
+  "mcpServers": {
+    "slicejs": {
+      "command": "npx",
+      "args": ["-y", "slicejs-mcp"]
+    }
+  }
+}
 ```
+:::
 
 ## Tool Summary
 | Tool | Purpose |
@@ -46,7 +61,7 @@ npx @vkneider/slicejs-mcp
 | `list_docs` | Returns available documentation sections/categories. |
 | `search_docs` | Searches across all documentation using keywords or phrases. |
 | `get_doc_content` | Fetches the full content of specific documentation page(s). |
-| `get_llm_full_context` | Fetches the complete documentation bundle (~2000 lines). |
+| `get_llm_full_context` | Fetches the complete documentation bundle. Expensive; use deliberately. |
 | `slice_framework_*` | Namespace-aware access to framework documentation. |
 | `slice_components_*` | Namespace-aware access to Slice.js Components documentation. |
 
@@ -61,12 +76,11 @@ The Components catalog is backed by the published Markdown manifest from the
 ## list_docs
 Returns a list of all available documentation sections and categories.
 
-**Parameters:** None
+**Parameters:** none.
 
 ## search_docs
 Searches across all documentation using keywords or phrases.
 
-### Parameters
 | Parameter | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `query` | string | required | Search term |
@@ -75,22 +89,22 @@ Searches across all documentation using keywords or phrases.
 ## get_doc_content
 Fetches the full content of specific documentation page(s).
 
-### Parameters
 | Parameter | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `doc_id` | string or string[] | required | Documentation ID(s) to fetch |
 | `include_metadata` | boolean | false | Include additional metadata |
 
 ## get_llm_full_context
-Fetches the complete documentation bundle (~2000 lines) for comprehensive LLM context.
+Fetches the complete documentation bundle for comprehensive LLM context.
 
-**Parameters:** None
+**Parameters:** none.
 
-**Note:** This consumes considerable tokens but provides all documentation in one request.
+Use it sparingly: it is large, expensive in tokens, and usually unnecessary when `search_docs` +
+`get_doc_content` can answer the question.
 
 ## Namespace-aware catalog tools
 
-Use the framework namespace for framework questions:
+Framework:
 
 ```text
 slice_framework_list_docs()
@@ -98,7 +112,7 @@ slice_framework_search_docs(query)
 slice_framework_get_doc(doc_id)
 ```
 
-Use the Components namespace for Visual and Service component questions:
+Components:
 
 ```text
 slice_components_list_docs()
@@ -111,36 +125,29 @@ catalog version, source path, and revision. The MCP does not execute `:::script`
 
 ## Architecture
 
-- **Framework source**: Documentation fetched from https://github.com/VKneider/slicejs_docs
+- **Framework source**: documentation fetched from https://github.com/VKneider/slicejs_docs
 - **Components source**: Markdown and manifest fetched from https://github.com/VKneider/slicejs-components
-- **Caching**: Infinite session cache to minimize API requests and improve performance
-- **Initialization**: Lazy loading of document structure on first tool use
-- **Rate Limiting**: Optimized to stay within GitHub API limits (60 req/hour)
+- **Caching**: session cache to minimize API requests and improve performance
+- **Initialization**: lazy loading of the document structure on first tool use
+- **Rate limiting**: designed to stay within GitHub API limits (60 req/hour)
 
-## Integration with AI Assistants
+## Guidelines
 
-The MCP server can be integrated with MCP-compatible clients to provide real-time access to Slice.js documentation during development.
-
-## Best Practices
-
-:::tip
-Use `list_docs` first to explore available documentation, then `search_docs` for specific queries.
-:::
-
-:::tip
-For comprehensive context, use `get_llm_full_context` sparingly due to token consumption.
-:::
-
-:::tip
-The server maintains a cache during the session, so repeated queries are fast.
-:::
-
-## Gotchas
+| Do | Why |
+| --- | --- |
+| `list_docs` first, then `search_docs` | Chasing a doc id blind costs more calls than listing the catalog. |
+| Use `get_doc_content` for the page you need | Fetching the whole corpus is slower and more expensive. |
+| Use `get_llm_full_context` only for broad tasks | It is a large bundle; targeted reads answer most questions. |
+| Reuse the session cache | Repeated queries in one session are cheap. |
 
 :::warning
-The server fetches documentation from GitHub on-demand. Ensure internet connectivity for full functionality.
+The server fetches documentation from GitHub on demand. It needs network access, and large requests
+(especially `get_llm_full_context`) can consume significant tokens in an AI context.
 :::
 
-:::warning
-Large documentation requests may consume significant tokens in AI contexts.
+:::related
+- [Documentation & AGENTS.md](/Documentation/Documentation-System) - The source the MCP indexes.
+- [CLI Commands](/Documentation/CLI) - `slice docs search` / `slice docs get` as the local fallback.
+- [API Reference](/Documentation/API-Reference) - The framework surface at a glance.
+- [Components documentation](https://components.slicejs.com) - The external Components catalog.
 :::

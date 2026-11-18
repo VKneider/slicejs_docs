@@ -2,9 +2,9 @@
 title: Slice Routing
 route: /Documentation/Routing
 navLabel: Routing
-section: Getting Started
-group: Routing
-order: 50
+section: State & Routing
+group: ''
+order: 10
 description: Router setup, navigation, and guards.
 component: RoutingDocumentation
 tags: [routing, router, guards]

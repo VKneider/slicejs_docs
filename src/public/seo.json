@@ -55,7 +55,7 @@
         "type": "article"
       },
       "sitemap": {
-        "lastmod": "2026-11-14",
+        "lastmod": "2026-11-16",
         "priority": "0.9",
         "changefreq": "monthly"
       },
@@ -73,7 +73,7 @@
             "@type": "Organization",
             "name": "Slice.js"
           },
-          "dateModified": "2026-11-14"
+          "dateModified": "2026-11-16"
         },
         {
           "@type": "BreadcrumbList",
@@ -332,7 +332,7 @@
     },
     "/Documentation/Architecture/Refreshing-Component-Data": {
       "title": "Refreshing Component Data | Slice.js",
-      "description": "How to update what a component shows after it's built — prop setters, update(), context, events, or destroy+recreate — and which to reach for.",
+      "description": "How to update what a component shows after it's built — prop setters, update(), list reconciliation, context, events, or destroy+recreate — and which to reach for.",
       "robots": {
         "index": true,
         "follow": true
@@ -349,7 +349,7 @@
         {
           "@type": "TechArticle",
           "headline": "Refreshing Component Data | Slice.js",
-          "description": "How to update what a component shows after it's built — prop setters, update(), context, events, or destroy+recreate — and which to reach for.",
+          "description": "How to update what a component shows after it's built — prop setters, update(), list reconciliation, context, events, or destroy+recreate — and which to reach for.",
           "url": "https://slicejs.com/Documentation/Architecture/Refreshing-Component-Data",
           "author": {
             "@type": "Organization",
@@ -703,8 +703,8 @@
       ]
     },
     "/Documentation/CLI": {
-      "title": "Slice CLI | Slice.js",
-      "description": "Command reference for the Slice.js CLI.",
+      "title": "CLI Commands | Slice.js",
+      "description": "The commands you use every day: init, dev, build, start, doctor, lint, typecheck, components, docs and SEO.",
       "robots": {
         "index": true,
         "follow": true
@@ -720,8 +720,8 @@
       "jsonLd": [
         {
           "@type": "TechArticle",
-          "headline": "Slice CLI | Slice.js",
-          "description": "Command reference for the Slice.js CLI.",
+          "headline": "CLI Commands | Slice.js",
+          "description": "The commands you use every day: init, dev, build, start, doctor, lint, typecheck, components, docs and SEO.",
           "url": "https://slicejs.com/Documentation/CLI",
           "author": {
             "@type": "Organization",
@@ -751,7 +751,7 @@
             {
               "@type": "ListItem",
               "position": 3,
-              "name": "Slice CLI",
+              "name": "CLI Commands",
               "item": "https://slicejs.com/Documentation/CLI"
             }
           ]
@@ -865,62 +865,6 @@
               "position": 3,
               "name": "Component Anatomy",
               "item": "https://slicejs.com/Documentation/Component-Anatomy"
-            }
-          ]
-        }
-      ]
-    },
-    "/Documentation/Components": {
-      "title": "Components Docs Portal | Slice.js",
-      "description": "Official entrypoint to visual components documentation.",
-      "robots": {
-        "index": true,
-        "follow": true
-      },
-      "openGraph": {
-        "type": "article"
-      },
-      "sitemap": {
-        "lastmod": "2026-10-26",
-        "priority": "0.7",
-        "changefreq": "monthly"
-      },
-      "jsonLd": [
-        {
-          "@type": "TechArticle",
-          "headline": "Components Docs Portal | Slice.js",
-          "description": "Official entrypoint to visual components documentation.",
-          "url": "https://slicejs.com/Documentation/Components",
-          "author": {
-            "@type": "Organization",
-            "name": "vkneider.dev"
-          },
-          "publisher": {
-            "@type": "Organization",
-            "name": "Slice.js"
-          },
-          "dateModified": "2026-10-26"
-        },
-        {
-          "@type": "BreadcrumbList",
-          "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "name": "Home",
-              "item": "https://slicejs.com"
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "Documentation",
-              "item": "https://slicejs.com/Documentation"
-            },
-            {
-              "@type": "ListItem",
-              "position": 3,
-              "name": "Components Docs Portal",
-              "item": "https://slicejs.com/Documentation/Components"
             }
           ]
         }
@@ -1226,7 +1170,7 @@
     },
     "/Documentation/Development-Workflow": {
       "title": "The Development Loop | Slice.js",
-      "description": "The dev to build to start cycle and where your components live.",
+      "description": "The day-to-day loop: start the dev server, edit, create components, run the fast checks, document, build and serve.",
       "robots": {
         "index": true,
         "follow": true
@@ -1243,7 +1187,7 @@
         {
           "@type": "TechArticle",
           "headline": "The Development Loop | Slice.js",
-          "description": "The dev to build to start cycle and where your components live.",
+          "description": "The day-to-day loop: start the dev server, edit, create components, run the fast checks, document, build and serve.",
           "url": "https://slicejs.com/Documentation/Development-Workflow",
           "author": {
             "@type": "Organization",
@@ -1618,7 +1562,7 @@
     },
     "/Documentation/LifeCycle-Methods/beforeDestroy": {
       "title": "beforeDestroy() | Slice.js",
-      "description": "Cleanup hooks to avoid memory leaks in Slice.js.",
+      "description": "Cleanup hooks for timers, listeners, requests and Services that outlive the component.",
       "robots": {
         "index": true,
         "follow": true
@@ -1635,7 +1579,7 @@
         {
           "@type": "TechArticle",
           "headline": "beforeDestroy() | Slice.js",
-          "description": "Cleanup hooks to avoid memory leaks in Slice.js.",
+          "description": "Cleanup hooks for timers, listeners, requests and Services that outlive the component.",
           "url": "https://slicejs.com/Documentation/LifeCycle-Methods/beforeDestroy",
           "author": {
             "@type": "Organization",
@@ -1680,7 +1624,7 @@
     },
     "/Documentation/LifeCycle-Methods/init": {
       "title": "init() | Slice.js",
-      "description": "One-time setup for Slice.js components.",
+      "description": "One-time async setup for Slice.js components.",
       "robots": {
         "index": true,
         "follow": true
@@ -1697,7 +1641,7 @@
         {
           "@type": "TechArticle",
           "headline": "init() | Slice.js",
-          "description": "One-time setup for Slice.js components.",
+          "description": "One-time async setup for Slice.js components.",
           "url": "https://slicejs.com/Documentation/LifeCycle-Methods/init",
           "author": {
             "@type": "Organization",
@@ -1972,7 +1916,7 @@
     },
     "/Documentation/Routing/Guards": {
       "title": "Route Guards | Slice.js",
-      "description": "Guard patterns for secure navigation.",
+      "description": "Block, redirect or observe navigation with beforeEach and afterEach.",
       "robots": {
         "index": true,
         "follow": true
@@ -1989,7 +1933,7 @@
         {
           "@type": "TechArticle",
           "headline": "Route Guards | Slice.js",
-          "description": "Guard patterns for secure navigation.",
+          "description": "Block, redirect or observe navigation with beforeEach and afterEach.",
           "url": "https://slicejs.com/Documentation/Routing/Guards",
           "author": {
             "@type": "Organization",
@@ -2146,7 +2090,7 @@
     },
     "/Documentation/Slice-MCP": {
       "title": "Slice.js MCP | Slice.js",
-      "description": "Model Context Protocol server for accessing Slice.js documentation via npx or local development.",
+      "description": "Model Context Protocol server for querying the framework and Components documentation from an AI assistant.",
       "robots": {
         "index": true,
         "follow": true
@@ -2163,7 +2107,7 @@
         {
           "@type": "TechArticle",
           "headline": "Slice.js MCP | Slice.js",
-          "description": "Model Context Protocol server for accessing Slice.js documentation via npx or local development.",
+          "description": "Model Context Protocol server for querying the framework and Components documentation from an AI assistant.",
           "url": "https://slicejs.com/Documentation/Slice-MCP",
           "author": {
             "@type": "Organization",
@@ -2438,7 +2382,7 @@
     },
     "/Documentation/Structural/EventManager": {
       "title": "EventManager | Slice.js",
-      "description": "Lightweight pub/sub for component and app events.",
+      "description": "Lightweight pub/sub for component and app signals — not a state store.",
       "robots": {
         "index": true,
         "follow": true
@@ -2455,7 +2399,7 @@
         {
           "@type": "TechArticle",
           "headline": "EventManager | Slice.js",
-          "description": "Lightweight pub/sub for component and app events.",
+          "description": "Lightweight pub/sub for component and app signals — not a state store.",
           "url": "https://slicejs.com/Documentation/Structural/EventManager",
           "author": {
             "@type": "Organization",

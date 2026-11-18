@@ -1,49 +1,87 @@
 slice-mynavigation {
-  position: fixed;
-  top: 0;
-  right: 0;
-  font-family: var(--font-family);
-  background-color: var(--primary-background-color);
-  border-left: 1px solid var(--primary-color-shade);
-  display: flex;
-  align-items: flex-start;
-  height: 100%;
-  width: 17%;
-  transition: transform 0.3s ease, width 0.3s ease;
-  overflow-x: hidden;
+  display: block;
+  width: 100%;
+  background: var(--primary-background-color);
 }
+
 .my_navigation {
   display: flex;
   flex-direction: column;
-  margin-top: 80px;
-}
-.my_navigation a {
-  padding: 10px;
+  gap: 2px;
+  height: 100%;
+  margin: 0;
+  padding: 22px 12px 32px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-left: 1px solid var(--doc-border-color, var(--primary-color-shade));
+  margin-left: 2px;
 }
 
-@media only screen and (max-width: 770px) {
+.my_navigation_title {
+  margin: 0 0 8px;
+  padding: 0 9px;
+  color: var(--font-secondary-color);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.my_navigation_links {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.my_navigation a {
+  display: block;
+  margin-left: -3px;
+  padding: 4px 8px 4px 10px;
+  border-left: 2px solid transparent;
+  border-radius: 0 5px 5px 0;
+  color: var(--font-secondary-color);
+  font-size: 0.78rem;
+  line-height: 1.35;
+  text-decoration: none;
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.my_navigation a:hover {
+  color: var(--primary-color);
+  background: color-mix(in srgb, var(--secondary-background-color) 55%, transparent);
+}
+
+.my_navigation a.is-active {
+  color: var(--primary-color);
+  border-left-color: var(--primary-color);
+  background: color-mix(in srgb, var(--primary-color) 8%, transparent);
+  font-weight: 600;
+}
+
+.my_navigation a.nav-h2 {
+  padding-left: 10px;
+}
+
+.my_navigation a.nav-h3 {
+  padding-left: 22px;
+  font-size: 0.75rem;
+}
+
+.my_navigation a.nav-h4 {
+  padding-left: 34px;
+  font-size: 0.72rem;
+}
+
+.my_navigation_empty {
+  margin: 0;
+  padding: 0 9px;
+  color: var(--font-secondary-color);
+  font-size: 0.75rem;
+}
+
+@media (max-width: 1180px) {
   slice-mynavigation {
-    visibility: hidden;
+    display: none;
   }
 }
-a[class^="nav-"] {
-  text-decoration: none;
-  color: var(--font-primary-color);
-}
-a[class^="nav-"]:hover{
-  color: var(--primary-color);
-}
-a[class$="1"] {
-  font-weight: 700;
-  margin-left: 0%;
-}
-a[class$="2"] {
-  margin-left: 5%;
-}
-a[class$="3"] {
-  margin-left: 10%;
-}
-a[class$="4"] {
-  margin-left: 15%;
-}
-

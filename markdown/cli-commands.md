@@ -1,16 +1,16 @@
 ---
-title: Slice CLI
+title: CLI Commands
 route: /Documentation/CLI
-navLabel: CLI
+navLabel: CLI Commands
 section: Getting Started
-group: Tooling
-order: 15
-description: Command reference for the Slice.js CLI.
+group: ''
+order: 30
+description: The commands you use every day: init, dev, build, start, doctor, lint, typecheck, components, docs and SEO.
 component: CommandsDocumentation
-tags: [cli, tooling]
+tags: [cli, tooling, getting-started]
 ---
 
-# Slice.js CLI
+# CLI Commands
 
 ## Overview
 The Slice.js CLI (`slice`) helps you initialize projects, manage components, run the dev server,

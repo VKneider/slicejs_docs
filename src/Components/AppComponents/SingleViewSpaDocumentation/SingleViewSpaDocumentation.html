@@ -1,25 +1,31 @@
 <div class="documentation-content singleviewspadocumentation">
 
+<div class="doc-page-meta">
+  <div class="doc-breadcrumb" data-block-id="doc-block-1"></div>
+  <span class="doc-reading-time">2 min read</span>
+</div>
+
 <div class="doc-title-bar">
   <h1 id="single-view-spa">
     <span class="doc-title-text">Single-View SPA</span>
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
+<p class="doc-lede">Build flow-driven apps with one route and internal state transitions.</p>
 <p>Use this style when your app is one main experience and transitions happen inside that experience.</p>
 <h2 id="when-to-use">When to Use</h2>
 <ul><li>Games (Impostor-style)</li><li>Multi-step wizards with one dominant screen</li><li>Tools where URL sections are not the main interaction model</li></ul>
-<p>&gt; Deciding between this and App Shell + MultiRoute? See the [decision matrix](/Documentation/Architecture).</p>
+<blockquote><p>Deciding between this and App Shell + MultiRoute? See the <a href="/Documentation/Architecture" data-route>decision matrix</a>.</p></blockquote>
 <h2 id="minimal-route-setup">Minimal Route Setup</h2>
-<div class="code-block" data-block-id="doc-block-1"></div>
-<h2 id="root-state-flow-example">Root State Flow Example</h2>
 <div class="code-block" data-block-id="doc-block-2"></div>
+<h2 id="root-state-flow-example">Root State Flow Example</h2>
+<div class="code-block" data-block-id="doc-block-3"></div>
 <h2 id="data-flow-tips">Data Flow Tips</h2>
 <ul><li>Keep flow state in root component state and/or <code>slice.context</code>.</li><li>Emit events for cross-cutting concerns (audio, analytics, notifications).</li><li>Keep URL stable unless deep links are required.</li></ul>
 <h2 id="common-mistakes">Common Mistakes</h2>
-<div class="callout callout-warning">Do not create many routes just to represent internal game phases. That usually increases complexity without user value.</div>
+<div class="callout-block" data-block-id="doc-block-4"></div>
 <h2 id="outgrowing-single-view-app-shell">Outgrowing single-view → App Shell</h2>
-<p>When users need independent, URL-addressable sections, grow into the [App Shell + MultiRoute](/Documentation/Architecture/App-Shell-MultiRoute) pattern. Do it in slices, keeping the app working at each step:</p>
-<ol><li>Add an <code>AppShell</code> that owns persistent UI (navbar, theme, footer) and hosts the section content.</li><li>Wrap your current single view as <strong>one</strong> section route (e.g. <code>/play</code>).</li><li>Add new sections only when they're independently navigable and meaningful as URLs.</li><li>Move global controls into the shell; keep shared state in <code>slice.context</code> to avoid prop-drilling.</li><li>Add [route guards](/Documentation/Routing/Guards) only when navigation policy needs it.</li></ol>
-<div class="callout callout-tip">Migrate in small slices: keep one route stable, move one section at a time, and verify after each move.</div>
+<p>When users need independent, URL-addressable sections, grow into the <a href="/Documentation/Architecture/App-Shell-MultiRoute" data-route>App Shell + MultiRoute</a> pattern. Do it in slices, keeping the app working at each step:</p>
+<ol><li>Add an <code>AppShell</code> that owns persistent UI (navbar, theme, footer) and hosts the section content.</li><li>Wrap your current single view as <strong>one</strong> section route (e.g. <code>/play</code>).</li><li>Add new sections only when they're independently navigable and meaningful as URLs.</li><li>Move global controls into the shell; keep shared state in <code>slice.context</code> to avoid prop-drilling.</li><li>Add <a href="/Documentation/Routing/Guards" data-route>route guards</a> only when navigation policy needs it.</li></ol>
+<div class="callout-block" data-block-id="doc-block-5"></div>
 </div>

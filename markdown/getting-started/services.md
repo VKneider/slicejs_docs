@@ -2,9 +2,9 @@
 title: Services
 route: /Documentation/Service
 navLabel: Services
-section: Getting Started
-group: Components
-order: 34
+section: Components
+group: Component Model
+order: 50
 description: Service components for shared logic and data.
 component: ServiceDocumentation
 tags: [services, fetch, state]

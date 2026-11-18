@@ -2,9 +2,9 @@
 title: Documentation
 route: /Documentation
 navLabel: Documentation
-section: Introduction
+section: Getting Started
 group: Overview
-order: 1
+order: 0
 description: The documentation landing page for Slice.js.
 component: Documentation
 tags: [documentation, overview]
@@ -281,11 +281,6 @@ const createToolingCards = () => {
       title: 'Themes',
       description: 'Customize themes, set defaults, and build your own palettes.',
       path: '/Documentation/Themes'
-    },
-    {
-      title: 'Components',
-      description: 'Browse the official visual component library and its live examples.',
-      path: '/Documentation/Components'
     }
   ];
 

@@ -1,38 +1,44 @@
 <div class="documentation-content servicedocumentation">
 
+<div class="doc-page-meta">
+  <div class="doc-breadcrumb" data-block-id="doc-block-1"></div>
+  <span class="doc-reading-time">2 min read</span>
+</div>
+
 <div class="doc-title-bar">
   <h1 id="services">
     <span class="doc-title-text">Services</span>
     <span class="copy-md-slot" data-copy-md></span>
   </h1>
 </div>
+<p class="doc-lede">Service components for shared logic and data.</p>
 <h2 id="overview">Overview</h2>
 <p>Services centralize logic and data access. They can cache results, encapsulate API calls, and integrate with EventManager or ContextManager.</p>
 <p>Services are created with <code>slice.build()</code> like other components, but they do not render UI.</p>
 <h2 id="built-in-services">Built-in Services</h2>
-<div class="table-block" data-block-id="doc-block-1"></div>
+<div class="table-block" data-block-id="doc-block-2"></div>
 <h2 id="using-a-service">Using a Service</h2>
-<div class="code-block" data-block-id="doc-block-2"></div>
+<div class="code-block" data-block-id="doc-block-3"></div>
 <h2 id="service-singleton-pattern-sliceid">Service Singleton Pattern (sliceId)</h2>
 <p>Use a stable <code>sliceId</code> to create a shared service instance and retrieve it from any component.</p>
-<div class="code-block" data-block-id="doc-block-3"></div>
-<div class="callout callout-tip">Use <code>sliceId</code> when you need a single instance across routes or screens.</div>
-<div class="callout callout-warning">Do not store service instances or functions in <code>slice.context</code>. Persist only serializable state.</div>
+<div class="code-block" data-block-id="doc-block-4"></div>
+<div class="callout-block" data-block-id="doc-block-5"></div>
+<div class="callout-block" data-block-id="doc-block-6"></div>
 <h2 id="where-services-live-and-how-to-share-them">Where services live and how to share them</h2>
 <p>Most services are <strong>app-lifetime singletons</strong>. Where to build them, how to share one instance, the <code>singleton: true</code> get-or-create shortcut, Provider Services for global UI, and the cleanup contract all live in one canonical place:</p>
-<p>➡️ <strong>[Service Patterns](/Documentation/Architecture/Service-Patterns)</strong></p>
+<p>➡️ <strong><a href="/Documentation/Architecture/Service-Patterns" data-route>Service Patterns</a></strong></p>
 <p>In short: build app-wide singletons <strong>once</strong> (a composition-root Service) and recover them with <code>slice.getComponent(name)</code>; reach for <code>slice.build('X', { singleton: true })</code> (Service only) when a service can be built from more than one entry point.</p>
 <h2 id="fetchmanager-api">FetchManager API</h2>
-<div class="table-block" data-block-id="doc-block-4"></div>
-<h2 id="indexeddbmanager-api">IndexedDbManager API</h2>
-<div class="table-block" data-block-id="doc-block-5"></div>
-<h2 id="localstoragemanager-api">LocalStorageManager API</h2>
-<div class="table-block" data-block-id="doc-block-6"></div>
-<h2 id="link-api">Link API</h2>
 <div class="table-block" data-block-id="doc-block-7"></div>
-<div class="code-block" data-block-id="doc-block-8"></div>
+<h2 id="indexeddbmanager-api">IndexedDbManager API</h2>
+<div class="table-block" data-block-id="doc-block-8"></div>
+<h2 id="localstoragemanager-api">LocalStorageManager API</h2>
+<div class="table-block" data-block-id="doc-block-9"></div>
+<h2 id="link-api">Link API</h2>
+<div class="table-block" data-block-id="doc-block-10"></div>
+<div class="code-block" data-block-id="doc-block-11"></div>
 <h2 id="best-practices">Best Practices</h2>
-<div class="callout callout-tip">Use <code>sliceId</code> when you need global access to a service instance.</div>
-<div class="callout callout-tip">Pair services with EventManager for notifications or ContextManager for shared state.</div>
+<div class="callout-block" data-block-id="doc-block-12"></div>
+<div class="callout-block" data-block-id="doc-block-13"></div>
 <h2 id="gotchas">Gotchas</h2>
 </div>

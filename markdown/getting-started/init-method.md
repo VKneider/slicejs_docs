@@ -2,10 +2,10 @@
 title: init()
 route: /Documentation/LifeCycle-Methods/init
 navLabel: init()
-section: Getting Started
-group: Components
-order: 41
-description: One-time setup for Slice.js components.
+section: Components
+group: Lifecycle
+order: 20
+description: One-time async setup for Slice.js components.
 component: InitMethodDocumentation
 tags: [lifecycle, init]
 ---
@@ -19,21 +19,22 @@ ready. Use `init()` for one-time setup that should not repeat during updates.
 
 `slice.build()` awaits `init()` before returning the component instance, so `init()` is the place
 for **async** work the constructor cannot do — fetching data and building children with
-`await slice.build(...)`. See Component Anatomy for the constructor and the two ways to cache DOM
-references.
+`await slice.build(...)`. See [Component Anatomy](/Documentation/Component-Anatomy) for the
+constructor and the two ways to cache DOM references.
 
 ## API
 | Method | Signature | Returns | Notes |
 | --- | --- | --- | --- |
 | `init` | `async init()` | `Promise<void>` | Called once per instance. |
 
-## Ideal Use Cases
-- Cache DOM references
-- Attach event listeners for the component lifetime
-- Fetch initial data
-- Build static child components
+## Ideal use cases
+- Cache DOM references.
+- Attach event listeners for the component lifetime.
+- Fetch initial data.
+- Build static child components.
 
 ## Example
+
 ```javascript title="One-time setup in init()"
 export default class UserProfile extends HTMLElement {
   async init() {
@@ -61,7 +62,19 @@ export default class UserProfile extends HTMLElement {
 }
 ```
 
+## Constructor vs init()
+
+:::compare left="Constructor — synchronous" right="init() — async"
+Attach the template, cache DOM refs, bind local listeners, then apply props with `setComponentProps` last. No `await` here.
+---
+Fetch data, `await slice.build(...)` children, subscribe to events/context, and finish the first paint. The framework awaits it before `build()` resolves.
+:::
+
+The constructor and `init()` are not interchangeable: the constructor cannot await, and `init()` is
+the only place where `slice.build()` is already safe for async children.
+
 ## Patterns
+
 ```javascript title="Bind events with auto-cleanup"
 export default class Notifications extends HTMLElement {
   async init() {
@@ -71,19 +84,15 @@ export default class Notifications extends HTMLElement {
 }
 ```
 
-## Best Practices
-:::tip
-The template is attached in the constructor by `slice.attachTemplate(this)`, so `querySelector`
-works there too. You can cache DOM references in the constructor (after `attachTemplate`, as the
-official components do) or in `init()`. Reserve `init()` for async work — fetching and building
-children — which the synchronous constructor cannot perform.
+:::details title="Static children vs dynamic lists"
+Build **static** children in `init()` — a toolbar, a header, a fixed card. A list whose data can
+change belongs in `update()` (or in [DomService.reconcile](https://components.slicejs.com/docs/services/dom-service)),
+so it can refresh without rebuilding the whole component.
 :::
 
-:::tip
-Build static child components here. Dynamic lists belong in `update()`.
-:::
-
-## Gotchas
-:::warning
-Avoid building dynamic lists in `init()` if the list needs to refresh.
+:::related
+- [Component Anatomy](/Documentation/Component-Anatomy) - Constructor, template and refs.
+- [update()](/Documentation/LifeCycle-Methods/update) - Refreshing after `init()`.
+- [beforeDestroy()](/Documentation/LifeCycle-Methods/beforeDestroy) - What cleanup runs later.
+- [Service Patterns](/Documentation/Architecture/Service-Patterns) - Building Services from `init()`.
 :::
