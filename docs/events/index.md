@@ -8,14 +8,16 @@ This catalog is generated from `slice.events.register(...)` and the static
 
 ## Summary
 
-| Namespace | Events | Emitters | Listeners | Page |
-| --- | --- | --- | --- | --- |
-| router | 1 | 0 | 1 | [router](./router.md) |
+| Namespace | Events | Emitters | Listeners | Page | Diagram |
+| --- | --- | --- | --- | --- | --- |
+| router | 1 | 0 | 1 | [router](./router.md) | [diagram](./diagram-router.mmd) |
 
 ## Diagram
 
-- [Mermaid source](./diagram.mmd)
+- [Mermaid source, every event](./diagram.mmd)
 - [Standalone HTML](./diagram.html)
+- Each namespace has its own smaller diagram, linked in the table above. Blue nodes emit, green
+  nodes listen, grey nodes do both; solid arrows are emits and dashed arrows are subscriptions.
 
 ## Drift
 
