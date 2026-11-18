@@ -4,17 +4,12 @@ flowchart LR
   subgraph ns0["router"]
     e1(["router:change"]):::event
   end
-  c2["TreeView"]:::listener
-  e1 -.-> c2
-  subgraph legend["Legend"]
-    direction LR
-    legEmit["component that emits"]:::emitter --> legEvent(["event"]):::event
-    legEvent -.-> legListen["component that listens"]:::listener
-    legBoth["emits and listens"]:::both
+  subgraph listenerGroup["Listeners"]
+    c2["TreeView"]:::listener
   end
+  e1 -.-> c2
   classDef event fill:#ede9fe,stroke:#7c3aed,stroke-width:2px,color:#3b0764
   classDef emitter fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
   classDef listener fill:#d1fae5,stroke:#059669,color:#064e3b
   classDef both fill:#f1f5f9,stroke:#475569,color:#0f172a
   classDef dynamic fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-dasharray:4 3
-  style legend fill:none,stroke:#cbd5e1
